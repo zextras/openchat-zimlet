@@ -1,0 +1,24 @@
+{
+  "name": "openchat-zimlet",
+  "version": "8.8.0",
+  "private": true,
+  "license" : "SEE LICENSE IN LICENSE",
+  "engines" : {
+    "node" : ">=6.9.0 <7"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/ZeXtras/openchat-zimlet.git"
+  },
+  "scripts": {
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.0.8",
+    "coffee-loader": "^0.7.3",
+    "coffee-script": "^1.12.4",
+    "json-loader": "^0.5.4",
+    "typescript": "^2.2.1",
+    "webpack": "^2.2.1"
+  }
+}
