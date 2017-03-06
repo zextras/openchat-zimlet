@@ -1,0 +1,102 @@
+/*!
+ / Copyright (C) 2017 ZeXtras S.r.l.
+ /
+ / This program is free software; you can redistribute it and/or
+ / modify it under the terms of the GNU General Public License
+ / as published by the Free Software Foundation, version 2 of
+ / the License.
+ /
+ / This program is distributed in the hope that it will be useful,
+ / but WITHOUT ANY WARRANTY; without even the implied warranty of
+ / MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ / GNU General Public License for more details.
+ /
+ / You should have received a copy of the GNU General Public License.
+ / If not, see <http://www.gnu.org/licenses/>.
+ /
+
+@import "images/com_zextras_chat_open_sprite"
+
+.Img16
+  //@extend .ZxChat-16
+  background-repeat: no-repeat
+  display: block
+  overflow: hidden
+  height: 16px
+  width: 16px
+
+@import "dwt/widgets/Conversation"
+@import "dwt/widgets/BuddyTreeItem"
+@import "dwt/widgets/BuddyTreeItemActionMenuFactory"
+@import "dwt/widgets/GroupTreeItem"
+@import "dwt/widgets/GroupTreeItemActionMenuFactory"
+@import "dwt/widgets/MainMenuButton"
+@import "dwt/widgets/Message"
+@import "dwt/widgets/MessageNotification"
+@import "dwt/widgets/MessageStatus"
+@import "dwt/widgets/MessageWritingStatus"
+@import "dwt/widgets/SearchInputField"
+@import "dwt/windows/RoomWindow"
+@import "dwt/windows/RoomWindowMenuButton"
+@import "dwt/windows/WindowBase"
+
+// Our Chat folder image is more beautiful
+.ImgChatFolder
+  @extend .Img16
+  @include sprite($chat-folder)
+
+// Default ZxChat Icon
+.ImgZxChat_icon
+  @extend .Img16
+  @include sprite($icon-zxchat)
+
+// Default ZxChat Icon (de-brand version)
+.ImgZxChat_personalized_brand
+  @extend .Img16
+  @include sprite($icon-chat)
+
+.ZxEmojiPickerButton
+  margin: 0
+
+.ZxEmojiPickerButton > .ZLeftIcon
+  padding: 0
+
+.ZxEmojiPickerButton > .ZRightIcon
+  padding: 0
+
+.ZxEmojiPickerButton > .ZDropDown
+  padding: 0
+  width: 0
+  height: 0
+
+// Override button borders and settings for the emoji picker button
+.ZxEmojiPickerButton > .ZToolbarButtonBorder
+  border-radius: 0
+  border-collapse: separate
+  border: 0
+  background-image: none
+  box-shadow: none
+
+.ZxChat_Button > .ZToolbarButtonBorder
+  background-image: none
+  box-shadow: none
+  border: none
+
+.ZxChat_Button.ZHover > .ZToolbarButtonBorder
+  box-shadow: none
+  border: none
+  background: #007cc3 none
+
+.ZxChat_Button.ZActive > .ZToolbarButtonBorder
+  box-shadow: none
+  border: none
+  background: #007cc3 none
+
+.ZxChat_Button.ZSelected > .ZToolbarButtonBorder
+  box-shadow: none
+  border: none
+  background: #007cc3 none
+
+.ZxChat_Toolbar
+  background: #d5f1f9 none
+  padding: 2px 0

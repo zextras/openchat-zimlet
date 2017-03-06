@@ -1,0 +1,55 @@
+<!--
+  ~ Copyright (C) 2017 ZeXtras S.r.l.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation, version 2 of
+  ~ the License.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License.
+  ~ If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<zimlet name="#NAME#"
+        version="#VERSION#"
+        label="#NAME#"
+        description="#DESCRIPTION#">
+
+    <include>#NAME#_bundle.js</include>
+
+    <includeCSS>#NAME#.css</includeCSS>
+    <includeCSS>emojione.sprites.css</includeCSS>
+
+    <handlerObject>#NAME#_hdlr</handlerObject>
+
+    <!-- Includes for auto-generated template files -->
+    <include>templates/Widgets.template.js</include>
+    <include>templates/Windows.template.js</include>
+
+    <userProperties>
+        <property type="string" name="zxchat_pref_dockmode" value="true"/>
+        <property type="string" name="zxchat_pref_dockmode_up" value="true"/>
+        <!-- Enable Emoji in chat conversation -->
+        <property type="string" name="zxchat_pref_emoji_in_conv" value="true"/>
+        <!-- Enable Emoji in history -->
+        <property type="string" name="zxchat_pref_emoji_in_hist" value="true"/>
+        <!-- Enable Emoji in email -->
+        <property type="string" name="zxchat_pref_emoji_in_mail" value="false"/>
+        <!-- Show debug tab in preferences dialog -->
+        <property type="string" name="zxchat_pref_show_debug_info" value="false"/>
+        <property type="string" name="report_errors" value="false"/>
+    </userProperties>
+
+    <resource>emojione.sprites.png</resource>
+    <resource>images/com_zextras_chat_open_sprite.png</resource>
+    <resource>images/desktop-chat_128.png</resource>
+    <resource>images/desktop-zxchat_128.png</resource>
+    <resource>images/sf_clearSearchIcon.png</resource>
+    <resource>images/sf_searchIcon.png</resource>
+    <!-- TODO: Add emojione images here... -->
+</zimlet>

@@ -1,23 +1,40 @@
 {
-  "name": "openchat-zimlet",
+  "name": "com_zextras_chat_open",
   "version": "8.8.0",
+  "description": "Open Chat Zimlet",
   "private": true,
-  "license" : "SEE LICENSE IN LICENSE",
-  "engines" : {
-    "node" : ">=6.9.0 <7"
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">=6.9.0 <7"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/ZeXtras/openchat-zimlet.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZeXtras/openchat-zimlet.git"
   },
   "scripts": {
+    "lint": "./node_modules/.bin/tslint -c tslint.json --project tsconfig.json && ./node_modules/.bin/coffeelint src/",
+    "bundle": "./node_modules/.bin/webpack --config webpack.config-open.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bowser": "^1.6.0",
+    "emojione": "^2.2.6",
+    "html-entities": "^1.2.0",
+    "json-prune": "^1.0.1",
+    "json3": "^3.3.2",
+    "stacktrace-js-legacy": "^0.6.5",
+    "xregexp": "^3.1.1"
+  },
   "devDependencies": {
     "awesome-typescript-loader": "^3.0.8",
     "coffee-loader": "^0.7.3",
     "coffee-script": "^1.12.4",
+    "coffeelint": "^1.16.0",
     "json-loader": "^0.5.4",
+    "npm-sass": "^2.0.0",
+    "sharp-cli": "^1.1.0",
+    "spritesmith": "^3.1.0",
+    "spritesmith-cli": "^1.1.2",
+    "tslint": "^4.5.1",
     "typescript": "^2.2.1",
     "webpack": "^2.2.1"
   }

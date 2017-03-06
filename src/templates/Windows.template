@@ -1,0 +1,98 @@
+<!--
+  ~ Copyright (C) 2017 ZeXtras S.r.l.
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation, version 2 of
+  ~ the License.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License.
+  ~ If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<template id="com_zextras_chat.Windows#BaseWindow">
+    <div id='${id}_windowDiv' class='${cssClassesForWindowDiv}'>
+        <table role="presentation" >
+            <tr id='${id}_titlebar' style="height: 38px">
+                <td class='minWidth ZxChatWindowIcon'>
+                    <div id='${id}_icon' class='${icon}'></div>
+                </td>
+                <td id='${dragId}' class='DwtDialogTitle ZxChatWindowTitle'>
+                    <div id='${id}_title'>
+                      ${title}
+                    </div>
+                    <div id='${id}_writing_status'></div>
+                </td>
+                <td style='width: 18px;'>
+                    <div id='${id}_minimizeIcon' style="display: none; float: right;" class='${minimizeIcon}'></div>
+                    <div id='${id}_expandIcon' style="display: none; float: right;" class='${expandIcon}'></div>
+                </td>
+                <td style='width: 18px;'>
+                    <div id='${id}_closeIcon' style="display: none;" class='${closeIcon}'></div>
+                </td>
+            </tr>
+            <tr>
+                <td class='WindowInnerContainer ZxChatWindowInnerContainer' colspan='4'>
+                    <div id='${id}_content' class='DwtDialogBody'></div>
+                    <div id='${id}_miniContent' class='DwtDialogBody' style='display: none;'></div>
+                    <$ if (data.controlsTemplateId) { $>
+                        <$= AjxTemplate.expand(data.controlsTemplateId, data) $>
+                    <$ } $>
+                </td>
+            </tr>
+        </table>
+    </div>
+</template>
+
+<template id="com_zextras_chat.Windows#AddBuddyDialog">
+    <table cellpadding="2" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td>
+                <b>${msg_email}:</b>
+            </td>
+            <td>
+                <input type="text" id="${id}_email" name="add_buddy_dialog_email_prop" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>${msg_nickname}:</b>
+            </td>
+            <td>
+                <input type="text" id="${id}_nickname" name="add_buddy_dialog_nickname_prop" />
+            </td>
+        </tr>
+    </table>
+</template>
+
+<template id="com_zextras_chat.Windows#RenameBuddyDialog">
+    <table cellpadding="2" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td>
+                <b>${msg_nickname}:</b>
+            </td>
+            <td>
+                <input type="text" id="${id}_nickname" name="rename_buddy_dialog_nickname_prop" />
+            </td>
+        </tr>
+    </table>
+</template>
+
+<template id="com_zextras_chat.Windows#AddGroupDialog">
+    <table cellpadding="2" cellspacing="0" border="0" width="100%">
+        <tr>
+            <td>
+                <b>${msg_group_name}:</b>
+            </td>
+            <td>
+                <input type="text" id="${id}_group_name" name="group_name" />
+            </td>
+        </tr>
+    </table>
+</template>
+

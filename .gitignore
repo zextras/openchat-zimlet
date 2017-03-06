@@ -1,4 +1,11 @@
 /.idea/workspace.xml
 /node_modules/
-/src/ZimletVersion.ts
+/build/
+/dist/
 /npm-debug.log
+# Generated files:
+/src/ZimletVersion.ts
+src/images/com_zextras_chat_open_sprite.sass
+src/images/com_zextras_chat_open_sprite.png
+src/images/emojione.sprites.png
+src/emojione.sprites.css

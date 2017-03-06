@@ -1,0 +1,64 @@
+/*!
+ / Copyright (C) 2017 ZeXtras S.r.l.
+ /
+ / This program is free software; you can redistribute it and/or
+ / modify it under the terms of the GNU General Public License
+ / as published by the Free Software Foundation, version 2 of
+ / the License.
+ /
+ / This program is distributed in the hope that it will be useful,
+ / but WITHOUT ANY WARRANTY; without even the implied warranty of
+ / MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ / GNU General Public License for more details.
+ /
+ / You should have received a copy of the GNU General Public License.
+ / If not, see <http://www.gnu.org/licenses/>.
+ /
+
+.ZxChat_Message
+
+.ZxChat_MessageOuterContainer
+  margin: 5px 10px
+  position: relative
+  background-color: #fff
+  -webkit-border-radius: 10px
+  border-radius: 10px
+  max-width: 80%
+  display: inline-block
+  text-align: left
+  padding: 5px
+
+.ZxChat_MessageSender
+  margin-left: 3px
+  font-weight: bold
+  padding: 2px
+  float: left
+
+.ZxChat_MessageDate
+  margin-right: 3px
+  text-align: right
+  color: white
+  padding: 2px
+  float: right
+
+.ZxChat_MessageContent
+  padding: 4px
+  cursor: text
+  clear: both
+  word-wrap: break-word
+  -webkit-border-radius: 10px
+  border-radius: 10px
+  background-color: inherit
+
+//Prevent any fontsize overwrite (related to ZXCHAT-36 with MsgBody className)
+.ZxChat_MessageContent, .ZxChat_MessageContent *
+  font-size: 1em !important
+
+.DwtComposite[sender="true"]
+  text-align: right
+
+.DwtComposite[sender="true"] > .ZxChat_MessageOuterContainer
+  background-color: #d8ffc9
+
+.DwtComposite[sender="false"] > .ZxChat_MessageOuterContainer
+  background-color: #feffd7
