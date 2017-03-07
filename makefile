@@ -22,21 +22,26 @@ DESCRIPTION = $(shell fgrep "\"description\":" package.json | sed -e 's/\s*"desc
 NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')
 
 all: dist/com_zextras_chat_open.zip
-#.PHONY: dist/com_zextras_chat_open.zip
+
+.PHONY: check-yui clean init install guard-%
+
+node_modules:
+	if [ ! -d "node_modules" ]; then npm install; fi
 
 src/ZimletVersion.ts:
+	# Build the zimlet version file
 	cp src/ZimletVersion.template.ts src/ZimletVersion.ts
 	sed -i s/#COMMIT_DATA#/$(COMMIT_BRANCH)-$(COMMIT_ID)/g src/ZimletVersion.ts
 	sed -i s/#VERSION#/$(VERSION)/g src/ZimletVersion.ts
 
-src/emojione.sprites.css:
+src/emojione.sprites.css: node_modules
 	# Build sprites (emojione and icons)
 	mkdir -p build/tmp
 	./node_modules/.bin/sharp resize 16 16 -i node_modules/emojione/assets/png/* -o build/tmp
 	./node_modules/.bin/spritesmith
 	rm -rf build/tmp
 
-build/com_zextras_chat_open.css: src/emojione.sprites.css
+build/com_zextras_chat_open.css: node_modules src/emojione.sprites.css
 	# Build the CSS and copy the images
 	mkdir -p build/images/
 	cp src/images/*.png build/images/
@@ -44,23 +49,33 @@ build/com_zextras_chat_open.css: src/emojione.sprites.css
 	cp src/emojione.sprites.css build/
 
 build/com_zextras_chat_open.xml:
+	# Build the zimlet xml
 	cp src/com_zextras_chat_open.template.xml build/com_zextras_chat_open.xml
 	sed -i -e 's/#VERSION#/$(VERSION)/g' \
 		-e 's/#NAME#/$(NAME)/g' \
 		-e 's/#DESCRIPTION#/$(DESCRIPTION)/g' \
 		build/com_zextras_chat_open.xml
 
-build/com_zextras_chat_open_bundle.js: check-t4z lint src/ZimletVersion.ts
-	npm run bundle
+build/com_zextras_chat_open_bundle.js: node_modules src/ZimletVersion.ts
+	# Check T4Z project if there are modifications
+	cd src/zimbra && make check-exports
+	# Lint the files
+	./node_modules/.bin/tslint -c tslint.json --project tsconfig.json
+	./node_modules/.bin/coffeelint src/
+	# Create the JS bundle
+	./node_modules/.bin/webpack --config webpack.config-open.js
 
-dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_zextras_chat_open.css build/com_zextras_chat_open_bundle.js
-	rm -f dist/com_zextras_chat_open.zip
+build/com_zextras_chat_open.properties:
 	# Copy language files
-	if [ ! -f build/com_zextras_chat_open.properties ]; \
-	then \
-	cp src/i18n/*.properties build/; \
-	fi;
+	cp src/i18n/*.properties build/
+
+build/templates:
+	# Copy templates
 	cp -r src/templates build/
+
+dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_zextras_chat_open.css build/com_zextras_chat_open_bundle.js build/com_zextras_chat_open.properties build/templates
+	# Create the zip file
+	rm -f dist/com_zextras_chat_open.zip
 	cd build && zip -q -r ../dist/com_zextras_chat_open.zip \
 		templates \
 		images \
@@ -72,19 +87,21 @@ dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_z
 		com_zextras_chat_open_bundle.js
 
 clean:
+	# Version file
 	rm -f src/ZimletVersion.ts
 	# Assets
 	rm -f src/images/emojione.sprites.png
 	rm -f src/emojione.sprites.css
+	rm -f build/emojione.sprites.css
 	rm -f src/images/com_zextras_chat_open_sprite.png
 	rm -f src/images/com_zextras_chat_open_sprite.sass
 	rm -rf build/images
-	rm -f build/com_zextras_chat_open.css
 	rm -rf build/templates
 	# Language files
 	rm -f build/com_zextras_chat_open.properties
 	rm -f build/com_zextras_chat_open*.properties
 	# Zimlet files
+	rm -f build/com_zextras_chat_open.css
 	rm -f build/com_zextras_chat_open.xml
 	rm -f build/com_zextras_chat_open_bundle.js
 	# Final package
@@ -95,21 +112,23 @@ init:
 	mkdir -p build/images
 	mkdir -p dist
 
-check-t4z:
-	cd src/zimbra && make check-exports
+build/yuicompressor.jar:
+	rm -f build/yuicompressor.jar
+	wget https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-2.4.8.jar -O build/yuicompressor.jar
 
-lint:
-	npm run lint
+check-yui: build/yuicompressor.jar build/com_zextras_chat_open_bundle.js
+	java -jar build/yuicompressor.jar --type js --nomunge --preserve-semi --disable-optimizations build/com_zextras_chat_open_bundle.js -o build/com_zextras_chat_open_bundle.min.js
 
-install: guard-ZIMLET_DEV_SERVER build
+install: guard-ZIMLET_DEV_SERVER check-yui dist/com_zextras_chat_open.zip
+	# Deploy the zimlet on a server
 	scp dist/com_zextras_chat_open.zip root@${ZIMLET_DEV_SERVER}:/tmp/
 	ssh root@${ZIMLET_DEV_SERVER} "chown zimbra:zimbra /tmp/com_zextras_chat_open.zip"
 	ssh root@${ZIMLET_DEV_SERVER} "su - zimbra -c '/opt/zimbra/bin/zmzimletctl deploy /tmp/com_zextras_chat_open.zip'"
 	ssh root@${ZIMLET_DEV_SERVER} "su - zimbra -c '/opt/zimbra/bin/zmprov fc zimlet'"
 
 guard-%:
+	# Verify if an environment variable is set
 	@ if [ "${${*}}" = "" ]; then \
 		echo "Environment variable $* not set"; \
 		exit 1; \
 	fi
-

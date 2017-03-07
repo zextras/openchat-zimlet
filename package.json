@@ -12,12 +12,11 @@
     "url": "https://github.com/ZeXtras/openchat-zimlet.git"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/tslint -c tslint.json --project tsconfig.json && ./node_modules/.bin/coffeelint src/",
-    "bundle": "./node_modules/.bin/webpack --config webpack.config-open.js"
+    "postinstall": "patch -p0 < patches/emojione-2.2.7.patch"
   },
   "dependencies": {
     "bowser": "^1.6.0",
-    "emojione": "^2.2.6",
+    "emojione": "^2.2.7",
     "html-entities": "^1.2.0",
     "json-prune": "^1.0.1",
     "json3": "^3.3.2",
