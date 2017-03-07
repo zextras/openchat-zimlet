@@ -118,6 +118,7 @@ build/yuicompressor.jar:
 
 check-yui: build/yuicompressor.jar build/com_zextras_chat_open_bundle.js
 	java -jar build/yuicompressor.jar --type js --nomunge --preserve-semi --disable-optimizations build/com_zextras_chat_open_bundle.js -o build/com_zextras_chat_open_bundle.min.js
+	rm -f build/com_zextras_chat_open_bundle.min.js
 
 install: guard-ZIMLET_DEV_SERVER check-yui dist/com_zextras_chat_open.zip
 	# Deploy the zimlet on a server
