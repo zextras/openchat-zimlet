@@ -19,7 +19,6 @@ import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {MainWindow} from "../../dwt/windows/MainWindow";
 import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
-import {IdGenerator} from "../../dwt/IdGenerator";
 import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {BuddyTreeItem} from "../../dwt/widgets/BuddyTreeItem";
@@ -34,11 +33,9 @@ export class MainWindowCreateNewMailMenuItemPlugin implements ChatPlugin {
   public trigger(mainWindow: MainWindow, menu: DwtMenu, treeItem: BuddyTreeItem): void {
     let newMailMenuItem: DwtMenuItem = new DwtMenuItem({
       parent: menu,
-      style: DwtMenuItem.IMAGE_LEFT,
-      id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{buddy.getId()}_MenuItem_New_Mail")
+      style: DwtMenuItem.IMAGE_LEFT
     });
     newMailMenuItem.setText(ZmMsg.newEmail);
-    newMailMenuItem.setImage("ZxChat_new-email");
     newMailMenuItem.addSelectionListener(new AjxListener(null, MainWindowCreateNewMailMenuItemPlugin.sendNewMail, [treeItem.getBuddy().getId()]));
     newMailMenuItem.setEnabled(true);
   }

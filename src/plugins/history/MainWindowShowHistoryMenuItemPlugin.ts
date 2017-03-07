@@ -31,14 +31,13 @@ export class MainWindowShowHistoryMenuItemPlugin implements ChatPlugin {
 
   public static Name = BuddyTreeItemActionMenuFactory.AddMenuItemPlugin;
 
-  trigger(mainWindow: MainWindow, menu: DwtMenu, treeItem: BuddyTreeItem): void {
+  public trigger(mainWindow: MainWindow, menu: DwtMenu, treeItem: BuddyTreeItem): void {
     let newMailMenuItem: DwtMenuItem = new DwtMenuItem({
       parent: menu,
       style: DwtMenuItem.IMAGE_LEFT,
       id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{buddy.getId()}_MenuItem_Search")
     });
     newMailMenuItem.setText(StringUtils.getMessage("friend_history"));
-    newMailMenuItem.setImage("ZxChat_history");
     newMailMenuItem.addSelectionListener(new AjxListener(null, MainWindowShowHistoryMenuItemPlugin.showHistory, [treeItem.getBuddy().getId()]));
     newMailMenuItem.setEnabled(true);
   }

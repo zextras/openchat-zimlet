@@ -34,8 +34,7 @@ export class RoomWindowShowHistoryMenuItemPlugin implements ChatPlugin {
     let historyMenuItem: DwtMenuItem = menu.createMenuItem(
       "ZxChat_MenuItem_History",
       {
-        text: StringUtils.getMessage("friend_history"),
-        image: "ZxChat_history"
+        text: StringUtils.getMessage("friend_history")
       }
     );
     historyMenuItem.addSelectionListener(

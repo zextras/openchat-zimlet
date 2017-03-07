@@ -80,7 +80,6 @@ define(
           id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{buddy.getId()}_MenuItem_Rename")
         })
         menu.optRename.setText(StringUtils.getMessage('friend_rename'))
-        menu.optRename.setImage('ZxChat_renameFriend')
         menu.optRename.addSelectionListener(new AjxListener(treeItem, treeItem._onRenameBuddy))
         menu.optRename.setEnabled(true, true)
 
@@ -114,7 +113,6 @@ define(
           id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{buddy.getId()}_MenuItem_Delete")
         })
         menu.optDelete.setText(StringUtils.getMessage('friend_delete'))
-        menu.optDelete.setImage('ZxChat_removeFriend')
         menu.optDelete.addSelectionListener(new AjxListener(treeItem, treeItem._onDeleteBuddy))
         menu.optDelete.setEnabled(true, true)
 
@@ -125,7 +123,6 @@ define(
 #          id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{buddy.getId()}_MenuItem_New_Mail")
 #        })
 #        menu.optNewMail.setText(ZmMsg.newEmail)
-#        menu.optNewMail.setImage('ZxChat_new-email')
 #        menu.optNewMail.addSelectionListener(new AjxListener(treeItem, treeItem._sendNewMail))
 #        menu.optNewMail.setEnabled(true, true)
 #

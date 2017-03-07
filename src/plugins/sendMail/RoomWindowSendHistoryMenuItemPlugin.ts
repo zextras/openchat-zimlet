@@ -40,8 +40,7 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
      let sendHistory: DwtMenuItem = menu.createMenuItem(
       "ZxChat_MenuItem_NewMail",
       {
-        text: StringUtils.getMessage("send_email_conversation"),
-        image: "ZxChat_send-mail"
+        text: StringUtils.getMessage("send_email_conversation")
       }
      );
     sendHistory.addSelectionListener(

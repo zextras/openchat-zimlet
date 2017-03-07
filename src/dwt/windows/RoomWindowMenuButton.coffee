@@ -20,21 +20,18 @@ define(
     "require",
     "exports",
     '../../zimbra/ajax/dwt/widgets/DwtToolBar',
-    '../../zimbra/zimbraMail/share/view/ZmPopupMenu',
-    '../IdGenerator'
+    '../../zimbra/zimbraMail/share/view/ZmPopupMenu'
   ],
   (
     require,
     exports,
     DwtToolBar_1,
-    ZmPopupMenu_1,
-    IdGenerator_1
+    ZmPopupMenu_1
   ) ->
     "use strict"
     
     DwtToolBarButton = DwtToolBar_1.DwtToolBarButton
     ZmPopupMenu = ZmPopupMenu_1.ZmPopupMenu
-    IdGenerator = IdGenerator_1.IdGenerator
 
     class RoomWindowMenuButton extends DwtToolBarButton
 
@@ -46,12 +43,11 @@ define(
         @roomWindow = roomWindow
         super({
           parent: parent
-          className: "ZxChat_Button ZToolbarButton"
-          id: IdGenerator.generateId("ZxChat_MainMenuButton")
+          className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
         })
         @dontStealFocus()
-        @setImage("ZxChat_preferences")
-        menu = new ZmPopupMenu(@, "ActionMenu", "ZmPopupMenu_ZxChat_MainMenu")
+
+        menu = new ZmPopupMenu(@, "ActionMenu ZmPopupMenu_ZxChat_MainMenu")
         roomWindowPluginManager.triggerPlugins(RoomWindowMenuButton.AddMenuItemPlugin, menu)
         @setMenu(menu, false, false, true)
         if menu.getItemCount() is 0

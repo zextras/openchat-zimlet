@@ -24,7 +24,6 @@ define(
     '../../lib/callbacks/CallbackManager'
     '../../lib/callbacks/Callback'
     '../../lib/StringUtils'
-    '../../lib/Version'
     '../../zimbra/ajax/events/AjxListener'
     '../../zimbra/ajax/dwt/core/Dwt'
     '../../zimbra/ajax/dwt/widgets/DwtComposite'
@@ -38,10 +37,8 @@ define(
     '../widgets/Conversation'
     '../widgets/emoji/EmojiOnePickerButton'
     './RoomWindowMenuButton'
-    '../widgets/MessageWritingStatus'
     '../../client/Room'
     '../../client/events/chat/WritingStatusEvent'
-    '../../client/events/chat/LeftConversationEvent'
   ],
   (
     require
@@ -51,7 +48,6 @@ define(
     CallbackManager_1
     Callback_1
     StringUtils_1
-    Version_1
     AjxListener_1
     Dwt_1
     DwtComposite_1
@@ -65,10 +61,8 @@ define(
     Conversation_1
     EmojiOnePickerButton_1
     RoomWindowMenuButton_1
-    MessageWritingStatus_1
     Room_1
     WritingStatusEvent_1
-    LeftConversationEvent_1
   ) ->
     "use strict"
 
@@ -88,17 +82,13 @@ define(
     CallbackManager = CallbackManager_1.CallbackManager
     Callback = Callback_1.Callback
     StringUtils = StringUtils_1.StringUtils
-    Version = Version_1.Version
 
     WindowBase = WindowBase_1.WindowBase
     Conversation = Conversation_1.Conversation
     EmojiOnePickerButton = EmojiOnePickerButton_1.EmojiOnePickerButton
     RoomWindowMenuButton = RoomWindowMenuButton_1.RoomWindowMenuButton
-#    Reason = Reason_1.Reason
     Room = Room_1.Room
     WritingStatusEvent = WritingStatusEvent_1.WritingStatusEvent
-    MessageWritingStatus = MessageWritingStatus_1.MessageWritingStatus
-    LeftConversationEvent = LeftConversationEvent_1.LeftConversationEvent
 
     class RoomWindow extends WindowBase
 
@@ -107,8 +97,8 @@ define(
 
       @DEFAULT_ICON = "ImgZxChat_personalized_brand"
 
-      @WIDTH  = 210 * 1.25
-      @HEIGHT = 340 * 1.25
+      @WIDTH  = 320
+      @HEIGHT = 451
 
       @_SMOOTH_MOVE_DELAY = 800
 
@@ -146,29 +136,45 @@ define(
         @_lastBuddyStatusWriting = [] # [{buddyId:, status:}]
         super(
           shell
-          "ZxChat_RoomWindow_#{room.getTitle()}"
-          "Img#{@room.getRoomStatus().getCSS()}"
+          "ZxChat_RoomWindow"
+          "#{@room.getRoomStatus().getCSS()}"
           "Chat"
-          [
-            WindowBase.BTN_MINIMIZE
-            WindowBase.BTN_CLOSE
-          ]
+          []
           undefined
           false
         )
-        @setTitle(room.getTitle())
-        @_titleEl.style.width = "195px"
-        @mTitleWritingStatusEl.style.height = @_titleEl.offsetHeight * 0.8 + "px"
-        @mTitleWritingStatusEl.style.fontSize = "0.8rem"
         @containerView = new DwtComposite({parent: @})
         @containerView.setSize(
-          "#{RoomWindow.WIDTH - 2}px"
+          "#{RoomWindow.WIDTH}px"
           "#{RoomWindow.HEIGHT - 26}px"
         )
+        @mTitlebar = new DwtToolBar({
+          parent: @containerView,
+          parentElement: @_titleBarEl,
+          className: "ZxChat_TitleBar_Toolbar"
+        })
+        @mTitlebar.setSize(
+          "#{RoomWindow.WIDTH}px"
+          Dwt.DEFAULT
+        )
+        @mTitleLbl = new DwtLabel({
+          parent: @mTitlebar
+          className: "ZxChat_TitleBar_Title"
+        })
+        @mTitleLbl.setText(room.getTitle())
+        @setIcon("#{@room.getRoomStatus().getCSS()}")
+        @mTitlebar.addFiller()
+        @mainMenuButton = new RoomWindowMenuButton(@, @mTitlebar, @mRoomWindowPluginManager)
+        @mCloseButton = new DwtToolBarButton({
+          parent: @mTitlebar
+          className: "ZToolbarButton ZxChat_Button ZxChat_TitleBar_Button"
+        })
+        @mCloseButton.setImage("Close")
+
         @conversation = new Conversation(@containerView, @appCtxt, @dateProvider, @mTimedCallbackFactory)
         @conversation.setSize(
           Dwt.DEFAULT
-          "#{RoomWindow.HEIGHT - 118}px"
+          "#{RoomWindow.HEIGHT - 51}px"
         )
         @room.onAddMessageReceived(new Callback(@, @_onAddMessageReceived))
         @room.onBuddyWritingStatus(new Callback(@, @_onBuddyWritingStatus))
@@ -183,30 +189,23 @@ define(
 
 #        separator1 = new DwtControl({parent: @containerView, className: "horizSep"})
 #        separator1.getHtmlElement().style.marginTop = 0
-        toolbar = new DwtToolBar({parent: @containerView, className: "ZxChat_Toolbar"})
+        inputToolbar = new DwtToolBar({parent: @containerView, className: "ZxChat_RoomToolbar"})
 #        separator2 = new DwtControl({parent: @containerView, className: "horizSep"})
 #        separator2.getHtmlElement().style.marginBottom = 0
 
-        @_populateToolbar(toolbar)
         @inputField = new DwtInputField({
-          parent: @containerView
+          parent: inputToolbar
           className: "DwtInputField ZxChat_ConversationInput"
-          forceMultiRow: true
-          id: "ZxChat_ConversationInput_#{room.getTitle()}"
+          hint: StringUtils.getMessage("type_a_message")
         })
-        if Version.isZ8_5Up()
-          @inputField.setSize("#{RoomWindow.WIDTH - 10}px", "55px")
-          if @inputField.getInputElement()?
-            @inputField.getInputElement().style.width = "#{RoomWindow.WIDTH - 10}px"
-            @inputField.getInputElement().style.height = "55px"
-        else
-          @inputField.setSize("#{RoomWindow.WIDTH - 4}px", "46px")
-          if @inputField.getInputElement()?
-            @inputField.getInputElement().style.width = "#{RoomWindow.WIDTH - 4}px"
-            @inputField.getInputElement().style.height = "46px"
-        if @inputField.getInputElement()?
-          @inputField.getInputElement().style.resize = "none"
-          @inputField.getInputElement().style.borderStyle = "none"
+        inputToolbar.addFiller()
+        @emoticonBtn = new EmojiOnePickerButton(
+          { parent: inputToolbar }
+          @zimletContext
+          @mTimedCallbackFactory
+          new Callback(this, this.onEmojiSelected)
+          true
+        )
         @inputField.addListener(
           DwtEvent.ONKEYUP
           new AjxListener(@, @_keyboardListener)
@@ -215,13 +214,11 @@ define(
           DwtEvent.ONMOUSEMOVE
           new AjxListener(@, @stopBlink)
         )
-    #    O_o WAT?
-    #    dropTarget = new DwtDropTarget('BuddyTreeItem')
-    #    dropTarget.addDropListener(new AjxListener(@, @_dropListener))
-    #    @inputField.setDropTarget(dropTarget)
+        # O_o WAT?
+#        dropTarget = new DwtDropTarget('BuddyTreeItem')
+#        dropTarget.addDropListener(new AjxListener(@, @_dropListener))
+#        @inputField.setDropTarget(dropTarget)
         @setView(@containerView)
-        @setIcon("Img#{@room.getRoomStatus().getCSS()}")
-        @mIconEl.parentElement.style.verticalAlign = "top"
         @_timeoutWrittenStatus = 5000
 
       ###*
@@ -231,28 +228,18 @@ define(
       getId: () ->
         @room.getId()
 
+      setTitle: (title) ->
+        @mTitleLbl.setText(title)
+
+      setIcon: (icon) ->
+        @mTitleLbl.setImage(icon)
+
+      _createHtmlFromTemplate: (templateId, data) ->
+        data.doNotRenderTitleBar = true
+        super(templateId, data)
+
       getPluginManager: () ->
         @mRoomWindowPluginManager
-        
-      _populateToolbar: (toolbar) ->
-        # Emoticons can be converted to a plugin
-        @emoticonBtn = new EmojiOnePickerButton(
-          {parent: toolbar, id: "EmojiOneButton"}
-          @zimletContext
-          @mTimedCallbackFactory
-          new Callback(this, this.onEmojiSelected)
-          true
-        )
-
-        @mRoomWindowPluginManager.triggerPlugins(RoomWindow.AddButtonPlugin, toolbar)
-
-        toolbar.addFiller()
-
-        @mainMenuButton = new RoomWindowMenuButton(@, toolbar, @mRoomWindowPluginManager)
-        sendBtn = new DwtToolBarButton({ parent: toolbar, className: "ZxChat_Button ZToolbarButton" })
-        sendBtn.setImage("ZxChat_send-message")
-        sendBtn.setToolTipContent(StringUtils.getMessage("send_tooltip"), false)
-        sendBtn.addSelectionListener(new AjxListener(@, @_sendButtonHandler))
 
       ###*
         Insert an arbitrary text inside the input field of the window
@@ -264,7 +251,7 @@ define(
         pre = currentValue.slice(0, position)
         pre = if pre != "" then "#{pre} " else ""
         post = currentValue.slice(position)
-    #    post = if post != "" then " #{post}" else ""
+#        post = if post != "" then " #{post}" else ""
         newValue = "#{pre}#{newText} #{post}"
         @inputField.setValue(newValue)
         @inputField.focus()
@@ -334,7 +321,7 @@ define(
         else if not @_writingTimerCallback? and (DwtKeyEvent.KEY_DELETE or DwtKeyEvent.KEY_BACKSPACE)
           @room.sendWritingStatus(writingValue)
         return false
-        
+
       _onWritingStatusTimeout: () ->
         if @_restartTimerCallbackOnTimeout
           @_writingTimerCallback.stop()
@@ -356,53 +343,7 @@ define(
         @conversation.addMessageReceived(message)
 
       _onBuddyWritingStatus: (writingStatus) ->
-#        buddyId = writingStatus.getSender().getId()
-#        lastWritingStatusElement = @_getLastBuddyStatusWriting(buddyId)
-#        if lastWritingStatusElement?
-#          lastWritingStatusElement.setVisible(false)
-#        if writingStatus.getValue() != WritingStatusEvent.RESET
-#          statusElement = new MessageWritingStatus(@, writingStatus, @dateProvider)
-#          @_setLastBuddyStatusWriting(buddyId, statusElement)
-        @setWritingStatusInTitle(writingStatus.getValue())
-        if writingStatus.getValue() == WritingStatusEvent.WRITTEN
-          @mTimedCallbackFactory.createTimedCallback(
-            new Callback(
-              @
-              @setWritingStatusInTitle
-              WritingStatusEvent.RESET
-            )
-            MessageWritingStatus.TIMEOUT
-          ).start()
-#        @scrollToTop()
-#        @conversation.addWritingStatus(writingStatus)
-
-      _setLastBuddyStatusWriting: (buddyId, status) ->
-        statusElement = @_getLastBuddyStatusWriting(buddyId)
-        if statusElement?
-          for buddyId_Status in @_lastBuddyStatusWriting
-            if buddyId_Status.buddyId == buddyId
-              buddyId_Status.status = status
-        else
-          @_lastBuddyStatusWriting.push({buddyId: buddyId, status: status})
-
-      _getLastBuddyStatusWriting: (buddyId) ->
-        for buddyId_Status in @_lastBuddyStatusWriting
-          if buddyId_Status.buddyId == buddyId
-            return buddyId_Status.status
-        return null
-
-      setWritingStatusInTitle: (writingStatusValue) ->
-        switch writingStatusValue
-          when WritingStatusEvent.WRITING
-            message = StringUtils.getMessage("is_writing")
-          when WritingStatusEvent.WRITTEN
-            message = StringUtils.getMessage("has_written")
-          when LeftConversationEvent.LEFT_CONVERSATION
-            message = StringUtils.getMessage("buddy_has_left_the_conversation")
-          else
-  #        WritingStatusEvent.RESET
-            message = ""
-        @mTitleWritingStatusEl.innerText = message
+        @conversation.addWritingStatus(writingStatus)
 
       popup: (point) ->
         date = @dateProvider.getNow()
@@ -525,7 +466,7 @@ define(
       ###
       _onRoomStatusChange: (status) ->
         css = status.getCSS()
-        @setIcon("Img#{css}")
+        @setIcon(css)
 
       ###*
         Get if the window (o one of his children has the focus)

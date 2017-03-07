@@ -61,7 +61,7 @@ define(
           when LeftConversationEvent.LEFT_CONVERSATION
             message = StringUtils.getMessage("buddy_has_left_the_conversation")
           else
-    #        WritingStatusEvent.RESET
+            # WritingStatusEvent.RESET
             message = ""
 
         super(
@@ -81,12 +81,11 @@ define(
       ###
       _createHtml: () ->
         data = {
-          id: @_htmlElId + "_" + @writingStatus.getValue()
-          buddy: @writingStatus.getSender().getNickname()
-          message: @message.getMessage()
+          id: @_htmlElId
         }
         # Expand template
         DwtComposite.prototype._createHtmlFromTemplate.call(@, @TEMPLATE, data)
+        $("##{data.id}_dots").loadingdots({ dots : 5 })
 
     exports.MessageWritingStatus = MessageWritingStatus
     return

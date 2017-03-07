@@ -16,30 +16,31 @@
   -->
 
 <template id="com_zextras_chat_open.Widgets#Message">
-    <div class="DwtDialog ZxChat_MessageOuterContainer">
-        <div id="${id}_sender" class="ZxChat_MessageSender">
-            ${sender}
-        </div>
-        <div id="${id}_date" class="ZxChat_MessageDate" title="${dateTooltip}">
-            ${date}
-        </div>
-        <div id="${id}_content" class="ZxChat_MessageContent MsgBody">
-            ${content}
+    <div class="ZxChat_MessageContainer">
+        <div class="DwtDialog ZxChat_MessageOuterContainer ZxChat_Message">
+            <div class="ZxChat_MessageSenderDate">
+                <span id="${id}_sender" class="ZxChat_MessageSender">
+                    ${sender}
+                </span>
+                <span id="${id}_date" class="ZxChat_MessageDate" title="${dateTooltip}">
+                    ${date}
+                </span>
+            </div>
+            <div id="${id}_content" class="ZxChat_MessageContent MsgBody">
+                ${content}
+            </div>
         </div>
     </div>
 </template>
 
 <template id="com_zextras_chat_open.Widgets#MessageStatus">
     <div class="DwtDialog ZxChat_MessageStatusOuterContainer">
-        <div id="${id}_buddy" class="ZxChat_MessageStatusSender">
-            ${buddy}
-        </div>
-        <div id="${id}_date" class="ZxChat_MessageStatusDate" title="${dateTooltip}">
-            ${date}
-        </div>
-        <div id="${id}_content" class="ZxChat_MessageStatusContent">
+        <span id="${id}_sender" class="ZxChat_MessageStatusSender">
+            ${sender}
+        </span>
+        <span id="${id}_content" class="ZxChat_MessageStatusContent">
             ${content}
-        </div>
+        </span>
     </div>
 </template>
 
@@ -59,9 +60,7 @@
 
 <template id="com_zextras_chat_open.Widgets#MessageWritingStatus">
     <div class="DwtDialog ZxChat_MessageWritingStatusOuterContainer">
-        <div id="${id}_message" class="ZxChat_MessageWritingStatusMessage">
-            ${buddy} ${message}
-        </div>
+        <div id="${id}_dots"></div>
     </div>
 </template>
 

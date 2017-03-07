@@ -37,7 +37,7 @@ define(
 
       constructor: (parent, message, dateProvider) ->
         super(parent, message, dateProvider)
-        @getHtmlElement().setAttribute("sender", false)
+        @getHtmlElement().childNodes[0].setAttribute("sender", false)
         buddy = message.getSender()
         buddy.onNicknameChange(new Callback(@, @_updateBuddyNickname))
 

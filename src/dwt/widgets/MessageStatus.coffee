@@ -19,7 +19,6 @@ define(
   [
     "require",
     "exports",
-    '../../lib/StringUtils',
     '../../zimbra/ajax/dwt/widgets/DwtComposite',
     './Message',
     '../../client/MessageReceived',
@@ -28,15 +27,12 @@ define(
   (
     require,
     exports,
-    StringUtils_1,
     DwtComposite_1,
     Message_1,
     MessageReceived_1,
     BuddyStatusType_1
   ) ->
     "use strict"
-    
-    StringUtils = StringUtils_1.StringUtils
 
     DwtComposite = DwtComposite_1.DwtComposite
     Message = Message_1.Message
@@ -75,16 +71,13 @@ define(
       _createHtml: () ->
         data = {
           id: @_htmlElId
-          buddy: @buddy.getNickname()
-          date: StringUtils.localizeHour(@date, @dateProvider.getNow())
-          dateTooltip: @formatDate(@date)
+          sender: @buddy.getNickname()
           content: @message.getMessage()
         }
         # Expand template
         DwtComposite.prototype._createHtmlFromTemplate.call(@, @TEMPLATE, data)
         # Remember elements
-        @_senderEl = document.getElementById("#{data.id}_buddy")
-        @_dateEl = document.getElementById("#{data.id}_date")
+        @_senderEl = document.getElementById("#{data.id}_sender")
         @_contentEl = document.getElementById("#{data.id}_content")
 
     exports.MessageStatus = MessageStatus

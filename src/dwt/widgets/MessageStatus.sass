@@ -15,41 +15,19 @@
  / If not, see <http://www.gnu.org/licenses/>.
  /
 
-.DwtComposite[status="st_available"]
-  margin: 0 10px
-  border-left: 2px solid #268C1E
+.ZxChat_MessageStatusOuterContainer
+  clear: both
+  text-align: center
+  border-bottom: 1px dotted #9b9b9b
+  line-height: 0
+  margin: 14px 14px 0 14px
 
-.DwtComposite[status="st_busy"]
-  margin: 0 10px
-  border-left: 2px solid #E31E02
-
-.DwtComposite[status="st_away"]
-  margin: 0 10px
-  border-left: 2px solid #E6D700
-
-.DwtComposite[status="st_offline"]
-  margin: 0 10px
-  border-left: 2px solid #000000
+.ZxChat_MessageStatusSender, .ZxChat_MessageStatusContent
+  color: #9b9b9b
+  background-color: #ffffff
 
 .ZxChat_MessageStatusSender
-  margin-left: 3px
-  padding: 2px
-  float: left
-  font-weight: normal
-
-.ZxChat_MessageStatusDate
-  @extend .ZxChat_MessageDate
-  margin-right: 8px
-  color: #989F9F
+  padding-left: 2px
 
 .ZxChat_MessageStatusContent
-  margin-left: 3px
-  padding-left: 2px
-  cursor: text
-  clear: both
-  word-wrap: break-word
-  background-color: inherit
-  font-style: italic
-
-.ZxChat_MessageStatusOuterContainer
-  opacity: 0.8
+  padding-right: 2px

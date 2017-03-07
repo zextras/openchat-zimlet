@@ -1,18 +1,12 @@
 #
-# Copyright (C) 2017 ZeXtras S.r.l.
+# ***** BEGIN LICENSE BLOCK *****
+# Copyright (C) 2011-2017 ZeXtras
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation, version 2 of
-# the License.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License.
-# If not, see <http://www.gnu.org/licenses/>.
+# The contents of this file are subject to the ZeXtras EULA;
+# you may not use this file except in compliance with the EULA.
+# You may obtain a copy of the EULA at
+# http://www.zextras.com/zextras-eula.html
+# ***** END LICENSE BLOCK *****
 #
 
 define(
@@ -24,26 +18,32 @@ define(
     './MessageReceived'
     './MessageSent'
     './MessageStatus'
+    './MessageWritingStatus'
     './MessageNotification'
+    '../../client/events/chat/WritingStatusEvent'
   ],
   (
-    require,
+    require
     exports
-    Dwt_1,
-    DwtComposite_1,
-    MessageReceived_1,
-    MessageSent_1,
-    MessageStatus_1,
+    Dwt_1
+    DwtComposite_1
+    MessageReceived_1
+    MessageSent_1
+    MessageStatus_1
+    MessageWritingStatus_1
     MessageNotification_1
+    WritingStatusEvent_1
   ) ->
     "use strict"
-    
+
     Dwt = Dwt_1.Dwt
     DwtComposite = DwtComposite_1.DwtComposite
     MessageReceived = MessageReceived_1.MessageReceived
     MessageSent = MessageSent_1.MessageSent
     MessageStatus = MessageStatus_1.MessageStatus
+    MessageWritingStatus = MessageWritingStatus_1.MessageWritingStatus
     MessageNotification = MessageNotification_1.MessageNotification
+    WritingStatusEvent = WritingStatusEvent_1.WritingStatusEvent
 
     class Conversation extends DwtComposite
 
@@ -52,7 +52,7 @@ define(
         @dateProvider = dateProvider
         @timedCallbackFactory = timedCallbackFactory
         @_lastBuddyStatusMessages = {}
-#        @_lastBuddyStatusWriting = [] # [{buddyId:, status:}]
+        @_lastBuddyStatusWriting = [] # [{buddyId:, status:}]
         super({
           parent: parent
           className: "ZxChat_Conversation"
@@ -90,44 +90,55 @@ define(
         message = new MessageNotification(@, text, @dateProvider)
         @scrollToTop()
 
-#      ###*
-#        Add a writing status to the conversation
-#        @param {client/MessageWritingStatus} writingStatus
-#      ###
-#      addWritingStatus: (writingStatus) ->
-#        buddyId = writingStatus.getSender().getId()
-#        lastWritingStatusElement = @_getLastBuddyStatusWriting(buddyId)
-#        if lastWritingStatusElement?
-#          lastWritingStatusElement.setVisible(false)
-#          # new widgets/MessageWritingStatus
-#        if writingStatus.getValue() != WritingStatusEvent.RESET
-#          statusElement = new MessageWritingStatus(@, writingStatus, @dateProvider)
-#          @_setLastBuddyStatusWriting(buddyId, statusElement)
-#          if writingStatus.getValue() == WritingStatusEvent.WRITTEN
-#            @timedCallbackFactory.createTimedCallback(
-#              new Callback(
-#                statusElement
-#                statusElement.setVisible
-#                false
-#              )
-#              MessageWritingStatus.TIMEOUT
-#            ).start()
-#        @scrollToTop()
-#
-#      _setLastBuddyStatusWriting: (buddyId, status) ->
-#        statusElement = @_getLastBuddyStatusWriting(buddyId)
-#        if statusElement?
-#          for buddyId_Status in @_lastBuddyStatusWriting
-#            if buddyId_Status.buddyId == buddyId
-#              buddyId_Status.status = status
-#        else
-#          @_lastBuddyStatusWriting.push({buddyId: buddyId, status: status})
-#
-#      _getLastBuddyStatusWriting: (buddyId) ->
-#        for buddyId_Status in @_lastBuddyStatusWriting
-#          if buddyId_Status.buddyId == buddyId
-#            return buddyId_Status.status
-#        return null
+      ###*
+        Add a writing status to the conversation
+        @param {client/MessageWritingStatus} writingStatus
+      ###
+      addWritingStatus: (writingStatus) ->
+        buddyId = writingStatus.getSender().getId()
+        @_removeAllWritingStatuses()
+        if writingStatus.getValue() is WritingStatusEvent.WRITING
+          @_setLastBuddyStatusWriting(buddyId, new MessageWritingStatus(@, writingStatus, @dateProvider))
+        #        lastWritingStatusElement = @_getLastBuddyStatusWriting(buddyId)
+        #        if lastWritingStatusElement?
+        #          lastWritingStatusElement.setVisible(false)
+        #          # new widgets/MessageWritingStatus
+        #        if writingStatus.getValue() isnt WritingStatusEvent.RESET or writingStatus.getValue() isnt WritingStatusEvent.WRITTEN
+        #          statusElement = new MessageWritingStatus(@, writingStatus, @dateProvider)
+        #          @_setLastBuddyStatusWriting(buddyId, statusElement)
+        #        else if writingStatus.getValue() is WritingStatusEvent.WRITTEN
+        #            @timedCallbackFactory.createTimedCallback(
+        #              new Callback(
+        #                statusElement
+        #                statusElement.setVisible
+        #                false
+        #              )
+        #              MessageWritingStatus.TIMEOUT
+        #            ).start()
+        #        else
+        #          lastWritingStatusElement.setVisible(false)
+        @scrollToTop()
+
+      _setLastBuddyStatusWriting: (buddyId, status) ->
+        statusElement = @_getLastBuddyStatusWriting(buddyId)
+        if statusElement?
+          for buddyId_Status in @_lastBuddyStatusWriting
+            if buddyId_Status.buddyId == buddyId
+              buddyId_Status.status = status
+        else
+          @_lastBuddyStatusWriting.push({buddyId: buddyId, status: status})
+
+      _getLastBuddyStatusWriting: (buddyId) ->
+        for buddyId_Status in @_lastBuddyStatusWriting
+          if buddyId_Status.buddyId == buddyId
+            return buddyId_Status.status
+        return null
+
+      _removeAllWritingStatuses: () ->
+        for buddyId_Status in @_lastBuddyStatusWriting
+          @removeChild(buddyId_Status.status)
+        @_lastBuddyStatusWriting = []
+
 
       ###*
         Scroll the conversation to top

@@ -23,6 +23,7 @@ define(
     '../../lib/StringUtils',
     '../../zimbra/ajax/events/AjxListener',
     '../../zimbra/ajax/dwt/widgets/DwtToolBar',
+    '../../zimbra/ajax/dwt/core/Dwt',
     '../../zimbra/zimbraMail/share/view/ZmPopupMenu',
     '../IdGenerator'
   ],
@@ -33,6 +34,7 @@ define(
     StringUtils_1,
     AjxListener_1,
     DwtToolBar_1,
+    Dwt_1,
     ZmPopupMenu_1,
     IdGenerator_1
   ) ->
@@ -40,6 +42,7 @@ define(
 
     AjxListener = AjxListener_1.AjxListener
     DwtToolBarButton = DwtToolBar_1.DwtToolBarButton
+    Dwt = Dwt_1.Dwt
     ZmPopupMenu = ZmPopupMenu_1.ZmPopupMenu
 
     CallbackManager = CallbackManager_1.CallbackManager
@@ -137,6 +140,7 @@ define(
         )
         mainWindowPluginManager.triggerPlugins(MainMenuButton.AddMenuItemPlugin, menu)
         @setMenu(menu)
+        Dwt.delClass(this.getHtmlElement(), "ZHasDropDown")
 
       ###*
         Set the status of the button used for the "Hide offline buddies"

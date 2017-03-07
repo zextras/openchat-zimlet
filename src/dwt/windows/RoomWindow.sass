@@ -15,13 +15,13 @@
  / If not, see <http://www.gnu.org/licenses/>.
  /
 
+
+.ZxChat_RoomToolbar
+  border-top: 1px #E0E0E0 solid
+
 .ZxChat_RoomInputField input[type="text"]
-  width: 184px
-  height: 36px
 
 .ZxChat_RoomInputField_Z8_5 input[type="text"]
-  width: 194px
-  height: 46px
 
 .ImgZxChat_send-mail
   @extend .Img16
@@ -31,8 +31,6 @@
   @extend .Img16
   +sprite($send-message)
 
-.ZxChat_ConversationInput
-  padding-top: 3px
-
-.ZxChat_ConversationInput > textarea
-  padding: .1em .3em
+.ZxChat_ConversationInput INPUT[type="text"],
+.ZxChat_ConversationInput TEXTAREA
+  border: none

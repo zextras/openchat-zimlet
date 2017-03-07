@@ -18,7 +18,9 @@
 <template id="com_zextras_chat_open.Windows#BaseWindow">
     <div id='${id}_windowDiv' class='${cssClassesForWindowDiv}'>
         <table role="presentation" >
-            <tr id='${id}_titlebar' style="height: 38px">
+            <tr id='${id}_titlebar' class="ZxChat_TitleBar">
+                <$ if (data.doNotRenderTitleBar === true) { $>
+                <$ } else { $>
                 <td class='minWidth ZxChatWindowIcon'>
                     <div id='${id}_icon' class='${icon}'></div>
                 </td>
@@ -26,7 +28,6 @@
                     <div id='${id}_title'>
                       ${title}
                     </div>
-                    <div id='${id}_writing_status'></div>
                 </td>
                 <td style='width: 18px;'>
                     <div id='${id}_minimizeIcon' style="display: none; float: right;" class='${minimizeIcon}'></div>
@@ -35,6 +36,7 @@
                 <td style='width: 18px;'>
                     <div id='${id}_closeIcon' style="display: none;" class='${closeIcon}'></div>
                 </td>
+                <$ } $>
             </tr>
             <tr>
                 <td class='WindowInnerContainer ZxChatWindowInnerContainer' colspan='4'>

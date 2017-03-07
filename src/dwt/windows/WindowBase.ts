@@ -61,7 +61,6 @@ export class WindowBase extends DwtBaseDialog {
   public mMinimizeIconEl: HTMLElement;
   public mExpandIconEl: HTMLElement;
   public mCloseIconEl: HTMLElement;
-  public mTitleWritingStatusEl: HTMLElement;
   private mMiniContentEl: HTMLElement;
   private mBlinkTitlebarColor: ColorFaderColor;
   private mBlinkTitlebarFontColor: ColorFaderColor;
@@ -85,7 +84,6 @@ export class WindowBase extends DwtBaseDialog {
     });
     this.mIcon = icon;
     this.mInterceptKeyboardMgr = interceptKeyboardMgr;
-    this.setTitleBarColor(this.mDefaultTitlebarColor.toHEX(), this.mDefaultTitlebarFontColor.toHEX());
     this.mBlinkTitlebarColor = ColorFaderColor.GREEN;
     this.mBlinkTitlebarFontColor = ColorFaderColor.WHITE;
     this.addMinimizeExpandListener();
@@ -190,7 +188,6 @@ export class WindowBase extends DwtBaseDialog {
     if (typeof this._titleBarEl !== "undefined" && this._titleBarEl !== null) {
       this._titleBarEl.style.backgroundColor = color;
       this._titleEl.style.color = fontColor;
-      this.mTitleWritingStatusEl.style.color = fontColor;
     }
   }
 
@@ -299,7 +296,6 @@ export class WindowBase extends DwtBaseDialog {
       this._titleBarEl = document.getElementById(data["id"] + "_titlebar");
       this.mIconEl = document.getElementById(data["id"] + "_icon");
       this._titleEl = document.getElementById(data["id"] + "_title");
-      this.mTitleWritingStatusEl = document.getElementById(data["id"] + "_writing_status");
 
       this.mMinimizeIconEl = document.getElementById(data["id"] + "_minimizeIcon");
       this.mExpandIconEl = document.getElementById(data["id"] + "_expandIcon");
@@ -408,9 +404,7 @@ export class WindowBase extends DwtBaseDialog {
     timedCallback.start();
   }
 
-  private fadeStepCbk(color: ColorFaderColor, fontColor: ColorFaderColor): void {
-    this.setTitleBarColor(color.toHEX(), fontColor.toHEX());
-  }
+  private fadeStepCbk(color: ColorFaderColor, fontColor: ColorFaderColor): void {}
 
   private endFadeTitleToDefaultColorCbk(): void {
     if (this.mBlink) {

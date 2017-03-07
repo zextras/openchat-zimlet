@@ -15,50 +15,52 @@
  / If not, see <http://www.gnu.org/licenses/>.
  /
 
-.ZxChat_Message
+.ZxChat_MessageContainer
+  margin: 14px 12px 0 12px
+  clear: both
 
 .ZxChat_MessageOuterContainer
-  margin: 5px 10px
   position: relative
-  background-color: #fff
-  -webkit-border-radius: 10px
-  border-radius: 10px
   max-width: 80%
   display: inline-block
   text-align: left
   padding: 5px
 
 .ZxChat_MessageSender
-  margin-left: 3px
+  color: #9b9b9b
+  font-size: 11px
+  letter-spacing: normal
   font-weight: bold
-  padding: 2px
-  float: left
 
 .ZxChat_MessageDate
-  margin-right: 3px
-  text-align: right
-  color: white
-  padding: 2px
-  float: right
+  color: #9b9b9b
+  font-size: 11px
+  letter-spacing: normal
 
 .ZxChat_MessageContent
-  padding: 4px
+  padding: 8px 24px 11px 12px
+  color: #333333
+  -webkit-border-radius: 1px
+  -moz-border-radius: 1px
+  border-radius: 2px
   cursor: text
-  clear: both
   word-wrap: break-word
-  -webkit-border-radius: 10px
-  border-radius: 10px
-  background-color: inherit
 
 //Prevent any fontsize overwrite (related to ZXCHAT-36 with MsgBody className)
 .ZxChat_MessageContent, .ZxChat_MessageContent *
   font-size: 1em !important
 
-.DwtComposite[sender="true"]
+.ZxChat_MessageContainer[sender=true] > .ZxChat_Message
+  float: right
+
+.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageSenderDate
   text-align: right
 
-.DwtComposite[sender="true"] > .ZxChat_MessageOuterContainer
-  background-color: #d8ffc9
+.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageSenderDate
+  text-align: left
 
-.DwtComposite[sender="false"] > .ZxChat_MessageOuterContainer
-  background-color: #feffd7
+.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageContent
+  background-color: rgba(0, 123, 195, 0.12)
+
+.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageContent
+  background-color: rgba(0, 123, 195, 0.3)

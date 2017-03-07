@@ -113,6 +113,7 @@ init:
 	mkdir -p dist
 
 build/yuicompressor.jar:
+	# In Zimbra 8.6 is used `yuicompressor-2.4.2-zimbra.jar`, but We will use the latest.
 	rm -f build/yuicompressor.jar
 	wget https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-2.4.8.jar -O build/yuicompressor.jar
 

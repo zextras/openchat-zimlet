@@ -28,6 +28,7 @@ import {DwtSelectionEvent} from "../../../zimbra/ajax/dwt/events/DwtSelectionEve
 import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {FocusKeeper} from "../../../lib/FocusKeeper";
+import {DwtKeyMap} from "../../../zimbra/ajax/dwt/keyboard/DwtKeyMap";
 
 export class EmojiOnePickerButton extends DwtToolBarButton {
 
@@ -57,7 +58,7 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     this.dontStealFocus();
 
     this.addSelectionListener(
-      new AjxListener(this, this.btnLsnr, [onEmojiSelectedCallback])
+      new AjxListener(this, this.handleKeyAction, [DwtKeyMap.SUBMENU, undefined])
     );
 
     // Defer the creation of the emoji menu creation.

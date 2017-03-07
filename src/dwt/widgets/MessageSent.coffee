@@ -40,7 +40,7 @@ define(
 
       constructor: (parent, message, dateProvider) ->
         super(parent, message, dateProvider)
-        @getHtmlElement().setAttribute("sender", true)
+        @getHtmlElement().childNodes[0].setAttribute("sender", true)
         @message.onSetDelivered(new Callback(@, @setDelivered))
         @setDelivered(message.isDelivered())
 

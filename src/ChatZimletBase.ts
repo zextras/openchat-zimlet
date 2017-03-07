@@ -76,6 +76,7 @@ import {ZmMailMsg} from "./zimbra/zimbraMail/mail/model/ZmMailMsg";
 import {ZimletVersion} from "./ZimletVersion";
 import {DwtEvent} from "./zimbra/ajax/dwt/events/DwtEvent";
 import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
+import {JQueryPlugins} from "./JQueryPlugins";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -149,6 +150,8 @@ export class ChatZimletBase extends ZmZimletBase {
 
     ZimbraPatcher.patch();
     this.Log.debug("Zimbra patched", "ChatZimletBase");
+    JQueryPlugins.registerPlugins();
+    this.Log.debug("JQuery", "Added plugins");
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mDateProvider = dateProvider;
     this.mSettingsManager = settingsManager;
