@@ -51,7 +51,7 @@ define(
           parent
           message
           dateProvider
-          "com_zextras_chat.Widgets#MessageNotification"
+          "com_zextras_chat_open.Widgets#MessageNotification"
         )
 
       ###*

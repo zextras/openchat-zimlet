@@ -73,7 +73,7 @@ define(
             message
           )
           dateProvider
-          "com_zextras_chat.Widgets#MessageWritingStatus"
+          "com_zextras_chat_open.Widgets#MessageWritingStatus"
         )
 
       ###*

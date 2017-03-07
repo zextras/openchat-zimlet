@@ -72,7 +72,7 @@ export class WindowBase extends DwtBaseDialog {
               icon: string,
               title: string,
               controlButtons: string[] = [],
-              template: string = "com_zextras_chat.Windows#BaseWindow",
+              template: string = "com_zextras_chat_open.Windows#BaseWindow",
               interceptKeyboardMgr: boolean = true) {
     super({
       parent   : parent,

@@ -88,7 +88,7 @@ define(
         view = new DwtComposite(@)
         if view.getHtmlElement()?
           view.getHtmlElement().style.overflow = "auto"
-          view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat.Windows#AddGroupDialog", data)
+          view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#AddGroupDialog", data)
         @_groupNameEl = document.getElementById("#{data.id}_group_name")
         @_groupNameEl.value = @group.getName()
         view

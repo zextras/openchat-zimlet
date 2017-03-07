@@ -15,7 +15,7 @@
   ~ If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<template id="com_zextras_chat.Widgets#Message">
+<template id="com_zextras_chat_open.Widgets#Message">
     <div class="DwtDialog ZxChat_MessageOuterContainer">
         <div id="${id}_sender" class="ZxChat_MessageSender">
             ${sender}
@@ -29,7 +29,7 @@
     </div>
 </template>
 
-<template id="com_zextras_chat.Widgets#MessageStatus">
+<template id="com_zextras_chat_open.Widgets#MessageStatus">
     <div class="DwtDialog ZxChat_MessageStatusOuterContainer">
         <div id="${id}_buddy" class="ZxChat_MessageStatusSender">
             ${buddy}
@@ -43,7 +43,7 @@
     </div>
 </template>
 
-<template id="com_zextras_chat.Widgets#MessageNotification">
+<template id="com_zextras_chat_open.Widgets#MessageNotification">
     <div class="DwtDialog ZxChat_MessageNotificationOuterContainer">
         <div id="${id}_title" class="ZxChat_MessageNotificationSender">
             ${title}
@@ -57,7 +57,7 @@
     </div>
 </template>
 
-<template id="com_zextras_chat.Widgets#MessageWritingStatus">
+<template id="com_zextras_chat_open.Widgets#MessageWritingStatus">
     <div class="DwtDialog ZxChat_MessageWritingStatusOuterContainer">
         <div id="${id}_message" class="ZxChat_MessageWritingStatusMessage">
             ${buddy} ${message}
@@ -65,63 +65,62 @@
     </div>
 </template>
 
-<template id="com_zextras_chat.Widgets#BuddyTreeItemTooltip">
-  <table role="presentation"><tr><td>
+<template id="com_zextras_chat_open.Widgets#BuddyTreeItemTooltip">
+    <table role="presentation"><tr><td>
 
-    <!-- display contact toolipt first if available -->
-    <$ if (data.contact) { $>
-      <$= data.contact.getToolTip() $>
-      <div style="padding-top:10px"></div>
+        <!-- display contact toolipt first if available -->
+        <$ if (data.contact) { $>
+        <$= data.contact.getToolTip() $>
+        <div style="padding-top:10px"></div>
+        <$ } $>
+
+        <!-- buddy tooltip -->
+        <table role="presentation" align="center" width="100%">
+        <tr valign="middle">
+            <td colspan="2" align="left">
+                <div style="border-bottom:1px solid black;">
+                    <table role="presentation" width="100%">
+                        <tr valign="middle">
+                            <td valign="middle"></td>
+                            <td valign="middle">
+                                <b>
+                                    <$= AjxStringUtil.htmlEncode(data.buddy.getNickname()) $><br>
+                                    (<$= AjxStringUtil.htmlEncode(data.buddy.getStatus().getMessage()) $>)
+                                </b>
+                            </td>
+                            <td align="right" valign="middle">
+                                <$= AjxImg.getImageHtml(data.buddy.getStatus().getCSS()) $>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <$= AjxTemplate.expand("com_zextras_chat_open.Widgets#BuddyTreeItemTooltip-row", { label: ZmMsg.imAddress, data: data.buddy.getId() }) $>
+        </table>
+
+    </td></tr></table>
+</template>
+
+<template id="com_zextras_chat_open.Widgets#BuddyTreeItemTooltip-row">
+    <$ if (data.data) { $>
+        <tr>
+            <td align="right" valign="middle" style="padding-right:5px"><b><div style="white-space:nowrap">
+                <$= AjxMessageFormat.format(ZmMsg.makeLabel, AjxStringUtil.htmlEncode(data.label)) $>
+            </div></b></td>
+            <td align="left"><div style="white-space:nowrap">
+                <$= AjxStringUtil.htmlEncode(data.data) $>
+            </div></td>
+        </tr>
     <$ } $>
-
-    <!-- buddy tooltip -->
-    <table role="presentation" align="center" width="100%">
-      <tr valign="middle">
-        <td colspan="2" align="left">
-          <div style="border-bottom:1px solid black;">
-            <table role="presentation" width="100%">
-              <tr valign="middle">
-                <td valign="middle"></td>
-                <td valign="middle">
-                  <b>
-                    <$= AjxStringUtil.htmlEncode(data.buddy.getNickname()) $><br>
-                    (<$= AjxStringUtil.htmlEncode(data.buddy.getStatus().getMessage()) $>)
-                  </b>
-                </td>
-                <td align="right" valign="middle">
-                    <$= AjxImg.getImageHtml(data.buddy.getStatus().getCSS()) $>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </td>
-      </tr>
-      <$= AjxTemplate.expand("com_zextras_chat.Widgets#BuddyTreeItemTooltip-row", { label: ZmMsg.imAddress, data: data.buddy.getId() }) $>
-    </table>
-
-  </td></tr></table>
 </template>
 
-<template id="com_zextras_chat.Widgets#BuddyTreeItemTooltip-row">
-  <$ if (data.data) { $>
-    <tr>
-      <td align="right" valign="middle" style="padding-right:5px"><b><div style="white-space:nowrap">
-        <$= AjxMessageFormat.format(ZmMsg.makeLabel, AjxStringUtil.htmlEncode(data.label)) $>
-      </div></b></td>
-      <td align="left"><div style="white-space:nowrap">
-        <$= AjxStringUtil.htmlEncode(data.data) $>
-      </div></td>
-    </tr>
-  <$ } $>
-</template>
-
-<template id='com_zextras_chat.Widgets#Image' class='ZWidget'>
+<template id='com_zextras_chat_open.Widgets#Image' class='ZWidget'>
 	<table role="presentation" class='ZWidgetTable ZLabelBorder'>
-		<tr>
-			<td>
-			   <div id='${id}_image' class='${imageClass}'></div>
-			</td>
-		</tr>
-	</table>
+        <tr>
+            <td>
+                <div id='${id}_image' class='${imageClass}'></div>
+            </td>
+        </tr>
+    </table>
 </template>
-

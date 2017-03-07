@@ -85,7 +85,7 @@ define(
         view = new DwtComposite(@)
         if view.getHtmlElement()?
           view.getHtmlElement().style.overflow = "auto"
-          view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat.Windows#RenameBuddyDialog", data)
+          view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#RenameBuddyDialog", data)
         @_buddyNicknameEl = document.getElementById("#{data.id}_nickname")
         @_buddyNicknameEl.value = @buddy.getNickname()
         view

@@ -65,7 +65,7 @@ define(
             message
           )
           dateProvider
-          "com_zextras_chat.Widgets#MessageStatus"
+          "com_zextras_chat_open.Widgets#MessageStatus"
         )
         @getHtmlElement().setAttribute("status", status.getMessageLabel())
 

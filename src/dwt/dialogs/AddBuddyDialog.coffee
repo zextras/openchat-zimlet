@@ -106,7 +106,7 @@ define(
         view = new DwtComposite(@)
         if view.getHtmlElement()?
           view.getHtmlElement().style.overflow = "auto"
-          view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat.Windows#AddBuddyDialog", data)
+          view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#AddBuddyDialog", data)
         @_buddyAddressEl = document.getElementById("#{data.id}_email")
         @_buddyNicknameEl = document.getElementById("#{data.id}_nickname")
         view

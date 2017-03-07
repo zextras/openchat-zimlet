@@ -289,7 +289,7 @@ define(
       ###
       _createTooltip: (callback) ->
         expanded = AjxTemplate.expand(
-          "com_zextras_chat.Widgets#BuddyTreeItemTooltip",
+          "com_zextras_chat_open.Widgets#BuddyTreeItemTooltip",
           {
             buddy: @getBuddy()
             contact : @getContact()

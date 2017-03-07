@@ -48,7 +48,7 @@ define(
 
     class Message extends DwtComposite
 
-      constructor: (parent, message, dateProvider, template = "com_zextras_chat.Widgets#Message") ->
+      constructor: (parent, message, dateProvider, template = "com_zextras_chat_open.Widgets#Message") ->
         @message = message
         @dateProvider = dateProvider
         @conversation = parent
