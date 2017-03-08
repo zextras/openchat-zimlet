@@ -47,6 +47,7 @@ module.exports = {
   resolve: {
     extensions: [".js", ".json", ".ts", ".coffee"]
   },
+  devtool: "source-map", // TODO: Remove source maps from production?
   module: {
     rules: [
       {

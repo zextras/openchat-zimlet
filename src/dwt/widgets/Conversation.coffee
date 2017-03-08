@@ -70,11 +70,11 @@ define(
           buddyId_Status.status.reparent(this)
         @scrollToTop()
 
-      addMessageStatus: (buddy, buddyStatus, offlineMessage) ->
+      addMessageStatus: (buddy, buddyStatus) ->
         lastMessageStatus = @_lastBuddyStatusMessages[buddy.getId()]
         if lastMessageStatus?
           lastMessageStatus.setVisible(false)
-        @_lastBuddyStatusMessages[buddy.getId()] = new MessageStatus(@, buddy, buddyStatus, offlineMessage, @dateProvider)
+        @_lastBuddyStatusMessages[buddy.getId()] = new MessageStatus(@, buddy, buddyStatus, @dateProvider)
         @scrollToTop()
 
       addMessageGroupInfo: (buddyId, buddyNickname, type) ->

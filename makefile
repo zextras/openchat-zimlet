@@ -84,7 +84,8 @@ dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_z
 		com_zextras_chat_open.xml \
 		com_zextras_chat_open.css \
 		emojione.sprites.css \
-		com_zextras_chat_open_bundle.js
+		com_zextras_chat_open_bundle.js \
+		com_zextras_chat_open_bundle.js.map
 
 clean:
 	# Version file

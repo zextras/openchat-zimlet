@@ -15,6 +15,4 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export declare class json_prune {
-  public static prune(value: any, depthDecr?: number, arrayMaxLength?: number): any;
-}
+export declare let json_prune: (value: any, depthDecr?: number, arrayMaxLength?: number) => any;

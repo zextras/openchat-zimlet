@@ -98,8 +98,6 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
         true
       );
     }
-    let menu: DwtMenu = EmojiOnePicker.getInstance().getMenu(this.mOnEmojiSelectedCallback);
-    // menu.reparent(this);
     this.setMenu(
       EmojiOnePicker.getInstance().getMenu(this.mOnEmojiSelectedCallback),
       false,
@@ -115,7 +113,6 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
       tmpEmoji = this.getData(EmojiOnePicker.KEY_EMOJI_DATA);
     }
     if (typeof tmpEmoji !== "undefined") {
-      this.setEmoji(tmpEmoji);
       if (typeof callback !== "undefined") {
         callback.run(ev, tmpEmoji);
       }

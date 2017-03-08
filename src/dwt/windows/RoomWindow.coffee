@@ -97,8 +97,8 @@ define(
 
       @DEFAULT_ICON = "ImgZxChat_personalized_brand"
 
-      @WIDTH  = 320
-      @HEIGHT = 451
+      @WIDTH  = 318
+      @HEIGHT = 446
 
       @_SMOOTH_MOVE_DELAY = 800
 
@@ -144,10 +144,6 @@ define(
           false
         )
         @containerView = new DwtComposite({parent: @})
-        @containerView.setSize(
-          "#{RoomWindow.WIDTH}px"
-          "#{RoomWindow.HEIGHT - 26}px"
-        )
         @mTitlebar = new DwtToolBar({
           parent: @containerView,
           parentElement: @_titleBarEl,
@@ -162,7 +158,7 @@ define(
           className: "ZxChat_TitleBar_Title"
         })
         @mTitleLbl.setText(room.getTitle())
-        @setIcon("#{@room.getRoomStatus().getCSS()}")
+#        @setIcon("#{@room.getRoomStatus().getCSS()}")
         @mTitlebar.addFiller()
         @mainMenuButton = new RoomWindowMenuButton(@, @mTitlebar, @mRoomWindowPluginManager)
         @mCloseButton = new DwtToolBarButton({
@@ -170,12 +166,9 @@ define(
           className: "ZToolbarButton ZxChat_Button ZxChat_TitleBar_Button"
         })
         @mCloseButton.setImage("Close")
+        @mCloseButton.addSelectionListener(new AjxListener(@, @closeCallback))
 
         @conversation = new Conversation(@containerView, @appCtxt, @dateProvider, @mTimedCallbackFactory)
-        @conversation.setSize(
-          Dwt.DEFAULT
-          "#{RoomWindow.HEIGHT - 51}px"
-        )
         @room.onAddMessageReceived(new Callback(@, @_onAddMessageReceived))
         @room.onBuddyWritingStatus(new Callback(@, @_onBuddyWritingStatus))
         @room.onRoomStatusChange(new Callback(@, @_onRoomStatusChange))
@@ -187,16 +180,14 @@ define(
         @room.onTriggeredPopup(new Callback(@, @popup))
         @_lastPopup = 0
 
-#        separator1 = new DwtControl({parent: @containerView, className: "horizSep"})
-#        separator1.getHtmlElement().style.marginTop = 0
         inputToolbar = new DwtToolBar({parent: @containerView, className: "ZxChat_RoomToolbar"})
-#        separator2 = new DwtControl({parent: @containerView, className: "horizSep"})
-#        separator2.getHtmlElement().style.marginBottom = 0
 
         @inputField = new DwtInputField({
           parent: inputToolbar
           className: "DwtInputField ZxChat_ConversationInput"
           hint: StringUtils.getMessage("type_a_message")
+          forceMultiRow: true
+          rows: 1
         })
         inputToolbar.addFiller()
         @emoticonBtn = new EmojiOnePickerButton(
@@ -218,6 +209,18 @@ define(
 #        dropTarget = new DwtDropTarget('BuddyTreeItem')
 #        dropTarget.addDropListener(new AjxListener(@, @_dropListener))
 #        @inputField.setDropTarget(dropTarget)
+#        @containerView.setSize(
+#          "#{RoomWindow.WIDTH}px"
+#          "#{RoomWindow.HEIGHT - inputToolbar.getSize().y - @mTitlebar.getSize().y}px"
+#        )
+        @conversation.setSize(
+          Dwt.DEFAULT
+          "#{RoomWindow.HEIGHT - inputToolbar.getSize().y - @mTitlebar.getSize().y}px"
+        )
+        @inputField.setSize(
+          "#{RoomWindow.WIDTH - 80}px" # @emoticonBtn.getSize().x
+          Dwt.DEFAULT
+        )
         @setView(@containerView)
         @_timeoutWrittenStatus = 5000
 
@@ -456,7 +459,7 @@ define(
         @private
       ###
       _onBuddyStatusChange: (buddy, status) ->
-        @conversation.addMessageStatus(buddy, status, @room.getOfflineMessage())
+        @conversation.addMessageStatus(buddy, status)
         @mRoomWindowPluginManager.triggerPlugins(RoomWindow.BuddyStatusChangedPlugin, status)
 
       ###*

@@ -17,52 +17,43 @@
 
 define(
   [
-    "require",
-    "exports",
-    '../../zimbra/ajax/dwt/widgets/DwtComposite',
-    './Message',
-    '../../client/MessageReceived',
-    '../../client/BuddyStatusType'
+    "require"
+    "exports"
+    '../../zimbra/ajax/dwt/widgets/DwtComposite'
+    './Message'
+    '../../client/MessageReceived'
   ],
   (
-    require,
-    exports,
-    DwtComposite_1,
-    Message_1,
-    MessageReceived_1,
-    BuddyStatusType_1
+    require
+    exports
+    DwtComposite_1
+    Message_1
+    MessageReceived_1
   ) ->
     "use strict"
 
     DwtComposite = DwtComposite_1.DwtComposite
     Message = Message_1.Message
     MessageReceived = MessageReceived_1.MessageReceived
-    BuddyStatusType = BuddyStatusType_1.BuddyStatusType
 
     class MessageStatus extends Message
 
-      constructor: (parent, buddy, status, offlineMessage, dateProvider) ->
+      constructor: (parent, buddy, status, dateProvider) ->
         @date = dateProvider.getNow()
         @buddy = buddy
         @status = status
-        message = status.getMessage()
-        if status.getType() in [BuddyStatusType.OFFLINE, BuddyStatusType.UNREACHABLE]
-          message = offlineMessage
-#          if isGroupChat
-#            message = StringUtils.getMessage("user_left_conversation")
-#          else
-#            message = StringUtils.getMessage("user_offline_messages_will_be_delivered")
         super(
           parent
           new MessageReceived(
             ""
-            buddy.getId()
+            buddy
             dateProvider.getNow()
-            message
+            status.getMessage()
           )
           dateProvider
           "com_zextras_chat_open.Widgets#MessageStatus"
         )
+        @_createHtml()
         @getHtmlElement().setAttribute("status", status.getMessageLabel())
 
       ###*

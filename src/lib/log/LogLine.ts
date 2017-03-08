@@ -79,7 +79,7 @@ export class LogLine {
   }
 
   public getPrettyObject(): string {
-    return JSON3.stringify(JSON3.parse(json_prune.prune(this.mObject)), null, 2);
+    return JSON3.stringify(JSON3.parse(json_prune(this.mObject)), null, 2);
   }
 
   public toString(prettyPrint: boolean = false): string {
@@ -90,9 +90,9 @@ export class LogLine {
     } else {
       try {
         if (prettyPrint) {
-          text = JSON3.stringify(JSON3.parse(json_prune.prune(this.mObject)), null, 2);
+          text = JSON3.stringify(JSON3.parse(json_prune(this.mObject)), null, 2);
         } else {
-          text = json_prune.prune(this.mObject);
+          text = json_prune(this.mObject);
         }
       } catch (err) {
         text = "[Unable to print object]";

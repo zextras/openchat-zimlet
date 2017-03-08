@@ -295,7 +295,7 @@ export class Room {
   /**
    * Send the writing status when one-to-one-chat
    */
-  public sendWritingStatus(value: number, callback: Callback, errorCallback: Callback): void {
+  public sendWritingStatus(value: number, callback?: Callback, errorCallback?: Callback): void {
     // if (!this.isGroupChat()) {
       for (let member of this.members) {
         let event = new WritingStatusEvent(null, member.getId(), this.mDateProvider.getNow(), this.mDateProvider.getNow(), value);
