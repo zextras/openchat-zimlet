@@ -15,17 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ZmAppCtxt} from "../zimbra/zimbraMail/core/ZmAppCtxt";
+import {JQueryPlugin} from "./JQueryPlugin";
 
-export declare class ChatFolderHandler {
+export class JQueryPlugins {
 
-  constructor(
-    appCtxt: ZmAppCtxt,
-    folderId: number,
-    hideId: {[name: string]: boolean},
-    apps: string[]
-  );
+  private mPlugins: JQueryPlugin[];
 
-  public setVisible(visible: boolean): void;
+  constructor(...plugins: JQueryPlugin[]) {
+    this.mPlugins = plugins;
+  }
+
+  public installPlugins() {
+    for (let plugin of this.mPlugins) {
+      plugin.install();
+    }
+  }
 
 }

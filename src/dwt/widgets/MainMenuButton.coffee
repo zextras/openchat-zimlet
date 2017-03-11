@@ -17,26 +17,24 @@
 
 define(
   [
-    "require",
-    "exports",
-    '../../lib/callbacks/CallbackManager',
-    '../../lib/StringUtils',
-    '../../zimbra/ajax/events/AjxListener',
-    '../../zimbra/ajax/dwt/widgets/DwtToolBar',
-    '../../zimbra/ajax/dwt/core/Dwt',
-    '../../zimbra/zimbraMail/share/view/ZmPopupMenu',
-    '../IdGenerator'
+    "require"
+    "exports"
+    '../../lib/callbacks/CallbackManager'
+    '../../lib/StringUtils'
+    '../../zimbra/ajax/events/AjxListener'
+    '../../zimbra/ajax/dwt/widgets/DwtToolBar'
+    '../../zimbra/ajax/dwt/core/Dwt'
+    '../../zimbra/zimbraMail/share/view/ZmPopupMenu'
   ],
   (
-    require,
-    exports,
-    CallbackManager_1,
-    StringUtils_1,
-    AjxListener_1,
-    DwtToolBar_1,
-    Dwt_1,
-    ZmPopupMenu_1,
-    IdGenerator_1
+    require
+    exports
+    CallbackManager_1
+    StringUtils_1
+    AjxListener_1
+    DwtToolBar_1
+    Dwt_1
+    ZmPopupMenu_1
   ) ->
     "use strict"
 
@@ -47,7 +45,6 @@ define(
 
     CallbackManager = CallbackManager_1.CallbackManager
     StringUtils = StringUtils_1.StringUtils
-    IdGenerator = IdGenerator_1.IdGenerator
 
     class MainMenuButton extends DwtToolBarButton
 
@@ -65,11 +62,11 @@ define(
       constructor: (parent, mainWindowPluginManager) ->
         super({
           parent: parent
-          className: "ZxChat_Button ZToolbarButton"
-          id: IdGenerator.generateId("ZxChat_MainMenuButton")
+          className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
         })
+        @setImage("MoreVertical,color=#b4d7eb")
+        @setDropDownImages("","","","")
         @dontStealFocus()
-        @setImage("ZxChat_preferences")
         @onAddFriendSelectionCbkMgr = new CallbackManager()
         @onAddGroupSelectionCbkMgr = new CallbackManager()
         @onCreateMultiChatRoomSelectionCbkMgr = new CallbackManager()
@@ -95,26 +92,26 @@ define(
         @opAddGroup.addSelectionListener(
           new AjxListener(@, @_onAddGroupSelected, [])
         )
-        menu.createSeparator()
-        @opSwitchToSidebar = menu.createMenuItem(
-          MainMenuButton.SWITCH_TO_SIDEBAR_MENU_ITEM_ID,
-          {
-            text: StringUtils.getMessage("switch_to_sidebar")
-            image: "ZxChat_column_right"
-          })
-        @opSwitchToSidebar.addSelectionListener(
-          new AjxListener(@, @_onSwitchToSidebar, [])
-        )
-        @opSwitchToDock = menu.createMenuItem(
-          MainMenuButton.SWITCH_TO_DOCK_MENU_ITEM_ID,
-          {
-            text: StringUtils.getMessage("switch_to_docked")
-            image: "ZxChat_column_bottom"
-          })
-        @opSwitchToDock.addSelectionListener(
-          new AjxListener(@, @_onSwitchToDock, [])
-        )
-        @opSwitchToDock.setVisible(false)
+#        menu.createSeparator()
+#        @opSwitchToSidebar = menu.createMenuItem(
+#          MainMenuButton.SWITCH_TO_SIDEBAR_MENU_ITEM_ID,
+#          {
+#            text: StringUtils.getMessage("switch_to_sidebar")
+#            image: "ZxChat_column_right"
+#          })
+#        @opSwitchToSidebar.addSelectionListener(
+#          new AjxListener(@, @_onSwitchToSidebar, [])
+#        )
+#        @opSwitchToDock = menu.createMenuItem(
+#          MainMenuButton.SWITCH_TO_DOCK_MENU_ITEM_ID,
+#          {
+#            text: StringUtils.getMessage("switch_to_docked")
+#            image: "ZxChat_column_bottom"
+#          })
+#        @opSwitchToDock.addSelectionListener(
+#          new AjxListener(@, @_onSwitchToDock, [])
+#        )
+#        @opSwitchToDock.setVisible(false)
         @opSHOffline = menu.createMenuItem(
           MainMenuButton.HIDE_OFFLINE_BUDDIES_MENU_ITEM_ID,
           {

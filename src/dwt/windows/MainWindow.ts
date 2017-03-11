@@ -22,17 +22,13 @@ import {SettingsManager, GroupsData} from "../../settings/SettingsManager";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {BuddyList} from "../../client/BuddyList";
-import {Bowser} from "../../libext/bowser";
 import {DwtToolBar} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {StatusSelector} from "../widgets/StatusSelector";
 import {MainMenuButton} from "../widgets/MainMenuButton";
-import {SearchInputField} from "../widgets/SearchInputField";
 import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
 import {BuddyListTree} from "../widgets/BuddyListTree";
 import {Callback} from "../../lib/callbacks/Callback";
-import {DwtKeyEvent} from "../../zimbra/ajax/dwt/events/DwtKeyEvent";
-import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
 import {BuddyStatus} from "../../client/BuddyStatus";
 import {DwtControlEvent} from "../../zimbra/ajax/dwt/events/DwtControlEvent";
 import {LogEngine} from "../../lib/log/LogEngine";
@@ -43,15 +39,16 @@ import {GroupTreeItem} from "../widgets/GroupTreeItem";
 import {Group} from "../../client/Group";
 import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
 import {Constants} from "../../Constants";
-import {Version} from "../../lib/Version";
 import {Setting} from "../../settings/Setting";
 import {SmoothRoomWindowMover} from "./SmoothRoomWindowMover";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
-import {GroupStats} from "../../client/GroupStats";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {SortFcns} from "../SortFcns";
 import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
+import {DwtInputField} from "../../zimbra/ajax/dwt/widgets/DwtInputField";
+import {DwtButton} from "../../zimbra/ajax/dwt/widgets/DwtButton";
+import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 
 export class MainWindow extends WindowBase {
 
@@ -61,8 +58,8 @@ export class MainWindow extends WindowBase {
   public static BrandPlugin = "Main Window Brand";
 
   public static DEBRAND_ICON   = "ImgZxChat_personalized_brand";
-  public static WIDTH: number  = 210 * 1.05;
-  public static HEIGHT: number = 340 * 1.25;
+  public static WIDTH: number  = 315;
+  public static HEIGHT: number = 446;
   public static RIGHT_PADDING  = 20;
   public static BOTTOM_PADDING  = 28;
 
@@ -72,9 +69,6 @@ export class MainWindow extends WindowBase {
   private mBrandName: string;
   private mContainerView: DwtComposite;
   private mStatusSelector: StatusSelector;
-  private mSearchInput: SearchInputField;
-  private mBrandLabelForSidebar: DwtLabel;
-  private mToolSepSize: number;
   private mOnDock: boolean;
   private mMainMenuButton: MainMenuButton;
   private mBuddyListTree: BuddyListTree;
@@ -99,6 +93,12 @@ export class MainWindow extends WindowBase {
   private mOnShowHideOfflineCbkMgr: CallbackManager;
   private mOnSetSortMethodCbkMgr: CallbackManager;
   private Log: Logger;
+  private mTitleBar: DwtToolBar;
+  private mStatusSelectorToolbar: DwtToolBar;
+  private mSearchInput: DwtInputField;
+  private mTitleLbl: DwtLabel;
+  private mSearchButton: DwtButton;
+  private mSearchToolBar: DwtToolBar;
 
   constructor(appCtxt: ZmAppCtxt, settingsManager: SettingsManager, buddyList: BuddyList, mainWindowPluginManager: ChatPluginManager) {
 
@@ -107,7 +107,7 @@ export class MainWindow extends WindowBase {
       "ZxChat_Main_Window",
       MainWindow.DEBRAND_ICON,
       "Chat",
-      [WindowBase.BTN_MINIMIZE],
+      [],
       undefined,
       false
     );
@@ -120,8 +120,6 @@ export class MainWindow extends WindowBase {
     this.mBrandIcon  = MainWindow.DEBRAND_ICON;
     this.mBrandName = "Chat";
     this.Log = LogEngine.getLogger(LogEngine.CHAT);
-    this._titleEl.style.width = "161px";
-    this._titleEl.style.cursor = "default";
     this.mOnStatusSelectedCallbacks = new CallbackManager();
     this.mOnAddFriendSelectionCallbacks = new CallbackManager();
     this.mOnCreateChatRoomSelectionCallbacks = new CallbackManager();
@@ -140,32 +138,58 @@ export class MainWindow extends WindowBase {
     this.mOnChangeSidebarOrDockCallbacks = new CallbackManager();
     this.mOnShowHideOfflineCbkMgr = new CallbackManager();
     this.mOnSetSortMethodCbkMgr = new CallbackManager();
-    this.mContainerView = new DwtComposite({parent: this});
-    this.mContainerView.setSize(
-      Bowser.msie ? MainWindow.WIDTH - 6 : MainWindow.WIDTH - 2,
-      MainWindow.HEIGHT - 26
+    this.mContainerView = new DwtComposite({ parent: this });
+    this.mTitleBar = new DwtToolBar({
+      parent: this.mContainerView,
+      parentElement: this._titleBarEl,
+      className: "ZxChat_TitleBar_Toolbar"
+    });
+    this.mTitleBar.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
+    this.mTitleBar.setSize(
+      `${MainWindow.WIDTH}px`,
+      Dwt.DEFAULT
     );
-
-    let toolbar: DwtToolBar = new DwtToolBar({parent: this.mContainerView});
-    this.createStatusSelector(toolbar);
-    this.createMainMenuButton(toolbar);
-    // let separator: DwtControl = new DwtControl({parent: this.mContainerView, className: "horizSep"});
-    this.createSearchInput();
+    this.mTitleLbl = new DwtLabel({
+      parent: this.mTitleBar,
+      className: "ZxChat_TitleBar_Title"
+    });
+    this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
+    this.mTitleLbl.setText("Chat");
+    this.mTitleBar.addFiller();
+    this.createMainMenuButton(this.mTitleBar);
+    this.mStatusSelectorToolbar = new DwtToolBar({
+      parent: this.mContainerView
+    });
+    this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar);
+    this.mStatusSelector.setSize(
+      `${MainWindow.WIDTH}px`,
+      Dwt.DEFAULT
+    );
+    this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
+    this.mSearchToolBar = new DwtToolBar({
+      parent: this.mContainerView,
+      className: "ZToolbar ZWidget ZxChat_MainWindowSearchToolBar"
+    });
+    this.mSearchInput = new DwtInputField({
+      parent: this.mSearchToolBar,
+      className: "DwtInputField ZxChat_MainWindowSearchInput",
+      hint: ZmMsg.search
+    });
+    this.mSearchInput.setHandler(DwtEvent.ONKEYUP, (ev) => this.handleSearchKeyUp(ev));
+    this.mSearchButton = new DwtButton({ parent: this.mSearchToolBar });
+    this.mSearchButton.setImage("Search2");
+    this.mSearchButton.addSelectionListener(new AjxListener(this, this.resetSearchField));
+    this.mSearchInput.setSize(
+      `${MainWindow.WIDTH - this.mSearchButton.getSize().x}px`,
+      Dwt.DEFAULT
+    );
     this.createBuddyListTree(buddyList);
-    this.createBrandLabelForSidebar();
-
-    // # Size of the toolbar and the separator
-    // Resize status selector in toolbar
-    let newWidth: number = toolbar.getSize().x - this.mMainMenuButton.getSize().x;
-    this.mStatusSelector.setSize(newWidth - 10, Dwt.DEFAULT);
-    this.mToolSepSize = toolbar.getSize().y + this.mSearchInput.getSize().y;
-
     this.setView(this.mContainerView);
     this.onMinimize(new Callback(this, this.handleMinimized, true));
     this.onExpand(new Callback(this, this.handleMinimized, false));
     this.onShowHideOffline(new Callback(this, this.setShowHideOffline));
     this.onSetSortMethod(new Callback(this, this.setSortMethod));
-    this.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDock));
+    // this.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDock));
     this.mOnDock = true;
     if (this._titleBarEl.addEventListener) {
       this._titleBarEl.addEventListener(
@@ -188,9 +212,9 @@ export class MainWindow extends WindowBase {
     return this.mBuddyListTree;
   }
 
-  protected createStatusSelector(toolbar: DwtToolBar): void {
-    this.mStatusSelector = new StatusSelector(toolbar);
-    this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
+  public _createHtmlFromTemplate(templateId: string, data: {[p: string]: any}): void {
+    data.doNotRenderTitleBar = true;
+    super._createHtmlFromTemplate(templateId, data);
   }
 
   protected createMainMenuButton(toolbar: DwtToolBar): void {
@@ -200,9 +224,7 @@ export class MainWindow extends WindowBase {
     this.mMainMenuButton.onSettingsSelection(new Callback(this, this.settingsOptionSelected));
 //    Shouldn't be necessary ?!?
     this.mMainMenuButton.onShowHideOffline(new Callback(this, this.showHideOffline));
-    this.mMainMenuButton.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDockSelected));
-    // To advanced
-    // this.mMainMenuButton.onCreateMultiChatRoomSelection(new Callback(this, this.createChatRoomOptionSelected));
+    // this.mMainMenuButton.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDockSelected));
   }
 
   protected createBuddyListTree(buddyList: BuddyList): void {
@@ -227,22 +249,10 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.onContactDroppedInGroup(new Callback(this, this.contactDroppedInGroup));
     this.mBuddyListTree.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
     this.mBuddyListTree.onGroupExpandCollapse(new Callback(this, this.expandOrCollapseGroup));
-  }
-
-  protected createSearchInput(): void {
-    this.mSearchInput = new SearchInputField(this.mContainerView);
-    this.mSearchInput.onChange(new Callback(this, this.onSearchInputChange));
-  }
-
-  protected createBrandLabelForSidebar(): void {
-    this.mBrandLabelForSidebar = new DwtLabel({parent: this.mContainerView});
-    this.mBrandLabelForSidebar.setSize(Dwt.DEFAULT, "20px");
-    this.mBrandLabelForSidebar.setText("Chat");
-    this.mBrandLabelForSidebar.setImage(MainWindow.DEBRAND_ICON);
-  }
-
-  private onSearchInputChange(ev: DwtMouseEvent|DwtKeyEvent, value: string): void {
-    this.mBuddyListTree.applyFilter(value);
+    this.mBuddyListTree.setSize(
+      `${MainWindow.WIDTH + 1}px`,
+      `${MainWindow.HEIGHT - 15 - this.mTitleBar.getSize().y - this.mStatusSelector.getSize().y - this.mSearchInput.getSize().y}px`
+    );
   }
 
   public setUserStatuses(statuses: BuddyStatus[]): void {
@@ -276,24 +286,11 @@ export class MainWindow extends WindowBase {
   public setBrandOptions(name: string, icon: string): void {
     this.mBrandIcon = icon;
     this.mBrandName = name;
-    this.setIcon(icon);
     this.setTitle(name);
-    this.mBrandLabelForSidebar.setText("&nbsp;" + name);
-    if (/^Img/g.test(icon)) {
-      icon = icon.substr(3);
-    }
-    this.mBrandLabelForSidebar.setImage(icon);
   }
 
   public updateMainIcon(): void {
-    let groupStats: GroupStats = this.mBuddyListTree.getStatistics();
-    if (groupStats.getWaitingForResponseBuddiesCount() > 0) {
-      this.setIcon("ImgZxChat_need_response");
-      this.mBrandLabelForSidebar.setImage("ZxChat_need_response");
-    }
-    else {
-      this.setBrandOptions(this.mBrandName, this.mBrandIcon);
-    }
+    this.setBrandOptions(this.mBrandName, this.mBrandIcon);
   }
 
   public changeSidebarOrDock(docked: boolean): void {
@@ -476,37 +473,34 @@ export class MainWindow extends WindowBase {
 
   private moveToDock(): void {
     this.mOnDock = true;
-    this.mBrandLabelForSidebar.setVisible(false);
     this.handleSidebarResize();
-    this.mMainMenuButton.setSwitchOnSidebarStatus(false);
-    this.mContainerView.reparent(this);
-    this.setView(this.mContainerView);
-    this.mContainerView.setSize(
-      Bowser.msie ? MainWindow.WIDTH - 6 : MainWindow.WIDTH - 2,
-      MainWindow.HEIGHT - 26
+    this.setSize(
+      `${MainWindow.WIDTH}px`,
+      `${MainWindow.HEIGHT}px`
     );
+    this.mTitleBar.setSize(
+      `${MainWindow.WIDTH}px`,
+      Dwt.DEFAULT
+    );
+    this.mMainMenuButton.setSwitchOnSidebarStatus(false);
     this.mBuddyListTree.setSize(
       Dwt.DEFAULT,
-      MainWindow.HEIGHT - this.mToolSepSize - 38
+      `${MainWindow.HEIGHT - 15 - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
     );
+    // this.mContainerView.setSize(
+    //   Dwt.DEFAULT,
+    //   `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - this.mStatusSelector.getSize().y - this.mSearchInput.getSize().y}px`
+    // );
+    this.mContainerView.reparent(this);
+    this.setView(this.mContainerView);
     this.popup();
   }
 
   private moveToSidebar(): void {
     this.mOnDock = false;
-    this.mBrandLabelForSidebar.setVisible(true);
     this.handleSidebarResize();
     this.mMainMenuButton.setSwitchOnSidebarStatus(true);
     let container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
-    //   appTopBarEl: HTMLElement = document.getElementById(Constants.ID_TOP_BAR_DIV),
-    //   appToolbarEl: HTMLElement = document.getElementById(Constants.ID_APP_TOOLBAR_DIV),
-    //   sHeight: number = Dwt.getBounds(container).height;
-    // if (typeof appTopBarEl !== "undefined" && appTopBarEl !== null) {
-    //   sHeight -= Dwt.getBounds(appTopBarEl).height;
-    // }
-    // if (typeof appToolbarEl !== "undefined" && appToolbarEl !== null) {
-    //   sHeight -= Dwt.getBounds(appTopBarEl).height;
-    // }
     this.mContainerView.reparentHtmlElement(container, 0);
     this.popdown();
     this.setVisible(true);
@@ -539,46 +533,22 @@ export class MainWindow extends WindowBase {
   }
 
   private resizeSidebar(width: number, height: number) {
-    let sHeight: number = height,
-      tdElement: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV),
-      container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER),
-      appTopBarEl: HTMLElement = document.getElementById(Constants.ID_TOP_BAR_DIV),
-      appToolbarEl: HTMLElement = document.getElementById(Constants.ID_APP_TOOLBAR_DIV);
-    if (typeof appTopBarEl !== "undefined" && appTopBarEl !== null) {
-      sHeight -= Dwt.getBounds(appTopBarEl).height;
-    }
-    if (typeof appToolbarEl !== "undefined" && appToolbarEl !== null) {
-      sHeight -= Dwt.getBounds(appTopBarEl).height;
-    }
+    let tdElement: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV),
+      container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
     tdElement.className = "";
     if (this.mOnDock) {
       if (typeof tdElement !== "undefined" && tdElement !== null) tdElement.style.width = "1px";
       if (typeof container !== "undefined" && container !== null) container.style.width = "1px";
-    }
-    else {
-      if (Version.isZ8_5Up()) {
-        if (typeof tdElement !== "undefined" && tdElement !== null) tdElement.style.width = (width + 10) + "px";
-        if (typeof container !== "undefined" && container !== null) container.style.width = (width + 10) + "px";
-      }
-      else {
-        if (typeof tdElement !== "undefined" && tdElement !== null) tdElement.style.width = (width + 8) + "px";
-        if (typeof container !== "undefined" && container !== null) container.style.width = width + "px";
-      }
+    } else {
       if (typeof container !== "undefined" && container !== null) {
         container.style.paddingLeft = "6px";
         container.style.display = "block";
+        container.style.width = `${width + 10}px`;
       }
       if (typeof tdElement !== "undefined" && tdElement !== null) {
         tdElement.style.display = "table-cell";
+        tdElement.style.width = `${width + 10}px`;
       }
-      this.mContainerView.setSize(
-        Bowser.msie ? MainWindow.WIDTH - 6 : MainWindow.WIDTH - 2,
-        sHeight
-      );
-      this.mBuddyListTree.setSize(
-        Dwt.DEFAULT,
-        sHeight - this.mToolSepSize + 16
-      );
     }
   }
 
@@ -613,6 +583,18 @@ export class MainWindow extends WindowBase {
 
   // Don't drag me! >:(
   public _initializeDragging(): void {}
+
+  private resetSearchField(): void {
+    this.mSearchInput.setValue("");
+    this.mSearchButton.setImage("Search2");
+  }
+
+  private handleSearchKeyUp(ev: DwtEvent): boolean {
+    const value: string = this.mSearchInput.getValue();
+    this.mBuddyListTree.applyFilter(value);
+    this.mSearchButton.setImage(value === "" ? "Search2" : "Close");
+    return true;
+  }
 
 }
 

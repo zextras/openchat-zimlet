@@ -76,7 +76,9 @@ import {ZmMailMsg} from "./zimbra/zimbraMail/mail/model/ZmMailMsg";
 import {ZimletVersion} from "./ZimletVersion";
 import {DwtEvent} from "./zimbra/ajax/dwt/events/DwtEvent";
 import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
-import {JQueryPlugins} from "./JQueryPlugins";
+import {JQueryPlugins} from "./jquery/JQueryPlugins";
+import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
+import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -117,6 +119,7 @@ export class ChatZimletBase extends ZmZimletBase {
 
   private mRequiredCoreVersion: Version;
   private mCoreVersion: Version;
+  private mJQueryPlugins: JQueryPlugins;
 
   constructor() {
     super(); // Do nothing
@@ -126,6 +129,10 @@ export class ChatZimletBase extends ZmZimletBase {
     let originalConfirmExitMethod: Function = ZmNewWindow._confirmExitMethod;
     ZmNewWindow._confirmExitMethod = <() => void>(new Callback(this, this.clientShutdownBeforeExit, originalConfirmExitMethod)).toClosure();
     window.onbeforeunload = ZmNewWindow._confirmExitMethod;
+    this.mJQueryPlugins = new JQueryPlugins(
+      new LoadingDotsPlugin(),
+      new TextCompletePlugin()
+    );
   }
 
   private clientShutdownBeforeExit(originalConfirmExitMethod: Function, event: DwtEvent): void {
@@ -150,7 +157,7 @@ export class ChatZimletBase extends ZmZimletBase {
 
     ZimbraPatcher.patch();
     this.Log.debug("Zimbra patched", "ChatZimletBase");
-    JQueryPlugins.registerPlugins();
+    this.mJQueryPlugins.installPlugins();
     this.Log.debug("JQuery", "Added plugins");
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mDateProvider = dateProvider;
@@ -280,9 +287,10 @@ export class ChatZimletBase extends ZmZimletBase {
       new Callback(this.mMainWindow, this.mMainWindow.sortMethodSet)
     );
 
-    let onDock: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK);
+    let onDock: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK) || true;
     if ((typeof onDock === "undefined" || onDock === null) || onDock) {
-      this.mMainWindow.changeSidebarOrDock(true);
+      this.mMainWindow.popup();
+      // this.mMainWindow.changeSidebarOrDock(true);
       let isUp: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK_UP);
       if (isUp) {
         this.mMainWindow.setExpanded(false);
@@ -291,11 +299,11 @@ export class ChatZimletBase extends ZmZimletBase {
         this.mMainWindow.setMinimized(false);
       }
     }
-    else {
-      this.mMainWindow.changeSidebarOrDock(false);
-    }
+    // else {
+    //   this.mMainWindow.changeSidebarOrDock(false);
+    // }
 
-    this.mMainWindow.onChangeSidebarOrDock(new Callback(this, this.onChangeSidebarOrDock));
+    // this.mMainWindow.onChangeSidebarOrDock(new Callback(this, this.onChangeSidebarOrDock));
     this.mStoreGroupsDataCallback = new Callback(this.mSettingsManager, this.mSettingsManager.storeGroupsData, this.mMainWindow);
     this.mChatClient.getBuddyList().onAddGroup(this.mStoreGroupsDataCallback);
     this.mChatClient.getBuddyList().onRemoveGroup(this.mStoreGroupsDataCallback);

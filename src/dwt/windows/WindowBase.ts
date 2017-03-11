@@ -306,6 +306,14 @@ export class WindowBase extends DwtBaseDialog {
     this.setContent(this._getContentHtml());
   }
 
+  protected onTitleBarClick(ev: DwtEvent): void {
+    if (this.mMinimized) {
+      this.expandCallback(ev);
+    } else {
+      this.minimizeCallback(ev);
+    }
+  }
+
   private minimizeCallback(ev: any): void {
     if (typeof ev !== "undefined") {
       if (typeof ev.stopPropagation !== "undefined") {

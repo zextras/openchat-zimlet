@@ -58,9 +58,10 @@ define([
       setImagePath: setImagePath,
       asciiRegexp: new RegExp(emojione_1.asciiRegexp, "g"),
       unicodeRegexp: new RegExp(emojione_1.unicodeRegexp, "g"),
-      shortnamesRegexp: new RegExp(emojione_1.shortnames, "g")
+      shortnamesRegexp: new RegExp(emojione_1.shortnames, "g"),
+      emojioneList: emojione_1.emojioneList
     };
     exports.toImage = toImage;
-
+    exports.emojioneList = emojione_1.emojioneList;
   }
 );

@@ -45,6 +45,8 @@ define(
           parent: parent
           className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
         })
+        @setImage("MoreVertical,color=#b4d7eb")
+        @setDropDownImages("","","","")
         @dontStealFocus()
 
         menu = new ZmPopupMenu(@, "ActionMenu ZmPopupMenu_ZxChat_MainMenu")

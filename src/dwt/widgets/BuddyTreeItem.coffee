@@ -17,39 +17,39 @@
 
 define(
   [
-    "require",
-    "exports",
-    '../../lib/log/LogEngine',
-    '../../lib/callbacks/Callback',
-    '../../lib/callbacks/CallbackManager',
-    '../../zimbra/ajax/boot/AjxDispatcher',
-    '../../zimbra/ajax/events/AjxListener',
-    '../../zimbra/ajax/boot/AjxCallback',
-    '../../zimbra/ajax/boot/AjxTemplate',
-    '../../zimbra/ajax/dwt/core/Dwt',
-    '../../zimbra/ajax/dwt/dnd/DwtDragEvent',
-    '../../zimbra/ajax/dwt/dnd/DwtDragSource',
-    '../../zimbra/ajax/dwt/widgets/DwtTreeItem',
-    './BuddyTreeItemActionMenuFactory',
-    '../IdGenerator',
+    "require"
+    "exports"
+    '../../lib/log/LogEngine'
+    '../../lib/callbacks/Callback'
+    '../../lib/callbacks/CallbackManager'
+    '../../zimbra/ajax/boot/AjxDispatcher'
+    '../../zimbra/ajax/events/AjxListener'
+    '../../zimbra/ajax/boot/AjxCallback'
+    '../../zimbra/ajax/boot/AjxTemplate'
+    '../../zimbra/ajax/dwt/core/Dwt'
+    '../../zimbra/ajax/dwt/dnd/DwtDragEvent'
+    '../../zimbra/ajax/dwt/dnd/DwtDragSource'
+    '../../zimbra/ajax/dwt/widgets/DwtTreeItem'
+    './BuddyTreeItemActionMenuFactory'
+    '../IdGenerator'
     '../../lib/LearningClipUtils'
   ],
   (
-    require,
-    exports,
-    LogEngine_1,
-    Callback_1,
-    CallbackManager_1,
-    AjxDispatcher_1,
-    AjxListener_1,
-    AjxCallback_1,
-    AjxTemplate_1,
-    Dwt_1,
-    DwtDragEvent_1,
-    DwtDragSource_1,
-    DwtTreeItem_1,
-    BuddyTreeItemActionMenuFactory_1,
-    IdGenerator_1,
+    require
+    exports
+    LogEngine_1
+    Callback_1
+    CallbackManager_1
+    AjxDispatcher_1
+    AjxListener_1
+    AjxCallback_1
+    AjxTemplate_1
+    Dwt_1
+    DwtDragEvent_1
+    DwtDragSource_1
+    DwtTreeItem_1
+    BuddyTreeItemActionMenuFactory_1
+    IdGenerator_1
     LearningClipUtils_1
   ) ->
     "use strict"
@@ -88,12 +88,12 @@ define(
         super({
           parent: parent
           text: treeText
-    #      imageInfo: "Group"
           selectable: true
           id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{@refBuddy.getId()}")
           dndScrollCallback: parent._dndScrollCallback
           dndScrollId: parent._dndScrollId
         })
+        @_treeItemExtraImgClass = "ZxChat_BuddyTreeItem-ExtraImg"
         @setImage(@refBuddy.getStatus().getCSS())
         @setText(treeText)
         dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE)
@@ -253,7 +253,12 @@ define(
       _initialize: (index, realizeDeferred, forceNode) ->
         super(index, realizeDeferred, forceNode)
         @_updateVisibility()
-    
+
+#      _setTreeElementStyles: (img, focused) ->
+#        if img is "ColumnDownArrow"
+#          img = "MoreVertical,color=#989898"
+#        super(img, focused)
+
       ###*
         Apply the filter value for the buddy list.
         Only the matching buddies will be displayed.

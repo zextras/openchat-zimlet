@@ -15,14 +15,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtInputField} from "../../zimbra/ajax/dwt/widgets/DwtInputField";
-import {DwtKeyEvent} from "../../zimbra/ajax/dwt/events/DwtKeyEvent";
-import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
-import {Callback} from "../../lib/callbacks/Callback";
-
-export declare class SearchInputField extends DwtInputField {
-
-  public _handleChange(ev: DwtMouseEvent|DwtKeyEvent): void;
-  public onChange(callback: Callback): void;
-
+export interface JQueryPlugin {
+  install(): void;
 }

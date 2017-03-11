@@ -17,8 +17,8 @@
 
 define(
   [
-    "require",
-    "exports",
+    "require"
+    "exports"
     '../../lib/log/LogEngine'
     '../../lib/callbacks/CallbackManager'
     '../../zimbra/ajax/events/AjxListener'
@@ -26,19 +26,17 @@ define(
     '../../zimbra/ajax/dwt/widgets/DwtMenuItem'
     '../../zimbra/ajax/dwt/widgets/DwtToolBar'
     '../../zimbra/zimbraMail/share/view/ZmPopupMenu'
-    '../IdGenerator'
   ],
   (
-    require,
-    exports,
-    LogEngine_1,
-    CallbackManager_1,
-    AjxListener_1,
-    DwtLabel_1,
-    DwtMenuItem_1,
-    DwtToolBar_1,
-    ZmPopupMenu_1,
-    IdGenerator_1
+    require
+    exports
+    LogEngine_1
+    CallbackManager_1
+    AjxListener_1
+    DwtLabel_1
+    DwtMenuItem_1
+    DwtToolBar_1
+    ZmPopupMenu_1
   ) ->
     "use strict"
     
@@ -51,8 +49,6 @@ define(
     DwtToolBarButton = DwtToolBar_1.DwtToolBarButton
     ZmPopupMenu = ZmPopupMenu_1.ZmPopupMenu
 
-    IdGenerator = IdGenerator_1.IdGenerator
-
     class StatusSelector extends DwtToolBarButton
 
       @_DATA_STATUS = "status"
@@ -60,13 +56,11 @@ define(
       constructor: (parent) ->
         super({
           parent: parent
-          className: "ZxChat_Button ZToolbarButton ZNewButton"
-          id: IdGenerator.generateId("ZxChat_StatusSelector")
+          className: "ZToolbarButton ZNewButton"
         })
         @dontStealFocus()
         @onStatusSelectedCbkMgr = new CallbackManager()
         @setAlign(DwtLabel.ALIGN_LEFT)
-        @getHtmlElement().style.marginBottom = "2px"
         @menu = new ZmPopupMenu(@)
         @setMenu(@menu)
 
@@ -101,11 +95,10 @@ define(
 
       setCurrentStatus: (status) ->
         @setText(status.getMessage(true))
-        @setImage(status.getCSS())
         menuItems = @menu.getMenuItems()
         for item of menuItems
           itemStatus = menuItems[item].getData(StatusSelector._DATA_STATUS)
-          menuItems[item]._setChecked(status.getId().toString() == itemStatus.getId(), null, true)
+          menuItems[item]._setChecked(status.getId().toString() is itemStatus.getId(), null, true)
 
       ###*
         Notify the status selection to the callbacks set

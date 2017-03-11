@@ -22,14 +22,12 @@ import {ChatClient} from "../../client/ChatClient";
 import {ZmFolder} from "../../zimbra/zimbraMail/share/model/ZmFolder";
 import {ZmApp} from "../../zimbra/zimbraMail/core/ZmApp";
 import {ChatFolderHandler} from "../../dwt/ChatFolderHandler";
-import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 
 export class EventSessionRegisteredHistoryEnabledPlugin implements ChatPlugin {
 
   public trigger(eventManager: EventManager, chatEvent: ChatEvent, client: ChatClient): void {
     // client.getSessionInfoProvider().setHistoryEnabled((<EventSessionRegistered> chatEvent).getHistoryEnabled());
     let chatFolder = new ChatFolderHandler(
-      appCtxt,
       ZmFolder.ID_CHATS,
       ZmFolder.HIDE_ID,
       [ZmApp.MAIL, ZmApp.PORTAL]

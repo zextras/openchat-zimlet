@@ -26,6 +26,18 @@ export declare class emojione {
   static shortnameRegexp: RegExp;
 
   static toImage(emoji: string): string;
+  static emojioneList: EmojiOneList;
 }
 
 export declare function toImage(emoji: string): string;
+
+export declare const emojioneList: EmojiOneList;
+export interface EmojiOneList {
+  [shortName: string]: EmojiOneListData;
+}
+export interface EmojiOneListData {
+  fname: string;
+  uc: string;
+  isCanonical: boolean;
+  unicode: string[];
+}

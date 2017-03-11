@@ -15,11 +15,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-declare const $: any;
+import {JQueryPlugin} from "./JQueryPlugin";
 
-export class JQueryPlugins {
+declare let $: any;
 
-  public static registerPlugins() {
+export class LoadingDotsPlugin implements JQueryPlugin {
+
+  public install(): void {
+    if (typeof $.fn.loadingdots !== "undefined") { return; }
+
     $.fn.loadingdots = function( options: {} )
     {
       let i = 0, settings = $.extend( {}, { duration : 250 }, options ),
@@ -50,7 +54,6 @@ export class JQueryPlugins {
           .find( ".dot" )
           .each( bucle );
       });
-
     };
   }
 

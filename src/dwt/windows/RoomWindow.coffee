@@ -39,6 +39,7 @@ define(
     './RoomWindowMenuButton'
     '../../client/Room'
     '../../client/events/chat/WritingStatusEvent'
+    '../../jquery/TextCompletePlugin'
   ],
   (
     require
@@ -63,6 +64,7 @@ define(
     RoomWindowMenuButton_1
     Room_1
     WritingStatusEvent_1
+    TextCompletePlugin_1
   ) ->
     "use strict"
 
@@ -90,6 +92,8 @@ define(
     Room = Room_1.Room
     WritingStatusEvent = WritingStatusEvent_1.WritingStatusEvent
 
+    TextCompletePlugin = TextCompletePlugin_1.TextCompletePlugin
+
     class RoomWindow extends WindowBase
 
       @AddButtonPlugin = "Room Window Add Button"
@@ -97,7 +101,7 @@ define(
 
       @DEFAULT_ICON = "ImgZxChat_personalized_brand"
 
-      @WIDTH  = 318
+      @WIDTH  = 315
       @HEIGHT = 446
 
       @_SMOOTH_MOVE_DELAY = 800
@@ -149,6 +153,7 @@ define(
           parentElement: @_titleBarEl,
           className: "ZxChat_TitleBar_Toolbar"
         })
+        @mTitlebar.addListener(DwtEvent.ONCLICK, new AjxListener(@, @onTitleBarClick))
         @mTitlebar.setSize(
           "#{RoomWindow.WIDTH}px"
           Dwt.DEFAULT
@@ -157,8 +162,9 @@ define(
           parent: @mTitlebar
           className: "ZxChat_TitleBar_Title"
         })
+        @mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(@, @onTitleBarClick))
         @mTitleLbl.setText(room.getTitle())
-#        @setIcon("#{@room.getRoomStatus().getCSS()}")
+        @setIcon("#{@room.getRoomStatus().getCSS()}")
         @mTitlebar.addFiller()
         @mainMenuButton = new RoomWindowMenuButton(@, @mTitlebar, @mRoomWindowPluginManager)
         @mCloseButton = new DwtToolBarButton({
@@ -189,6 +195,7 @@ define(
           forceMultiRow: true
           rows: 1
         })
+        TextCompletePlugin.installOnTextField(@inputField.getInputElement())
         inputToolbar.addFiller()
         @emoticonBtn = new EmojiOnePickerButton(
           { parent: inputToolbar }

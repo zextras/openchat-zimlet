@@ -128,6 +128,7 @@ install: guard-ZIMLET_DEV_SERVER check-yui dist/com_zextras_chat_open.zip
 	ssh root@${ZIMLET_DEV_SERVER} "chown zimbra:zimbra /tmp/com_zextras_chat_open.zip"
 	ssh root@${ZIMLET_DEV_SERVER} "su - zimbra -c '/opt/zimbra/bin/zmzimletctl deploy /tmp/com_zextras_chat_open.zip'"
 	ssh root@${ZIMLET_DEV_SERVER} "su - zimbra -c '/opt/zimbra/bin/zmprov fc zimlet'"
+	echo -n "Completed @ " && date
 
 guard-%:
 	# Verify if an environment variable is set

@@ -17,6 +17,7 @@
 
 import {BuddyStatusType} from "./BuddyStatusType";
 import {StringUtils} from "../lib/StringUtils";
+import {ZmSkin} from "../zimbra/zimbraMail/ZmSkin";
 
 export class BuddyStatus {
   private static sOrderMapStatus: BuddyStatusType[] = [
@@ -118,6 +119,34 @@ export class BuddyStatus {
    * @return {string} CSS Style
    */
   public getCSS(): string {
+    if (ZmSkin.hints.name === "harmony2") {
+      return this.getCssForUniversalUI();
+    } else {
+      return this.getLegacyCss();
+    }
+  }
+
+  private getCssForUniversalUI(): string {
+    switch (this.mType) {
+      case BuddyStatusType.ONLINE:
+        return "_ImSmallAvailable";
+      case BuddyStatusType.BUSY:
+        return "_ImSmallDnD";
+      case BuddyStatusType.AWAY:
+        return "_ImSmallAway";
+      case BuddyStatusType.NEED_RESPONSE:
+      case BuddyStatusType.INVITED:
+        return "_ImSmallUnavailable"; // TODO: We need an invited|need_response icon
+      case BuddyStatusType.INVISIBLE:
+        return "_ImSmallInvisble"; // Todo: There is a typo, notify to synacor
+      case BuddyStatusType.UNREACHABLE:
+      case BuddyStatusType.OFFLINE:
+      default:
+        return "_ImSmallInvisble"; // _ImSmallUnavailable
+    }
+  }
+
+  private getLegacyCss(): string {
     switch (this.mType) {
       case BuddyStatusType.ONLINE:
         return "ZxChat_online";

@@ -18,6 +18,7 @@
     "bowser": "^1.6.0",
     "emojione": "^2.2.7",
     "html-entities": "^1.2.0",
+    "jquery-textcomplete": "^1.8.0",
     "json-prune": "^1.0.1",
     "json3": "^3.3.2",
     "stacktrace-js-legacy": "^0.6.5",

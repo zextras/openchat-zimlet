@@ -35,15 +35,10 @@
 @import "dwt/widgets/MessageNotification"
 @import "dwt/widgets/MessageStatus"
 @import "dwt/widgets/MessageWritingStatus"
-@import "dwt/widgets/SearchInputField"
+@import "dwt/windows/MainWindow"
 @import "dwt/windows/RoomWindow"
 @import "dwt/windows/RoomWindowMenuButton"
 @import "dwt/windows/WindowBase"
-
-// Our Chat folder image is more beautiful
-.ImgChatFolder
-  @extend .Img16
-  @include sprite($chat-folder)
 
 // Default ZxChat Icon
 .ImgZxChat_icon
@@ -68,6 +63,38 @@
   padding: 0
   width: 0
   height: 0
+
+.ImgZxChat_online
+  @extend .Img16
+  +sprite($available)
+
+.ImgZxChat_away
+  @extend .Img16
+  +sprite($away)
+
+.ImgZxChat_busy
+  @extend .Img16
+  +sprite($busy)
+
+.ImgZxChat_offline
+  @extend .Img16
+  +sprite($offline)
+
+.ImgZxChat_invisible
+  @extend .Img16
+  +sprite($invisible)
+
+.ImgZxChat_unreachable
+  @extend .Img16
+  +sprite($deleted)
+
+.ImgZxChat_need_response
+  @extend .Img16
+  +sprite($pending-request)
+
+.ImgZxChat_invited
+  @extend .Img16
+  +sprite($pending)
 
 // Override button borders and settings for the emoji picker button
 .ZxEmojiPickerButton > .ZToolbarButtonBorder
@@ -96,3 +123,5 @@
   box-shadow: none
   border: none
   background: #007cc3 none
+
+@import "./jquery/JQueryPlugins"
