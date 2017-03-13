@@ -38,13 +38,34 @@
   letter-spacing: normal
 
 .ZxChat_MessageContent
+  float: left
   padding: 8px 24px 11px 12px
   color: #333333
-  -webkit-border-radius: 1px
-  -moz-border-radius: 1px
+  -webkit-border-radius: 2px
+  -moz-border-radius: 2px
   border-radius: 2px
   cursor: text
   word-wrap: break-word
+
+.triangle-top-right
+  float: left
+  width: 0
+  height: 0
+  border-top: 15px solid rgba(0, 123, 195, 0.3)
+  border-left: 15px solid transparent
+
+.triangle-top-left
+  float: left
+  width: 0
+  height: 0
+  border-top: 15px solid rgba(0, 123, 195, 0.12)
+  border-right: 15px solid transparent
+
+.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-right
+  visibility: collapse
+
+.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-left
+  visibility: collapse
 
 //Prevent any fontsize overwrite (related to ZXCHAT-36 with MsgBody className)
 .ZxChat_MessageContent, .ZxChat_MessageContent *
@@ -59,8 +80,10 @@
 .ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageSenderDate
   text-align: left
 
-.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageContent
+.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .ZxChat_MessageContent
   background-color: rgba(0, 123, 195, 0.12)
+  border-top-right-radius: 0
 
-.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageContent
+.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .ZxChat_MessageContent
   background-color: rgba(0, 123, 195, 0.3)
+  border-top-left-radius: 0

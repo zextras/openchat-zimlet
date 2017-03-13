@@ -26,8 +26,12 @@
                     ${date}
                 </span>
             </div>
-            <div id="${id}_content" class="ZxChat_MessageContent MsgBody">
-                ${content}
+            <div class="ZxChat_MessageInnerContainer">
+                <div class="triangle-top-right"></div>
+                <div id="${id}_content" class="ZxChat_MessageContent MsgBody">
+                    ${content}
+                </div>
+                <div class="triangle-top-left"></div>
             </div>
         </div>
     </div>
