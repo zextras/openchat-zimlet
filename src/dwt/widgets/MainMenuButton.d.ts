@@ -35,7 +35,8 @@ export declare class MainMenuButton extends DwtToolBarButton {
 
   constructor(
     toolbar: DwtToolBar,
-    mainWindowPluginManager: ChatPluginManager
+    mainWindowPluginManager: ChatPluginManager,
+    icon: string
   )
 
   public enableDisableCreateChatRoom(enable: boolean): void;

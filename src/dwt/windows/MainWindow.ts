@@ -49,6 +49,7 @@ import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 import {DwtInputField} from "../../zimbra/ajax/dwt/widgets/DwtInputField";
 import {DwtButton} from "../../zimbra/ajax/dwt/widgets/DwtButton";
 import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
 
 export class MainWindow extends WindowBase {
 
@@ -70,7 +71,7 @@ export class MainWindow extends WindowBase {
   private mContainerView: DwtComposite;
   private mStatusSelector: StatusSelector;
   private mOnDock: boolean;
-  private mMainMenuButton: MainMenuButton;
+  private mMainMenuButtons: MainMenuButton[];
   private mBuddyListTree: BuddyListTree;
 
   private mMainWindowPluginManager: ChatPluginManager;
@@ -111,6 +112,7 @@ export class MainWindow extends WindowBase {
       undefined,
       false
     );
+    this.mMainMenuButtons = [];
     this.mAppCtxt = appCtxt;
     this.mSettingsManager = settingsManager;
     this.mMainWindowPluginManager = mainWindowPluginManager;
@@ -156,16 +158,18 @@ export class MainWindow extends WindowBase {
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
     this.mTitleBar.addFiller();
-    this.createMainMenuButton(this.mTitleBar);
+    let primaryMenuButton = this.createMainMenuButton(this.mTitleBar, true);
     this.mStatusSelectorToolbar = new DwtToolBar({
       parent: this.mContainerView
     });
     this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar);
+    this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
+    // let secondaryMenuButton = this.createMainMenuButton(this.mStatusSelectorToolbar, false);
     this.mStatusSelector.setSize(
+      // `${MainWindow.WIDTH - this.mMainMenuButtons[1].getSize().x}px`,
       `${MainWindow.WIDTH}px`,
       Dwt.DEFAULT
     );
-    this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
     this.mSearchToolBar = new DwtToolBar({
       parent: this.mContainerView,
       className: "ZToolbar ZWidget ZxChat_MainWindowSearchToolBar"
@@ -217,14 +221,23 @@ export class MainWindow extends WindowBase {
     super._createHtmlFromTemplate(templateId, data);
   }
 
-  protected createMainMenuButton(toolbar: DwtToolBar): void {
-    this.mMainMenuButton = new MainMenuButton(toolbar, this.mMainWindowPluginManager);
-    this.mMainMenuButton.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
-    this.mMainMenuButton.onAddGroupSelection(new Callback(this, this.addGroupOptionSelected));
-    this.mMainMenuButton.onSettingsSelection(new Callback(this, this.settingsOptionSelected));
+  protected createMainMenuButton(toolbar: DwtToolBar, isPrimary: boolean): MainMenuButton {
+    let image: string;
+    if (ZimbraUtils.isUniversalUI()) {
+      image = `MoreVertical,color=${isPrimary ? "#b4d7eb" : "#989898"}`;
+    } else {
+      image = `${isPrimary ? "ZxChat_preferences" : "ZxChat_preferences-gray"}`;
+    }
+    let mainMenuButton = new MainMenuButton(toolbar, this.mMainWindowPluginManager, image);
+    mainMenuButton.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
+    mainMenuButton.onAddGroupSelection(new Callback(this, this.addGroupOptionSelected));
+    mainMenuButton.onSettingsSelection(new Callback(this, this.settingsOptionSelected));
 //    Shouldn't be necessary ?!?
-    this.mMainMenuButton.onShowHideOffline(new Callback(this, this.showHideOffline));
-    // this.mMainMenuButton.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDockSelected));
+    mainMenuButton.onShowHideOffline(new Callback(this, this.showHideOffline));
+    // mainMenuButton.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDockSelected));
+
+    this.mMainMenuButtons.push(mainMenuButton);
+    return mainMenuButton;
   }
 
   protected createBuddyListTree(buddyList: BuddyList): void {
@@ -271,7 +284,7 @@ export class MainWindow extends WindowBase {
   }
 
   public setShowHideOffline(hide: boolean): void {
-    this.mMainMenuButton.setHideOfflineButtonStatus(hide);
+    // this.mMainMenuButton.setHideOfflineButtonStatus(hide);
     this.mBuddyListTree.showHideOfflineBuddies(hide);
   }
 
@@ -482,7 +495,7 @@ export class MainWindow extends WindowBase {
       `${MainWindow.WIDTH}px`,
       Dwt.DEFAULT
     );
-    this.mMainMenuButton.setSwitchOnSidebarStatus(false);
+    // this.mMainMenuButton.setSwitchOnSidebarStatus(false);
     this.mBuddyListTree.setSize(
       Dwt.DEFAULT,
       `${MainWindow.HEIGHT - 15 - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
@@ -499,7 +512,7 @@ export class MainWindow extends WindowBase {
   private moveToSidebar(): void {
     this.mOnDock = false;
     this.handleSidebarResize();
-    this.mMainMenuButton.setSwitchOnSidebarStatus(true);
+    // this.mMainMenuButton.setSwitchOnSidebarStatus(true);
     let container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
     this.mContainerView.reparentHtmlElement(container, 0);
     this.popdown();

@@ -17,7 +17,7 @@
 
 import {BuddyStatusType} from "./BuddyStatusType";
 import {StringUtils} from "../lib/StringUtils";
-import {ZmSkin} from "../zimbra/zimbraMail/ZmSkin";
+import {ZimbraUtils} from "../lib/ZimbraUtils";
 
 export class BuddyStatus {
   private static sOrderMapStatus: BuddyStatusType[] = [
@@ -119,7 +119,7 @@ export class BuddyStatus {
    * @return {string} CSS Style
    */
   public getCSS(): string {
-    if (ZmSkin.hints.name === "harmony2") {
+    if (ZimbraUtils.isUniversalUI()) {
       return this.getCssForUniversalUI();
     } else {
       return this.getLegacyCss();

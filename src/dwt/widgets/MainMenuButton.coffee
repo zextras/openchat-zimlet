@@ -59,12 +59,12 @@ define(
 
       @_KEY_HIDE_OFFILINE = "hideOfflineBuddies"
 
-      constructor: (parent, mainWindowPluginManager) ->
+      constructor: (parent, mainWindowPluginManager, image) ->
         super({
           parent: parent
           className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
         })
-        @setImage("MoreVertical,color=#b4d7eb")
+        @setImage(image)
         @setDropDownImages("","","","")
         @dontStealFocus()
         @onAddFriendSelectionCbkMgr = new CallbackManager()

@@ -20,18 +20,21 @@ define(
     "require",
     "exports",
     '../../zimbra/ajax/dwt/widgets/DwtToolBar',
-    '../../zimbra/zimbraMail/share/view/ZmPopupMenu'
+    '../../zimbra/zimbraMail/share/view/ZmPopupMenu',
+    '../../lib/ZimbraUtils'
   ],
   (
     require,
     exports,
     DwtToolBar_1,
-    ZmPopupMenu_1
+    ZmPopupMenu_1,
+    ZimbraUtils_1
   ) ->
     "use strict"
     
     DwtToolBarButton = DwtToolBar_1.DwtToolBarButton
     ZmPopupMenu = ZmPopupMenu_1.ZmPopupMenu
+    ZimbraUtils = ZimbraUtils_1.ZimbraUtils
 
     class RoomWindowMenuButton extends DwtToolBarButton
 
@@ -45,7 +48,10 @@ define(
           parent: parent
           className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
         })
-        @setImage("MoreVertical,color=#b4d7eb")
+        if ZimbraUtils.isUniversalUI()
+          @setImage("MoreVertical,color=#b4d7eb")
+        else
+          @setImage("ZxChat_preferences")
         @setDropDownImages("","","","")
         @dontStealFocus()
 
