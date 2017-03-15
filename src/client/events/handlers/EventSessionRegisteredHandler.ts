@@ -30,9 +30,6 @@ export class EventSessionRegisteredHandler implements ChatEventHandler {
       let eventSessionRegistered: EventSessionRegistered = <EventSessionRegistered> chatEvent;
       client.getSessionInfoProvider().setServerVersion(eventSessionRegistered.getServerVersion());
       client.getSessionInfoProvider().setSessionId(eventSessionRegistered.getSessionId());
-      // client.getSessionInfoProvider().setHistoryEnabled(eventSessionRegistered.getHistoryEnabled());
-      // client.getSessionInfoProvider().setReBranded(eventSessionRegistered.getNoBrand());
-      client.getSessionInfoProvider().enableSilentErrorReporting(eventSessionRegistered.isSilentErrorReportingEnabled());
       client.getSessionInfoProvider().setRoomServiceAddress(eventSessionRegistered.getRoomServiceAddress());
 
       client.serverOnline(eventSessionRegistered);

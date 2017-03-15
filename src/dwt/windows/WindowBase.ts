@@ -39,7 +39,7 @@ export class WindowBase extends DwtBaseDialog {
 
   public static _MINIMIZE_ICON = "ImgZxChat_minimize";
   public static _EXPAND_ICON = "ImgZxChat_expand";
-  public static _CLOSE_ICON = "ImgZxChat_close";
+  public static _CLOSE_ICON = "ImgZxChat_close-legacy";
 
   public static MAX_TITLE_LENGTH: number = 148;
 

@@ -40,16 +40,6 @@
 @import "dwt/windows/RoomWindowMenuButton"
 @import "dwt/windows/WindowBase"
 
-// Default ZxChat Icon
-.ImgZxChat_icon
-  @extend .Img16
-  @include sprite($icon-zxchat)
-
-// Default ZxChat Icon (de-brand version)
-.ImgZxChat_personalized_brand
-  @extend .Img16
-  @include sprite($icon-chat)
-
 .ZxEmojiPickerButton
   margin: 0
 
@@ -63,6 +53,10 @@
   padding: 0
   width: 0
   height: 0
+
+.ImgZxChat_close
+  @extend .Img16
+  +sprite($icon-close)
 
 .ImgZxChat_preferences
   @extend .Img16
@@ -103,6 +97,10 @@
 .ImgZxChat_invited
   @extend .Img16
   +sprite($pending)
+
+.ImgChatFolder
+  @extend .Img16
+  +sprite($chat-folder)
 
 // Override button borders and settings for the emoji picker button
 .ZxEmojiPickerButton > .ZToolbarButtonBorder

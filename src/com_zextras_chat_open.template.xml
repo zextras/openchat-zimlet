@@ -47,9 +47,7 @@
 
     <resource>emojione.sprites.png</resource>
     <resource>images/com_zextras_chat_open_sprite.png</resource>
+    <resource>images/emojione.sprites.png</resource>
     <resource>images/desktop-chat_128.png</resource>
-    <resource>images/desktop-zxchat_128.png</resource>
-    <resource>images/sf_clearSearchIcon.png</resource>
-    <resource>images/sf_searchIcon.png</resource>
 
 </zimlet>

@@ -132,7 +132,6 @@ define(
 #          id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{buddy.getId()}_MenuItem_Search")
 #        })
 #        menu.optSearch.setText(StringUtils.getMessage('friend_history'))
-#        menu.optSearch.setImage('ZxChat_history')
 #        menu.optSearch.addSelectionListener(new AjxListener(treeItem, treeItem._showHistory))
 #        menu.optSearch.setEnabled(true, true)
 #        menu.enableDisableHistoryOpt(treeItem.isHistoryEnabled())
