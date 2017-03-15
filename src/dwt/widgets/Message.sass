@@ -15,13 +15,15 @@
  / If not, see <http://www.gnu.org/licenses/>.
  /
 
+.ZxChat_MessageSenderDate
+  padding-bottom: 5px
+
 .ZxChat_MessageContainer
-  margin: 14px 12px 0 12px
+  padding: 0 5px 16px 5px
   clear: both
 
 .ZxChat_MessageOuterContainer
   position: relative
-  max-width: 80%
   display: inline-block
   text-align: left
   padding: 5px
@@ -36,10 +38,11 @@
   color: #9b9b9b
   font-size: 11px
   letter-spacing: normal
+  padding-left: 8px
 
 .ZxChat_MessageContent
   float: left
-  padding: 8px 24px 11px 12px
+  padding: 8px 12px 11px 12px
   color: #333333
   -webkit-border-radius: 2px
   -moz-border-radius: 2px
@@ -70,6 +73,7 @@
 //Prevent any fontsize overwrite (related to ZXCHAT-36 with MsgBody className)
 .ZxChat_MessageContent, .ZxChat_MessageContent *
   font-size: 1em !important
+  max-width: 217px
 
 .ZxChat_MessageContainer[sender=true] > .ZxChat_Message
   float: right

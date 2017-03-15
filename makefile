@@ -119,6 +119,7 @@ build/yuicompressor.jar:
 	wget https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-2.4.8.jar -O build/yuicompressor.jar
 
 check-yui: build/yuicompressor.jar build/com_zextras_chat_open_bundle.js
+	# Test the bundle file against the YUI Compressor
 	java -jar build/yuicompressor.jar --type js --nomunge --preserve-semi --disable-optimizations build/com_zextras_chat_open_bundle.js -o build/com_zextras_chat_open_bundle.min.js
 	rm -f build/com_zextras_chat_open_bundle.min.js
 

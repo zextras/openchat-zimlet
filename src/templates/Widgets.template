@@ -62,10 +62,8 @@
     </div>
 </template>
 
-<template id="com_zextras_chat_open.Widgets#MessageWritingStatus">
-    <div class="DwtDialog ZxChat_MessageWritingStatusOuterContainer">
-        <div id="${id}_dots"></div>
-    </div>
+<template id="com_zextras_chat_open.Widgets#LoadingDots">
+    <div id="${id}_dots"></div>
 </template>
 
 <template id="com_zextras_chat_open.Widgets#BuddyTreeItemTooltip">

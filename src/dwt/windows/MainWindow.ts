@@ -284,7 +284,9 @@ export class MainWindow extends WindowBase {
   }
 
   public setShowHideOffline(hide: boolean): void {
-    // this.mMainMenuButton.setHideOfflineButtonStatus(hide);
+    for (let btn of this.mMainMenuButtons) {
+      btn.setHideOfflineButtonStatus(hide);
+    }
     this.mBuddyListTree.showHideOfflineBuddies(hide);
   }
 

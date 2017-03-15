@@ -27,12 +27,12 @@ export class EventSessionRegisteredHistoryEnabledPlugin implements ChatPlugin {
 
   public trigger(eventManager: EventManager, chatEvent: ChatEvent, client: ChatClient): void {
     // client.getSessionInfoProvider().setHistoryEnabled((<EventSessionRegistered> chatEvent).getHistoryEnabled());
-    let chatFolder = new ChatFolderHandler(
+    let chatFolderHandler = new ChatFolderHandler(
       ZmFolder.ID_CHATS,
       ZmFolder.HIDE_ID,
       [ZmApp.MAIL, ZmApp.PORTAL]
     );
-    chatFolder.setVisible(true);
+    chatFolderHandler.setVisible(true);
   }
 
 }

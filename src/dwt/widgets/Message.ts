@@ -24,13 +24,15 @@ import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {StringUtils} from "../../lib/StringUtils";
 import {Message as MessageObj} from "../../client/Message";
 import {Conversation} from "./Conversation";
+import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
+import {MessageSent as MessageSentObj} from "../../client/MessageSent";
 
 export class Message extends DwtComposite {
 
   public static TEMPLATE: string = "com_zextras_chat_open.Widgets#Message";
 
-  protected message: MessageObj;
-  private dateProvider: DateProvider;
+  protected message: MessageReceivedObj|MessageSentObj;
+  public dateProvider: DateProvider;
   private conversation: Conversation;
   protected _dateFormatter: AjxDateFormat;
   protected _senderEl: HTMLElement;
@@ -38,7 +40,12 @@ export class Message extends DwtComposite {
   protected _contentEl: HTMLElement;
   protected _objectManager: ZmObjectManager;
 
-  constructor(parent: Conversation, message: MessageObj, dateProvider: DateProvider, template: string = Message.TEMPLATE) {
+  constructor(
+    parent: Conversation,
+    message: MessageReceivedObj|MessageSentObj,
+    dateProvider: DateProvider,
+    template: string = Message.TEMPLATE
+  ) {
     super({
       parent: parent,
       template: template
@@ -118,4 +125,5 @@ export interface MessageCreateHtmlData {
   date?: string;
   dateTooltip?: string;
   content?: string;
+  sender?: string;
 }

@@ -15,14 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
+import {Message} from "./Message";
+import {Conversation} from "./Conversation";
 import {DateProvider} from "../../lib/DateProvider";
+import {Buddy} from "../../client/Buddy";
+import {BuddyStatus} from "../../client/BuddyStatus";
 
-export declare class Conversation extends DwtComposite {
+export declare class MessageStatus extends Message {
 
-  public dateProvider: DateProvider;
-
-  public addNotificationMessage(text: string): void;
-  public scrollToTop(): void;
+  constructor(conversation: Conversation, buddy: Buddy, buddyStatus: BuddyStatus, dateProvider: DateProvider);
 
 }

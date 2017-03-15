@@ -35,6 +35,7 @@ define(
     '../../zimbra/ajax/dwt/events/DwtUiEvent'
     './WindowBase'
     '../widgets/Conversation'
+    '../widgets/LoadingDots'
     '../widgets/emoji/EmojiOnePickerButton'
     './RoomWindowMenuButton'
     '../../client/Room'
@@ -60,6 +61,7 @@ define(
     DwtUiEvent_1
     WindowBase_1
     Conversation_1
+    LoadingDots_1
     EmojiOnePickerButton_1
     RoomWindowMenuButton_1
     Room_1
@@ -87,6 +89,7 @@ define(
 
     WindowBase = WindowBase_1.WindowBase
     Conversation = Conversation_1.Conversation
+    LoadingDots = LoadingDots_1.LoadingDots
     EmojiOnePickerButton = EmojiOnePickerButton_1.EmojiOnePickerButton
     RoomWindowMenuButton = RoomWindowMenuButton_1.RoomWindowMenuButton
     Room = Room_1.Room
@@ -136,8 +139,7 @@ define(
         @onDuringDragCallbacks = new CallbackManager()
         @onDragEndCallbacks = new CallbackManager()
         @_writingTimerCallback = null
-        @_lastBuddyStatusMessages = {}
-        @_lastBuddyStatusWriting = [] # [{buddyId:, status:}]
+        @mBuddyWritingStatuses = {}
         super(
           shell
           "ZxChat_RoomWindow"
@@ -173,8 +175,8 @@ define(
         })
         @mCloseButton.setImage("Close")
         @mCloseButton.addSelectionListener(new AjxListener(@, @closeCallback))
-
-        @conversation = new Conversation(@containerView, @appCtxt, @dateProvider, @mTimedCallbackFactory)
+        @conversation = new Conversation(@containerView, @dateProvider, @mTimedCallbackFactory)
+        @mWritingStatusDots = new LoadingDots(@containerView, { dots: 5 })
         @room.onAddMessageReceived(new Callback(@, @_onAddMessageReceived))
         @room.onBuddyWritingStatus(new Callback(@, @_onBuddyWritingStatus))
         @room.onRoomStatusChange(new Callback(@, @_onRoomStatusChange))
@@ -222,7 +224,7 @@ define(
 #        )
         @conversation.setSize(
           Dwt.DEFAULT
-          "#{RoomWindow.HEIGHT - inputToolbar.getSize().y - @mTitlebar.getSize().y}px"
+          "#{RoomWindow.HEIGHT - inputToolbar.getSize().y - @mTitlebar.getSize().y - @mWritingStatusDots.getSize().y}px"
         )
         @inputField.setSize(
           "#{RoomWindow.WIDTH - 80}px" # @emoticonBtn.getSize().x
@@ -353,7 +355,8 @@ define(
         @conversation.addMessageReceived(message)
 
       _onBuddyWritingStatus: (writingStatus) ->
-        @conversation.addWritingStatus(writingStatus)
+        @mBuddyWritingStatuses[writingStatus.getSender().getId()] = writingStatus
+        @_updateWritingDots(writingStatus.getValue())
 
       popup: (point) ->
         date = @dateProvider.getNow()
@@ -535,6 +538,12 @@ define(
 
       getOriginalZIndex: () ->
         WindowBase.Z_INDEX
+
+      _updateWritingDots: (writingStatusValue) ->
+        if writingStatusValue is WritingStatusEvent.WRITING
+          @mWritingStatusDots.start()
+        else
+          @mWritingStatusDots.stop()
 
     exports.RoomWindow = RoomWindow
     return
