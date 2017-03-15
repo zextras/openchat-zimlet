@@ -16,7 +16,6 @@
  */
 
 import {DwtComposite} from "../../../zimbra/ajax/dwt/widgets/DwtComposite";
-import {IdGenerator} from "../../IdGenerator";
 import {EmojiData} from "./EmojiTemplate";
 import {Dwt} from "../../../zimbra/ajax/dwt/core/Dwt";
 import {DwtToolBar, DwtToolBarButton} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
@@ -27,6 +26,7 @@ import {Callback} from "../../../lib/callbacks/Callback";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {AjxEnv} from "../../../zimbra/ajax/boot/AjxEnv";
 import {DwtEvent} from "../../../zimbra/ajax/dwt/events/DwtEvent";
+import {toImage} from "../../../libext/emojione";
 
 export class EmojiPage extends DwtComposite {
 
@@ -35,7 +35,6 @@ export class EmojiPage extends DwtComposite {
   private mZimlet: ZmZimletBase;
   private mTimedCallbackFactory: TimedCallbackFactory;
   private mEmojis: EmojiData[];
-  private mAsyncLoading: boolean;
   private mOnSelectionCallback: Callback;
 
   constructor(
@@ -43,17 +42,14 @@ export class EmojiPage extends DwtComposite {
     zimlet: ZmZimletBase,
     timedCallbackFactory: TimedCallbackFactory,
     onSelectionCallback: Callback,
-    emojis: EmojiData[],
-    asyncLoading: boolean
+    emojis: EmojiData[]
   ) {
     super({
-      parent: parent,
-      id: IdGenerator.generateId(emojis[0].name)
+      parent: parent
     });
     this.mZimlet = zimlet;
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mEmojis = emojis;
-    this.mAsyncLoading = asyncLoading;
     this.mOnSelectionCallback = onSelectionCallback;
 
     this.setScrollStyle(Dwt.SCROLL);
@@ -91,28 +87,8 @@ export class EmojiPage extends DwtComposite {
         parent: rows[rowToPick],
         className: "ZToolbarButton ZxEmojiPickerButton"
       });
+      button.setText(tmpEmoji.data);
       button.setData(EmojiOnePicker.KEY_EMOJI_DATA, tmpEmoji.name);
-
-      if (this.mAsyncLoading) {
-        let imageLoader: TimedImageLoader = new TimedImageLoader(
-          button,
-          tmpEmoji,
-          this.mZimlet.getResource("images/")
-        );
-        if (AjxEnv.isIE && !EmojiOnePicker.sIeImagesAlreadyLoaded) {
-          this.mTimedCallbackFactory.createTimedCallback(
-            imageLoader,
-            (100 * i) + 10 // Why this number? simple: In 1000ms we are doing 10 requests, this should avoid the DoSFilter.
-          ).start();
-        } else {
-          this.mTimedCallbackFactory.createTimedCallback(
-            imageLoader,
-            10
-          ).start();
-        }
-      } else {
-        button.setText(tmpEmoji.data.replace("#imagePathPNG#", this.mZimlet.getResource("images/")));
-      }
       button.setToolTipContent(tmpEmoji.name, false);
       button.addSelectionListener(onSelectionListener);
     }
@@ -122,24 +98,5 @@ export class EmojiPage extends DwtComposite {
     if (typeof this.mOnSelectionCallback !== "undefined") {
       this.mOnSelectionCallback.run(ev);
     }
-  }
-}
-
-class TimedImageLoader extends Callback {
-  private mButton: DwtToolBarButton;
-  private mEmoji: EmojiData;
-  private mBasePath: string;
-
-  constructor(buttonToLoad: DwtToolBarButton, emoji: EmojiData, basePath: string) {
-    super(null, function() {});
-    this.setContext(this);
-    this.setFcn(this.populate);
-    this.mButton = buttonToLoad;
-    this.mEmoji = emoji;
-    this.mBasePath = basePath;
-  }
-
-  public populate() {
-    this.mButton.setText(this.mEmoji.data.replace("#imagePathPNG#", this.mBasePath));
   }
 }

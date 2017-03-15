@@ -24,6 +24,7 @@ define(
     '../../lib/callbacks/CallbackManager'
     '../../lib/callbacks/Callback'
     '../../lib/StringUtils'
+    '../../lib/ZimbraUtils'
     '../../zimbra/ajax/events/AjxListener'
     '../../zimbra/ajax/dwt/core/Dwt'
     '../../zimbra/ajax/dwt/widgets/DwtComposite'
@@ -50,6 +51,7 @@ define(
     CallbackManager_1
     Callback_1
     StringUtils_1
+    ZimbraUtils_1
     AjxListener_1
     Dwt_1
     DwtComposite_1
@@ -86,6 +88,7 @@ define(
     CallbackManager = CallbackManager_1.CallbackManager
     Callback = Callback_1.Callback
     StringUtils = StringUtils_1.StringUtils
+    ZimbraUtils = ZimbraUtils_1.ZimbraUtils
 
     WindowBase = WindowBase_1.WindowBase
     Conversation = Conversation_1.Conversation
@@ -173,7 +176,10 @@ define(
           parent: @mTitlebar
           className: "ZToolbarButton ZxChat_Button ZxChat_TitleBar_Button"
         })
-        @mCloseButton.setImage("Close")
+        if ZimbraUtils.isUniversalUI()
+          @mCloseButton.setImage("Close")
+        else
+          @mCloseButton.setImage("ZxChat_close")
         @mCloseButton.addSelectionListener(new AjxListener(@, @closeCallback))
         @conversation = new Conversation(@containerView, @dateProvider, @mTimedCallbackFactory)
         @mWritingStatusDots = new LoadingDots(@containerView, { dots: 5 })

@@ -28,6 +28,9 @@ all: dist/com_zextras_chat_open.zip
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi
 
+src/dwt/widgets/emoji/EmojiTemplate.ts:
+	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
+
 src/ZimletVersion.ts:
 	# Build the zimlet version file
 	cp src/ZimletVersion.template.ts src/ZimletVersion.ts
@@ -56,7 +59,7 @@ build/com_zextras_chat_open.xml:
 		-e 's/#DESCRIPTION#/$(DESCRIPTION)/g' \
 		build/com_zextras_chat_open.xml
 
-build/com_zextras_chat_open_bundle.js: node_modules src/ZimletVersion.ts
+build/com_zextras_chat_open_bundle.js: node_modules src/ZimletVersion.ts src/dwt/widgets/emoji/EmojiTemplate.ts
 	# Check T4Z project if there are modifications
 	cd src/zimbra && make check-exports
 	# Lint the files
@@ -90,6 +93,8 @@ dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_z
 clean:
 	# Version file
 	rm -f src/ZimletVersion.ts
+	# Emoji menu data
+	rm -f src/dwt/widgets/emoji/EmojiTemplate.ts
 	# Assets
 	rm -f src/images/emojione.sprites.png
 	rm -f src/emojione.sprites.css

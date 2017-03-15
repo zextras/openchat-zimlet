@@ -21,7 +21,7 @@ import {DwtMenu} from "../../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {IdGenerator} from "../../IdGenerator";
 import {ZmZimletBase} from "../../../zimbra/zimbraMail/share/model/ZmZimletBase";
 import {EmojiPage} from "./EmojiPage";
-import {EmojiTemplate} from "./EmojiTemplate";
+import {EmojiTemplate, EmojiData} from "./EmojiTemplate";
 import {TimedCallbackFactory} from "../../../lib/callbacks/TimedCallbackFactory";
 import {Callback} from "../../../lib/callbacks/Callback";
 import {DwtToolBar, DwtToolBarButton} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
@@ -91,11 +91,10 @@ export class EmojiOnePicker extends DwtComposite {
         zimlet,
         timedCallbackFactory,
         new Callback(this, this.onEmojiSelected),
-        EmojiTemplate.DATA[0],
-        true
+        EmojiTemplate.DATA_SPRITES[0]
       );
       page.setVisible(true);
-      this.mEmojiPages[EmojiOnePicker.getDefaultEmoji()] = page;
+      this.mEmojiPages[EmojiOnePicker.getDefaultEmoji().name] = page;
 
     } else {
 
@@ -128,7 +127,6 @@ export class EmojiOnePicker extends DwtComposite {
           timedCallbackFactory,
           new Callback(this, this.onEmojiSelected),
           EmojiTemplate.DATA_SPRITES[i],
-          false
         );
         page.setVisible(isFirst);
         this.mEmojiPages[pageIcon] = page;
@@ -151,8 +149,8 @@ export class EmojiOnePicker extends DwtComposite {
     return this.mMenu;
   }
 
-  public static getDefaultEmoji(): string {
-    return ":grinning:";
+  public static getDefaultEmoji(): EmojiData {
+    return { name: ":grinning:", data: "<span class='emojione emojione-1f600' title=':grinning:'>:grinning:</span>" };
   }
 
   private onEmojiSelected(ev: DwtSelectionEvent): void {

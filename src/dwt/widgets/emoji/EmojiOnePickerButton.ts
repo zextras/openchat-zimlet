@@ -53,7 +53,8 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     this.mOnEmojiSelectedCallback = new Callback(this, this.onEmojiSelected, onEmojiSelectedCallback);
     this.mTimedCallbackFactory = timedCallbackFactory;
 
-    this.setEmoji(EmojiOnePicker.getDefaultEmoji());
+    this.setData(EmojiOnePicker.KEY_EMOJI_DATA, EmojiOnePicker.getDefaultEmoji().name);
+    this.setText(EmojiOnePicker.getDefaultEmoji().data);
     this.setToolTipContent(ZmMsg.emoticons, false);
     this.dontStealFocus();
 
@@ -67,13 +68,8 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
 
     timedCallbackFactory.createTimedCallback(
       new Callback(this, this.setEmojiPickerMenu),
-      10
+      1
     ).start();
-  }
-
-  public setEmoji(emoji: string): void {
-    this.setData(EmojiOnePicker.KEY_EMOJI_DATA, emoji);
-    this.setText(toImage(emoji));
   }
 
   public popup(menu: DwtMenu): void {
