@@ -160,7 +160,8 @@ export class MainWindow extends WindowBase {
     this.mTitleBar.addFiller();
     let primaryMenuButton = this.createMainMenuButton(this.mTitleBar, true);
     this.mStatusSelectorToolbar = new DwtToolBar({
-      parent: this.mContainerView
+      parent: this.mContainerView,
+      className: "MainWindowStatusToolbar"
     });
     this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar);
     this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
