@@ -139,8 +139,7 @@ define(
         @_loadOriginalValues()
         super({
           parent: shell
-          title: Graphic.getTitleWithIcon('ZxChat_personalized_brand', StringUtils.getMessage("title_chat_preferences"))
-          id: IdGenerator.generateId("ZxChat_ChatSettingsDialog")
+          title: StringUtils.getMessage("title_chat_preferences")
         })
         @setButtonListener(
           DwtDialog.OK_BUTTON,

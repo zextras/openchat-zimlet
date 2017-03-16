@@ -18,139 +18,96 @@
 import {DwtComposite} from "../../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {DwtControl} from "../../../zimbra/ajax/dwt/widgets/DwtControl";
 import {DwtMenu} from "../../../zimbra/ajax/dwt/widgets/DwtMenu";
-import {IdGenerator} from "../../IdGenerator";
-import {ZmZimletBase} from "../../../zimbra/zimbraMail/share/model/ZmZimletBase";
-import {EmojiPage} from "./EmojiPage";
 import {EmojiTemplate, EmojiData} from "./EmojiTemplate";
-import {TimedCallbackFactory} from "../../../lib/callbacks/TimedCallbackFactory";
 import {Callback} from "../../../lib/callbacks/Callback";
-import {DwtToolBar, DwtToolBarButton} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
-import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
+import {DwtToolBarButton, DwtToolBar} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {DwtSelectionEvent} from "../../../zimbra/ajax/dwt/events/DwtSelectionEvent";
-import {AjxEnv} from "../../../zimbra/ajax/boot/AjxEnv";
+import {DwtTabView, DwtTabViewPage} from "../../../zimbra/ajax/dwt/widgets/DwtTabView";
+import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {DwtPoint} from "../../../zimbra/ajax/dwt/graphics/DwtPoint";
-import {Version} from "../../../lib/Version";
+import {AjxCallback} from "../../../zimbra/ajax/boot/AjxCallback";
 
-export class EmojiOnePicker extends DwtComposite {
+export class EmojiOnePicker extends DwtMenu {
 
   public static KEY_EMOJI_DATA: string = "emoji";
 
   private static sInstance: EmojiOnePicker = void 0;
+  private static sEmojiPerRow: number = 10;
+  private static hEmojiToolBarBtn: number = 26;
+  private static wEmojiToolBarBtn: number = 36;
 
-  public static sIeImagesAlreadyLoaded: boolean = false;
-
-  private static sEmojiSize: number = 18;
-  private static sWidth: number = 621;
-  private static sHeight: number = 270;
-
-  private mAsyncLoading: boolean;
-  private mMenu: DwtMenu;
-  private mZimlet: ZmZimletBase;
-  private mEmojiPages: {[pageName: string]: EmojiPage};
-  private mPageButtons: {[pageName: string]: DwtToolBarButton};
-  private mCurrentPage: EmojiPage;
-
-  public mOnEmojiSelectedCbk: Callback = void 0;
+  private mOnEmojiSelectedCbk: Callback = void 0;
 
   public static getInstance(): EmojiOnePicker {
     return this.sInstance;
   }
 
   constructor(
-    parent: DwtControl,
-    zimlet: ZmZimletBase,
-    timedCallbackFactory: TimedCallbackFactory,
-    asyncLoading: boolean = true
+    parent: DwtControl
   ) {
-    super({parent: new DwtMenu({
+    super({
       parent: parent,
-      style: DwtMenu.GENERIC_WIDGET_STYLE,
-      id: IdGenerator.generateId("Emoticon_Action_Menu")
-    })});
-    this.mMenu = <DwtMenu>this.parent;
+      style: DwtMenu.GENERIC_WIDGET_STYLE
+    });
 
-    if (Version.isZ8_6Up()) {
-      // Hack for issue ZXCHAT-499
-      // DwtMenu does not return the correct size in Zimbra 8.6,
-      // will work as usual if the menu is popped up under the button
-      // WARNING: Do not remove this function!
-      this.mMenu.getSize = (getFromStyle?: boolean) => {
-        return new DwtPoint(642, 247);
-      };
-    }
-
-    this.mAsyncLoading = asyncLoading;
-    this.mZimlet = zimlet;
-    this.mEmojiPages = {};
-    this.mPageButtons = {};
-
-    if (AjxEnv.isIE) {
-
-      let page = new EmojiPage(
-        this,
-        zimlet,
-        timedCallbackFactory,
-        new Callback(this, this.onEmojiSelected),
-        EmojiTemplate.DATA_SPRITES[0]
+    let emojiTabView = new DwtTabView({parent: this});
+    let pageIdx: number = -1;
+    let selectionListener = new AjxListener(
+      this,
+      this.onEmojiSelected
+    );
+    for (let emojiName of EmojiTemplate.NAMES) {
+      pageIdx++;
+      // TODO: There are some issue on deferred tab view initialization
+      // emojiTabView.addTab(
+      //   EmojiTemplate.NAMES_DATA_SPRITE[pageIdx],
+      //   new AjxCallback(
+      //     this,
+      //     EmojiOnePicker.createEmojiTabPage,
+      //     [
+      //       emojiTabView,
+      //       EmojiTemplate.DATA_SPRITES[pageIdx],
+      //       selectionListener
+      //     ]
+      //   )
+      // );
+      emojiTabView.addTab(
+        EmojiTemplate.NAMES_DATA_SPRITE[pageIdx],
+        EmojiOnePicker.createEmojiTabPage(
+          emojiTabView,
+          EmojiTemplate.DATA_SPRITES[pageIdx],
+          selectionListener
+        )
       );
-      page.setVisible(true);
-      this.mEmojiPages[EmojiOnePicker.getDefaultEmoji().name] = page;
-
-    } else {
-
-      let tabBar: DwtToolBar = new DwtToolBar({parent: this, id: "EmojiOnePickerToolbar"}),
-        separator: DwtControl,
-        isFirst: boolean = true,
-        pageSelectionLsnr: AjxListener = new AjxListener(this, this.onPageSelected);
-
-      separator = new DwtControl({parent: this, className: "horizSep"});
-      this.mAsyncLoading = false;
-
-      for (let i: number = 0; i < EmojiTemplate.NAMES.length; i += 1) {
-        let pageIcon: string = EmojiTemplate.NAMES[i],
-          page: EmojiPage,
-          pageButton: DwtToolBarButton = new DwtToolBarButton({
-            parent: tabBar,
-            style: ((!isFirst) ? "border-left-width:0;" : ""),
-            className: "ZxChat_Button"
-          });
-        pageButton.setText(EmojiTemplate.NAMES_DATA_SPRITE[i]);
-        pageButton.setToolTipContent(pageIcon, false);
-        pageButton.setSelected(isFirst);
-        pageButton.setData(EmojiOnePicker.KEY_EMOJI_DATA, pageIcon);
-        pageButton.addSelectionListener(pageSelectionLsnr);
-        this.mPageButtons[pageIcon] = pageButton;
-
-        page = new EmojiPage(
-          this,
-          zimlet,
-          timedCallbackFactory,
-          new Callback(this, this.onEmojiSelected),
-          EmojiTemplate.DATA_SPRITES[i],
-        );
-        page.setVisible(isFirst);
-        this.mEmojiPages[pageIcon] = page;
-
-        if (isFirst) {
-          isFirst = false;
-          this.mCurrentPage = page;
-        }
-      }
-      EmojiOnePicker.sIeImagesAlreadyLoaded = true;
     }
+
+    let wSize: number = (EmojiTemplate.NAMES.length * 48) + 25;
+    let hSize: number = (EmojiOnePicker.hEmojiToolBarBtn * 5) + 25;
+    this.setSize(
+      `${wSize}px`,
+      `${hSize + 5}px`
+    );
 
     if (typeof EmojiOnePicker.sInstance === "undefined") {
       EmojiOnePicker.sInstance = this;
     }
   }
 
-  public getMenu(callback: Callback): DwtMenu {
+  public getSize(getFromStyle?: boolean): DwtPoint {
+    return new DwtPoint(
+      (EmojiTemplate.NAMES.length * 48) + 30,
+      (EmojiOnePicker.hEmojiToolBarBtn * 5) + 30
+    );
+  }
+
+  public getMenu(parent: DwtComposite, callback: Callback): DwtMenu {
     this.mOnEmojiSelectedCbk = callback;
-    return this.mMenu;
+    // this.reparent(parent); // Reparenting done right does not work... :/
+    return this;
   }
 
   public static getDefaultEmoji(): EmojiData {
-    return { name: ":grinning:", data: "<span class='emojione emojione-1f600' title=':grinning:'>:grinning:</span>" };
+    return EmojiTemplate.DATA_SPRITES[0][0];
   }
 
   private onEmojiSelected(ev: DwtSelectionEvent): void {
@@ -161,23 +118,36 @@ export class EmojiOnePicker extends DwtComposite {
     }
   }
 
-  public onPageSelected(ev: DwtSelectionEvent): void {
-    let selectedPageName: string = ev.dwtObj.getData(EmojiOnePicker.KEY_EMOJI_DATA);
-    if (typeof selectedPageName === "undefined" || !this.mEmojiPages.hasOwnProperty(selectedPageName)) {
-      return;
+  private static createEmojiTabPage(emojiTabView: DwtTabView, emojiData: EmojiData[], selectionListner: AjxListener): DwtTabViewPage {
+    let emojiTab = new DwtTabViewPage(emojiTabView);
+    let maxToolbarCount = Math.ceil(emojiData.length / EmojiOnePicker.sEmojiPerRow);
+    for (let toolbarIdx: number = 0; toolbarIdx < maxToolbarCount; toolbarIdx += 1) {
+      EmojiOnePicker.populateEmojiRow(
+        new DwtToolBar({
+          parent: emojiTab
+        }),
+        emojiData.slice(toolbarIdx * EmojiOnePicker.sEmojiPerRow, (toolbarIdx * EmojiOnePicker.sEmojiPerRow) + EmojiOnePicker.sEmojiPerRow),
+        selectionListner
+      );
     }
-    for (let pageName in this.mPageButtons) {
-      if (!this.mPageButtons.hasOwnProperty(pageName)) { continue; }
-      if (pageName === selectedPageName) { continue; }
-      let button: DwtToolBarButton = this.mPageButtons[pageName];
-      button.setSelected(false);
-    }
-    let page: EmojiPage = this.mEmojiPages[selectedPageName];
-    (<DwtToolBarButton>ev.dwtObj).setSelected(true);
+    emojiTab.setSize(
+      `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow}px`,
+      `${EmojiOnePicker.hEmojiToolBarBtn * 5}px`
+    );
+    return emojiTab;
+  }
 
-    this.mCurrentPage.setVisible(false);
-    page.setVisible(true);
-    this.mCurrentPage = page;
+  private static populateEmojiRow(dwtToolBar: DwtToolBar, emojisToAdd: EmojiData[], selectionListner: AjxListener): void {
+    for (let emojiData of emojisToAdd) {
+      let button = new DwtToolBarButton({
+        parent: dwtToolBar,
+        className: "EmojiOnePickerToolbarButton"
+      });
+      button.setText(emojiData.data);
+      button.setData(EmojiOnePicker.KEY_EMOJI_DATA, emojiData.name);
+      button.setToolTipContent(emojiData.name, false);
+      button.addSelectionListener(selectionListner);
+    }
   }
 
 }

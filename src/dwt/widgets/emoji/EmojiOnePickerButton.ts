@@ -15,12 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {toImage} from "../../../libext/emojione";
-
 import {DwtToolBarButton, DwtToolBarButtonParams} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
-import {ZmZimletBase} from "../../../zimbra/zimbraMail/share/model/ZmZimletBase";
-import {DwtButton} from "../../../zimbra/ajax/dwt/widgets/DwtButton";
-import {TimedCallbackFactory} from "../../../lib/callbacks/TimedCallbackFactory";
 import {EmojiOnePicker} from "./EmojiOnePicker";
 import {Callback} from "../../../lib/callbacks/Callback";
 import {DwtMenu} from "../../../zimbra/ajax/dwt/widgets/DwtMenu";
@@ -33,43 +28,29 @@ import {DwtKeyMap} from "../../../zimbra/ajax/dwt/keyboard/DwtKeyMap";
 export class EmojiOnePickerButton extends DwtToolBarButton {
 
   private mPopAbove: boolean;
-  private mZimlet: ZmZimletBase;
-  private mTimedCallbackFactory: TimedCallbackFactory;
   private mOnEmojiSelectedCallback: Callback;
 
   constructor(
     params: EmojiOnePickerButtonParams,
-    zimlet: ZmZimletBase,
-    timedCallbackFactory: TimedCallbackFactory,
     onEmojiSelectedCallback: Callback,
     popAbove: boolean = false
   ) {
     if (typeof params === "undefined") { return; }
-    params.className = "ZxChat_Button ZToolbarButton";
-    params.actionTiming = DwtButton.ACTION_MOUSEUP;
+    params.className = "ZToolbarButton EmojiPickerButton";
+    // params.actionTiming = DwtButton.ACTION_MOUSEUP;
     super(params);
     this.mPopAbove = popAbove;
-    this.mZimlet = zimlet;
     this.mOnEmojiSelectedCallback = new Callback(this, this.onEmojiSelected, onEmojiSelectedCallback);
-    this.mTimedCallbackFactory = timedCallbackFactory;
 
     this.setData(EmojiOnePicker.KEY_EMOJI_DATA, EmojiOnePicker.getDefaultEmoji().name);
     this.setText(EmojiOnePicker.getDefaultEmoji().data);
     this.setToolTipContent(ZmMsg.emoticons, false);
     this.dontStealFocus();
+    this.setEmojiPickerMenu();
 
     this.addSelectionListener(
       new AjxListener(this, this.handleKeyAction, [DwtKeyMap.SUBMENU, undefined])
     );
-
-    // Defer the creation of the emoji menu creation.
-    //   This operation is cpu-heavy, so we can't freeze the window
-    //   creator beacuse of the emoji.
-
-    timedCallbackFactory.createTimedCallback(
-      new Callback(this, this.setEmojiPickerMenu),
-      1
-    ).start();
   }
 
   public popup(menu: DwtMenu): void {
@@ -87,15 +68,13 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
 
   private setEmojiPickerMenu(): void {
     if (typeof EmojiOnePicker.getInstance() === "undefined") {
-      let picker: EmojiOnePicker = new EmojiOnePicker(
-        this,
-        this.mZimlet,
-        this.mTimedCallbackFactory,
-        true
-      );
+      let picker: EmojiOnePicker = new EmojiOnePicker(this);
     }
     this.setMenu(
-      EmojiOnePicker.getInstance().getMenu(this.mOnEmojiSelectedCallback),
+      EmojiOnePicker.getInstance().getMenu(
+        this,
+        this.mOnEmojiSelectedCallback
+      ),
       false,
       false,
       this.mPopAbove,

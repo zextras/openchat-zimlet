@@ -207,8 +207,6 @@ define(
         inputToolbar.addFiller()
         @emoticonBtn = new EmojiOnePickerButton(
           { parent: inputToolbar }
-          @zimletContext
-          @mTimedCallbackFactory
           new Callback(this, this.onEmojiSelected)
           true
         )
