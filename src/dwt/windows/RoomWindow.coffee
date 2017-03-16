@@ -167,6 +167,9 @@ define(
           parent: @mTitlebar
           className: "ZxChat_TitleBar_Title"
         })
+        # TODO: Dirty hack to modify the title label classname
+        document.getElementById(@mTitleLbl.getHTMLElId() + "_title").className += " RoomWindowTitleBar-TitleLabel"
+        @mTitleLbl.getHtmlElement()
         @mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(@, @onTitleBarClick))
         @mTitleLbl.setText(room.getTitle())
         @setIcon("#{@room.getRoomStatus().getCSS()}")
@@ -198,7 +201,7 @@ define(
 
         @inputField = new DwtInputField({
           parent: inputToolbar
-          className: "DwtInputField ZxChat_ConversationInput"
+          className: "DwtInputField RoomWindowConversationInput"
           hint: StringUtils.getMessage("type_a_message")
           forceMultiRow: true
           rows: 1
