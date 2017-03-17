@@ -22,10 +22,11 @@ NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",
 
 all: dist/com_zextras_chat_open.zip
 
-.PHONY: check-yui clean init install guard-%
+.PHONY: check-yui node_modules clean init install guard-%
 
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi
+	npm update
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
