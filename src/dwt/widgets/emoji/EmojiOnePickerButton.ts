@@ -24,6 +24,7 @@ import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {FocusKeeper} from "../../../lib/FocusKeeper";
 import {DwtKeyMap} from "../../../zimbra/ajax/dwt/keyboard/DwtKeyMap";
+import {ZimbraUtils} from "../../../lib/ZimbraUtils";
 
 export class EmojiOnePickerButton extends DwtToolBarButton {
 
@@ -36,7 +37,7 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     popAbove: boolean = false
   ) {
     if (typeof params === "undefined") { return; }
-    params.className = "ZToolbarButton EmojiPickerButton";
+    params.className = `ZToolbarButton EmojiPickerButton${ !ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`;
     // params.actionTiming = DwtButton.ACTION_MOUSEUP;
     super(params);
     this.mPopAbove = popAbove;

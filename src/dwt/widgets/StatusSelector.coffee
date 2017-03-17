@@ -26,6 +26,7 @@ define(
     '../../zimbra/ajax/dwt/widgets/DwtMenuItem'
     '../../zimbra/ajax/dwt/widgets/DwtToolBar'
     '../../zimbra/zimbraMail/share/view/ZmPopupMenu'
+    '../../lib/ZimbraUtils'
   ],
   (
     require
@@ -37,6 +38,7 @@ define(
     DwtMenuItem_1
     DwtToolBar_1
     ZmPopupMenu_1
+    ZimbraUtils_1
   ) ->
     "use strict"
     
@@ -48,6 +50,7 @@ define(
     DwtMenuItem = DwtMenuItem_1.DwtMenuItem
     DwtToolBarButton = DwtToolBar_1.DwtToolBarButton
     ZmPopupMenu = ZmPopupMenu_1.ZmPopupMenu
+    ZimbraUtils = ZimbraUtils_1.ZimbraUtils
 
     class StatusSelector extends DwtToolBarButton
 
@@ -58,6 +61,8 @@ define(
           parent: parent
           className: "ZToolbarButton ZNewButton"
         })
+        # TODO: Dirty hack to modify the title label classname
+        document.getElementById(@getHTMLElId() + "_title").className += " ChatStatusSelectorTitle#{ if !ZimbraUtils.isUniversalUI() then '-legacy-ui' else '' }"
         @dontStealFocus()
         @onStatusSelectedCbkMgr = new CallbackManager()
         @setAlign(DwtLabel.ALIGN_LEFT)

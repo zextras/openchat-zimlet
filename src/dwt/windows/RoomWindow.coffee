@@ -165,7 +165,7 @@ define(
         )
         @mTitleLbl = new DwtLabel({
           parent: @mTitlebar
-          className: "ZxChat_TitleBar_Title"
+          className: "WindowBaseTitleBar#{ if !ZimbraUtils.isUniversalUI() then '-legacy-ui' else '' }"
         })
         # TODO: Dirty hack to modify the title label classname
         document.getElementById(@mTitleLbl.getHTMLElId() + "_title").className += " RoomWindowTitleBar-TitleLabel"

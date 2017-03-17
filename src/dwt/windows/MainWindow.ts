@@ -153,7 +153,7 @@ export class MainWindow extends WindowBase {
     );
     this.mTitleLbl = new DwtLabel({
       parent: this.mTitleBar,
-      className: "ZxChat_TitleBar_Title"
+      className: `WindowBaseTitleBar${ !ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`
     });
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
@@ -163,13 +163,18 @@ export class MainWindow extends WindowBase {
       parent: this.mContainerView,
       className: "MainWindowStatusToolbar"
     });
+    if (!ZimbraUtils.isUniversalUI()) {
+      this.mStatusSelectorToolbar.setSize(
+        Dwt.DEFAULT,
+        "45px"
+      );
+    }
     this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar);
     this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
     // let secondaryMenuButton = this.createMainMenuButton(this.mStatusSelectorToolbar, false);
     this.mStatusSelector.setSize(
-      // `${MainWindow.WIDTH - this.mMainMenuButtons[1].getSize().x}px`,
       `${MainWindow.WIDTH}px`,
-      Dwt.DEFAULT
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "45px"
     );
     this.mSearchToolBar = new DwtToolBar({
       parent: this.mContainerView,
@@ -177,11 +182,14 @@ export class MainWindow extends WindowBase {
     });
     this.mSearchInput = new DwtInputField({
       parent: this.mSearchToolBar,
-      className: "DwtInputField ZxChat_MainWindowSearchInput",
+      className: `DwtInputField ZxChat_MainWindowSearchInput${ (!ZimbraUtils.isUniversalUI()) ? "-legacy-ui" : "" }`,
       hint: ZmMsg.search
     });
     this.mSearchInput.setHandler(DwtEvent.ONKEYUP, (ev) => this.handleSearchKeyUp(ev));
-    this.mSearchButton = new DwtButton({ parent: this.mSearchToolBar });
+    this.mSearchButton = new DwtButton({
+      parent: this.mSearchToolBar,
+      className: `ZToolbarButton ZxChat_MainWindowSearchButton${ (!ZimbraUtils.isUniversalUI()) ? "-legacy-ui" : "" }`
+    });
     this.mSearchButton.setImage("Search2");
     this.mSearchButton.addSelectionListener(new AjxListener(this, this.resetSearchField));
     this.mSearchInput.setSize(
@@ -263,9 +271,15 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.onContactDroppedInGroup(new Callback(this, this.contactDroppedInGroup));
     this.mBuddyListTree.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
     this.mBuddyListTree.onGroupExpandCollapse(new Callback(this, this.expandOrCollapseGroup));
+    let buddyListHeight = MainWindow.HEIGHT - this.mTitleBar.getSize().y - this.mStatusSelector.getSize().y - this.mSearchInput.getSize().y;
+    if (ZimbraUtils.isUniversalUI()) {
+      buddyListHeight -= 24;
+    } else {
+      buddyListHeight -= 3;
+    }
     this.mBuddyListTree.setSize(
       `${MainWindow.WIDTH + 1}px`,
-      `${MainWindow.HEIGHT - 15 - this.mTitleBar.getSize().y - this.mStatusSelector.getSize().y - this.mSearchInput.getSize().y}px`
+      `${buddyListHeight}px`
     );
   }
 

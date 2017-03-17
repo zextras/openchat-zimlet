@@ -26,6 +26,7 @@ import {DwtTabView, DwtTabViewPage} from "../../../zimbra/ajax/dwt/widgets/DwtTa
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {DwtPoint} from "../../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {AjxCallback} from "../../../zimbra/ajax/boot/AjxCallback";
+import {ZimbraUtils} from "../../../lib/ZimbraUtils";
 
 export class EmojiOnePicker extends DwtMenu {
 
@@ -141,7 +142,7 @@ export class EmojiOnePicker extends DwtMenu {
     for (let emojiData of emojisToAdd) {
       let button = new DwtToolBarButton({
         parent: dwtToolBar,
-        className: "EmojiOnePickerToolbarButton"
+        className: `EmojiOnePickerToolbarButton${ !ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`
       });
       button.setText(emojiData.data);
       button.setData(EmojiOnePicker.KEY_EMOJI_DATA, emojiData.name);
