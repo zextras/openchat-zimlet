@@ -16,7 +16,6 @@
 #
 
 COMMIT_ID = $(shell git rev-parse --short HEAD)
-COMMIT_BRANCH = $(shell git rev-parse --abbrev-ref HEAD)
 VERSION = $(shell fgrep "\"version\":" package.json | sed -e 's/\s*"version":\s*"\(.*\)",/\1/')
 DESCRIPTION = $(shell fgrep "\"description\":" package.json | sed -e 's/\s*"description":\s*"\(.*\)",/\1/')
 NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')
@@ -34,7 +33,7 @@ src/dwt/widgets/emoji/EmojiTemplate.ts:
 src/ZimletVersion.ts:
 	# Build the zimlet version file
 	cp src/ZimletVersion.template.ts src/ZimletVersion.ts
-	sed -i s/#COMMIT_DATA#/$(COMMIT_BRANCH)-$(COMMIT_ID)/g src/ZimletVersion.ts
+	sed -i s/#COMMIT_DATA#/$(COMMIT_ID)/g src/ZimletVersion.ts
 	sed -i s/#VERSION#/$(VERSION)/g src/ZimletVersion.ts
 
 src/emojione.sprites.css: node_modules

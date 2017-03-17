@@ -18,7 +18,7 @@
 export class ZimletVersion {
   public static COMMIT: string  = "#COMMIT_DATA#";
   public static VERSION: string = "#VERSION#";
-  public static STABLE: boolean  = false;
+  public static STABLE: boolean  = true;
   public static STAGING: boolean = false;
-  public static TESTING: boolean = true;
+  public static TESTING: boolean = false;
 }

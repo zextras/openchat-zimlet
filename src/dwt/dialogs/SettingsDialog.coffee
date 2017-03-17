@@ -383,7 +383,7 @@ define(
         testingMessage = ""
         if @preferenceManager.isZimletTesting()
           testingMessage = " <span style=\"color: #FF0000; font-weight:bold;\">TESTING</span>"
-        versionMsg = "#{@preferenceManager.getZimletVersion().toString()}#{testingMessage} (#{@preferenceManager.getZimletCommitId()})"
+        versionMsg = "#{@preferenceManager.getZimletVersion().toString()}#{testingMessage} <a href=\"https://github.com/ZeXtras/openchat-zimlet/tree/#{@preferenceManager.getZimletCommitId()}\" target=\"_blank\">@#{@preferenceManager.getZimletCommitId()}</a>"
         versionLabel = new DwtLabel({parent: versionCtrl})
         versionLabel.setText(versionMsg)
 #        if @preferenceManager.getZimletVersion().lessThan(@preferenceManager.getZimletAvailableVersion())
