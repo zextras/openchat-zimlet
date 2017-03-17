@@ -226,7 +226,7 @@ define(
             else if ev.dwtObj.getGroup? # fruit-eating wolf says it is a GroupTreeItem
               @onGroupSelectedCallbacks.run(ev, @)
             else if itemId?
-              if itemId is BuddyList._ID_ADD_BUDDY
+              if itemId is BuddyListTree._ID_ADD_BUDDY
                 @onAddFriendSelectionCbkMgr.run()
 
       ###*
