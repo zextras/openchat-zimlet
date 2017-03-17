@@ -52,9 +52,9 @@
 </template>
 
 <template id="com_zextras_chat_open.Windows#AddBuddyDialog">
-    <table cellpadding="2" cellspacing="0" border="0" width="100%">
+    <table cellpadding="2" cellspacing="0" border="0" width="100%" class="AddBuddyDialogTable">
         <tr>
-            <td>
+            <td class="AddBuddyDialogTablePropertyLabel">
                 <b>${msg_email}:</b>
             </td>
             <td>
@@ -62,7 +62,7 @@
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="AddBuddyDialogTablePropertyLabel">
                 <b>${msg_nickname}:</b>
             </td>
             <td>
