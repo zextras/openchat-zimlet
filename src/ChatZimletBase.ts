@@ -859,7 +859,6 @@ export class ChatZimletBase extends ZmZimletBase {
           dataClass: appCtxt.getAutocompleter()
         },
         this.mChatClient,
-        appCtxt,
         aliases
       );
     }
