@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "bowser": "^1.6.0",
-    "emojione": "^2.2.7",
+    "emojione": "2.2.7",
     "html-entities": "^1.2.0",
     "jquery-textcomplete": "^1.8.0",
     "json-prune": "^1.0.1",
