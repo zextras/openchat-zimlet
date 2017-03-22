@@ -28,6 +28,7 @@ export class EventSessionRegisteredHandler implements ChatEventHandler {
   handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
     if ((chatEvent != null) && typeof chatEvent !== "undefined") {
       let eventSessionRegistered: EventSessionRegistered = <EventSessionRegistered> chatEvent;
+      client.getSessionInfoProvider().resetSessionResponsesReceived();
       client.getSessionInfoProvider().setServerVersion(eventSessionRegistered.getServerVersion());
       client.getSessionInfoProvider().setSessionId(eventSessionRegistered.getSessionId());
       client.getSessionInfoProvider().setRoomServiceAddress(eventSessionRegistered.getRoomServiceAddress());
