@@ -28,6 +28,7 @@ export class SessionInfoProvider {
   private mZimletVerion: Version;
   private mRoomServiceAddress: string;
   private mDisplayName: string;
+  private mSessionResponsesReceivedInThisSession: number = 0;
 
   constructor(username: string, displayName: string, zimletVersion: Version) {
     this.mUsername = username;
@@ -97,6 +98,18 @@ export class SessionInfoProvider {
 
   public getDisplayName(): string {
     return this.mDisplayName;
+  }
+
+  public addEventsReceived(responses: number): void {
+    this.mSessionResponsesReceivedInThisSession += responses;
+  }
+
+  public getSessionResponsesReceived(): number {
+    return this.mSessionResponsesReceivedInThisSession;
+  }
+
+  public resetSessionResponsesReceived(): void {
+    this.mSessionResponsesReceivedInThisSession = 0;
   }
 
 }

@@ -26,6 +26,7 @@ import {ZxError} from "../../../lib/error/ZxError";
 import {ZxErrorCode} from "../../../lib/error/ZxErrorCode";
 import {ZmCsfeException} from "../../../zimbra/csfe/ZmCsfeException";
 import {RequiredRegistrationEvent} from "../../events/chat/RequiredRegistrationEvent";
+import {SessionInfoProvider} from "../../SessionInfoProvider";
 
 export class PingManagerImp implements PingManager {
 
@@ -46,11 +47,14 @@ export class PingManagerImp implements PingManager {
   private mHandlePingErrorCbk: Callback = new Callback(this, this.handlePingError);
   private mDoPingCallback: Callback = new Callback(this, this.doPing);
   private mOnEndProcessResponsesCbk: Callback;
+  private mSessionInfoProvider: SessionInfoProvider;
 
   constructor(
-    timedCallbackFactory: TimedCallbackFactory
+    timedCallbackFactory: TimedCallbackFactory,
+    sessionInfoProvider: SessionInfoProvider
   ) {
     this.mTimedCallbackFactory = timedCallbackFactory;
+    this.mSessionInfoProvider = sessionInfoProvider;
   }
 
   public setConnection(connection: Connection): void {
@@ -91,7 +95,9 @@ export class PingManagerImp implements PingManager {
       this.mRetryAttempted++;
       this.mRequest = this.mConnection.sendObject(
         PingManagerImp.COMMAND,
-        {},
+        {
+          "received_events": this.mSessionInfoProvider.getSessionResponsesReceived()
+        },
         this.mHandlePingCbk,
         this.mHandlePingErrorCbk
       );
@@ -101,6 +107,7 @@ export class PingManagerImp implements PingManager {
   private handlePing(responses: {type: number}[]): void {
     this.mRetryAttempted = -1;
     this.mRequest = void 0;
+    this.mSessionInfoProvider.addEventsReceived(responses.length);
     if (typeof responses !== "undefined") {
       if (this.checkPresenceRequiredRegistrationEvent(responses)) {
         return;

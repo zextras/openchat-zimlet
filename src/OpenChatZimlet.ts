@@ -90,7 +90,8 @@ export class OpenChatZimlet extends ChatZimletBase {
             timedCallbackFactory
           ),
           new PingManagerImp(
-            timedCallbackFactory
+            timedCallbackFactory,
+            sessionInfoProvider
           )
         ),
         soapCommandFactory,
