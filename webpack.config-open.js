@@ -43,7 +43,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "build"),
-    filename: 'build/[name].js'
+    filename: '[name].js'
   },
   resolve: {
     extensions: [".js", ".json", ".ts", ".coffee"]
