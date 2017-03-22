@@ -20,7 +20,7 @@ var BannerPlugin = webpack.BannerPlugin;
 var path = require("path");
 
 var license = [];
-license.push("Copyright (C) " + ((new Date()).getYear()) + " ZeXtras S.r.l.");
+license.push("Copyright (C) " + ((new Date()).getFullYear()) + " ZeXtras S.r.l.");
 license.push("");
 license.push("This program is free software; you can redistribute it and/or");
 license.push("modify it under the terms of the GNU General Public License");
@@ -42,6 +42,7 @@ module.exports = {
     com_zextras_chat_open_bundle: "./src/OpenChatZimlet.ts"
   },
   output: {
+    path: path.resolve(__dirname, "build"),
     filename: 'build/[name].js'
   },
   resolve: {
