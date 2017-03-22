@@ -63,9 +63,7 @@ export class HandlerRegister {
     eventManager.addEventHandler(new NewClientVersionEventHandler());
     eventManager.addEventHandler(new ShutdownEventHandler());
     eventManager.addEventHandler(new ErrorEventHandler());
-    eventManager.addEventHandler(new EventSessionRegisteredHandler(
-
-    ));
+    eventManager.addEventHandler(new EventSessionRegisteredHandler());
     eventManager.addEventHandler(new UnregisterSessionEventHandler());
     eventManager.addEventHandler(new SuperSecretEventHandler());
   };
