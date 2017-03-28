@@ -22,6 +22,7 @@ export declare class ZxError extends Error {
   constructor(code?: string, parentError?: Error|ZxError);
 
   public initCause(cause: ZxError|Error|AjxException): ZxError;
+  public getCause(): ZxError;
   public setDetail(key: string, value: string|number): ZxError;
   public getCode(): string;
   public getDetail(key: string): string|number;
