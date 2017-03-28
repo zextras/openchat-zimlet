@@ -43,7 +43,7 @@ import {EventSessionRegistered} from "./client/events/chat/EventSessionRegistere
 import {TimedCallback} from "./lib/callbacks/TimedCallback";
 import {ZxError} from "./lib/error/ZxError";
 import {ZxErrorCode} from "./lib/error/ZxErrorCode";
-import {ZmCsfeException} from "./zimbra/csfe/ZmCsfeException";
+import {ZmCsfeException} from "./zimbra/zimbra/csfe/ZmCsfeException";
 import {AjxException} from "./zimbra/ajax/core/AjxException";
 import {BuddyStatus} from "./client/BuddyStatus";
 import {RemoveFriendshipEvent} from "./client/events/chat/RemoveFriendshipEvent";
