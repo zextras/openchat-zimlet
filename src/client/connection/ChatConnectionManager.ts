@@ -27,7 +27,7 @@ import {ConnectionEventParser} from "../events/parsers/ConnectionEventParser";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {ZxError} from "../../lib/error/ZxError";
 import {ZxErrorCode} from "../../lib/error/ZxErrorCode";
-import {ZmCsfeException} from "../../zimbra/csfe/ZmCsfeException";
+import {ZmCsfeException} from "../../zimbra/zimbra/csfe/ZmCsfeException";
 import {ArrayUtils} from "../../lib/ArrayUtils";
 
 export class ChatConnectionManager implements ConnectionManager {
