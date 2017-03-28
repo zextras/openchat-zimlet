@@ -39,10 +39,9 @@ src/ZimletVersion.ts:
 
 src/emojione.sprites.css: node_modules
 	# Build sprites (emojione and icons)
-	mkdir -p build/tmp
-	./node_modules/.bin/sharp resize 16 16 -i node_modules/emojione/assets/png/* -o build/tmp
+	mkdir -p build/images/emojione/png
+	./node_modules/.bin/sharp resize 16 16 -i node_modules/emojione/assets/png/* -o build/images/emojione/png
 	./node_modules/.bin/spritesmith
-	rm -rf build/tmp
 
 build/com_zextras_chat_open.css: node_modules src/emojione.sprites.css
 	# Build the CSS and copy the images

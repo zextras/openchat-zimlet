@@ -31,7 +31,7 @@ module.exports = [{
   cssTemplate: "./src/images/com_zextras_chat_open_sprite.template.sass",
   cssOpts: {}
 },{
-  src: './build/tmp/*.{png,gif,jpg}',
+  src: './build/images/emojione/png/*.{png,gif,jpg}',
   destImage: './src/images/emojione.sprites.png',
   destCSS: './src/emojione.sprites.css',
   imgPath: 'images/emojione.sprites.png',

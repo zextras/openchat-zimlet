@@ -23,7 +23,7 @@ export declare class emojione {
   static setImagePath(path: string): void;
   static asciiRegexp: RegExp;
   static unicodeRegexp: RegExp;
-  static shortnameRegexp: RegExp;
+  static shortnamesRegexp: RegExp;
 
   static toImage(emoji: string): string;
   static emojioneList: EmojiOneList;
