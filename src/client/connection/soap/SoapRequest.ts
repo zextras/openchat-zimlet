@@ -20,7 +20,7 @@ import {JSON3} from "../../../libext/json3";
 import {Callback} from "../../../lib/callbacks/Callback";
 import {AjxSoapDocParams, AjxSoapDoc} from "../../../zimbra/ajax/soap/AjxSoapDoc";
 import {AjxCallback} from "../../../zimbra/ajax/boot/AjxCallback";
-import {ZmCsfeResult} from "../../../zimbra/csfe/ZmCsfeResult";
+import {ZmCsfeResult} from "../../../zimbra/zimbra/csfe/ZmCsfeResult";
 
 import {ZxError} from "../../../lib/error/ZxError";
 import {ZxErrorCode} from "../../../lib/error/ZxErrorCode";

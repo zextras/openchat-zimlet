@@ -24,7 +24,7 @@ import {LogEngine} from "../../../lib/log/LogEngine";
 import {Request} from "../Request";
 import {ZxError} from "../../../lib/error/ZxError";
 import {ZxErrorCode} from "../../../lib/error/ZxErrorCode";
-import {ZmCsfeException} from "../../../zimbra/csfe/ZmCsfeException";
+import {ZmCsfeException} from "../../../zimbra/zimbra/csfe/ZmCsfeException";
 import {RequiredRegistrationEvent} from "../../events/chat/RequiredRegistrationEvent";
 import {SessionInfoProvider} from "../../SessionInfoProvider";
 
