@@ -69,13 +69,15 @@ build/com_zextras_chat_open_bundle.js: node_modules src/ZimletVersion.ts src/dwt
 
 build/com_zextras_chat_open.properties:
 	# Copy language files
-	cp src/i18n/*.properties build/
+	mkdir -p build
+	cp i18n/*.properties build/
 
 build/templates:
 	# Copy templates
+	mkdir -p build
 	cp -r src/templates build/
 
-dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_zextras_chat_open.css build/com_zextras_chat_open_bundle.js build/com_zextras_chat_open.properties build/templates
+dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_zextras_chat_open.css build/com_zextras_chat_open_bundle.js build/com_zextras_chat_open.properties build/templates build/com_zextras_chat_open.properties
 	# Create the zip file
 	rm -f dist/com_zextras_chat_open.zip
 	cd build && zip -q -r ../dist/com_zextras_chat_open.zip \
@@ -134,6 +136,13 @@ install: guard-ZIMLET_DEV_SERVER check-yui dist/com_zextras_chat_open.zip
 	ssh root@${ZIMLET_DEV_SERVER} "su - zimbra -c '/opt/zimbra/bin/zmzimletctl deploy /tmp/com_zextras_chat_open.zip'"
 	ssh root@${ZIMLET_DEV_SERVER} "su - zimbra -c '/opt/zimbra/bin/zmprov fc zimlet'"
 	echo -n "Completed @ " && date
+
+push-translations:
+	zanata-cli push
+
+pull-translations:
+	zanata-cli -B pull
+	mv i18n/com_zextras_chat_open_en_US.properties i18n/com_zextras_chat_open.properties
 
 guard-%:
 	# Verify if an environment variable is set
