@@ -25,6 +25,7 @@ import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {Callback} from "../../lib/callbacks/Callback";
+import {SidebarUtils} from "../../lib/SidebarUtils";
 
 export class MainMenuButton extends DwtToolBarButton {
 
@@ -37,6 +38,7 @@ export class MainMenuButton extends DwtToolBarButton {
   public static OPEN_PREFERENCES_MENU_ITEM_ID: string = "ZxChat_MenuItem_OpenPreferences";
   private static _KEY_HIDE_OFFILINE: string = "hideOfflineBuddies";
 
+  private mSidebarUtils: SidebarUtils;
   private onAddFriendSelectionCbkMgr: CallbackManager;
   private onAddGroupSelectionCbkMgr: CallbackManager;
   private onCreateMultiChatRoomSelectionCbkMgr: CallbackManager;
@@ -48,7 +50,12 @@ export class MainMenuButton extends DwtToolBarButton {
   private opSHOffline: DwtMenuItem;
   private opSettings: DwtMenuItem;
 
-  constructor(parent: DwtToolBar, mainWindowPluginManager: ChatPluginManager, image: string) {
+  constructor(
+    parent: DwtToolBar,
+    mainWindowPluginManager: ChatPluginManager,
+    image: string,
+    sidebarUtils: SidebarUtils
+  ) {
     super({
       parent: parent,
       className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
@@ -56,6 +63,7 @@ export class MainMenuButton extends DwtToolBarButton {
     this.setImage(image);
     this.setDropDownImages("", "", "", "");
     this.dontStealFocus();
+    this.mSidebarUtils = sidebarUtils;
     this.onAddFriendSelectionCbkMgr = new CallbackManager();
     this.onAddGroupSelectionCbkMgr = new CallbackManager();
     this.onCreateMultiChatRoomSelectionCbkMgr = new CallbackManager();
