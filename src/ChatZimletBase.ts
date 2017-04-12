@@ -43,7 +43,7 @@ import {EventSessionRegistered} from "./client/events/chat/EventSessionRegistere
 import {TimedCallback} from "./lib/callbacks/TimedCallback";
 import {ZxError} from "./lib/error/ZxError";
 import {ZxErrorCode} from "./lib/error/ZxErrorCode";
-import {ZmCsfeException} from "./zimbra/csfe/ZmCsfeException";
+import {ZmCsfeException} from "./zimbra/zimbra/csfe/ZmCsfeException";
 import {AjxException} from "./zimbra/ajax/core/AjxException";
 import {BuddyStatus} from "./client/BuddyStatus";
 import {RemoveFriendshipEvent} from "./client/events/chat/RemoveFriendshipEvent";
@@ -500,8 +500,9 @@ export class ChatZimletBase extends ZmZimletBase {
     let msg: string;
     if (
       typeof error !== "undefined" && error !== null &&
-      typeof error.getCode !== "undefined" && error.getCode !== null &&
-      error.getCode() === ZxErrorCode.DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT
+      typeof error.getCause !== "undefined" && typeof error.getCause() !== "undefined" &&
+      typeof error.getCause().getCode !== "undefined" && error.getCause().getCode !== null &&
+      error.getCause().getCode() === ZxErrorCode.DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT
     ) {
       this.mSettingsManager.DELEGATED_ACCESS = true;
       msg = StringUtils.getMessage("delegated_or_resources_not_allowed");
