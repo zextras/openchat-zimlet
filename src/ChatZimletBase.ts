@@ -79,6 +79,7 @@ import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
 import {JQueryPlugins} from "./jquery/JQueryPlugins";
 import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
 import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
+import {SidebarUtils} from "./lib/SidebarUtils";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -152,7 +153,8 @@ export class ChatZimletBase extends ZmZimletBase {
     roomManagerPluginManager: ChatPluginManager,
     chatClientPluginManager: ChatPluginManager,
     mainWindowPluginManager: ChatPluginManager,
-    roomWindowManagerPluginManager: ChatPluginManager
+    roomWindowManagerPluginManager: ChatPluginManager,
+    sidebarUtils: SidebarUtils
   ): void {
 
     ZimbraPatcher.patch();
@@ -262,7 +264,8 @@ export class ChatZimletBase extends ZmZimletBase {
       appCtxt,
       this.mSettingsManager,
       this.mChatClient.getBuddyList(),
-      mainWindowPluginManager
+      mainWindowPluginManager,
+      sidebarUtils
     );
 
     this.mMainWindow.onStatusSelected(new Callback(this, this.statusSelected));

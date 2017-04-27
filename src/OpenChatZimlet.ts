@@ -36,6 +36,7 @@ import {CommandFactory} from "./client/connection/CommandFactory";
 import {SoapCommands} from "./client/connection/soap/SoapCommands";
 import {HistoryPlugin} from "./plugins/HistoryPlugin";
 import {SendMailPlugin} from "./plugins/SendMailPlugin";
+import {SidebarUtils} from "./lib/SidebarUtils";
 
 export class OpenChatZimlet extends ChatZimletBase {
 
@@ -132,7 +133,8 @@ export class OpenChatZimlet extends ChatZimletBase {
         roomManagerPluginManager,
         chatClientPluginManager,
         mainWindowPluginManager,
-        roomWindowManagerPluginManager
+        roomWindowManagerPluginManager,
+        new SidebarUtils()
       );
     } catch (err) {
       ChatZimletBase.alreadyInit = false;
