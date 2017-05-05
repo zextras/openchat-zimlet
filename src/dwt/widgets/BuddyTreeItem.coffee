@@ -31,8 +31,8 @@ define(
     '../../zimbra/ajax/dwt/dnd/DwtDragSource'
     '../../zimbra/ajax/dwt/widgets/DwtTreeItem'
     './BuddyTreeItemActionMenuFactory'
-    '../IdGenerator'
     '../../lib/LearningClipUtils'
+    '../../lib/ZimbraUtils'
   ],
   (
     require
@@ -49,8 +49,8 @@ define(
     DwtDragSource_1
     DwtTreeItem_1
     BuddyTreeItemActionMenuFactory_1
-    IdGenerator_1
     LearningClipUtils_1
+    ZimbraUtils_1
   ) ->
     "use strict"
     
@@ -67,8 +67,8 @@ define(
     DwtDragSource = DwtDragSource_1.DwtDragSource
     DwtTreeItem = DwtTreeItem_1.DwtTreeItem
     BuddyTreeItemActionMenuFactory = BuddyTreeItemActionMenuFactory_1.BuddyTreeItemActionMenuFactory
-    IdGenerator = IdGenerator_1.IdGenerator
     LearningClipUtils = LearningClipUtils_1.LearningClipUtils
+    ZimbraUtils = ZimbraUtils_1.ZimbraUtils
 
     class BuddyTreeItem extends DwtTreeItem
     
@@ -89,11 +89,12 @@ define(
           parent: parent
           text: treeText
           selectable: true
-          id: IdGenerator.generateId("ZxChat_BuddyTreeItem_#{@refBuddy.getId()}")
           dndScrollCallback: parent._dndScrollCallback
           dndScrollId: parent._dndScrollId
         })
-        @_treeItemExtraImgClass = "ZxChat_BuddyTreeItem-ExtraImg"
+#        if ZimbraUtils.isUniversalUI()
+#          iconEl = document.getElementById("#{@getHTMLElId()}_imageCell")
+#          iconEl.className += " BuddyTreeItem-ExtraImg"
         @setImage(@refBuddy.getStatus().getCSS())
         @setText(treeText)
         dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE)
@@ -252,6 +253,9 @@ define(
       ###
       _initialize: (index, realizeDeferred, forceNode) ->
         super(index, realizeDeferred, forceNode)
+        if ZimbraUtils.isUniversalUI()
+          iconEl = document.getElementById("#{@getHTMLElId()}_imageCell")
+          if iconEl? then iconEl.className += " BuddyTreeItem-IconImg"
         @_updateVisibility()
 
 #      _setTreeElementStyles: (img, focused) ->
