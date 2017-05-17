@@ -343,7 +343,7 @@ export class ChatZimletBase extends ZmZimletBase {
       Setting.IM_USR_PREF_EMOJI_IN_MAIL,
       new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInMail)
     );
-    ZmObjectManager.registerHandler(ObjectHandler, null, this._zimletContext.priority);
+    ZmObjectManager.registerHandler(this.mObjectHandler, null, this._zimletContext.priority);
     this.mTimedCallbackFactory.createTimedCallback(
       new Callback(this.mChatClient, this.mChatClient.registerSession),
       100
