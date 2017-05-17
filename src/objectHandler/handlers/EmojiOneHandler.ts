@@ -55,13 +55,17 @@ export class EmojiOneHandler extends ZmObjectHandler {
     let imgDiv = toImage(obj).replace(`>${obj}</`, `>${obj.replace(/:/g, "")}</`);
     emojione.setSprites(true);
     emojione.asciiRegexp.lastIndex = 0;
-    let removeEmoji = emojione.asciiRegexp.test(obj) ? "cursor: pointer;' id='" + spanId : "";
+    let removeEmoji = emojione.asciiRegexp.test(obj) ? "cursor: pointer;\" id=\"" + spanId : "";
     html[idx] = `<span style="height: 16px; width: 16px; ${removeEmoji}" title="${obj}">
                    ${imgDiv}
                  </span>
                  `;
     idx += 1;
     return idx;
+  }
+
+  public clicked(spanElement: HTMLElement, contentObjText: string, matchContext?: any, canvas?: any): void {
+    spanElement.parentNode.replaceChild(document.createTextNode(contentObjText), spanElement);
   }
 
   private static sortResultsFcn(a: MatchResult, b: MatchResult): number {
