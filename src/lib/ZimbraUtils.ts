@@ -20,7 +20,8 @@ import {ZmSkin} from "../zimbra/zimbraMail/ZmSkin";
 export class ZimbraUtils {
 
   public static isUniversalUI(): boolean {
-    return ZmSkin.hints.name === "harmony2";
+    return (ZmSkin.hints.name === "harmony2")
+      || (ZmSkin.hints.name === "clarity");
   }
 
 }
