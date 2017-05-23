@@ -295,7 +295,7 @@ export class ChatClient {
   /**
    * Accept a friendship.
    */
-  public acceptFriendship(buddy: Buddy, callback: Callback, errorCallback: Callback): void {
+  public acceptFriendship(buddy: Buddy, callback?: Callback, errorCallback?: Callback): void {
     this.sendEvent(
       new AcceptFriendshipEvent(
         buddy.getId(),
