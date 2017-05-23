@@ -18,8 +18,6 @@
 import {AjxMessageFormat} from "../zimbra/ajax/util/AjxText";
 import {AjxDateUtil} from "../zimbra/ajax/util/AjxDateUtil";
 
-declare const com_zextras_zextras: {[label: string]: string};
-declare const com_zextras_zxmig: {[label: string]: string};
 declare const com_zextras_chat: {[label: string]: string};
 declare const com_zextras_chat_testing: {[label: string]: string};
 declare const com_zextras_chat_open: {[label: string]: string};
@@ -33,15 +31,8 @@ export class StringUtils {
    * @return {String}
    */
   public static getMessage(messageLabel: string, substitutions: string[] = []): string {
-    let message: string = messageLabel,
-      translation: string;
+    let message: string = messageLabel;
     try {
-      if (typeof com_zextras_zextras !== "undefined" && com_zextras_zextras.hasOwnProperty(messageLabel)) {
-        message = AjxMessageFormat.format(com_zextras_zextras[messageLabel], substitutions);
-      }
-      if (typeof com_zextras_zxmig !== "undefined" && com_zextras_zxmig.hasOwnProperty(messageLabel)) {
-        message = AjxMessageFormat.format(com_zextras_zxmig[messageLabel], substitutions);
-      }
       if (typeof com_zextras_chat !== "undefined" && com_zextras_chat.hasOwnProperty(messageLabel)) {
         message = AjxMessageFormat.format(com_zextras_chat[messageLabel], substitutions);
       }

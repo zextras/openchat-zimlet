@@ -49,10 +49,6 @@ export class UserMedia {
   public static getUserMedia(constraints: UserMediaParams, callback: Callback, errorCallback: Callback) {
     if (typeof navigator !== "undefined" && typeof navigator.getUserMedia !== "undefined") {
       navigator.getUserMedia(constraints, callback.toClosure(), errorCallback.toClosure());
-    } else if (typeof navigator !== "undefined" && typeof navigator.webkitGetUserMedia !== "undefined") {
-      navigator.webkitGetUserMedia(constraints, callback.toClosure(), errorCallback.toClosure());
-    } else if (typeof navigator !== "undefined" && typeof navigator.mozGetUserMedia !== "undefined") {
-      navigator.mozGetUserMedia(constraints, callback.toClosure(), errorCallback.toClosure());
     } else {
       errorCallback.run(new Error("Error while requesting getUserMedia()"));
     }
@@ -79,9 +75,7 @@ export class UserMedia {
 
   public static testBrowserSupport() {
     return (typeof navigator !== "undefined" && (
-      typeof navigator.getUserMedia !== "undefined" ||
-      typeof navigator.webkitGetUserMedia !== "undefined" ||
-      typeof navigator.mozGetUserMedia !== "undefined"
+      typeof navigator.getUserMedia !== "undefined"
     ));
   }
 

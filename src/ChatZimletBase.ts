@@ -574,8 +574,8 @@ export class ChatZimletBase extends ZmZimletBase {
 
   private setStatusAsCurrent(status: BuddyStatus) {
     this.mMainWindow.setCurrentStatus(status);
-    if (typeof this.mIdleTimer !== "undefined" && this.mIdleTimer !== null && this.mIdleTimer.mIdle) {
-      this.handleIdle(this.mIdleTimer.mIdle);
+    if (typeof this.mIdleTimer !== "undefined" && this.mIdleTimer !== null && this.mIdleTimer.isIdle()) {
+      this.handleIdle(this.mIdleTimer.isIdle());
     }
   }
 
