@@ -5,4 +5,4 @@ export NVM_DIR="$HOME/.nvm"
 
 nvm use 6
 
-make dist/com_zextras_chat_open.zip
+make clean dist/com_zextras_chat_open.zip
