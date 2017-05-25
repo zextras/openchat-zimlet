@@ -21,6 +21,8 @@ import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 
 export declare class GroupTreeItem extends DwtTreeItem {
   public onBuddyDroppedInGroupCallbacks: CallbackManager;
+  public _onRenameGroupSelected: Function;
+  public _onDeleteGroupSelected: Function;
 
   public getGroup(): Group;
 }
