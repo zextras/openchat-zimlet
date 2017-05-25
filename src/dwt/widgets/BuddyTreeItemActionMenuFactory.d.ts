@@ -15,8 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {BuddyTreeItem} from "./BuddyTreeItem";
+import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
+import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
+
 export declare class BuddyTreeItemActionMenuFactory {
 
   public static AddMenuItemPlugin: string;
+
+  static createMenu(buddyTreeItem: BuddyTreeItem, mainWindowPluginManager: ChatPluginManager): DwtMenu;
 
 }
