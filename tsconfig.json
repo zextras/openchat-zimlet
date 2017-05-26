@@ -3,6 +3,10 @@
     "noImplicitAny": true,
     "removeComments": true
   },
+  "exclude": [
+    "node_modules",
+    "**/*.template.ts"
+  ],
   "awesomeTypescriptLoaderOptions": {
   }
 }
