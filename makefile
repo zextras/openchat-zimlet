@@ -35,8 +35,12 @@ src/dwt/widgets/emoji/EmojiTemplate.ts:
 src/ZimletVersion.ts:
 	# Build the zimlet version file
 	cp src/ZimletVersion.template.ts src/ZimletVersion.ts
-	sed -i s/#COMMIT_DATA#/$(COMMIT_ID)/g src/ZimletVersion.ts
-	sed -i s/#VERSION#/$(VERSION)/g src/ZimletVersion.ts
+	sed -i -e s/#COMMIT_DATA#/$(COMMIT_ID)/g \
+			-e s/#VERSION#/$(VERSION)/g \
+			-e s/#IS_STABLE#/true/g \
+			-e s/#IS_STAGING#/false/g \
+			-e s/#IS_TESTING#/false/g \
+		src/ZimletVersion.ts
 
 src/emojione.sprites.css: node_modules
 	# Build sprites (emojione and icons)
