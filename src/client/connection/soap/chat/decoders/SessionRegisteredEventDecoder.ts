@@ -18,7 +18,6 @@
 import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {EventSessionRegistered} from "../../../../events/chat/EventSessionRegistered";
-import {Version} from "../../../../../lib/Version";
 import {DateProvider} from "../../../../../lib/DateProvider";
 
 export class SessionRegisteredEventDecoder extends SoapEventDecoder {
@@ -30,27 +29,11 @@ export class SessionRegisteredEventDecoder extends SoapEventDecoder {
   }
 
   public decodeEvent(
-    eventObj: {
-      session_id: string,
-      server_version: string,
-      required_zimlet_version: string,
-      history_enabled: boolean,
-      remove_brand: boolean,
-      videochat_enabled: boolean,
-      silent_error_reporting_enabled: boolean,
-      room_service_address: string
-    },
+    eventObj: any,
     originEvent?: ChatEvent
   ): ChatEvent {
     return new EventSessionRegistered(
-      eventObj["session_id"],
-      new Version("" + eventObj["server_version"]),
-      new Version("" + eventObj["required_zimlet_version"]),
-      eventObj["history_enabled"],
-      eventObj["remove_brand"],
-      eventObj["videochat_enabled"],
-      eventObj["silent_error_reporting_enabled"],
-      eventObj["room_service_address"],
+      eventObj,
       this.mDateProvider.getNow()
     );
   }

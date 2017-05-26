@@ -26,7 +26,7 @@ import {ChatFolderHandler} from "../../dwt/ChatFolderHandler";
 export class EventSessionRegisteredHistoryEnabledPlugin implements ChatPlugin {
 
   public trigger(eventManager: EventManager, chatEvent: ChatEvent, client: ChatClient): void {
-    // client.getSessionInfoProvider().setHistoryEnabled((<EventSessionRegistered> chatEvent).getHistoryEnabled());
+    // client.getSessionInfoProvider().setHistoryEnabled((<EventSessionRegistered> chatEvent).getInfo("history_enabled"));
     let chatFolderHandler = new ChatFolderHandler(
       ZmFolder.ID_CHATS,
       ZmFolder.HIDE_ID,

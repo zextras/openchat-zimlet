@@ -416,8 +416,8 @@ export class ChatZimletBase extends ZmZimletBase {
   private handleServerOnline(eventServerInfo: EventSessionRegistered): void {
     this.mOnline = true;
     this.mCoreNotFoundNotified = false;
-    let requiredVersion: Version = eventServerInfo.getRequiredZimletVersion();
-    this.mCoreVersion = eventServerInfo.getServerVersion();
+    let requiredVersion: Version = new Version(eventServerInfo.getInfo("required_zimlet_version"));
+    this.mCoreVersion = new Version(eventServerInfo.getInfo("server_version"));
 
     if (this.needUpdate(requiredVersion, this.mCoreVersion)) {
       return;
