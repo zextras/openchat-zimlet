@@ -48,9 +48,6 @@ export class Room {
   private mDateProvider: DateProvider;
   private mLastActivity: number = 0;
   private members: Buddy[];
-  // private jingleSession: any;
-  // private videoChatEnabled: boolean;
-  // private featureCallsSupported: boolean;
   private roomStatus: BuddyStatus;
   private mOfflineMessage: string;
   private onTitleChangeCallbacks: CallbackManager;
@@ -64,10 +61,6 @@ export class Room {
   private onBuddyStatusChangeCallbacks: CallbackManager;
   private onRoomStatusChangeCallbacks: CallbackManager;
   private onBuddyWritingStatusCallbacks: CallbackManager;
-  // private onNewJingleSessionCallbacks: CallbackManager;
-  // private onStartJingleSessionCallbacks: CallbackManager;
-  // private onEnableDisableCallsFeatureCallbacks: CallbackManager;
-  // private onEnableDisableVideoChatCallbacks: CallbackManager;
   private onTriggeredPopupCallbacks: CallbackManager;
   private mRoomPluginManager: ChatPluginManager;
   protected Log: Logger;
@@ -82,9 +75,6 @@ export class Room {
     this.title = title;
     this.mDateProvider = dateProvider;
     this.members = [];
-    // this.jingleSession = null;
-    // this.videoChatEnabled = true;
-    // this.featureCallsSupported = false;
     this.roomStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
     this.onTitleChangeCallbacks = new CallbackManager();
     this.onAddMemberCallbacks = new CallbackManager();
@@ -101,10 +91,6 @@ export class Room {
     this.onBuddyStatusChange(new Callback(this, this.updateRoomStatus));
     this.onRoomStatusChangeCallbacks = new CallbackManager();
     this.onBuddyWritingStatusCallbacks = new CallbackManager();
-    // this.onNewJingleSessionCallbacks = new CallbackManager();
-    // this.onStartJingleSessionCallbacks = new CallbackManager();
-    // this.onEnableDisableCallsFeatureCallbacks = new CallbackManager();
-    // this.onEnableDisableVideoChatCallbacks = new CallbackManager();
     this.onTriggeredPopupCallbacks = new CallbackManager();
     this.setOfflineMessage(StringUtils.getMessage("user_offline_messages_will_be_delivered"));
     this.mRoomPluginManager = roomPluginManager;
@@ -341,10 +327,6 @@ export class Room {
   private _onRoomStatusChange(status: BuddyStatus): void {
     this.onRoomStatusChangeCallbacks.run(status);
   }
-  //
-  // public onNewJingleSession(callback: Callback): void {
-  //   this.onNewJingleSessionCallbacks.addCallback(callback);
-  // }
 
   public onBuddyWritingStatus(callback: Callback): void {
     this.onBuddyWritingStatusCallbacks.addCallback(callback);
@@ -358,51 +340,6 @@ export class Room {
       this.setTitle(nickname);
     }
   }
-  //
-  // /**
-  //  * Set a callback which will be invoked when a new jingle session is created.
-  //  */
-  // public onStartJingleSession(callback: Callback): void {
-  //   this.onStartJingleSessionCallbacks.addCallback(callback);
-  // }
-  //
-  // private _onStartJingleSession(isInitiator) {
-  //   this.onStartJingleSessionCallbacks.run(this, isInitiator);
-  // }
-  //
-  // /**
-  //  * Start a jingle session
-  //  */
-  // public startJingleSession(isInitiator: boolean = false): void {
-  //   if (this.jingleSession == null) {
-  //     this._onStartJingleSession(isInitiator);
-  //   } else {
-  //     this.Log.debug(this.jingleSession, "Jingle session already exists");
-  //   }
-  // }
-  //
-  // /**
-  //  * Add a jingle session to the room
-  //  */
-  // public addJingleSession(jingleSession: JingleSession): void {
-  //   this.jingleSession = jingleSession;
-  //   this.onNewJingleSessionCallbacks.run(jingleSession);
-  // };
-  //
-  // /**
-  //  * Remove the jingle session associated to the room
-  //  */
-  // public removeJingleSession(): void {
-  //   this.jingleSession = null;
-  // }
-  //
-  // public getJingleSession(): JingleSession {
-  //   return this.jingleSession;
-  // }
-  //
-  // public getJingleSessionId(): string {
-  //   return this.jingleSession.getId();
-  // }
 
   /**
    * Get the current room status
@@ -436,36 +373,6 @@ export class Room {
       this._onRoomStatusChange(this.roomStatus);
     }
   }
-  //
-  // /**
-  //  * Enable or disable the call support on the rooms.
-  //  */
-  // public enableCallSupport(enabled: boolean): void {
-  //   this.featureCallsSupported = enabled;
-  //   this.onEnableDisableCallsFeatureCallbacks.run(enabled);
-  // }
-  //
-  // /**
-  //  * Enable or disable the call support on the rooms.
-  //  */
-  // public enableVideoChat(enabled: boolean): void {
-  //   this.videoChatEnabled = enabled;
-  //   this.onEnableDisableVideoChatCallbacks.run(this.videoChatEnabled);
-  // }
-  //
-  // /**
-  //  * Set a callback which will be invoked when the calls feature is enabled or disabled.
-  //  */
-  // public onEnableDisableCallsFeature(callback: Callback): void {
-  //   this.onEnableDisableCallsFeatureCallbacks.addCallback(callback);
-  // }
-  //
-  // /**
-  //  * Set a callback which will be invoked when the calls feature is enabled or disabled.
-  //  */
-  // public onEnableDisableVideoChat(callback: Callback) {
-  //   this.onEnableDisableVideoChatCallbacks.addCallback(callback);
-  // }
 
   /**
    * Add the nicknames of the buddies inside of the room
@@ -487,14 +394,6 @@ export class Room {
   public getLastActivity(): number  {
     return this.mLastActivity;
   }
-  //
-  // public isVideoChatEnabled(): boolean {
-  //   return this.videoChatEnabled;
-  // }
-  //
-  // public isFeatureCallsSupported(): boolean {
-  //   return this.featureCallsSupported;
-  // }
 
   public onTriggeredPopup(callback: Callback): void {
     this.onTriggeredPopupCallbacks.addCallback(callback);
