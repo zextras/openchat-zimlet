@@ -66,14 +66,14 @@ define(
         @dontStealFocus()
         @onStatusSelectedCbkMgr = new CallbackManager()
         @setAlign(DwtLabel.ALIGN_LEFT)
-        @menu = new ZmPopupMenu(@)
+        @menu = new ZmPopupMenu(@, "ActionMenu ChatStatusSelector#{ if !ZimbraUtils.isUniversalUI() then '-legacy-ui' else '' }")
         @setMenu(@menu)
 
       ###*
         Clear the options in the status menu
       ###
       clear: () ->
-        @menu = new ZmPopupMenu(@)
+        @menu = new ZmPopupMenu(@, "ActionMenu ChatStatusSelector#{ if !ZimbraUtils.isUniversalUI() then '-legacy-ui' else '' }")
         @setMenu(@menu)
 
       ###*
