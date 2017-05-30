@@ -70,6 +70,12 @@
 .ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-left
   visibility: collapse
 
+.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer
+  float: right
+
+.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer
+  float: left
+
 //Prevent any fontsize overwrite (related to ZXCHAT-36 with MsgBody className)
 .ZxChat_MessageContent, .ZxChat_MessageContent *
   font-size: 1em !important
