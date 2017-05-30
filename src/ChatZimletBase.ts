@@ -610,9 +610,7 @@ export class ChatZimletBase extends ZmZimletBase {
     if (
       idleStatus === false &&
       (
-        currentStatusType === BuddyStatusType.AWAY ||
-        currentStatusType === BuddyStatusType.BUSY ||
-        currentStatusType === BuddyStatusType.INVISIBLE
+        currentStatusType === BuddyStatusType.AWAY
       )
     ) {
       this.mChatClient.setUserStatus(this.mLastStatus);
