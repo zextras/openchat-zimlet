@@ -616,6 +616,7 @@ export class MainWindow extends WindowBase {
 
   private resetSearchField(): void {
     this.mSearchInput.setValue("");
+    this.mBuddyListTree.applyFilter("");
     this.mSearchButton.setImage("Search2");
   }
 
