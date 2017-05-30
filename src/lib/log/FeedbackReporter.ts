@@ -21,7 +21,7 @@ import {Callback} from "../callbacks/Callback";
 export class FeedbackReporter {
 
   private mName: string;
-  private mEnabled: boolean;
+  private mEnabled: boolean = false;
   private mOnDebugCbkMgr: CallbackManager;
   private mOnLogCbkMgr: CallbackManager;
   private mOnInfoCbkMgr: CallbackManager;
@@ -29,9 +29,8 @@ export class FeedbackReporter {
   private mOnErrorCbkMgr: CallbackManager;
   private mContextData: ContextDataFeedbackReporter;
 
-  constructor(name: string, enabled: boolean) {
+  constructor(name: string) {
     this.mName = name;
-    this.mEnabled = enabled;
     this.mOnDebugCbkMgr = new CallbackManager();
     this.mOnLogCbkMgr = new CallbackManager();
     this.mOnInfoCbkMgr = new CallbackManager();
