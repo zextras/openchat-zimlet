@@ -115,13 +115,3 @@
         </tr>
     <$ } $>
 </template>
-
-<template id='com_zextras_chat_open.Widgets#Image' class='ZWidget'>
-	<table role="presentation" class='ZWidgetTable ZLabelBorder'>
-        <tr>
-            <td>
-                <div id='${id}_image' class='${imageClass}'></div>
-            </td>
-        </tr>
-    </table>
-</template>
