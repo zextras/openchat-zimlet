@@ -25,6 +25,7 @@ define(
     '../../lib/callbacks/Callback'
     '../../lib/StringUtils'
     '../../lib/ZimbraUtils'
+    '../../lib/LearningClipUtils'
     '../../zimbra/ajax/events/AjxListener'
     '../../zimbra/ajax/dwt/core/Dwt'
     '../../zimbra/ajax/dwt/widgets/DwtComposite'
@@ -52,6 +53,7 @@ define(
     Callback_1
     StringUtils_1
     ZimbraUtils_1
+    LearningClipUtils_1
     AjxListener_1
     Dwt_1
     DwtComposite_1
@@ -89,6 +91,7 @@ define(
     Callback = Callback_1.Callback
     StringUtils = StringUtils_1.StringUtils
     ZimbraUtils = ZimbraUtils_1.ZimbraUtils
+    LearningClipUtils = LearningClipUtils_1.LearningClipUtils
 
     WindowBase = WindowBase_1.WindowBase
     Conversation = Conversation_1.Conversation
@@ -171,7 +174,7 @@ define(
         document.getElementById(@mTitleLbl.getHTMLElId() + "_title").className += " RoomWindowTitleBar-TitleLabel"
         @mTitleLbl.getHtmlElement()
         @mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(@, @onTitleBarClick))
-        @mTitleLbl.setText(room.getTitle())
+        @setTitle(room.getTitle())
         @setIcon("#{@room.getRoomStatus().getCSS()}")
         @mTitlebar.addFiller()
         @mainMenuButton = new RoomWindowMenuButton(@, @mTitlebar, @mRoomWindowPluginManager)
@@ -248,6 +251,9 @@ define(
         @room.getId()
 
       setTitle: (title) ->
+        if title.length > 25
+          @mTitleLbl.setToolTipContent(title)
+          title = LearningClipUtils.clip(title, WindowBase.MAX_TITLE_LENGTH, "DwtDialogTitle ZxChatWindowTitle")
         @mTitleLbl.setText(title)
 
       setIcon: (icon) ->
