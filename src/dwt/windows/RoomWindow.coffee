@@ -234,7 +234,7 @@ define(
 #        )
         @conversation.setSize(
           Dwt.DEFAULT
-          "#{RoomWindow.HEIGHT - inputToolbar.getSize().y - @mTitlebar.getSize().y - @mWritingStatusDots.getSize().y}px"
+          "#{RoomWindow.HEIGHT - inputToolbar.getSize().y - @mTitlebar.getSize().y - @mWritingStatusDots.getSize().y - 10}px" # -10 due to top padding
         )
         @inputField.setSize(
           "#{RoomWindow.WIDTH - 80}px" # @emoticonBtn.getSize().x
