@@ -20,6 +20,7 @@ export class WindowsPositionContainer {
   private windows: {[position: number]: string} = {};
 
   public setWindowPosition(windowId: string, position: number): void {
+    this.remove(windowId);
     this.positions[windowId] = position;
     this.windows[position] = windowId;
   }
