@@ -45,7 +45,7 @@ export class RoomWindowShowHistoryMenuItemPlugin implements ChatPlugin {
 
   private static showHistory(roomWindow: RoomWindow): void {
     let ids: string[] = [];
-    for (let buddy of roomWindow.room.getMembers()) {
+    for (let buddy of roomWindow.getRoom().getMembers()) {
       ids.push("from:(" + (buddy.getId()) + ")");
     }
     appCtxt.getSearchController().search(

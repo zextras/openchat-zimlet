@@ -334,7 +334,7 @@ export class WindowBase extends DwtBaseDialog {
     this.setExpanded();
   }
 
-  private closeCallback(ev: any): void {
+  protected closeCallback(ev: any): void {
     if (typeof ev !== "undefined") {
       if (typeof ev.stopPropagation !== "undefined") {
         ev.stopPropagation();
