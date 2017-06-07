@@ -57,6 +57,7 @@ import {MessageSent} from "../../client/MessageSent";
 
 export class RoomWindow extends WindowBase {
 
+  public static PluginName: string = "Room Window";
   public static AddButtonPlugin: string = "Room Window Add Button";
   public static BuddyStatusChangedPlugin: string = "Room Window Buddy Status Changed";
   public static DEFAULT_ICON: string = "ImgZxChat_personalized_brand";
@@ -207,6 +208,7 @@ export class RoomWindow extends WindowBase {
     );
     this.setView(this.mContainerView);
     this.mTimeoutWrittenStatus = 5000;
+    this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.PluginName);
 
   }
 
