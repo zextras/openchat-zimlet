@@ -19,7 +19,7 @@ import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {RoomWindowManager} from "../dwt/windows/RoomWindowManager";
 import {EventManager} from "../client/events/EventManager";
 import {EventSessionRegistered} from "../client/events/chat/EventSessionRegistered";
-import {EventSessionRegisteredHistoryEnabledPlugin} from "./history/EventSessionRegisteredHistoryEnabledPlugin";
+import {EventSessionRegisteredHistoryEnabledHandler} from "./history/EventSessionRegisteredHistoryEnabledHandler";
 import {RoomWindowManagerIsHistoryEnabledPlugin} from "./history/RoomWindowManagerIsHistoryEnabledPlugin";
 import {BuddyTreeItemActionMenuFactory} from "../dwt/widgets/BuddyTreeItemActionMenuFactory";
 import {MainWindowShowHistoryMenuItemPlugin} from "./history/MainWindowShowHistoryMenuItemPlugin";
@@ -32,7 +32,8 @@ export class HistoryPlugin {
     mainWindowPluginManager: ChatPluginManager,
     roomWindowManagerPluginManager: ChatPluginManager
   ) {
-    eventManager.registerEventPlugin(EventSessionRegistered.ID, new EventSessionRegisteredHistoryEnabledPlugin());
+    eventManager.addEventHandler(new EventSessionRegisteredHistoryEnabledHandler());
+
     mainWindowPluginManager.registerPlugin(BuddyTreeItemActionMenuFactory.AddMenuItemPlugin, new MainWindowShowHistoryMenuItemPlugin());
     roomWindowManagerPluginManager.registerPlugin(RoomWindowManager.AddRoomWindowPlugin, new RoomWindowManagerIsHistoryEnabledPlugin());
     roomWindowManagerPluginManager.registerPlugin(RoomWindowManager.CreateRoomWindowPluginManager, new RoomWindowManagerHistoryPlugin());

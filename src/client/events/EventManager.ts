@@ -24,16 +24,9 @@ import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 export class EventManager {
 
   protected mHandlersMap: {[eventType: number]: ChatEventHandler[]};
-  private mPluginManager: ChatPluginManager;
 
   constructor() {
     this.mHandlersMap = {};
-    this.mPluginManager = new ChatPluginManager();
-    this.mPluginManager.switchOn(this);
-  }
-
-  public registerEventPlugin(eventId: number, plugin: ChatPlugin) {
-    this.mPluginManager.registerPlugin(String(eventId), plugin);
   }
 
   public addEventHandler(handler: ChatEventHandler): void {
@@ -49,7 +42,6 @@ export class EventManager {
       for (let handler of this.mHandlersMap[chatEvent.getCode()]) {
         handled = handler.handleEvent(chatEvent, client);
       }
-      this.mPluginManager.triggerPlugins(String(chatEvent.getCode()), chatEvent, client);
     }
     return handled;
   }
