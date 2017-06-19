@@ -36,7 +36,7 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
   constructor(shell: DwtShell, client: ChatClient, callback: Callback) {
     super({
       parent: shell,
-      standardButtons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
+      buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
       id: IdGenerator.generateId("ZxChat_DeleteBuddyDialog")
     });
     this.client = client;
@@ -66,7 +66,7 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
   }
 
   private _yesBtnListener(): void {
-    if (typeof this.buddy === null) {
+    if (typeof this.buddy !== null) {
       this.client.deleteFriendship(this.buddy, this.onDeletedCallback);
     }
     this.popdown();
