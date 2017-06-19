@@ -19,7 +19,7 @@
   padding-bottom: 5px
 
 .ZxChat_MessageContainer
-  padding: 0 5px 16px 5px
+  padding: 7px 5px 7px 5px
   clear: both
 
 .ZxChat_MessageOuterContainer
@@ -70,13 +70,19 @@
 .ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-left
   visibility: collapse
 
+.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer
+  float: right
+
+.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer
+  float: left
+
 //Prevent any fontsize overwrite (related to ZXCHAT-36 with MsgBody className)
 .ZxChat_MessageContent, .ZxChat_MessageContent *
   font-size: 1em !important
   max-width: 217px
 
-.ZxChat_MessageContainer[sender=true] > .ZxChat_Message
-  float: right
+.ZxChat_MessageContainer[sender=true]
+  text-align: right
 
 .ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageSenderDate
   text-align: right
