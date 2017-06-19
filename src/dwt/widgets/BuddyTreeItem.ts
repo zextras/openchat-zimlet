@@ -36,6 +36,7 @@ import {DwtDragEvent} from "../../zimbra/ajax/dwt/dnd/DwtDragEvent";
 import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
 import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
 
 export class BuddyTreeItem extends DwtTreeItem {
 
@@ -72,7 +73,10 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.hideIfOffline = false;
     this.historyEnabled = false;
 
-    this._treeItemExtraImgClass = "ZxChat_BuddyTreeItem-ExtraImg";
+    // if (ZimbraUtils.isUniversalUI()) {
+    //   let iconEl = document.getElementById(`${this.getHTMLElId()}_imageCell`);
+    //   if (typeof iconEl !== "undefined") iconEl.className += " BuddyTreeItem-IconImg";
+    // }
     this.setImage(this.refBuddy.getStatus().getCSS());
     this.setText(treeText);
     let dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE);
@@ -183,6 +187,10 @@ export class BuddyTreeItem extends DwtTreeItem {
 
   public _initialize(index?: number, realizeDeferred?: boolean, forceNode?: boolean): void {
     super._initialize(index, realizeDeferred, forceNode);
+    if (ZimbraUtils.isUniversalUI()) {
+      let iconEl = document.getElementById(`${this.getHTMLElId()}_imageCell`);
+      if (typeof iconEl !== "undefined") iconEl.className += " BuddyTreeItem-IconImg";
+    }
     this._updateVisibility();
   }
 

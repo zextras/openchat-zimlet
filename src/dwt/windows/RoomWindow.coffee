@@ -180,7 +180,7 @@ define(
           className: "ZToolbarButton ZxChat_Button ZxChat_TitleBar_Button"
         })
         if ZimbraUtils.isUniversalUI()
-          @mCloseButton.setImage("Close")
+          @mCloseButton.setImage("Close,color=#b4d7eb")
         else
           @mCloseButton.setImage("ZxChat_close")
         @mCloseButton.addSelectionListener(new AjxListener(@, @closeCallback))
