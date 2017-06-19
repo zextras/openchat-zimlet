@@ -50,13 +50,13 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
 
   private static sendHistory(roomWindow: RoomWindow): void {
     let body = RoomWindowSendHistoryMenuItemPlugin.getFormattedConversionHistory(
-      roomWindow.room,
-      roomWindow.dateProvider,
+      roomWindow.getRoom(),
+      roomWindow.getDateProvider(),
       Room.FORMAT_PLAIN
     );
     let recipients: string = "",
       nicknames: string[] = [];
-    for (let buddy of roomWindow.room.getMembers()) {
+    for (let buddy of roomWindow.getRoom().getMembers()) {
       nicknames.push(buddy.getNickname());
       recipients += "\"" + buddy.getNickname() + "\" <" + buddy.getId() + ">;";
     }

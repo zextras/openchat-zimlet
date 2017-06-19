@@ -90,9 +90,8 @@ export class DosFilterImp implements DosFilter {
     }
   }
 
-  private onExecuteAccumulator(accumulator: DosFilterAccumulator): void {
+  private onExecuteAccumulator(requests: Request[]): void {
     this.mAccumulator = void 0;
-    let requests: Request[] = accumulator.getRequests();
     for (let i: number = 0; i < requests.length; i += 1) {
       this.sendRequest(requests[i]);
     }

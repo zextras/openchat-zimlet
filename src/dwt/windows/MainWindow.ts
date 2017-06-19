@@ -591,7 +591,7 @@ export class MainWindow extends WindowBase {
     }
   }
 
-  private handleMinimized(minimized: boolean, save: boolean = true): void {
+  private handleMinimized(minimized: boolean, window: WindowBase, save: boolean = true): void {
     if (typeof this.mSettingsManager !== "undefined" && this.mSettingsManager !== null && save) {
       this.mSettingsManager.set(Setting.IM_USR_PREF_DOCK_UP, !minimized);
     }
@@ -616,6 +616,7 @@ export class MainWindow extends WindowBase {
 
   private resetSearchField(): void {
     this.mSearchInput.setValue("");
+    this.mBuddyListTree.applyFilter("");
     this.mSearchButton.setImage("Search2");
   }
 

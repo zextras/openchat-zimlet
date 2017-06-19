@@ -47,7 +47,7 @@ export class DosFilterAccumulator {
       throw new Error("Cannot execute an already executed DosFilterAccumulator");
     }
     this.mExecuted = true;
-    this.mOnExecute.run(this);
+    this.mOnExecute.run(this.getRequests());
   }
 
   public executed(): boolean {

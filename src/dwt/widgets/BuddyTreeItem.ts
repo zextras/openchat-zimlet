@@ -40,7 +40,7 @@ import {ZimbraUtils} from "../../lib/ZimbraUtils";
 
 export class BuddyTreeItem extends DwtTreeItem {
 
-  public static MAX_LENGTH: number = 133;
+  public static MAX_LENGTH: number = 200;
 
   public isBuddyTreeItem: boolean = true;
 
