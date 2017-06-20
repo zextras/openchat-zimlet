@@ -132,7 +132,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this._updateVisibility();
   }
 
-  private _onDeleteBuddy(ev: DwtSelectionEvent): void {
+  public _onDeleteBuddy(ev: DwtSelectionEvent): void {
     this.onDeleteBuddyCallbacks.run(this.refBuddy);
   }
 
@@ -140,7 +140,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onRenameBuddyCallbacks.addCallback(callback);
   }
 
-  private _onRenameBuddy(ev: DwtSelectionEvent): void {
+  public _onRenameBuddy(ev: DwtSelectionEvent): void {
     this.onRenameBuddyCallbacks.run(this.refBuddy);
   }
 
@@ -148,7 +148,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onSendInvitationCallbacks.addCallback(callback);
   }
 
-  private _onSendInvitation(ev: DwtSelectionEvent): void {
+  public _onSendInvitation(ev: DwtSelectionEvent): void {
     this.onSendInvitationCallbacks.run(this.refBuddy);
   }
 
@@ -156,7 +156,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onAcceptInvitationCallbacks.addCallback(callback);
   }
 
-  private _onAcceptInvitation(ev: DwtSelectionEvent): void {
+  public _onAcceptInvitation(ev: DwtSelectionEvent): void {
     this.onAcceptInvitationCallbacks.run(this.refBuddy);
   }
 
