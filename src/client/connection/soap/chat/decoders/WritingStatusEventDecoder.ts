@@ -20,13 +20,14 @@ import {ChatEvent} from "../../../../events/ChatEvent";
 import {WritingStatusEvent} from "../../../../events/chat/WritingStatusEvent";
 import {LeftConversationEvent} from "../../../../events/chat/LeftConversationEvent";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class WritingStatusEventDecoder extends SoapEventDecoder {
 
   public mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(WritingStatusEvent.ID);
+    super(OpenChatEventCode.WRITING_STATUS);
     this.mDateProvider = dateProvider;
   }
 

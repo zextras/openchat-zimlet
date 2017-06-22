@@ -16,12 +16,11 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class WritingStatusEvent extends ChatEvent {
 
   // TODO: Investigate about the encoding/decoding of the date field.
-
-  public static ID: number = 9;
 
   public static RESET: number = -1;
   public static WRITTEN: number = 0;
@@ -31,7 +30,7 @@ export class WritingStatusEvent extends ChatEvent {
   private mValue: number;
 
   constructor(sender: string, destination: string, eventDate: Date, creationDate: Date, value: number = WritingStatusEvent.RESET) {
-    super(WritingStatusEvent.ID, creationDate, false);
+    super(OpenChatEventCode.WRITING_STATUS, creationDate, false);
     if (typeof sender !== "undefined" && sender !== null)
       this.setSender(sender);
     if (typeof destination !== "undefined" && destination !== null)

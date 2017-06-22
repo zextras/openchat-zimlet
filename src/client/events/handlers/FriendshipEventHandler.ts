@@ -20,6 +20,7 @@ import {ChatClient} from "../../ChatClient";
 import {FriendshipEvent} from "../chat/FriendshipEvent";
 import {EventManager} from "../EventManager";
 import {ChatEventHandler} from "./ChatEventHandler";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class FriendshipEventHandler extends EventManager implements ChatEventHandler {
 
@@ -31,7 +32,7 @@ export class FriendshipEventHandler extends EventManager implements ChatEventHan
   }
 
   public getEventCode(): number {
-    return FriendshipEvent.ID;
+    return OpenChatEventCode.FRIENDSHIP;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

@@ -16,15 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class RemoveFriendshipEvent extends ChatEvent {
-
-  public static ID: number = 22;
 
   private mNickname: string;
 
   constructor(buddyId: string, nickname: string, creationDate: Date) {
-    super(RemoveFriendshipEvent.ID, creationDate, false);
+    super(OpenChatEventCode.REMOVE_FRIENDSHIP, creationDate, false);
     if (typeof buddyId !== "undefined" && buddyId !== null)
       this.setDestination(buddyId);
     this.mNickname = nickname;

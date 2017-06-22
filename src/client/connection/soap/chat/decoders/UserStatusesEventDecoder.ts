@@ -20,12 +20,13 @@ import {DateProvider} from "../../../../../lib/DateProvider";
 import {UserStatusesEvent} from "../../../../events/chat/UserStatusesEvent";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {BuddyStatus} from "../../../../BuddyStatus";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class UserStatusesEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(UserStatusesEvent.ID);
+    super(OpenChatEventCode.USER_STATUSES);
     this.mDateProvider = dateProvider;
   }
 

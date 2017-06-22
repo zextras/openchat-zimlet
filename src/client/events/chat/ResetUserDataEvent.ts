@@ -16,15 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class ResetUserDataEvent extends ChatEvent {
-
-  public static ID: number = 20;
 
   private mResetBuddyList: boolean;
 
   constructor(resetBuddyList: boolean = false, creationDate: Date) {
-    super(ResetUserDataEvent.ID, creationDate, false);
+    super(OpenChatEventCode.RESET_USER_DATA, creationDate, false);
     this.mResetBuddyList = resetBuddyList;
   }
 

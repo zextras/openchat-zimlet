@@ -18,11 +18,12 @@
 import {SoapEventEncoder} from "./SoapEventEncoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {MessageAckEvent} from "../../../../events/chat/MessageAckEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class MessageAckEventEncoder extends SoapEventEncoder {
 
   constructor() {
-    super(MessageAckEvent.ID);
+    super(OpenChatEventCode.MESSAGE_ACK);
   }
 
   protected getEventDetails(event: ChatEvent): {} {

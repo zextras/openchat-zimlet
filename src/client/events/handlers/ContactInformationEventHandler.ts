@@ -20,11 +20,12 @@ import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
 import {ContactInformationEvent} from "../chat/ContactInformationEvent";
 import {MessageType} from "../chat/MessageEvent";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class ContactInformationEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return ContactInformationEvent.ID;
+    return OpenChatEventCode.CONTACT_INFORMATION;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

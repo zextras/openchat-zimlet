@@ -18,11 +18,12 @@
 import {SoapEventEncoder} from "./SoapEventEncoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {RenameGroupEvent} from "../../../../events/chat/RenameGroupEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class RenameGroupEventEncoder extends SoapEventEncoder {
 
   constructor() {
-    super(RenameGroupEvent.ID);
+    super(OpenChatEventCode.RENAME_GROUP);
   }
 
   protected getEventDetails(event: ChatEvent): {} {

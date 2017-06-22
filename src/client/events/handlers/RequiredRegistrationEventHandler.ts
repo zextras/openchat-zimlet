@@ -16,14 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
-import {RequiredRegistrationEvent} from "../chat/RequiredRegistrationEvent";
 import {ChatEventHandler} from "./ChatEventHandler";
 import {ChatClient} from "../../ChatClient";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class RequiredRegistrationEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return RequiredRegistrationEvent.ID;
+    return OpenChatEventCode.REQUIRED_REGISTRATION;
   }
 
   public handleEvent(event: ChatEvent, client: ChatClient): boolean {

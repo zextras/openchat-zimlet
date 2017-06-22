@@ -19,11 +19,12 @@ import {ChatEventHandler} from "./ChatEventHandler";
 import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
 import {ErrorEvent} from "../chat/ErrorEvent";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class ErrorEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return ErrorEvent.ID;
+    return OpenChatEventCode.ERROR;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

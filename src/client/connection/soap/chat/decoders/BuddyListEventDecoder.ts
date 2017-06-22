@@ -23,12 +23,13 @@ import {Buddy} from "../../../../Buddy";
 import {BuddyStatus} from "../../../../BuddyStatus";
 import {DateProvider} from "../../../../../lib/DateProvider";
 import {BuddyImp} from "../../../../BuddyImp";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class BuddyListEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(BuddyListEvent.ID);
+    super(OpenChatEventCode.BUDDY_LIST);
     this.mDateProvider = dateProvider;
   }
 

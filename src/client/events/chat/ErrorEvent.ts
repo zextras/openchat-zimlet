@@ -16,14 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class ErrorEvent extends ChatEvent {
 
-  public static ID: number = 14;
   private mError: any;
 
   constructor(error: any, creationDate: Date) {
-    super(ErrorEvent.ID, creationDate, true);
+    super(OpenChatEventCode.ERROR, creationDate, true);
     this.mError = error;
   }
 

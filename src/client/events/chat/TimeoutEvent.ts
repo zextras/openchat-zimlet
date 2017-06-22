@@ -16,12 +16,12 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class TimeoutEvent extends ChatEvent {
 
-  public static ID: number = 8;
-
   constructor(creationDate: Date) {
-    super(TimeoutEvent.ID, creationDate, false);
+    super(OpenChatEventCode.TIMEOUT, creationDate, false);
   }
+
 }

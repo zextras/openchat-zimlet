@@ -26,10 +26,12 @@ import {Buddy} from "../../Buddy";
 import {Room} from "../../Room";
 import {MessageSent} from "../../MessageSent";
 import {ChatPluginManager} from "../../../lib/plugin/ChatPluginManager";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class MessageEventHandler implements ChatEventHandler {
+
   public getEventCode(): number {
-    return MessageEvent.ID;
+    return OpenChatEventCode.MESSAGE;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
