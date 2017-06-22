@@ -20,16 +20,16 @@ import {RoomManager} from "../../client/RoomManager";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 import {RoomStoreMessageInHistoryPlugin} from "./RoomStoreMessageInHistoryPlugin";
-import {Room} from "../../client/Room";
+import {RoomImp} from "../../client/RoomImp";
 
 export class RoomManagerHistoryPlugin implements ChatPlugin {
 
   public trigger(roomManager: RoomManager, roomPluginManager: ChatPluginManager): void {
     roomPluginManager.registerFieldPlugin(RoomHistoryFieldPlugin.FieldName, new RoomHistoryFieldPlugin());
     let messageStore: RoomStoreMessageInHistoryPlugin = new RoomStoreMessageInHistoryPlugin();
-    roomPluginManager.registerPlugin(Room.MessageSentPlugin, messageStore);
-    roomPluginManager.registerPlugin(Room.MessageSentFromAnotherSessionPlugin, messageStore);
-    roomPluginManager.registerPlugin(Room.MessageReceivedPlugin, messageStore);
+    roomPluginManager.registerPlugin(RoomImp.MessageSentPlugin, messageStore);
+    roomPluginManager.registerPlugin(RoomImp.MessageSentFromAnotherSessionPlugin, messageStore);
+    roomPluginManager.registerPlugin(RoomImp.MessageReceivedPlugin, messageStore);
   }
 
 }

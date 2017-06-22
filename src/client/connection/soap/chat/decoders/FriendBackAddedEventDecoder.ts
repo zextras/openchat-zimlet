@@ -22,6 +22,7 @@ import {Buddy} from "../../../../Buddy";
 import {BuddyStatusType} from "../../../../BuddyStatusType";
 import {BuddyStatus} from "../../../../BuddyStatus";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {BuddyImp} from "../../../../BuddyImp";
 
 export class FriendBackAddedEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -38,7 +39,7 @@ export class FriendBackAddedEventDecoder extends SoapEventDecoder {
     },
     originEvent?: ChatEvent
   ): ChatEvent {
-    let buddy: Buddy = new Buddy(
+    let buddy: Buddy = new BuddyImp(
       eventObj["buddyAddress"],
       eventObj["buddyNickname"]
     );

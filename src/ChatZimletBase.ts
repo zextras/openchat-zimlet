@@ -79,6 +79,7 @@ import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
 import {JQueryPlugins} from "./jquery/JQueryPlugins";
 import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
 import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
+import {ChatClientImp} from "./client/ChatClientImp";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -211,7 +212,7 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mCoreNotFoundNotified = false;
     this.m502Errors = 0;
 
-    this.mChatClient = new ChatClient(
+    this.mChatClient = new ChatClientImp(
       this.mSessionInfoProvider,
       this.mDateProvider,
       this.mConnectionManager,
@@ -430,7 +431,7 @@ export class ChatZimletBase extends ZmZimletBase {
       new BuddyStatus(BuddyStatusType.AWAY, "", 3),
       new BuddyStatus(BuddyStatusType.INVISIBLE, "", 4)
     ];
-    this.mChatClient.getPluginManager().triggerPlugins(ChatClient.SetStatusesPlugin, this.mUserStatuses);
+    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.SetStatusesPlugin, this.mUserStatuses);
     let currentStatus: BuddyStatus = this.mChatClient.getCurrentStatus();
     this.mMainWindow.setCurrentStatus(currentStatus);
     this.mMainWindow.setUserStatuses(this.mUserStatuses);
@@ -668,7 +669,7 @@ export class ChatZimletBase extends ZmZimletBase {
 
   private statusSelected(status: BuddyStatus): void {
     let callback: Callback = new Callback(this, this.setStatus);
-    this.mChatClient.getPluginManager().triggerPlugins(ChatClient.StatusSelectedPlugin, status, callback);
+    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.StatusSelectedPlugin, status, callback);
     callback.run(status);
   }
 

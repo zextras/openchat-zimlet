@@ -22,6 +22,7 @@ import {Group} from "../../../../Group";
 import {Buddy} from "../../../../Buddy";
 import {BuddyStatus} from "../../../../BuddyStatus";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {BuddyImp} from "../../../../BuddyImp";
 
 export class BuddyListEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -47,7 +48,7 @@ export class BuddyListEventDecoder extends SoapEventDecoder {
         group = new Group(buddyData["group"]);
         groups.push(group);
       }
-      let buddy = new Buddy(
+      let buddy: Buddy = new BuddyImp(
         buddyData["id"],
         buddyData["nickname"]
       );
