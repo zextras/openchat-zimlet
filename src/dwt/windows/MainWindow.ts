@@ -249,6 +249,10 @@ export class MainWindow extends WindowBase {
     return mainMenuButton;
   }
 
+  public getMainMenuButtons(): MainMenuButton[] {
+    return this.mMainMenuButtons;
+  }
+
   protected createBuddyListTree(buddyList: BuddyList): void {
     this.mBuddyListTree = new BuddyListTree(
       this.mContainerView,

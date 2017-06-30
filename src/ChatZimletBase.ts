@@ -509,6 +509,9 @@ export class ChatZimletBase extends ZmZimletBase {
       this.mMainWindow.setMinimized();
       this.mMainWindow.setEnabled(false);
       this.mMainWindow.changeSidebarOrDock(true);
+      for (let btn of this.mMainWindow.getMainMenuButtons()) {
+        btn.setVisible(false);
+      }
     } else {
       msg = StringUtils.getMessage("zxchat_core_missing_body");
     }
