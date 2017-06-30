@@ -49,7 +49,7 @@ export class GroupTreeItemActionMenuFactory {
     });
     optRename.setText(ZmMsg.rename);
     optRename.setImage("rename");
-    optRename.addSelectionListener(new AjxListener(treeItem, treeItem._onRenameGroupSelected));
+    optRename.addSelectionListener(new AjxListener(treeItem, treeItem.renameGroupSelected));
     let optDelete = new DwtMenuItem({
       parent: menu,
       style: DwtMenuItem.IMAGE_LEFT,
@@ -57,7 +57,7 @@ export class GroupTreeItemActionMenuFactory {
     });
     optDelete.setText(ZmMsg.del);
     optDelete.setImage("delete");
-    optDelete.addSelectionListener(new AjxListener(treeItem, treeItem._onDeleteGroupSelected));
+    optDelete.addSelectionListener(new AjxListener(treeItem, treeItem.deleteGroupSelected));
     mainWindowPluginManager.triggerPlugins(GroupTreeItemActionMenuFactory.AddMenuItemPlugin, menu, treeItem);
     return menu;
   }

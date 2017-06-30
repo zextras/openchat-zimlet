@@ -84,7 +84,7 @@ export interface Room {
   /**
    * Register a callback which will be invoked when a member is removed
    */
-  onMemberRemoved(callback: Callback): void
+  onMemberRemoved(callback: Callback): void;
 
   /**
    * Add a message sent

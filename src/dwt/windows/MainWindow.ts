@@ -18,7 +18,7 @@
 import {WindowBase} from "./WindowBase";
 import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
-import {SettingsManager, GroupsData} from "../../settings/SettingsManager";
+import {SettingsManager, GroupData} from "../../settings/SettingsManager";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {BuddyList} from "../../client/BuddyList";
@@ -305,11 +305,11 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.showHideOfflineBuddies(hide);
   }
 
-  public getGroupsData(): GroupsData {
+  public getGroupsData(): GroupData[] {
     return this.mBuddyListTree.getGroupsData();
   }
 
-  public setGroupsData(data: GroupsData): void {
+  public setGroupsData(data: GroupData[]): void {
     return this.mBuddyListTree.setGroupsData(data);
   }
 

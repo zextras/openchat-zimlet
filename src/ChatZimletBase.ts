@@ -25,7 +25,7 @@ import {ZmSetting} from "./zimbra/zimbraMail/share/model/ZmSetting";
 import {StringUtils} from "./lib/StringUtils";
 import {ZmStatusView} from "./zimbra/zimbraMail/share/view/ZmStatusView";
 import {Version} from "./lib/Version";
-import {SettingsManager, GroupsData} from "./settings/SettingsManager";
+import {SettingsManager, GroupData} from "./settings/SettingsManager";
 import {Setting} from "./settings/Setting";
 import {ChatClient} from "./client/ChatClient";
 import {NotificationManager} from "./lib/notifications/NotificationManager";
@@ -254,8 +254,8 @@ export class ChatZimletBase extends ZmZimletBase {
       Setting.IM_PREF_DESKTOP_ALERT,
       new Callback(this.mNotificationManager, this.mNotificationManager.setDesktopEnabled)
     );
-    let userGroupsData: GroupsData = this.mSettingsManager.loadGroupsData();
-    for (let groupData of (<{name: string}[]>userGroupsData)) {
+    let userGroupsData: GroupData[] = this.mSettingsManager.loadGroupsData();
+    for (let groupData of userGroupsData) {
       this.mChatClient.getBuddyList().addGroup(new Group(groupData.name));
     }
 

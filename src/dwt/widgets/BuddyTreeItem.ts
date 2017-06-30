@@ -36,12 +36,11 @@ import {DwtDragEvent} from "../../zimbra/ajax/dwt/dnd/DwtDragEvent";
 import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
 import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
+import {DwtChatTreeItem} from "./DwtChatTreeItem";
 
-export class BuddyTreeItem extends DwtTreeItem {
+export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
 
   public static MAX_LENGTH: number = 200;
-
-  public isBuddyTreeItem: boolean = true;
 
   private appCtxt: ZmAppCtxt;
   private refBuddy: Buddy;
@@ -85,6 +84,14 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onSendInvitationCallbacks = new CallbackManager();
     this.onAcceptInvitationCallbacks = new CallbackManager();
     this.setToolTipContent(new AjxCallback(this, this._createTooltip));
+  }
+
+  public isGroupTreeItem(): boolean {
+    return false;
+  }
+
+  public isBuddyTreeItem(): boolean {
+    return true;
   }
 
   public getBuddy(): Buddy {
