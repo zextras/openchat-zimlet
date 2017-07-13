@@ -625,4 +625,9 @@ export class SettingsDialog extends DwtDialog {
   public getErrorTextArea(): DwtInputField {
     return this.mErrorTextArea;
   }
+
+  public popdown(): void {
+    super.popdown();
+    this.mOnPopDownSwitchToFirstTabCallback.run();
+  }
 }
