@@ -209,7 +209,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     buddy.onNicknameChange(new Callback(this, this.sort));
     this.updateCounter();
     for (let child of this.getChildren()) {
-      if (child instanceof BuddyTreeItem) {
+      if (child.isGroupTreeItem()) {
         this._expand(this.mOriginalExpanded, null, null, false);
         break;
       }
