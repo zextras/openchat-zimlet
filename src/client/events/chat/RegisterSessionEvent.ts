@@ -17,15 +17,14 @@
 
 import {ChatEvent} from "../ChatEvent";
 import {Version} from "../../../lib/Version";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class RegisterSessionEvent extends ChatEvent {
-
-  public static ID: number = 16;
 
   private mClientVersion: Version;
 
   constructor(clientVersion: Version, creationDate: Date) {
-    super(RegisterSessionEvent.ID, creationDate, false);
+    super(OpenChatEventCode.REGISTER_SESSION, creationDate, false);
     this.mClientVersion = clientVersion;
   }
 

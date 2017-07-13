@@ -22,11 +22,12 @@ import {ChatClient} from "../../ChatClient";
 import {Buddy} from "../../Buddy";
 import {BuddyList} from "../../BuddyList";
 import {Group} from "../../Group";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class FriendBackAddedEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return FriendBackAddedEvent.ID;
+    return OpenChatEventCode.FRIEND_BACK_ADDED;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

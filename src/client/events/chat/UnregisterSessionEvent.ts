@@ -16,13 +16,12 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class UnregisterSessionEvent extends ChatEvent {
 
-  public static ID: number = 18;
-
   constructor(creationDate: Date) {
-    super(UnregisterSessionEvent.ID, creationDate, false);
+    super(OpenChatEventCode.UNREGISTER_SESSION, creationDate, false);
   }
 
 }

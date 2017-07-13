@@ -20,10 +20,11 @@ import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
 import {EventSessionRegistered} from "../chat/EventSessionRegistered";
 import {Version} from "../../../lib/Version";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class EventSessionRegisteredHandler implements ChatEventHandler {
   public getEventCode(): number {
-    return EventSessionRegistered.ID;
+    return OpenChatEventCode.REGISTER_SESSION;
   }
 
   handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

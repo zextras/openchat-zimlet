@@ -31,6 +31,7 @@ import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 import {MessageReceived} from "../../client/MessageReceived";
 import {HTMLUtils} from "../../lib/HTMLUtils";
 import {MessageSent} from "../../client/MessageSent";
+import {RoomImp} from "../../client/RoomImp";
 
 export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
 
@@ -52,7 +53,7 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
     let body = RoomWindowSendHistoryMenuItemPlugin.getFormattedConversionHistory(
       roomWindow.getRoom(),
       roomWindow.getDateProvider(),
-      Room.FORMAT_PLAIN
+      RoomImp.FORMAT_PLAIN
     );
     let recipients: string = "",
       nicknames: string[] = [];
@@ -73,9 +74,9 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
   /**
    * Get the history of the conversation in a human-readable format
    */
-  private static getFormattedConversionHistory(room: Room, dateProvider: DateProvider, format: string = Room.FORMAT_PLAIN): string {
+  private static getFormattedConversionHistory(room: Room, dateProvider: DateProvider, format: string = RoomImp.FORMAT_PLAIN): string {
     switch (format) {
-      case Room.FORMAT_HTML:
+      case RoomImp.FORMAT_HTML:
         return RoomWindowSendHistoryMenuItemPlugin.getHtmlFormattedHistory(room, dateProvider);
       default:
         return RoomWindowSendHistoryMenuItemPlugin.getPlainFormattedHistory(room, dateProvider);

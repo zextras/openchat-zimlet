@@ -82,8 +82,8 @@ export class EmojiOnePicker extends DwtMenu {
       );
     }
 
-    let wSize: number = (EmojiTemplate.NAMES.length * 48) + 25;
-    let hSize: number = (EmojiOnePicker.hEmojiToolBarBtn * 5) + 25;
+    let wSize: number = (EmojiTemplate.NAMES.length * 48) + 20;
+    let hSize: number = (EmojiOnePicker.hEmojiToolBarBtn * 5) + 40;
     this.setSize(
       `${wSize}px`,
       `${hSize + 5}px`

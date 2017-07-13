@@ -15,401 +15,166 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BuddyStatusType} from "./BuddyStatusType";
-import {CallbackManager} from "../lib/callbacks/CallbackManager";
 import {BuddyStatus} from "./BuddyStatus";
-import {DateProvider} from "../lib/DateProvider";
 import {Buddy} from "./Buddy";
 import {Callback} from "../lib/callbacks/Callback";
 import {MessageSent} from "./MessageSent";
 import {Message} from "./Message";
 import {MessageReceived} from "./MessageReceived";
 import {ChatEvent} from "./events/ChatEvent";
-import {WritingStatusEvent} from "./events/chat/WritingStatusEvent";
-import {StringUtils} from "../lib/StringUtils";
-import {Logger} from "../lib/log/Logger";
 import {MessageWritingStatus} from "./MessageWritingStatus";
 import {MessageType} from "./events/chat/MessageEvent";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 
-export class Room {
+export interface Room {
 
-  public static Plugin = "Room";
-  public static MessageSentPlugin = "Room Message Sent";
-  public static MessageSentFromAnotherSessionPlugin = "Room Message Sent From Another Session";
-  public static MessageReceivedPlugin = "Room Message Received";
-  public static WritingStatusPlugin = "Room Writing Status Plugin";
-
-  public static FORMAT_PLAIN: string = "plain";
-  public static FORMAT_HTML: string = "html";
-
-  private id: string;
-  private title: string;
-  private mDateProvider: DateProvider;
-  private mLastActivity: number = 0;
-  private members: Buddy[];
-  private roomStatus: BuddyStatus;
-  private mOfflineMessage: string;
-  private onTitleChangeCallbacks: CallbackManager;
-  private onAddMemberCallbacks: CallbackManager;
-  private onRemovedMemberCallbacks: CallbackManager;
-  private onSendEventCallbacks: CallbackManager;
-  private onSendMessageCallbacks: CallbackManager;
-  private onAddMessageReceivedCallbacks: CallbackManager;
-  private onAddMessageSentCallbacks: CallbackManager;
-  private onAddMessageSentFromAnotherSessionCallbacks: CallbackManager;
-  private onBuddyStatusChangeCallbacks: CallbackManager;
-  private onRoomStatusChangeCallbacks: CallbackManager;
-  private onBuddyWritingStatusCallbacks: CallbackManager;
-  private onTriggeredPopupCallbacks: CallbackManager;
-  private mRoomPluginManager: ChatPluginManager;
-  protected Log: Logger;
-
-  constructor(
-    id: string,
-    title: string,
-    dateProvider: DateProvider,
-    roomPluginManager: ChatPluginManager
-  ) {
-    this.id = id;
-    this.title = title;
-    this.mDateProvider = dateProvider;
-    this.members = [];
-    this.roomStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
-    this.onTitleChangeCallbacks = new CallbackManager();
-    this.onAddMemberCallbacks = new CallbackManager();
-    this.onAddMember(new Callback(this, this.updateRoomStatus));
-    this.onRemovedMemberCallbacks = new CallbackManager();
-    this.onMemberRemoved(new Callback(this, this.updateRoomStatus));
-    this.onSendEventCallbacks = new CallbackManager();
-    this.onSendMessageCallbacks = new CallbackManager();
-    this.onSendMessage(new Callback(this, this.addMessageSent));
-    this.onAddMessageReceivedCallbacks = new CallbackManager();
-    this.onAddMessageSentCallbacks = new CallbackManager();
-    this.onAddMessageSentFromAnotherSessionCallbacks = new CallbackManager();
-    this.onBuddyStatusChangeCallbacks = new CallbackManager();
-    this.onBuddyStatusChange(new Callback(this, this.updateRoomStatus));
-    this.onRoomStatusChangeCallbacks = new CallbackManager();
-    this.onBuddyWritingStatusCallbacks = new CallbackManager();
-    this.onTriggeredPopupCallbacks = new CallbackManager();
-    this.setOfflineMessage(StringUtils.getMessage("user_offline_messages_will_be_delivered"));
-    this.mRoomPluginManager = roomPluginManager;
-    this.mRoomPluginManager.switchOn(this);
-  }
-
-  public getPluginManager(): ChatPluginManager {
-    return this.mRoomPluginManager;
-  }
+  getPluginManager(): ChatPluginManager;
 
   /**
    * Get the room id
    */
-  public getId(): string {
-    return this.id;
-  }
+  getId(): string;
 
   /**
    * Get the room title
    */
-  public getTitle() {
-    return this.title;
-  }
+  getTitle(): string;
 
   /**
    * Set the room title
    */
-  public setTitle(title: string): void {
-    this.title = title;
-    this.onTitleChangeCallbacks.run(this.title);
-  }
+  setTitle(title: string): void;
 
   /**
    * Set a callback which will be invoked when the title of the room is changed.
    */
-  public onTitleChange(callback: Callback): void {
-    this.onTitleChangeCallbacks.addCallback(callback);
-  }
+  onTitleChange(callback: Callback): void;
 
   /**
    * Get the members of the room
    */
-  public getMembers(): Buddy[] {
-    return this.members;
-  }
+  getMembers(): Buddy[];
 
   /**
    * Add a member to the group
    */
-  public addMember(buddy: Buddy): void {
-    this.members.push(buddy);
-    buddy.onStatusChange(new Callback(this, this._onBuddyStatusChange));
-    buddy.onNicknameChange(new Callback(this, this._onNicknameChange));
-    this.onAddMemberCallbacks.run(buddy);
-  }
+  addMember(buddy: Buddy): void;
 
   /**
    * Get buddy by Id
    * @param buddyId
    * @returns {Buddy}
    */
-  public getBuddyById(buddyId: string): Buddy {
-    for (let intBuddy of this.members) {
-      if (buddyId === intBuddy.getId()) {
-        return intBuddy;
-      }
-    }
-  }
+  getBuddyById(buddyId: string): Buddy;
 
   /**
    * Only for Group Chat
    */
-  public applyBuddyStatus(buddy: Buddy): void {
-    for (let intBuddy of this.members) {
-      if (buddy.getId() === intBuddy.getId()) {
-        intBuddy.setStatus(buddy.getStatus());
-      }
-    }
-  }
+  applyBuddyStatus(buddy: Buddy): void;
 
   /**
    * Set a callback which will be invoked when a member is added to the room
    */
-  public onAddMember(callback: Callback): void {
-    this.onAddMemberCallbacks.addCallback(callback);
-  }
+  onAddMember(callback: Callback): void;
 
-  public removeMember(buddy: Buddy): void {
-    let idx: number[] = [];
-    let index: number = -1;
-    for (let intBuddy of this.members) {
-      index++;
-      if (!(buddy.getId() === intBuddy.getId())) {
-        continue;
-      }
-      idx.push(index);
-    }
-    idx.reverse();
-    for (let tmpIndex of idx) {
-      let spliced = this.members.splice(tmpIndex, 1);
-      this.onRemovedMemberCallbacks.run(spliced);
-    }
-  };
+  removeMember(buddy: Buddy): void;
 
-  public containsBuddy(buddy: Buddy): boolean {
-    for (let intBuddy of this.members) {
-      if (buddy.getId() === intBuddy.getId()) {
-        return true;
-      }
-    }
-    return false;
-  }
-
+  containsBuddy(buddy: Buddy): boolean;
 
   /**
    * Register a callback which will be invoked when a member is removed
    */
-  public onMemberRemoved(callback: Callback): void {
-    return this.onRemovedMemberCallbacks.addCallback(callback);
-  }
+  onMemberRemoved(callback: Callback): void;
 
   /**
    * Add a message sent
    */
-  public addMessageSent(message: MessageSent): void {
-    this.setLastActivity(message);
-    this.onAddMessageSentCallbacks.run(message);
-  }
+  addMessageSent(message: MessageSent): void;
 
 
   /**
    * Add a message sent from another session
    */
-  public addMessageSentFromAnotherSession(message: MessageSent) {
-    this.getPluginManager().triggerPlugins(Room.MessageSentFromAnotherSessionPlugin, message);
-    this.setLastActivity(message);
-    this.onAddMessageSentFromAnotherSessionCallbacks.run(message);
-  }
+  addMessageSentFromAnotherSession(message: MessageSent): void;
 
-  public onAddMessageSent(callback: Callback): void {
-    this.onAddMessageSentCallbacks.addCallback(callback);
-  }
+  onAddMessageSent(callback: Callback): void;
 
-  public onAddMessageSentFromAnotherSession(callback: Callback): void {
-    this.onAddMessageSentFromAnotherSessionCallbacks.addCallback(callback);
-  }
+  onAddMessageSentFromAnotherSession(callback: Callback): void;
 
   /**
    * Add a message received
    */
-  public addMessageReceived(message: MessageReceived): void {
-    this.getPluginManager().triggerPlugins(Room.MessageReceivedPlugin, message);
-    this.setLastActivity(message);
-    this.onAddMessageReceivedCallbacks.run(message);
-  }
+  addMessageReceived(message: MessageReceived): void;
 
-  public onAddMessageReceived(callback: Callback): void {
-    this.onAddMessageReceivedCallbacks.addCallback(callback);
-  }
+  onAddMessageReceived(callback: Callback): void;
 
   /**
    * Set a callback invoked when a send event is requested
    */
-  public onSendEvent(callback: Callback): void {
-    this.onSendEventCallbacks.addCallback(callback);
-  }
+  onSendEvent(callback: Callback): void;
 
-  public _sendEvent(event: ChatEvent, callback?: Callback, errorCallback?: Callback): void {
-    this.onSendEventCallbacks.run(event, callback, errorCallback);
-  }
+  _sendEvent(event: ChatEvent, callback?: Callback, errorCallback?: Callback): void;
 
   /**
    * Set a callback invoked when a send message is requested
    */
-  public onSendMessage(callback: Callback) {
-    this.onSendMessageCallbacks.addCallback(callback);
-  };
+  onSendMessage(callback: Callback): void;
 
   /**
    * Send a message to the room
    */
-  public sendMessage(message: string, messageType: MessageType = MessageType.CHAT): void {
-    let msgObj = new MessageSent(null, this.getId(), this.mDateProvider.getNow(), message);
-    this.getPluginManager().triggerPlugins(Room.MessageSentPlugin, msgObj);
-    this.onSendMessageCallbacks.run(msgObj, messageType);
-  }
+  sendMessage(message: string, messageType?: MessageType): void;
 
   /**
    * Send the writing status when one-to-one-chat
    */
-  public sendWritingStatus(value: number, callback?: Callback, errorCallback?: Callback): void {
-    // if (!this.isGroupChat()) {
-      for (let member of this.members) {
-        let event = new WritingStatusEvent(null, member.getId(), this.mDateProvider.getNow(), this.mDateProvider.getNow(), value);
-        this._sendEvent(event, callback, errorCallback);
-      }
-    // }
-  }
+  sendWritingStatus(value: number, callback?: Callback, errorCallback?: Callback): void;
 
   /**
    Add the writing status event of a buddy in this room.
    */
-  public addWritingStatusEvent(writingStatus: MessageWritingStatus): void {
-    this.getPluginManager().triggerPlugins(Room.WritingStatusPlugin, writingStatus);
-    this.setLastActivity(writingStatus);
-    this.onBuddyWritingStatusCallbacks.run(writingStatus);
-  }
+  addWritingStatusEvent(writingStatus: MessageWritingStatus): void;
 
   /**
    * Set a callback which will be invoked when a buddy of the room change its status
    */
-
-  public onBuddyStatusChange(callback: Callback): void {
-    this.onBuddyStatusChangeCallbacks.addCallback(callback);
-  }
-
-  /**
-   * Manage the status change of a buddy
-   */
-  private _onBuddyStatusChange(buddy: Buddy, status: BuddyStatus): void {
-    this.onBuddyStatusChangeCallbacks.run(buddy, status);
-  }
+  onBuddyStatusChange(callback: Callback): void;
 
   /**
    * Set a callback which will be invoked when a buddy of the room change its status
    */
-  public onRoomStatusChange(callback: Callback): void {
-    this.onRoomStatusChangeCallbacks.addCallback(callback);
-  }
+  onRoomStatusChange(callback: Callback): void;
 
-  /**
-   * Manage the status change of a buddy
-   */
-  private _onRoomStatusChange(status: BuddyStatus): void {
-    this.onRoomStatusChangeCallbacks.run(status);
-  }
-
-  public onBuddyWritingStatus(callback: Callback): void {
-    this.onBuddyWritingStatusCallbacks.addCallback(callback);
-  }
+  onBuddyWritingStatus(callback: Callback): void;
 
   /**
    * Handle the change of a nickname
    */
-  protected _onNicknameChange(nickname: string): void {
-    if (this.members.length === 1) {
-      this.setTitle(nickname);
-    }
-  }
+  _onNicknameChange(nickname: string): void;
 
   /**
    * Get the current room status
    */
-  public getRoomStatus(): BuddyStatus {
-    return this.roomStatus;
-  }
-
-  /**
-   * Get the status of the room, the status is based on the 'best' status of
-   * the room members.
-   */
-  private _calculateRoomStatus(): BuddyStatus {
-    let bestStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
-    for (let buddy of this.members) {
-      if (buddy.getStatus().isMoreAvailableThan(bestStatus)) {
-        bestStatus = buddy.getStatus();
-      }
-    }
-    return bestStatus;
-  }
+  getRoomStatus(): BuddyStatus;
 
   /**
    * Try to update the room status, if is changed, run the callback.
    */
-  public updateRoomStatus(): void {
-    let oldStatusType = this.roomStatus.getType();
-    let newStatus = this._calculateRoomStatus();
-    if (oldStatusType !== newStatus.getType()) {
-      this.roomStatus = newStatus;
-      this._onRoomStatusChange(this.roomStatus);
-    }
-  }
+  updateRoomStatus(): void;
 
   /**
    * Add the nicknames of the buddies inside of the room
    */
-  public getNicknames(delimiter: string = ", "): string {
-    const buddies = [];
-    for (let buddy of this.members) {
-      buddies.push(buddy.getNickname());
-    }
-    return buddies.join(delimiter);
-  }
+  getNicknames(delimiter: string): string ;
 
-  private setLastActivity(message: Message) {
-    if ((typeof message.getDate !== "undefined") && message.getDate().getMilliseconds() > this.mLastActivity) {
-      this.mLastActivity = message.getDate().getMilliseconds();
-    }
-  }
+  getLastActivity(): number;
 
-  public getLastActivity(): number  {
-    return this.mLastActivity;
-  }
+  onTriggeredPopup(callback: Callback): void;
 
-  public onTriggeredPopup(callback: Callback): void {
-    this.onTriggeredPopupCallbacks.addCallback(callback);
-  }
+  triggerPopup(): void;
 
-  public triggerPopup(): void {
-    this.onTriggeredPopupCallbacks.run();
-  }
-  public getOfflineMessage(): string {
-    return this.mOfflineMessage;
-    // return StringUtils.getMessage("user_offline_messages_will_be_delivered");
-  }
+  getOfflineMessage(): string;
 
-  public setOfflineMessage(message: string): void {
-    this.mOfflineMessage = message;
-  }
-
+  setOfflineMessage(message: string): void;
 
 }

@@ -18,11 +18,12 @@
 import {SoapEventEncoder} from "./SoapEventEncoder";
 import {WritingStatusEvent} from "../../../../events/chat/WritingStatusEvent";
 import {ChatEvent} from "../../../../events/ChatEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class WritingStatusEventEncoder extends SoapEventEncoder {
 
   constructor() {
-    super(WritingStatusEvent.ID);
+    super(OpenChatEventCode.WRITING_STATUS);
   }
 
   protected getEventDetails(event: ChatEvent): {} {

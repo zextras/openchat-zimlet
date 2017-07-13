@@ -16,10 +16,9 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class MessageEvent extends ChatEvent {
-
-  public static ID: number = 1;
 
   private mMsgId: string;
   public mMessage: string;
@@ -36,7 +35,7 @@ export class MessageEvent extends ChatEvent {
     eventDate: Date,
     creationDate: Date
   ) {
-    super(MessageEvent.ID, creationDate, true);
+    super(OpenChatEventCode.MESSAGE, creationDate, true);
     this.mMsgId = msgId;
     if (typeof sender !== "undefined" && sender !== null)
       this.setSender(sender);

@@ -24,11 +24,12 @@ import {DwtDialog} from "../../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {IdGenerator} from "../../../dwt/IdGenerator";
 import {StringUtils} from "../../../lib/StringUtils";
 import {appCtxt} from "../../../zimbra/zimbraMail/appCtxt";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class BroadcastMessageEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return BroadcastMessageEvent.ID;
+    return OpenChatEventCode.BROADCAST_MESSAGE;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

@@ -16,15 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class MessageAckReceivedEvent extends ChatEvent {
-
-  public static ID: number = 10;
 
   private mMsgId: string;
 
   constructor(sender: string, destination: string, id: string, creationDate: Date) {
-    super(MessageAckReceivedEvent.ID, creationDate, false);
+    super(OpenChatEventCode.MESSAGE_ACK, creationDate, false);
     this.setSender(sender);
     this.setDestination(destination);
     this.mMsgId = id;

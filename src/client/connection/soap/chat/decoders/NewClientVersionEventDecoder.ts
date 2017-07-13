@@ -20,12 +20,13 @@ import {ChatEvent} from "../../../../events/ChatEvent";
 import {NewClientVersionEvent} from "../../../../events/chat/NewClientVersionEvent";
 import {Version} from "../../../../../lib/Version";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class NewClientVersionEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(NewClientVersionEvent.ID);
+    super(OpenChatEventCode.NEW_CLIENT_VERSION);
     this.mDateProvider = dateProvider;
   }
 

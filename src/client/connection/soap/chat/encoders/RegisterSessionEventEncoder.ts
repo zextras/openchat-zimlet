@@ -18,11 +18,12 @@
 import {SoapEventEncoder} from "./SoapEventEncoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {RegisterSessionEvent} from "../../../../events/chat/RegisterSessionEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class RegisterSessionEventEncoder extends SoapEventEncoder {
 
   constructor() {
-    super(RegisterSessionEvent.ID);
+    super(OpenChatEventCode.REGISTER_SESSION);
   }
 
   protected getEventDetails(event: ChatEvent): {} {

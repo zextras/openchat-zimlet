@@ -18,16 +18,16 @@
 import {ChatEvent} from "../ChatEvent";
 import {BuddyStatus} from "../../BuddyStatus";
 import {MessageType} from "./MessageEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class ContactInformationEvent extends ChatEvent {
 
-  public static ID: number = 4;
   private mEventDate: Date;
   private mStatus: BuddyStatus;
   private mIsGroupChat: boolean;
 
   constructor(from: string, eventDate: Date, creationDate: Date, status: BuddyStatus, isGroupChat: boolean = false) {
-    super(ContactInformationEvent.ID, creationDate, true);
+    super(OpenChatEventCode.CONTACT_INFORMATION, creationDate, true);
     this.setSender(from);
     this.mEventDate = eventDate;
     this.mStatus = status;

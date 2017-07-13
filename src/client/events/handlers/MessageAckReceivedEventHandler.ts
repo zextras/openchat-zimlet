@@ -20,11 +20,12 @@ import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
 import {MessageAckReceivedEvent} from "../chat/MessageAckReceivedEvent";
 import {MessageSent} from "../../MessageSent";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class MessageAckReceivedEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return MessageAckReceivedEvent.ID;
+    return OpenChatEventCode.MESSAGE_ACK;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

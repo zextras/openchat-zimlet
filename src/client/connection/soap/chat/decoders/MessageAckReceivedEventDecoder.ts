@@ -19,12 +19,13 @@ import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {MessageAckReceivedEvent} from "../../../../events/chat/MessageAckReceivedEvent";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class MessageAckReceivedEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(MessageAckReceivedEvent.ID);
+    super(OpenChatEventCode.MESSAGE_ACK);
     this.mDateProvider = dateProvider;
   }
 

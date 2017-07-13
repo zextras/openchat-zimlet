@@ -19,8 +19,6 @@ import {WritingStatusEvent} from "./WritingStatusEvent";
 
 export class LeftConversationEvent extends WritingStatusEvent {
 
-  public static ID: number = WritingStatusEvent.ID;
-
   public static LEFT_CONVERSATION: number = 2;
 
   constructor(sender: string, destination: string, eventDate: Date, creationDate: Date) {

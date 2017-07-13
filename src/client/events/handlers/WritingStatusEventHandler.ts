@@ -21,11 +21,12 @@ import {Room} from "../../Room";
 import {MessageWritingStatus} from "../../MessageWritingStatus";
 import {ChatEventHandler} from "./ChatEventHandler";
 import {ChatClient} from "../../ChatClient";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class WritingStatusEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return WritingStatusEvent.ID;
+    return OpenChatEventCode.WRITING_STATUS;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

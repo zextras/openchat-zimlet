@@ -16,15 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class MessageAckEvent extends ChatEvent {
-
-  public static ID: number = 10;
 
   private mMsgIds: string[] = [];
 
   constructor(destination: string, creationDate: Date) {
-    super(MessageAckEvent.ID, creationDate, false);
+    super(OpenChatEventCode.MESSAGE_ACK, creationDate, false);
     this.setDestination(destination);
   }
 

@@ -15,8 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export declare class ZimbraPatcher {
+import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 
-  public static patch(): void;
+export interface DwtChatTreeItem {
+
+  isGroupTreeItem(): boolean;
+  isBuddyTreeItem(): boolean;
+  onAction(ev: DwtSelectionEvent): void;
 
 }

@@ -19,10 +19,12 @@ import {ChatEventHandler} from "./ChatEventHandler";
 import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
 import {TimeoutEvent} from "../chat/TimeoutEvent";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class TimeoutEventHandler implements ChatEventHandler {
+
   public getEventCode(): number {
-    return TimeoutEvent.ID;
+    return OpenChatEventCode.TIMEOUT;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

@@ -87,7 +87,7 @@ export class ChatEvent extends ClientEvent {
    * @param address
    * @return {ChatEvent}
    */
-  protected setDestination(address: string): ChatEvent {
+  public setDestination(address: string): ChatEvent {
     if (typeof address !== "undefined") {
       if (/\//.test(address)) {
         let parts: string[] = address.split("/");

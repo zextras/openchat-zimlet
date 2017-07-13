@@ -18,11 +18,12 @@
 import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {UnregisterSessionEvent} from "../../../../events/chat/UnregisterSessionEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class SessionUnregisteredEventDecoder extends SoapEventDecoder {
 
   constructor() {
-    super(UnregisterSessionEvent.ID);
+    super(OpenChatEventCode.UNREGISTER_SESSION);
   }
 
   public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {

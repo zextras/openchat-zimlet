@@ -18,11 +18,12 @@
 import {SoapEventEncoder} from "./SoapEventEncoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {AcceptFriendshipEvent} from "../../../../events/chat/AcceptFriendshipEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class AcceptFriendshipEventEncoder extends SoapEventEncoder {
 
   constructor() {
-    super(AcceptFriendshipEvent.ID);
+    super(OpenChatEventCode.ACCEPT_FRIENDSHIP);
   }
 
   protected getEventDetails(event: ChatEvent): {} {

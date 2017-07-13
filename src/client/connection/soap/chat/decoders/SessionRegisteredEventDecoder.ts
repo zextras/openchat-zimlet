@@ -19,12 +19,13 @@ import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {EventSessionRegistered} from "../../../../events/chat/EventSessionRegistered";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class SessionRegisteredEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(EventSessionRegistered.ID);
+    super(OpenChatEventCode.REGISTER_SESSION);
     this.mDateProvider = dateProvider;
   }
 

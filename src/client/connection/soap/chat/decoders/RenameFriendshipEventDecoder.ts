@@ -18,11 +18,12 @@
 import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {RenameFriendshipEvent} from "../../../../events/chat/RenameFriendshipEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class RenameFriendshipEventDecoder extends SoapEventDecoder {
 
   constructor() {
-    super(RenameFriendshipEvent.ID);
+    super(OpenChatEventCode.RENAME_FRIENDSHIP);
   }
 
   public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {

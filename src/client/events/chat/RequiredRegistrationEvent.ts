@@ -16,13 +16,12 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class RequiredRegistrationEvent extends ChatEvent {
 
-  public static ID: number = 5;
-
   constructor(creationDate: Date) {
-    super(RequiredRegistrationEvent.ID, creationDate, false);
+    super(OpenChatEventCode.REQUIRED_REGISTRATION, creationDate, false);
   }
 
 }

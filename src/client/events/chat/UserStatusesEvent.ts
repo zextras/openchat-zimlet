@@ -17,15 +17,14 @@
 
 import {ChatEvent} from "../ChatEvent";
 import {BuddyStatus} from "../../BuddyStatus";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class UserStatusesEvent extends ChatEvent {
-
-  public static ID: number = 3;
 
   private mStatuses: BuddyStatus[] = [];
 
   constructor(creationDate: Date) {
-    super(UserStatusesEvent.ID, creationDate, false);
+    super(OpenChatEventCode.USER_STATUSES, creationDate, false);
   }
 
   /**

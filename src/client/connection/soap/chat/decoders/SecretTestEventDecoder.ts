@@ -18,11 +18,12 @@
 import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {SecretTestEvent} from "../../../../events/chat/SecretTestEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class SecretTestEventDecoder extends SoapEventDecoder {
 
   constructor() {
-    super(SecretTestEvent.ID);
+    super(OpenChatEventCode.SECRET_TEST);
   }
 
   public decodeEvent(

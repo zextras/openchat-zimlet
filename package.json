@@ -1,6 +1,6 @@
 {
   "name": "com_zextras_chat_open",
-  "version": "8.7.11",
+  "version": "8.8.0",
   "description": "OpenChat Zimlet",
   "private": true,
   "license": "SEE LICENSE IN LICENSE",
@@ -18,14 +18,14 @@
     "bowser": "^1.6.0",
     "emojione": "2.2.7",
     "html-entities": "^1.2.0",
-    "jquery-textcomplete": "^1.8.0",
-    "json-prune": "^1.0.1",
+    "jquery-textcomplete": "^1.8.2",
+    "json-prune": "^1.1.0",
     "json3": "^3.3.2",
     "stacktrace-js-legacy": "^0.6.5",
     "xregexp": "^3.1.1"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^3.0.8",
+    "awesome-typescript-loader": "^3.2.1",
     "coffee-loader": "^0.7.3",
     "coffee-script": "^1.12.4",
     "coffeelint": "^1.16.0",
@@ -35,7 +35,7 @@
     "spritesmith": "^3.1.0",
     "spritesmith-cli": "^1.1.2",
     "tslint": "^4.5.1",
-    "typescript": "^2.2.1",
-    "webpack": "^2.2.1"
+    "typescript": "2.3.1",
+    "webpack": "^2.7.0"
   }
 }

@@ -22,12 +22,14 @@ import {Buddy} from "../../../../Buddy";
 import {BuddyStatusType} from "../../../../BuddyStatusType";
 import {BuddyStatus} from "../../../../BuddyStatus";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {BuddyImp} from "../../../../BuddyImp";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class FriendBackAddedEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(FriendBackAddedEvent.ID);
+    super(OpenChatEventCode.FRIEND_BACK_ADDED);
     this.mDateProvider = dateProvider;
   }
 
@@ -38,7 +40,7 @@ export class FriendBackAddedEventDecoder extends SoapEventDecoder {
     },
     originEvent?: ChatEvent
   ): ChatEvent {
-    let buddy: Buddy = new Buddy(
+    let buddy: Buddy = new BuddyImp(
       eventObj["buddyAddress"],
       eventObj["buddyNickname"]
     );

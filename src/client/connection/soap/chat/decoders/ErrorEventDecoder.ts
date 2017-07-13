@@ -20,12 +20,13 @@ import {ChatEvent} from "../../../../events/ChatEvent";
 import {ErrorEvent} from "../../../../events/chat/ErrorEvent";
 import {ZxError} from "../../../../../lib/error/ZxError";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class ErrorEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(ErrorEvent.ID);
+    super(OpenChatEventCode.ERROR);
     this.mDateProvider = dateProvider;
   }
 

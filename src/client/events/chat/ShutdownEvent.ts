@@ -16,12 +16,12 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class ShutdownEvent extends ChatEvent {
 
-  public static ID: number = 13;
-
   constructor(creationDate: Date) {
-    super(ShutdownEvent.ID, creationDate, false);
+    super(OpenChatEventCode.SHUTDOWN, creationDate, false);
   }
+
 }

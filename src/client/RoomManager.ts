@@ -24,6 +24,7 @@ import {MessageSent} from "./MessageSent";
 import {ChatEvent} from "./events/ChatEvent";
 import {BuddyStatus} from "./BuddyStatus";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
+import {RoomImp} from "./RoomImp";
 
 export class RoomManager {
 
@@ -61,7 +62,7 @@ export class RoomManager {
    */
   public createRoom(buddyId: string, buddyNickname: string, roomPluginManager: ChatPluginManager): Room {
     this.mRoomManagerPluginManager.triggerPlugins(RoomManager.CreateRoomPluginManager, roomPluginManager);
-    let newRoom = new Room(
+    let newRoom: Room = new RoomImp(
       buddyId,
       buddyNickname,
       this.mDateProvider,

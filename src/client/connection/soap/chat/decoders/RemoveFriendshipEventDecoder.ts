@@ -19,12 +19,13 @@ import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {RemoveFriendshipEvent} from "../../../../events/chat/RemoveFriendshipEvent";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class RemoveFriendshipEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(RemoveFriendshipEvent.ID);
+    super(OpenChatEventCode.REMOVE_FRIENDSHIP);
     this.mDateProvider = dateProvider;
   }
 

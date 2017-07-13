@@ -24,6 +24,7 @@ import {ChatEventHandler} from "../ChatEventHandler";
 import {ChatEvent} from "../../ChatEvent";
 import {StringUtils} from "../../../../lib/StringUtils";
 import {ChatZimletBase} from "../../../../ChatZimletBase";
+import {BuddyImp} from "../../../BuddyImp";
 
 export class FriendshipInvitationHandler implements ChatEventHandler {
 
@@ -40,9 +41,9 @@ export class FriendshipInvitationHandler implements ChatEventHandler {
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
     let friendshipEvent = <FriendshipInvitationEvent> chatEvent,
       buddyList = client.getBuddyList(),
-      buddy = buddyList.getBuddyById(friendshipEvent.getBuddyId());
+      buddy: Buddy = buddyList.getBuddyById(friendshipEvent.getBuddyId());
     if (buddy == null) {
-      buddy = new Buddy(friendshipEvent.getBuddyId(), friendshipEvent.getNickname());
+      buddy = new BuddyImp(friendshipEvent.getBuddyId(), friendshipEvent.getNickname());
       let defaultGroup = buddyList.getDefaultGroup();
       buddy.addGroup(defaultGroup);
       defaultGroup.addBuddy(buddy);

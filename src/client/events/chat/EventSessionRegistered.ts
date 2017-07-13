@@ -16,12 +16,9 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
-import {Version} from "../../../lib/Version";
-import {RegisterSessionEvent} from "./RegisterSessionEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class EventSessionRegistered extends ChatEvent {
-
-  public static ID: number = RegisterSessionEvent.ID;
 
   private mEventSessionInfo: any;
 
@@ -29,7 +26,7 @@ export class EventSessionRegistered extends ChatEvent {
     eventSessionInfo: any,
     creationDate: Date
   ) {
-    super(EventSessionRegistered.ID, creationDate, true);
+    super(OpenChatEventCode.REGISTER_SESSION, creationDate, true);
     this.mEventSessionInfo = eventSessionInfo;
   }
 
