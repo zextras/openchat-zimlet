@@ -128,6 +128,7 @@ clean:
 		build/com_zextras_chat_open.css \
         build/com_zextras_chat_open.xml \
         build/com_zextras_chat_open_bundle.js \
+        build/com_zextras_chat_open_bundle.js.map \
         build/VERSION \
         dist/com_zextras_chat_open.zip \
 	rm -rf build/images \
