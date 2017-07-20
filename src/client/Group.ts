@@ -21,6 +21,7 @@ import {Callback} from "../lib/callbacks/Callback";
 import {ArrayUtils} from "../lib/ArrayUtils";
 import {Buddy} from "./Buddy";
 import {BuddyStatus} from "./BuddyStatus";
+import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
 
 export class Group {
   private mId: string;
@@ -34,7 +35,7 @@ export class Group {
   private promisedSort: boolean = false;
 
   constructor(name: string) {
-    this.mId = this.mName = name;
+    this.mId = this.mName = AjxStringUtil.htmlDecode(name);
   }
 
   /**
@@ -42,7 +43,7 @@ export class Group {
    * @return {string}
    */
   public getName(): string {
-    return this.mName;
+    return AjxStringUtil.htmlEncode(this.mName);
   }
 
   /**
@@ -58,8 +59,8 @@ export class Group {
    * @param {string} name
    */
   public setName(name: string): void {
-    this.mName = name;
-    this.mOnNameChangeCallbacks.run(name, this);
+    this.mName = AjxStringUtil.htmlDecode(name);
+    this.mOnNameChangeCallbacks.run(this.mName);
   }
 
   /**

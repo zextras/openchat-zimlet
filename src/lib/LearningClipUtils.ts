@@ -16,6 +16,7 @@
  */
 
 import {Map} from "./Map";
+import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
 
 export class LearningClipUtils {
 
@@ -71,7 +72,7 @@ export class LearningClipUtils {
 
   private static _testString(str: string, className: string): number {
     LearningClipUtils.clipUtilsDiv.className = className;
-    LearningClipUtils.clipUtilsDiv.innerHTML = str;
+    LearningClipUtils.clipUtilsDiv.innerHTML = AjxStringUtil.htmlEncode(str);
     return LearningClipUtils.clipUtilsDiv.offsetWidth;
   }
 }
