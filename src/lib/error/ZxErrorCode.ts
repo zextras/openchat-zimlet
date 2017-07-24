@@ -38,6 +38,7 @@ export class ZxErrorCode {
   public static UNABLE_TO_FIND_COMMAND_FOR_EVENT: string = "UNABLE_TO_FIND_COMMAND_FOR_EVENT";
   public static UNKNOWN_ERROR: string = "UNKNOWN_ERROR";
   public static UNABLE_TO_PARSE_JSON_STRING: string = "UNABLE_TO_PARSE_JSON_STRING";
+  public static UNKNOWN_JS_EXCEPTION: string = "UNKNOWN_JS_EXCEPTION";
 
   private static sMsgs: {[key: string]: string} = {
     GENERIC_ERROR: "Generic Error: {details}",
@@ -60,6 +61,7 @@ export class ZxErrorCode {
     UNABLE_TO_FIND_COMMAND_FOR_EVENT: "UNABLE_TO_FIND_COMMAND_FOR_EVENT",
     UNKNOWN_ERROR: "UNKNOWN_ERROR",
     UNABLE_TO_PARSE_JSON_STRING: "UNABLE_TO_PARSE_JSON_STRING",
+    UNKNOWN_JS_EXCEPTION: "JavaScript Exception: {details}",
   };
 
   public static getMessage(code: string): string { return ZxErrorCode.sMsgs[code]; }
