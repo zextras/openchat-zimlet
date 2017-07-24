@@ -71,7 +71,7 @@
                             <td valign="middle"></td>
                             <td valign="middle">
                                 <b>
-                                    <$= AjxStringUtil.htmlEncode(data.buddy.getNickname()) $><br>
+                                    <$= data.buddy.getNickname() $><br>
                                     (<$= AjxStringUtil.htmlEncode(data.buddy.getStatus().getMessage()) $>)
                                 </b>
                             </td>

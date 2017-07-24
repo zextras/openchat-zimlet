@@ -15,7 +15,7 @@
     "postinstall": "patch -p0 < patches/emojione-2.2.7.patch"
   },
   "dependencies": {
-    "bowser": "^1.6.0",
+    "bowser": "^1.7.1",
     "emojione": "2.2.7",
     "html-entities": "^1.2.0",
     "jquery-textcomplete": "^1.8.0",

@@ -81,8 +81,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
       parent: parent,
       id: IdGenerator.generateId(`ZxChat_GroupTreeItem_${group.getName()}`),
       dndScrollCallback: parent._dndScrollCallback,
-      dndScrollId: parent._dndScrollId,
-      text: group.getName()
+      dndScrollId: parent._dndScrollId
     };
     if (isDefault) {
       groupParams.className = "FirstOverviewHeader overviewHeader";
@@ -99,6 +98,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
       groupParams.selectable = true;
     }
     super(groupParams);
+    this.setText(group.getName());
     this.Log = LogEngine.getLogger(LogEngine.CHAT);
     this.mRefGroup = group;
     this.mAppCtxt = appCtxt;
@@ -209,7 +209,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     buddy.onNicknameChange(new Callback(this, this.sort));
     this.updateCounter();
     for (let child of this.getChildren()) {
-      if (child.isGroupTreeItem()) {
+      if (child.isBuddyTreeItem()) {
         this._expand(this.mOriginalExpanded, null, null, false);
         break;
       }
@@ -256,7 +256,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     }
   }
 
-  private onNameChange(newName: string, group: Group): void {
+  private onNameChange(newName: string): void {
     this.updateCounter();
   }
 
@@ -300,16 +300,16 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnDeleteGroupCbkMgr.addCallback(callback);
   }
 
-  public deleteGroupSelected(group: Group): void {
-    this.mOnDeleteGroupCbkMgr.run(group);
+  public deleteGroupSelected(): void {
+    this.mOnDeleteGroupCbkMgr.run(this.mRefGroup);
   }
 
   public onRenameGroupSelected(callback: Callback): void {
     this.mOnRenameGroupCbkMgr.addCallback(callback);
   }
 
-  public renameGroupSelected(group: Group): void {
-    this.mOnRenameGroupCbkMgr.run(group);
+  public renameGroupSelected(): void {
+    this.mOnRenameGroupCbkMgr.run(this.mRefGroup);
   }
 
   public onBuddyStatusChange(callback: Callback): void {
