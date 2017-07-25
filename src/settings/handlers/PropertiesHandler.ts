@@ -86,6 +86,9 @@ export class PropertiesHandler implements SettingsHandlerInterface {
       Setting.IM_USR_PREF_EMOJI_IN_CONV,
       Setting.IM_USR_PREF_EMOJI_IN_HIST,
       Setting.IM_USR_PREF_EMOJI_IN_MAIL,
+      Setting.IM_USR_PREF_URL_IN_CONV,
+      Setting.IM_USR_PREF_URL_IN_HIST,
+      Setting.IM_USR_PREF_URL_IN_MAIL,
       Setting.IM_USR_PREF_SHOW_DEBUG_INFO,
       Setting.ENABLE_ERROR_REPORT
     ];
