@@ -49,6 +49,9 @@ export class Setting {
   public static IM_USR_PREF_EMOJI_IN_CONV: string = "zxchat_pref_emoji_in_conv";
   public static IM_USR_PREF_EMOJI_IN_HIST: string = "zxchat_pref_emoji_in_hist";
   public static IM_USR_PREF_EMOJI_IN_MAIL: string = "zxchat_pref_emoji_in_mail";
+  public static IM_USR_PREF_URL_IN_CONV: string = "zxchat_pref_url_in_conv";
+  public static IM_USR_PREF_URL_IN_HIST: string = "zxchat_pref_url_in_hist";
+  public static IM_USR_PREF_URL_IN_MAIL: string = "zxchat_pref_url_in_mail";
   public static IM_USR_PREF_ASSISTANT: string = "zxchat_pref_assistant";
   public static IM_USR_PREF_SHOW_DEBUG_INFO: string = "zxchat_pref_show_debug_info";
   public static ENABLE_ERROR_REPORT: string = "report_errors";

@@ -329,21 +329,7 @@ export class ChatZimletBase extends ZmZimletBase {
 
     this.mChatClient.onFriendshipInvitation(new Callback(this, this.handleNewFriendshipInvitation));
     this.mObjectHandler = new ObjectHandler();
-    this.mObjectHandler.setEmojiEnabledInConv(this.mSettingsManager.enabledEmojiInChatConversation());
-    this.mSettingsManager.onSettingChange(
-      Setting.IM_USR_PREF_EMOJI_IN_CONV,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInConv)
-    );
-    this.mObjectHandler.setEmojiEnabledInHist(this.mSettingsManager.enabledEmojiInChatHistory());
-    this.mSettingsManager.onSettingChange(
-      Setting.IM_USR_PREF_EMOJI_IN_HIST,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInHist)
-    );
-    this.mObjectHandler.setEmojiEnabledInMail(this.mSettingsManager.enabledEmojiInMail());
-    this.mSettingsManager.onSettingChange(
-      Setting.IM_USR_PREF_EMOJI_IN_MAIL,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInMail)
-    );
+    this.registerSettings();
     ZmObjectManager.registerHandler(this.mObjectHandler, null, this._zimletContext.priority);
     this.mTimedCallbackFactory.createTimedCallback(
       new Callback(this.mChatClient, this.mChatClient.registerSession),
@@ -948,4 +934,37 @@ export class ChatZimletBase extends ZmZimletBase {
     ).popup();
   }
 
+  private registerSettings(): void {
+    this.mObjectHandler.setEmojiEnabledInConv(this.mSettingsManager.enabledEmojiInChatConversation());
+    this.mSettingsManager.onSettingChange(
+      Setting.IM_USR_PREF_EMOJI_IN_CONV,
+      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInConv)
+    );
+    this.mObjectHandler.setEmojiEnabledInHist(this.mSettingsManager.enabledEmojiInChatHistory());
+    this.mSettingsManager.onSettingChange(
+      Setting.IM_USR_PREF_EMOJI_IN_HIST,
+      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInHist)
+    );
+    this.mObjectHandler.setEmojiEnabledInMail(this.mSettingsManager.enabledEmojiInMail());
+    this.mSettingsManager.onSettingChange(
+      Setting.IM_USR_PREF_EMOJI_IN_MAIL,
+      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInMail)
+    );
+
+    this.mObjectHandler.setUrlEnabledInConv(this.mSettingsManager.enabledUrlInChatConversation());
+    this.mSettingsManager.onSettingChange(
+      Setting.IM_USR_PREF_URL_IN_CONV,
+      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInConv)
+    );
+    this.mObjectHandler.setUrlEnabledInHist(this.mSettingsManager.enabledUrlInChatHistory());
+    this.mSettingsManager.onSettingChange(
+      Setting.IM_USR_PREF_URL_IN_HIST,
+      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInHist)
+    );
+    this.mObjectHandler.setUrlEnabledInMail(this.mSettingsManager.enabledUrlInMail());
+    this.mSettingsManager.onSettingChange(
+      Setting.IM_USR_PREF_URL_IN_MAIL,
+      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInMail)
+    );
+  }
 }
