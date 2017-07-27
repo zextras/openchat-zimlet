@@ -41,12 +41,10 @@ export class BroadcastMessageEventHandler implements ChatEventHandler {
       id: IdGenerator.generateId("ZxChat_BroadcastMessageDialog")
     });
     msgDialog.setMessage(
-      "<b>" +
-      StringUtils.getMessage("bmsg_from") +
-      " " +
-      (broadcastMessageEvent.getSender()) +
-      ":</b><br/>" +
-      (broadcastMessageEvent.getMessage())
+      StringUtils.getMessage("bmsg_from", [
+        broadcastMessageEvent.getSender(),
+        broadcastMessageEvent.getMessage()
+      ])
     );
     msgDialog.popup();
     return true;

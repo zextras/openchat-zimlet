@@ -50,7 +50,6 @@ export class RoomImp implements Room {
   private mLastActivity: number = 0;
   private members: Buddy[];
   private roomStatus: BuddyStatus;
-  private mOfflineMessage: string;
   private onTitleChangeCallbacks: CallbackManager;
   private onAddMemberCallbacks: CallbackManager;
   private onRemovedMemberCallbacks: CallbackManager;
@@ -93,7 +92,6 @@ export class RoomImp implements Room {
     this.onRoomStatusChangeCallbacks = new CallbackManager();
     this.onBuddyWritingStatusCallbacks = new CallbackManager();
     this.onTriggeredPopupCallbacks = new CallbackManager();
-    this.setOfflineMessage(StringUtils.getMessage("user_offline_messages_will_be_delivered"));
     this.mRoomPluginManager = roomPluginManager;
     this.mRoomPluginManager.switchOn(this);
   }
@@ -403,14 +401,5 @@ export class RoomImp implements Room {
   public triggerPopup(): void {
     this.onTriggeredPopupCallbacks.run();
   }
-  public getOfflineMessage(): string {
-    return this.mOfflineMessage;
-    // return StringUtils.getMessage("user_offline_messages_will_be_delivered");
-  }
-
-  public setOfflineMessage(message: string): void {
-    this.mOfflineMessage = message;
-  }
-
 
 }

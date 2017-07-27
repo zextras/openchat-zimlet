@@ -173,8 +173,4 @@ export interface Room {
 
   triggerPopup(): void;
 
-  getOfflineMessage(): string;
-
-  setOfflineMessage(message: string): void;
-
 }
