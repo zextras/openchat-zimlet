@@ -35,11 +35,11 @@ export class EmojiOneHandler extends ZmObjectHandler {
       return null;
     } else {
       let results = [];
-      let snR = emojione.shortnamesRegexp.exec(content);
+      let snR: RegExpExecArray = emojione.shortnamesRegexp.exec(content);
       if (snR !== null) results.push(new MatchResult(emojione.shortnamesRegexp.lastIndex, snR, 1));
-      let ucR = emojione.unicodeRegexp.exec(content);
+      let ucR: RegExpExecArray = emojione.unicodeRegexp.exec(content);
       if (ucR !== null) results.push(new MatchResult(emojione.unicodeRegexp.lastIndex, ucR, 3));
-      let asciiR = emojione.asciiRegexp.exec(content);
+      let asciiR: RegExpExecArray = emojione.asciiRegexp.exec(content);
       if (asciiR !== null) results.push(new MatchResult(emojione.asciiRegexp.lastIndex, asciiR, 2));
       if (results.length > 0) {
         results.sort(EmojiOneHandler.sortResultsFcn);
@@ -58,8 +58,7 @@ export class EmojiOneHandler extends ZmObjectHandler {
     let removeEmoji = emojione.asciiRegexp.test(obj) ? "cursor: pointer;\" id=\"" + spanId : "";
     html[idx] = `<span style="height: 16px; width: 16px; ${removeEmoji}" title="${obj}">
                    ${imgDiv}
-                 </span>
-                 `;
+                 </span>`;
     idx += 1;
     return idx;
   }
