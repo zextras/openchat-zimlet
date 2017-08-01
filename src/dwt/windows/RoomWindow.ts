@@ -107,7 +107,7 @@ export class RoomWindow extends WindowBase {
       "ZxChat_RoomWindow",
       room.getRoomStatus().getCSS(),
       "Chat",
-        [],
+      [],
       undefined,
       false
     );
@@ -129,10 +129,10 @@ export class RoomWindow extends WindowBase {
     this.mBuddyWritingStatuses = {};
     this.mContainerView = new DwtComposite({parent: this});
     this.mTitlebar = new DwtToolBar({
-        parent: this.mContainerView,
-        parentElement: this._titleBarEl,
-        className: "ZxChat_TitleBar_Toolbar"
-      });
+      parent: this.mContainerView,
+      parentElement: this._titleBarEl,
+      className: "ZxChat_TitleBar_Toolbar"
+    });
     this.mTitlebar.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitlebar.setSize(
       `${RoomWindow.WIDTH}px`,
@@ -144,7 +144,6 @@ export class RoomWindow extends WindowBase {
     });
     // TODO: Dirty hack to modify the title label classname
     document.getElementById(this.mTitleLbl.getHTMLElId() + "_title").className += " RoomWindowTitleBar-TitleLabel";
-    this.mTitleLbl.getHtmlElement();
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.setTitle(room.getTitle());
     this.setIcon(room.getRoomStatus().getCSS());
@@ -248,7 +247,7 @@ export class RoomWindow extends WindowBase {
     this.mTitleLbl.setImage(icon);
   }
 
-  public _createHtmlFromTemplate(templateId: string, data?: {[name: string]: any}) {
+  public _createHtmlFromTemplate(templateId: string, data: {[name: string]: any} = {}) {
     data.doNotRenderTitleBar = true;
     super._createHtmlFromTemplate(templateId, data);
   }
