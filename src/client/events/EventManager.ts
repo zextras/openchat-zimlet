@@ -18,15 +18,17 @@
 import {ChatEvent} from "./ChatEvent";
 import {ChatClient} from "../ChatClient";
 import {ChatEventHandler} from "./handlers/ChatEventHandler";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
-import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
+import {Logger} from "../../lib/log/Logger";
+import {LogEngine} from "../../lib/log/LogEngine";
 
 export class EventManager {
 
   protected mHandlersMap: {[eventType: number]: ChatEventHandler[]};
+  private Log: Logger;
 
   constructor() {
     this.mHandlersMap = {};
+    this.Log = LogEngine.getLogger(LogEngine.CHAT);
   }
 
   public addEventHandler(handler: ChatEventHandler): void {
@@ -40,7 +42,12 @@ export class EventManager {
     let handled: boolean = false;
     if (this.mHandlersMap.hasOwnProperty(chatEvent.getCode().toString())) {
       for (let handler of this.mHandlersMap[chatEvent.getCode()]) {
-        handled = handler.handleEvent(chatEvent, client);
+        try {
+          handled = handler.handleEvent(chatEvent, client);
+        }
+        catch (error) {
+          this.Log.debug(error, "EventManager.handleEvent");
+        }
       }
     }
     return handled;

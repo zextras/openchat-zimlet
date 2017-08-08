@@ -51,6 +51,8 @@ export class ZxError extends Error {
       }
     }
     super(code);
+    this.loadPrototype = ZxError.prototype.loadPrototype;
+    this.loadPrototype();
     this.mTime = new Date().getTime();
 
     if (typeof cause !== "undefined" && cause !== null) {
@@ -69,6 +71,30 @@ export class ZxError extends Error {
     this.mIsException = false;
     this.mDetails = {};
     this.mTrace = printStackTrace();
+  }
+
+  // WARNING: Each prototype method must be added here
+  public loadPrototype(): void {
+    this.toJSON = ZxError.prototype.toJSON;
+    this.initCause = ZxError.prototype.initCause;
+    this.setMessage = ZxError.prototype.setMessage;
+    this.getMessage = ZxError.prototype.getMessage;
+    this.setCode = ZxError.prototype.setCode;
+    this.getCode = ZxError.prototype.getCode;
+    this.setDetails = ZxError.prototype.setDetails;
+    this.setDetail = ZxError.prototype.setDetail;
+    this.getDetails = ZxError.prototype.getDetails;
+    this.getDetail = ZxError.prototype.getDetail;
+    this.isException = ZxError.prototype.isException;
+    this.isError = ZxError.prototype.isError;
+    this.setIsException = ZxError.prototype.setIsException;
+    this.setIsError = ZxError.prototype.setIsError;
+    this.setStackTrace = ZxError.prototype.setStackTrace;
+    this.getStackTrace = ZxError.prototype.getStackTrace;
+    this.setTime = ZxError.prototype.setTime;
+    this.getTime = ZxError.prototype.getTime;
+    this.getCause = ZxError.prototype.getCause;
+    this.toString = ZxError.prototype.toString;
   }
 
   public toJSON(): {[property: string]: any} {
