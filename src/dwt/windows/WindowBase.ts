@@ -419,4 +419,32 @@ export class WindowBase extends DwtBaseDialog {
       this.fadeTitleToBlinkColor();
     }
   }
+
+  public static addRecursiveFocusCallback(obj: DwtComposite, callback: Function): void {
+    obj.focus = ((obj: DwtComposite, callback: Function) =>
+      () => {
+        callback();
+        WindowBase.prototype.focus.call(obj);
+      }
+    )(obj, callback);
+    if (typeof obj.getChildren !== "undefined" && obj.getChildren !== null) {
+      for (let child of obj.getChildren()) {
+        WindowBase.addRecursiveFocusCallback(child, callback);
+      }
+    }
+  }
+
+  public static addRecursiveBlurCallback(obj: DwtComposite, callback: Function): void {
+    obj.blur = ((obj: DwtComposite, callback: Function) =>
+      () => {
+        callback();
+        WindowBase.prototype.blur.call(obj);
+      }
+    )(obj, callback);
+    if (typeof obj.getChildren !== "undefined" && obj.getChildren !== null) {
+      for (let child of obj.getChildren()) {
+        WindowBase.addRecursiveBlurCallback(child, callback);
+      }
+    }
+  }
 }

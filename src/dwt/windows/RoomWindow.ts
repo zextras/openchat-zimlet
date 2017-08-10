@@ -81,7 +81,8 @@ export class RoomWindow extends WindowBase {
   private mWritingTimerCallback: TimedCallback;
   private mBuddyWritingStatuses: {[buddyId: string]: number};
   private mContainerView: DwtComposite;
-  private mTitlebar: DwtToolBar;
+  private mTitleDragBar: DwtToolBar;
+  private mTitleButtonBar: DwtToolBar;
   private mTitleLbl: DwtLabel;
   private mMainMenuButton: RoomWindowMenuButton;
   private mCloseButton: DwtToolBarButton;
@@ -92,6 +93,8 @@ export class RoomWindow extends WindowBase {
   private mEmoticonBtn: EmojiOnePickerButton;
   private mTimeoutWrittenStatus: number;
   private mRestartTimerCallbackOnTimeout: boolean = false;
+  private mDefaultConversationHeight: string;
+  private mTitlebar: DwtToolBar;
 
   constructor(
     shell: DwtShell,
@@ -133,24 +136,29 @@ export class RoomWindow extends WindowBase {
       parentElement: this._titleBarEl,
       className: "ZxChat_TitleBar_Toolbar"
     });
-    this.mTitlebar.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
-    this.mTitlebar.setSize(
-      `${RoomWindow.WIDTH}px`,
+    this.mTitlebar.getHtmlElement().onmouseup = undefined;
+    this.mTitleDragBar = new DwtToolBar({
+      parent: this.mTitlebar,
+      className: "ZxChat_TitleBar_Toolbar_Child"}
+    );
+    this.mTitleDragBar.setSize(
+      `${RoomWindow.WIDTH - 80}px`,
       Dwt.DEFAULT
     );
     this.mTitleLbl = new DwtLabel({
-      parent: this.mTitlebar,
+      parent: this.mTitleDragBar,
       className: `WindowBaseTitleBar${!ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`
     });
     // TODO: Dirty hack to modify the title label classname
     document.getElementById(this.mTitleLbl.getHTMLElId() + "_title").className += " RoomWindowTitleBar-TitleLabel";
-    this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
+    this._initializeDragging(this.mTitleDragBar.getHTMLElId());
     this.setTitle(room.getTitle());
     this.setIcon(room.getRoomStatus().getCSS());
-    this.mTitlebar.addFiller();
-    this.mMainMenuButton = new RoomWindowMenuButton(this, this.mTitlebar, this.mRoomWindowPluginManager);
+    this.mTitleDragBar.addFiller();
+    this.mTitleButtonBar = new DwtToolBar({parent: this.mTitlebar, className: "ZxChat_TitleBar_Toolbar_Child"});
+    this.mMainMenuButton = new RoomWindowMenuButton(this, this.mTitleButtonBar, this.mRoomWindowPluginManager);
     this.mCloseButton = new DwtToolBarButton({
-      parent: this.mTitlebar,
+      parent: this.mTitleButtonBar,
       className: "ZToolbarButton ZxChat_Button ZxChat_TitleBar_Button"
     });
     if (ZimbraUtils.isUniversalUI()) {
@@ -160,6 +168,7 @@ export class RoomWindow extends WindowBase {
       this.mCloseButton.setImage("ZxChat_close");
     }
     this.mCloseButton.addSelectionListener(new AjxListener(this, this.closeCallback));
+    // this._initializeDragging(this.mTitleDragBar.getHTMLElId());
     this.mConversation = new Conversation(this.mContainerView, this.mDateProvider, this.mTimedCallbackFactory);
     this.mWritingStatusDots = new LoadingDots(this.mContainerView, { dots: 5 });
     this.mRoom.onAddMessageReceived(new Callback(this, this.onAddMessageReceived));
@@ -197,9 +206,12 @@ export class RoomWindow extends WindowBase {
       DwtEvent.ONMOUSEMOVE,
       new AjxListener(this, this.stopBlink)
     );
+    if (typeof this.mDefaultConversationHeight === "undefined" && this.mDefaultConversationHeight !== null) {
+      this.mDefaultConversationHeight = `${RoomWindow.HEIGHT - inputToolbar.getSize().y - this.mTitleDragBar.getSize().y - this.mWritingStatusDots.getSize().y - 10}px`;
+    }
     this.mConversation.setSize(
       Dwt.DEFAULT,
-      `${RoomWindow.HEIGHT - inputToolbar.getSize().y - this.mTitlebar.getSize().y - this.mWritingStatusDots.getSize().y - 10}px` // -10 due to top padding
+      this.mDefaultConversationHeight
     );
     this.mInputField.setSize(
       `${RoomWindow.WIDTH - 80}px`, // this.emoticonBtn.getSize().x,
@@ -207,6 +219,21 @@ export class RoomWindow extends WindowBase {
     );
     this.setView(this.mContainerView);
     this.mTimeoutWrittenStatus = 5000;
+    WindowBase.addRecursiveFocusCallback(
+      this,
+      ((roomWindow: RoomWindow) =>
+        () => {
+          roomWindow.setZIndex(500);
+        }
+      )(this));
+    WindowBase.addRecursiveBlurCallback(
+      this,
+      ((roomWindow: RoomWindow) =>
+        () => {
+          roomWindow.setZIndex(499);
+        }
+      )(this));
+    this.setZIndex(499);
     this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.PluginName);
 
   }
@@ -233,6 +260,10 @@ export class RoomWindow extends WindowBase {
 
   public getConversation(): Conversation {
     return this.mConversation;
+  }
+
+  public getDefaultConversationHeight(): string {
+    return this.mDefaultConversationHeight;
   }
 
   public setTitle(title: string): void {
@@ -265,7 +296,7 @@ export class RoomWindow extends WindowBase {
         this.mInputField.moveCursorToEnd();
   }
 
-  public focus(): void {
+  public inputfieldFocus(): void {
     this.mInputField.focus();
   }
 
@@ -399,7 +430,10 @@ export class RoomWindow extends WindowBase {
   }
 
   // Override DwtBaseDialog.prototype._dragStart
-  public _dragStart(x: number, y: number): void {
+  public _dragStart(point: number[]): void {
+    let x: number = point[0],
+      y: number = point[1];
+    super._dragStart(point);
     let currentSize = this.getSize();
     DwtDraggable.setDragBoundaries(
       DwtDraggable.dragEl,
@@ -411,13 +445,17 @@ export class RoomWindow extends WindowBase {
     this.mOnStartDragCallbacks.run(this, x, y);
   }
 
-  public _duringDrag(x: number, y: number): void {
-    super._duringDrag(x, y);
+  public _duringDrag(point: number[]): void {
+    let x: number = point[0],
+      y: number = point[1];
+    super._duringDrag(point);
     this.mOnDuringDragCallbacks.run(this, x, y);
   }
 
-  public _dragEnd(x: number, y: number): void {
-    super._dragEnd(x, y);
+  public _dragEnd(point: number[]): void {
+    let x: number = point[0],
+      y: number = point[1];
+    super._dragEnd(point);
     this.mOnDragEndCallbacks.run(this, x, y);
   }
 

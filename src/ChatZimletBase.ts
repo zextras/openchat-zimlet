@@ -688,7 +688,7 @@ export class ChatZimletBase extends ZmZimletBase {
       if (roomWindow.isMinimized()) {
         roomWindow.setExpanded();
       }
-      roomWindow.focus();
+      roomWindow.inputfieldFocus();
     }
   }
 

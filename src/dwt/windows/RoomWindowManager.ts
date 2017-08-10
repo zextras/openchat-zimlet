@@ -334,7 +334,7 @@ export class RoomWindowManager {
   private onStartDrag(roomWindow: RoomWindow, x: number, y: number): void {
     let dragTask: WindowDragTask = new WindowDragTask(roomWindow);
     this.mDragTasks.put(roomWindow.getId(), dragTask);
-    roomWindow.setZIndex(parseInt(`${roomWindow.getZIndex()}`, 10) + 1);
+    // roomWindow.setZIndex(parseInt(`${roomWindow.getZIndex()}`, 10) + 1);
   }
 
   private onDuringDrag(roomWindow: RoomWindow, x: number, y: number): void {
@@ -351,7 +351,7 @@ export class RoomWindowManager {
       openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values(),
       i: number,
       bufferPositions: WindowsPositionContainer = new WindowsPositionContainer();
-    roomWindow.setZIndex(dragTask.getOriginalZIndex());
+    // roomWindow.setZIndex(dragTask.getOriginalZIndex());
     if (typeof dragTask === "undefined") return;
     if (!dragTask.isReallyMoved(x, y)) {
       if (roomWindow.isMinimized()) roomWindow.setExpanded();
