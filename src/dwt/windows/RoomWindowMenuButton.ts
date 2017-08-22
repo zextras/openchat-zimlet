@@ -21,12 +21,14 @@ import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindow} from "./RoomWindow";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
+import {WindowBase} from "./WindowBase";
 
 export class RoomWindowMenuButton extends DwtToolBarButton {
 
   public static AddMenuItemPlugin = "Room Window Menu Button Add Menu Entry";
   public static _KEY_HIDE_OFFILINE = "hideOfflineBuddies";
   private mRoomWindow: RoomWindow;
+  private mMenu: RoomWindowMenu;
 
   constructor(
     roomWindow: RoomWindow,
@@ -47,12 +49,21 @@ export class RoomWindowMenuButton extends DwtToolBarButton {
     this.setDropDownImages("", "", "", "");
     this.dontStealFocus();
 
-    let menu: ZmPopupMenu = new ZmPopupMenu(this, "ActionMenu ZmPopupMenu_ZxChat_MainMenu");
-    roomWindowPluginManager.triggerPlugins(RoomWindowMenuButton.AddMenuItemPlugin, menu);
-    this.setMenu(menu, false, false, true);
-    if (menu.getItemCount() === 0) {
+    this.mMenu = new RoomWindowMenu(this, "ActionMenu ZmPopupMenu_ZxChat_MainMenu");
+    roomWindowPluginManager.triggerPlugins(RoomWindowMenuButton.AddMenuItemPlugin, this.mMenu);
+    this.setMenu(this.mMenu, false, false, true);
+    if (this.mMenu.getItemCount() === 0) {
       this.setVisible(false);
     }
+  }
+
+}
+
+class RoomWindowMenu extends ZmPopupMenu {
+
+  public popup(delay: number, x: number, y: number, kbGenereated?: boolean) {
+    super.popup(delay, x, y, kbGenereated);
+    this.setZIndex(Math.max(this.getZIndex(), WindowBase.sMaxZIndex + 1));
   }
 
 }

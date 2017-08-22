@@ -40,10 +40,11 @@ export class WindowBase extends DwtBaseDialog {
   public static _MINIMIZE_ICON = "ImgZxChat_minimize";
   public static _EXPAND_ICON = "ImgZxChat_expand";
   public static _CLOSE_ICON = "ImgZxChat_close-legacy";
-
   public static MAX_TITLE_LENGTH: number = 190;
-
   public static Z_INDEX: number = 499;
+
+  private static sWindows: WindowBase[] = [];
+  public static sMaxZIndex: number = 498;
 
   private mControlButtons: {[id: string]: boolean} = {};
   private mMinimized: boolean = false;
@@ -96,6 +97,11 @@ export class WindowBase extends DwtBaseDialog {
     if (typeof this.mWindowDiv !== "undefined" && this.mWindowDiv !== null) {
       this.mWindowDiv.onmouseover = <(ev: MouseEvent) => any> (new Callback(this, this.stopBlink)).toClosure();
     }
+    this.addFocusCallback(
+      (zIndex: number) => {
+        this.setZIndex(zIndex);
+      }
+    );
   }
 
   public startBlinkTitle(): void {
@@ -420,30 +426,25 @@ export class WindowBase extends DwtBaseDialog {
     }
   }
 
+  public addFocusCallback(callback: Function): void {
+    WindowBase.sWindows.push(this);
+    WindowBase.sMaxZIndex++;
+    WindowBase.addRecursiveFocusCallback(this, callback);
+  }
+
   public static addRecursiveFocusCallback(obj: DwtComposite, callback: Function): void {
     obj.focus = ((obj: DwtComposite, callback: Function) =>
       () => {
-        callback();
+        for (let window of WindowBase.sWindows) {
+          window.setZIndex(window.getZIndex() - 1);
+        }
+        callback(WindowBase.sMaxZIndex);
         WindowBase.prototype.focus.call(obj);
       }
     )(obj, callback);
     if (typeof obj.getChildren !== "undefined" && obj.getChildren !== null) {
       for (let child of obj.getChildren()) {
         WindowBase.addRecursiveFocusCallback(child, callback);
-      }
-    }
-  }
-
-  public static addRecursiveBlurCallback(obj: DwtComposite, callback: Function): void {
-    obj.blur = ((obj: DwtComposite, callback: Function) =>
-      () => {
-        callback();
-        WindowBase.prototype.blur.call(obj);
-      }
-    )(obj, callback);
-    if (typeof obj.getChildren !== "undefined" && obj.getChildren !== null) {
-      for (let child of obj.getChildren()) {
-        WindowBase.addRecursiveBlurCallback(child, callback);
       }
     }
   }

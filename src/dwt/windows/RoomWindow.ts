@@ -54,6 +54,8 @@ import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
 import {BuddyStatus} from "../../client/BuddyStatus";
 import {MessageSent} from "../../client/MessageSent";
+import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
+import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 
 export class RoomWindow extends WindowBase {
 
@@ -79,7 +81,7 @@ export class RoomWindow extends WindowBase {
   private mOnDuringDragCallbacks: CallbackManager;
   private mOnDragEndCallbacks: CallbackManager;
   private mWritingTimerCallback: TimedCallback;
-  private mBuddyWritingStatuses: {[buddyId: string]: number};
+  private mBuddyWritingStatuses: {[buddyId: string]: MessageWritingStatus};
   private mContainerView: DwtComposite;
   private mTitleDragBar: DwtToolBar;
   private mTitleButtonBar: DwtToolBar;
@@ -131,6 +133,13 @@ export class RoomWindow extends WindowBase {
     this.mWritingTimerCallback = null;
     this.mBuddyWritingStatuses = {};
     this.mContainerView = new DwtComposite({parent: this});
+    this.mContainerView.setHandler(
+      "onmousedown",
+      (ev: DwtEvent) => {
+        this.mContainerView.parent.focus();
+        return true;
+      }
+    );
     this.mTitlebar = new DwtToolBar({
       parent: this.mContainerView,
       parentElement: this._titleBarEl,
@@ -191,6 +200,7 @@ export class RoomWindow extends WindowBase {
       forceMultiRow: true,
       rows: 1
     });
+    // this.mInputField._focusByMouseUpEvent = DwtControl.prototype._focusByMouseUpEvent;
     TextCompletePlugin.installOnTextField(this.mInputField.getInputElement());
     inputToolbar.addFiller();
     this.mEmoticonBtn = new EmojiOnePickerButton(
@@ -219,20 +229,6 @@ export class RoomWindow extends WindowBase {
     );
     this.setView(this.mContainerView);
     this.mTimeoutWrittenStatus = 5000;
-    WindowBase.addRecursiveFocusCallback(
-      this,
-      ((roomWindow: RoomWindow) =>
-        () => {
-          roomWindow.setZIndex(500);
-        }
-      )(this));
-    WindowBase.addRecursiveBlurCallback(
-      this,
-      ((roomWindow: RoomWindow) =>
-        () => {
-          roomWindow.setZIndex(499);
-        }
-      )(this));
     this.setZIndex(499);
     this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.PluginName);
 
@@ -385,11 +381,12 @@ export class RoomWindow extends WindowBase {
   }
 
   private onBuddyWritingStatus(writingStatus: MessageWritingStatus): void {
-    this.mBuddyWritingStatuses[writingStatus.getSender().getId()];
+    this.mBuddyWritingStatuses[writingStatus.getSender().getId()] = writingStatus;
     this.updateWritingDots(writingStatus.getValue());
   }
 
   public popup(point?: DwtPoint): void {
+    if (this.isPoppedUp()) { return; }
     let date: Date = this.mDateProvider.getNow();
     this.mLastPopup = date.getTime();
     super.popup(point);
@@ -431,6 +428,7 @@ export class RoomWindow extends WindowBase {
 
   // Override DwtBaseDialog.prototype._dragStart
   public _dragStart(point: number[]): void {
+    this.focus();
     let x: number = point[0],
       y: number = point[1];
     super._dragStart(point);

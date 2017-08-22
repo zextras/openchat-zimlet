@@ -51,8 +51,7 @@ export class ZxError extends Error {
       }
     }
     super(code);
-    this.loadPrototype = ZxError.prototype.loadPrototype;
-    this.loadPrototype();
+    ZxError.prototype.loadPrototype.apply(this);
     this.mTime = new Date().getTime();
 
     if (typeof cause !== "undefined" && cause !== null) {

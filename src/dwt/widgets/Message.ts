@@ -29,9 +29,9 @@ export class Message extends DwtComposite {
 
   public static TEMPLATE: string = "com_zextras_chat_open.Widgets#Message";
 
-  protected message: MessageObj;
-  public dateProvider: DateProvider;
-  private conversation: Conversation;
+  protected mMessage: MessageObj;
+  public mDateProvider: DateProvider;
+  private mConversation: Conversation;
   protected _dateFormatter: AjxDateFormat;
   protected _senderEl: HTMLElement;
   protected _dateEl: HTMLElement;
@@ -48,9 +48,9 @@ export class Message extends DwtComposite {
       parent: parent,
       template: template
     });
-    this.message = message;
-    this.dateProvider = dateProvider;
-    this.conversation = parent;
+    this.mMessage = message;
+    this.mDateProvider = dateProvider;
+    this.mConversation = parent;
     this._dateFormatter = AjxDateFormat.getDateTimeInstance(AjxDateFormat.FULL, AjxDateFormat.MEDIUM);
     if (template !== "com_zextras_chat_open.Widgets#MessageStatus") {
       this._createHtml();
@@ -69,15 +69,15 @@ export class Message extends DwtComposite {
       manager.__hasSmileysHandler = true;
       appCtxt.notifyZimlets("onFindMsgObjects", [this, manager]);
       // TODO: Review these conditions
-      manager.setHandlerAttr(ZmObjectManager.DATE, ZmObjectManager.ATTR_CURRENT_DATE, this.message.getDate != null ? this.message.getDate() : this.dateProvider.getNow());
+      manager.setHandlerAttr(ZmObjectManager.DATE, ZmObjectManager.ATTR_CURRENT_DATE, this.mMessage.getDate != null ? this.mMessage.getDate() : this.mDateProvider.getNow());
       if (manager.processObjectsInNode != null) {
         manager.processObjectsInNode(document, this._contentEl.parentElement);
       } else {
         manager.findObjectsInNode(this._contentEl.parentElement);
       }
     } catch (ign) {}
-    if (this.conversation.scrollToTop != null) {
-      this.conversation.scrollToTop();
+    if (this.mConversation.scrollToTop != null) {
+      this.mConversation.scrollToTop();
     }
     let elements = this.getHtmlElement().getElementsByTagName("span");
     for (let i = 0; i < elements.length; i++) {
@@ -100,9 +100,9 @@ export class Message extends DwtComposite {
 
   protected _createHtml(data: MessageCreateHtmlData = {}): void {
     data.id = this._htmlElId;
-    data.date = StringUtils.localizeHour(this.message.getDate(), this.dateProvider.getNow());
-    data.dateTooltip = this.formatDate(this.message.getDate());
-    data.content = this.message.getHtmlMessage();
+    data.date = StringUtils.localizeHour(this.mMessage.getDate(), this.mDateProvider.getNow());
+    data.dateTooltip = this.formatDate(this.mMessage.getDate());
+    data.content = this.mMessage.getHtmlMessage();
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
     this._senderEl = document.getElementById(data.id + "_sender");
     this._dateEl = document.getElementById(data.id + "_date");

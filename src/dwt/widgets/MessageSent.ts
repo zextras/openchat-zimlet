@@ -27,7 +27,7 @@ export class MessageSent extends Message {
   constructor(parent: Conversation, message: MessageSentObj, dateProvider: DateProvider) {
     super(parent, message, dateProvider);
     (<HTMLElement>this.getHtmlElement().childNodes[0]).setAttribute("sender", "false");
-    (<MessageSentObj>this.message).onSetDelivered(new Callback(this, this.setDelivered));
+    (<MessageSentObj>this.mMessage).onSetDelivered(new Callback(this, this.setDelivered));
     this.setDelivered(message.isDelivered());
   }
 

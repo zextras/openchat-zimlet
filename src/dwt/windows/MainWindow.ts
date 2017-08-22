@@ -141,6 +141,13 @@ export class MainWindow extends WindowBase {
     this.mOnShowHideOfflineCbkMgr = new CallbackManager();
     this.mOnSetSortMethodCbkMgr = new CallbackManager();
     this.mContainerView = new DwtComposite({ parent: this });
+    this.mContainerView.setHandler(
+      "onmousedown",
+      (ev: DwtEvent) => {
+        this.mContainerView.parent.focus();
+        return true;
+      }
+    );
     this.mTitleBar = new DwtToolBar({
       parent: this.mContainerView,
       parentElement: this._titleBarEl,

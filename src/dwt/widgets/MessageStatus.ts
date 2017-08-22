@@ -49,7 +49,7 @@ export class MessageStatus extends Message {
       ...data,
       id: this._htmlElId,
       sender: this.mBuddy.getNickname(),
-      content: this.message.getMessage()
+      content: this.mMessage.getMessage()
     };
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
     this._senderEl = document.getElementById(data.id + "_sender");

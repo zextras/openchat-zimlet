@@ -80,6 +80,7 @@ export class RoomWindowManager {
               roomManager: RoomManager,
               chatPluginManager: ChatPluginManager
   ) {
+    (<ExtendedWindow>window).debugWM = this;
     this.mAppCtxt = appCtxt;
     this.mShell = shell;
     this.mNotificationManager = notificationManager;
@@ -139,9 +140,7 @@ export class RoomWindowManager {
   private onRoomAdded(room: Room) {
     let roomWindowPluginManager = new ChatPluginManager();
     this.mRoomWindowManagerPluginManager.triggerPlugins(RoomWindowManager.CreateRoomWindowPluginManager, roomWindowPluginManager);
-    let position: number = this.mWindowsMap.size(),
-      size = 0,
-      roomWindow: RoomWindow = new RoomWindow(
+    let roomWindow: RoomWindow = new RoomWindow(
         this.mShell,
         this.mTimedCallbackFactory,
         room,
@@ -537,4 +536,8 @@ export class RoomWindowManager {
     return Math.round(window.getLocation().y + (window.getSize().y / 2));
   }
 
+}
+
+declare class ExtendedWindow extends Window {
+  debugWM: RoomWindowManager;
 }
