@@ -682,13 +682,7 @@ export class ChatZimletBase extends ZmZimletBase {
         room.addMember(buddy);
       }
       roomWindow = this.mRoomWindowManager.getRoomWindowById(buddy.getId());
-      if (!roomWindow.isPoppedUp()) {
-        roomWindow.popup();
-      }
-      if (roomWindow.isMinimized()) {
-        roomWindow.setExpanded();
-      }
-      roomWindow.inputfieldFocus();
+      roomWindow.popup();
     }
   }
 
