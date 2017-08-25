@@ -42,11 +42,13 @@ export class MainMenuButton extends DwtToolBarButton {
   private onCreateMultiChatRoomSelectionCbkMgr: CallbackManager;
   private onShowHideOfflineCbkMgr: CallbackManager;
   private onSettingsSelectionCbkMgr: CallbackManager;
-  private onChangeSidebarOrDockCbkMgr: CallbackManager;
+  private onChangeSidebarOrDockCbkMgr: ((docked: boolean) => void)[];
   private opAddBuddy: DwtMenuItem;
   private opAddGroup: DwtMenuItem;
   private opSHOffline: DwtMenuItem;
   private opSettings: DwtMenuItem;
+  private mOpSwitchToDock: DwtMenuItem;
+  private mOpSwitchToSidebar: DwtMenuItem;
 
   constructor(parent: DwtToolBar, mainWindowPluginManager: ChatPluginManager, image: string) {
     super({
@@ -61,7 +63,7 @@ export class MainMenuButton extends DwtToolBarButton {
     this.onCreateMultiChatRoomSelectionCbkMgr = new CallbackManager();
     this.onShowHideOfflineCbkMgr = new CallbackManager();
     this.onSettingsSelectionCbkMgr = new CallbackManager();
-    this.onChangeSidebarOrDockCbkMgr = new CallbackManager();
+    this.onChangeSidebarOrDockCbkMgr = [];
     const menu = new ZmPopupMenu(this, "ActionMenu", "ZmPopupMenu_ZxChat_MainMenu");
     this.opAddBuddy = menu.createMenuItem(
       MainMenuButton.ADD_BUDDY_MENU_ITEM_ID,
@@ -81,26 +83,26 @@ export class MainMenuButton extends DwtToolBarButton {
     this.opAddGroup.addSelectionListener(
       new AjxListener(this, this._onAddGroupSelected, [])
     );
-// #        menu.createSeparator()
-// #        @opSwitchToSidebar = menu.createMenuItem(
-// #          MainMenuButton.SWITCH_TO_SIDEBAR_MENU_ITEM_ID,
-// #          {
-// #            text: StringUtils.getMessage("switch_to_sidebar")
-// #            image: "ZxChat_column_right"
-// #          })
-// #        @opSwitchToSidebar.addSelectionListener(
-// #          new AjxListener(@, @_onSwitchToSidebar, [])
-// #        )
-// #        @opSwitchToDock = menu.createMenuItem(
-// #          MainMenuButton.SWITCH_TO_DOCK_MENU_ITEM_ID,
-// #          {
-// #            text: StringUtils.getMessage("switch_to_docked")
-// #            image: "ZxChat_column_bottom"
-// #          })
-// #        @opSwitchToDock.addSelectionListener(
-// #          new AjxListener(@, @_onSwitchToDock, [])
-// #        )
-// #        @opSwitchToDock.setVisible(false)
+    menu.createSeparator();
+    this.mOpSwitchToSidebar = menu.createMenuItem(
+      MainMenuButton.SWITCH_TO_SIDEBAR_MENU_ITEM_ID,
+      {
+        text: StringUtils.getMessage("switch_to_sidebar")
+      }
+    );
+    this.mOpSwitchToSidebar.addSelectionListener(
+       new AjxListener(this, this._onSwitchToSidebar, [])
+    );
+    this.mOpSwitchToDock = menu.createMenuItem(
+      MainMenuButton.SWITCH_TO_DOCK_MENU_ITEM_ID,
+      {
+        text: StringUtils.getMessage("switch_to_docked")
+      }
+    );
+    this.mOpSwitchToDock.addSelectionListener(
+      new AjxListener(this, this._onSwitchToDock, [])
+    );
+    this.mOpSwitchToDock.setVisible(false);
     this.opSHOffline = menu.createMenuItem(
       MainMenuButton.HIDE_OFFLINE_BUDDIES_MENU_ITEM_ID,
       {
@@ -192,11 +194,11 @@ export class MainMenuButton extends DwtToolBarButton {
    */
   public setSwitchOnSidebarStatus(onSidebar: boolean): void {
     if (onSidebar) {
-      // this.opSwitchToDock.setVisible(true);
-      // this.opSwitchToSidebar.setVisible(false);
+      this.mOpSwitchToDock.setVisible(true);
+      this.mOpSwitchToSidebar.setVisible(false);
     } else {
-      // this.opSwitchToDock.setVisible(false);
-      // this.opSwitchToSidebar.setVisible(true);
+      this.mOpSwitchToDock.setVisible(false);
+      this.mOpSwitchToSidebar.setVisible(true);
     }
   }
 
@@ -206,9 +208,9 @@ export class MainMenuButton extends DwtToolBarButton {
    */
 
   private _onSwitchToSidebar(): void {
-    // this.opSwitchToDock.setVisible(true);
-    // this.opSwitchToSidebar.setVisible(false);
-    this.onChangeSidebarOrDockCbkMgr.run(false);
+    this.mOpSwitchToDock.setVisible(true);
+    this.mOpSwitchToSidebar.setVisible(false);
+    for (let cbk of this.onChangeSidebarOrDockCbkMgr) cbk(false);
   }
 
   /**
@@ -216,16 +218,13 @@ export class MainMenuButton extends DwtToolBarButton {
    * @private
    */
   private _onSwitchToDock(): void {
-    // this.opSwitchToDock.setVisible(false);
-    // this.opSwitchToSidebar.setVisible(true);
-    this.onChangeSidebarOrDockCbkMgr.run(true);
+    this.mOpSwitchToDock.setVisible(false);
+    this.mOpSwitchToSidebar.setVisible(true);
+    for (let cbk of this.onChangeSidebarOrDockCbkMgr) cbk(true);
   }
 
-  /**
-   * @param {Callback} callback
-   */
-  public onChangeSidebarOrDock(callback: Callback): void {
-    this.onChangeSidebarOrDockCbkMgr.addCallback(callback);
+  public onChangeSidebarOrDock(cbk: (docked: boolean) => void): void {
+    this.onChangeSidebarOrDockCbkMgr.push(cbk);
   }
 
 

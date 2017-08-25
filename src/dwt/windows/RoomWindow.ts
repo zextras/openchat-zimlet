@@ -54,8 +54,6 @@ import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
 import {BuddyStatus} from "../../client/BuddyStatus";
 import {MessageSent} from "../../client/MessageSent";
-import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
-import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 
 export class RoomWindow extends WindowBase {
 

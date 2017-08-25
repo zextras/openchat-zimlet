@@ -266,32 +266,32 @@ export class ChatZimletBase extends ZmZimletBase {
       mainWindowPluginManager
     );
 
-    this.mMainWindow.onStatusSelected(new Callback(this, this.statusSelected));
-    this.mMainWindow.onAddFriendOptionSelected(new Callback(this, this.addBuddy));
-    this.mMainWindow.onAddGroupOptionSelected(new Callback(this, this.addGroup));
-    this.mMainWindow.onSettingsOptionSelected(new Callback(this, this.showSettings));
-    this.mMainWindow.onRenameGroup(new Callback(this, this.renameGroup));
-    this.mMainWindow.onDeleteGroup(new Callback(this, this.deleteGroup));
-    this.mMainWindow.onBuddySelected(new Callback(this, this.buddySelected));
-    this.mMainWindow.onDeleteBuddy(new Callback(this, this.deleteBuddy));
-    this.mMainWindow.onRenameBuddy(new Callback(this, this.renameBuddy));
-    this.mMainWindow.onSendInvitation(new Callback(this, this.sendInvitation));
-    this.mMainWindow.onAcceptInvitation(new Callback(this, this.acceptInvitation));
-    this.mMainWindow.onBuddyDroppedInGroup(new Callback(this, this.changeBuddyGroup));
-    this.mMainWindow.onContactDroppedInGroup(new Callback(this, this.contactDroppedInGroup));
+    this.mMainWindow.onStatusSelected((status) => this.statusSelected(status));
+    this.mMainWindow.onAddFriendOptionSelected(() => this.addBuddy());
+    this.mMainWindow.onAddGroupOptionSelected(() => this.addGroup());
+    this.mMainWindow.onSettingsOptionSelected(() => this.showSettings());
+    this.mMainWindow.onRenameGroup((group) => this.renameGroup(group));
+    this.mMainWindow.onDeleteGroup((group) => this.deleteGroup(group));
+    this.mMainWindow.onBuddySelected((ev) => this.buddySelected(ev));
+    this.mMainWindow.onDeleteBuddy((buddy) => this.deleteBuddy(buddy));
+    this.mMainWindow.onRenameBuddy((buddy) => this.renameBuddy(buddy));
+    this.mMainWindow.onSendInvitation((buddy) => this.sendInvitation(buddy));
+    this.mMainWindow.onAcceptInvitation((buddy) => this.acceptInvitation(buddy));
+    this.mMainWindow.onBuddyDroppedInGroup((buddy, group) => this.changeBuddyGroup(buddy, group));
+    this.mMainWindow.onContactDroppedInGroup((contact, group) => this.contactDroppedInGroup(contact, group));
     this.mMainWindow.setShowHideOffline(this.mSettingsManager.get(Setting.IM_PREF_HIDE_OFFLINE));
     this.mMainWindow.setSortMethod(this.mSettingsManager.get(Setting.IM_PREF_BUDDY_SORT));
-    this.mMainWindow.onShowHideOffline(new Callback(this, this.onShowHideOffline));
+    this.mMainWindow.onShowHideOffline((hide) => this.onShowHideOffline(hide));
 
     this.mSettingsManager.onSettingChange(
       Setting.IM_PREF_BUDDY_SORT,
       new Callback(this.mMainWindow, this.mMainWindow.sortMethodSet)
     );
 
-    let onDock: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK) || true;
+    let onDock: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK);
     if ((typeof onDock === "undefined" || onDock === null) || onDock) {
       this.mMainWindow.popup();
-      // this.mMainWindow.changeSidebarOrDock(true);
+      this.mMainWindow.changeSidebarOrDock(true);
       let isUp: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK_UP);
       if (isUp) {
         this.mMainWindow.setExpanded(false);
@@ -299,12 +299,11 @@ export class ChatZimletBase extends ZmZimletBase {
       else {
         this.mMainWindow.setMinimized(false);
       }
+    } else {
+      this.mMainWindow.changeSidebarOrDock(false);
     }
-    // else {
-    //   this.mMainWindow.changeSidebarOrDock(false);
-    // }
 
-    // this.mMainWindow.onChangeSidebarOrDock(new Callback(this, this.onChangeSidebarOrDock));
+    this.mMainWindow.onChangeSidebarOrDock((onDock) => this.onChangeSidebarOrDock(onDock));
     this.mStoreGroupsDataCallback = new Callback(this.mSettingsManager, this.mSettingsManager.storeGroupsData, this.mMainWindow);
     this.mChatClient.getBuddyList().onAddGroup(this.mStoreGroupsDataCallback);
     this.mChatClient.getBuddyList().onRemoveGroup(this.mStoreGroupsDataCallback);
@@ -312,7 +311,7 @@ export class ChatZimletBase extends ZmZimletBase {
 
     // Set the visibility of loaded groups and show the main window
     this.mMainWindow.setGroupsData(userGroupsData);
-    this.mMainWindow.onGroupExpandedOrCollapsed(new Callback(this, this.onGroupExpandedOrCollapsed));
+    this.mMainWindow.onGroupExpandedOrCollapsed((item, expand, save) => this.onGroupExpandedOrCollapsed(item, expand, save));
 
     this.mRoomWindowManager = new RoomWindowManager(
       appCtxt,
@@ -411,6 +410,7 @@ export class ChatZimletBase extends ZmZimletBase {
     }
 
     this.mMainWindow.setCurrentStatus(this.mChatClient.getCurrentStatus());
+    this.mMainWindow.enableDisableMainMenuButton(true);
     this.mUserStatuses = [
       new BuddyStatus(BuddyStatusType.ONLINE, "", 1),
       new BuddyStatus(BuddyStatusType.BUSY, "", 2),
@@ -495,9 +495,7 @@ export class ChatZimletBase extends ZmZimletBase {
       this.mMainWindow.setMinimized();
       this.mMainWindow.setEnabled(false);
       this.mMainWindow.changeSidebarOrDock(true);
-      for (let btn of this.mMainWindow.getMainMenuButtons()) {
-        btn.setVisible(false);
-      }
+      this.mMainWindow.enableDisableMainMenuButton(false);
     } else {
       msg = StringUtils.getMessage("zxchat_core_missing_body");
     }

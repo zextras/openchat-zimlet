@@ -19,7 +19,6 @@ import {WindowBase} from "./WindowBase";
 import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {SettingsManager, GroupData} from "../../settings/SettingsManager";
-import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {BuddyList} from "../../client/BuddyList";
 import {DwtToolBar} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
@@ -50,6 +49,8 @@ import {DwtInputField} from "../../zimbra/ajax/dwt/widgets/DwtInputField";
 import {DwtButton} from "../../zimbra/ajax/dwt/widgets/DwtButton";
 import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
+import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 
 export class MainWindow extends WindowBase {
 
@@ -71,28 +72,27 @@ export class MainWindow extends WindowBase {
   private mContainerView: DwtComposite;
   private mStatusSelector: StatusSelector;
   private mOnDock: boolean;
-  private mMainMenuButtons: MainMenuButton[];
+  private mMainMenuButton: MainMenuButton;
   private mBuddyListTree: BuddyListTree;
 
   private mMainWindowPluginManager: ChatPluginManager;
-  private mOnStatusSelectedCallbacks: CallbackManager;
-  private mOnAddFriendSelectionCallbacks: CallbackManager;
-  private mOnCreateChatRoomSelectionCallbacks: CallbackManager;
-  private mOnAddGroupSelectionCallbacks: CallbackManager;
-  private mOnSettingsSelectionCallbacks: CallbackManager;
-  private mOnBuddySelectedCallbacks: CallbackManager;
-  private mOnDeleteBuddyCallbacks: CallbackManager;
-  private mOnRenameBuddyCallbacks: CallbackManager;
-  private mOnSendInvitationCallbacks: CallbackManager;
-  private mOnAcceptInvitationCallbacks: CallbackManager;
-  private mOnRenameGroupCallbacks: CallbackManager;
-  private mOnDeleteGroupCallbacks: CallbackManager;
-  private mOnGroupExpandedOrCollapsedCallbacks: CallbackManager;
-  private mOnBuddyDroppedInGroupCallbacks: CallbackManager;
-  private mOnContactDroppedInGroupCallbacks: CallbackManager;
-  private mOnChangeSidebarOrDockCallbacks: CallbackManager;
-  private mOnShowHideOfflineCbkMgr: CallbackManager;
-  private mOnSetSortMethodCbkMgr: CallbackManager;
+  private mOnStatusSelectedCallbacks: ((status: BuddyStatus) => void)[];
+  private mOnAddFriendSelectionCallbacks: (() => void)[];
+  private mOnAddGroupSelectionCallbacks: (() => void)[];
+  private mOnSettingsSelectionCallbacks: (() => void)[];
+  private mOnBuddySelectedCallbacks: ((ev: DwtSelectionEvent) => void)[];
+  private mOnDeleteBuddyCallbacks: ((buddy: Buddy) => void)[];
+  private mOnRenameBuddyCallbacks: ((buddy: Buddy) => void)[];
+  private mOnSendInvitationCallbacks: ((buddy: Buddy) => void)[];
+  private mOnAcceptInvitationCallbacks: ((buddy: Buddy) => void)[];
+  private mOnRenameGroupCallbacks: ((group: Group) => void)[];
+  private mOnDeleteGroupCallbacks: ((group: Group) => void)[];
+  private mOnGroupExpandedOrCollapsedCallbacks: ((item: GroupTreeItem, expand: boolean, save: boolean) => void)[];
+  private mOnBuddyDroppedInGroupCallbacks: ((buddy: Buddy, group: Group) => void)[];
+  private mOnContactDroppedInGroupCallbacks: ((contact: ZmContact, group: Group) => void)[];
+  private mOnChangeSidebarOrDockCallbacks: ((docked: boolean) => void)[];
+  private mOnShowHideOfflineCbkMgr: ((hide: boolean) => void)[];
+  private mOnSetSortMethodCbkMgr: ((sortMethod: string) => void)[];
   private Log: Logger;
   private mTitleBar: DwtToolBar;
   private mStatusSelectorToolbar: DwtToolBar;
@@ -112,7 +112,6 @@ export class MainWindow extends WindowBase {
       undefined,
       false
     );
-    this.mMainMenuButtons = [];
     this.mAppCtxt = appCtxt;
     this.mSettingsManager = settingsManager;
     this.mMainWindowPluginManager = mainWindowPluginManager;
@@ -122,24 +121,23 @@ export class MainWindow extends WindowBase {
     this.mBrandIcon  = MainWindow.DEBRAND_ICON;
     this.mBrandName = "Chat";
     this.Log = LogEngine.getLogger(LogEngine.CHAT);
-    this.mOnStatusSelectedCallbacks = new CallbackManager();
-    this.mOnAddFriendSelectionCallbacks = new CallbackManager();
-    this.mOnCreateChatRoomSelectionCallbacks = new CallbackManager();
-    this.mOnAddGroupSelectionCallbacks = new CallbackManager();
-    this.mOnSettingsSelectionCallbacks = new CallbackManager();
-    this.mOnBuddySelectedCallbacks = new CallbackManager();
-    this.mOnDeleteBuddyCallbacks = new CallbackManager();
-    this.mOnRenameBuddyCallbacks = new CallbackManager();
-    this.mOnSendInvitationCallbacks = new CallbackManager();
-    this.mOnAcceptInvitationCallbacks = new CallbackManager();
-    this.mOnRenameGroupCallbacks = new CallbackManager();
-    this.mOnDeleteGroupCallbacks = new CallbackManager();
-    this.mOnGroupExpandedOrCollapsedCallbacks = new CallbackManager();
-    this.mOnBuddyDroppedInGroupCallbacks = new CallbackManager();
-    this.mOnContactDroppedInGroupCallbacks = new CallbackManager();
-    this.mOnChangeSidebarOrDockCallbacks = new CallbackManager();
-    this.mOnShowHideOfflineCbkMgr = new CallbackManager();
-    this.mOnSetSortMethodCbkMgr = new CallbackManager();
+    this.mOnStatusSelectedCallbacks = [];
+    this.mOnAddFriendSelectionCallbacks = [];
+    this.mOnAddGroupSelectionCallbacks = [];
+    this.mOnSettingsSelectionCallbacks = [];
+    this.mOnBuddySelectedCallbacks = [];
+    this.mOnDeleteBuddyCallbacks = [];
+    this.mOnRenameBuddyCallbacks = [];
+    this.mOnSendInvitationCallbacks = [];
+    this.mOnAcceptInvitationCallbacks = [];
+    this.mOnRenameGroupCallbacks = [];
+    this.mOnDeleteGroupCallbacks = [];
+    this.mOnGroupExpandedOrCollapsedCallbacks = [];
+    this.mOnBuddyDroppedInGroupCallbacks = [];
+    this.mOnContactDroppedInGroupCallbacks = [];
+    this.mOnChangeSidebarOrDockCallbacks = [];
+    this.mOnShowHideOfflineCbkMgr = [];
+    this.mOnSetSortMethodCbkMgr = [];
     this.mContainerView = new DwtComposite({ parent: this });
     this.mContainerView.setHandler(
       "onmousedown",
@@ -165,7 +163,8 @@ export class MainWindow extends WindowBase {
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
     this.mTitleBar.addFiller();
-    let primaryMenuButton = this.createMainMenuButton(this.mTitleBar, true);
+    this.mMainMenuButton  = this.createMainMenuButton(this.mTitleBar, true);
+    this.mMainMenuButton.setEnabled(false);
     this.mStatusSelectorToolbar = new DwtToolBar({
       parent: this.mContainerView,
       className: "MainWindowStatusToolbar"
@@ -178,7 +177,6 @@ export class MainWindow extends WindowBase {
     }
     this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar);
     this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
-    // let secondaryMenuButton = this.createMainMenuButton(this.mStatusSelectorToolbar, false);
     this.mStatusSelector.setSize(
       `${MainWindow.WIDTH}px`,
       (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "45px"
@@ -207,9 +205,9 @@ export class MainWindow extends WindowBase {
     this.setView(this.mContainerView);
     this.onMinimize(new Callback(this, this.handleMinimized, true));
     this.onExpand(new Callback(this, this.handleMinimized, false));
-    this.onShowHideOffline(new Callback(this, this.setShowHideOffline));
-    this.onSetSortMethod(new Callback(this, this.setSortMethod));
-    // this.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDock));
+    this.onShowHideOffline((hide) => this.setShowHideOffline(hide));
+    this.onSetSortMethod((sortMethod) => this.setSortMethod(sortMethod));
+    this.onChangeSidebarOrDock((docked) => this.changeSidebarOrDock(docked));
     this.mOnDock = true;
     if (this._titleBarEl.addEventListener) {
       this._titleBarEl.addEventListener(
@@ -238,26 +236,26 @@ export class MainWindow extends WindowBase {
   }
 
   protected createMainMenuButton(toolbar: DwtToolBar, isPrimary: boolean): MainMenuButton {
-    let image: string;
-    if (ZimbraUtils.isUniversalUI()) {
-      image = `MoreVertical,color=${isPrimary ? "#b4d7eb" : "#989898"}`;
-    } else {
-      image = `${isPrimary ? "ZxChat_preferences" : "ZxChat_preferences-gray"}`;
-    }
-    let mainMenuButton = new MainMenuButton(toolbar, this.mMainWindowPluginManager, image);
+    let mainMenuButton = new MainMenuButton(toolbar, this.mMainWindowPluginManager, this.getMainMenuButtonImageStyle(isPrimary));
     mainMenuButton.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
     mainMenuButton.onAddGroupSelection(new Callback(this, this.addGroupOptionSelected));
     mainMenuButton.onSettingsSelection(new Callback(this, this.settingsOptionSelected));
 //    Shouldn't be necessary ?!?
     mainMenuButton.onShowHideOffline(new Callback(this, this.showHideOffline));
-    // mainMenuButton.onChangeSidebarOrDock(new Callback(this, this.changeSidebarOrDockSelected));
-
-    this.mMainMenuButtons.push(mainMenuButton);
+    mainMenuButton.onChangeSidebarOrDock((docked) => this.changeSidebarOrDockSelected(docked));
     return mainMenuButton;
   }
 
-  public getMainMenuButtons(): MainMenuButton[] {
-    return this.mMainMenuButtons;
+  private getMainMenuButtonImageStyle(primary: boolean) {
+    if (ZimbraUtils.isUniversalUI()) {
+      return `MoreVertical,color=${primary ? "#b4d7eb" : "#989898"}`;
+    } else {
+      return `${primary ? "ZxChat_preferences" : "ZxChat_preferences-gray"}`;
+    }
+  }
+
+  public enableDisableMainMenuButton(enable: boolean): void {
+    this.mMainMenuButton.setEnabled(enable);
   }
 
   protected createBuddyListTree(buddyList: BuddyList): void {
@@ -310,9 +308,7 @@ export class MainWindow extends WindowBase {
   }
 
   public setShowHideOffline(hide: boolean): void {
-    for (let btn of this.mMainMenuButtons) {
-      btn.setHideOfflineButtonStatus(hide);
-    }
+    this.mMainMenuButton.setHideOfflineButtonStatus(hide);
     this.mBuddyListTree.showHideOfflineBuddies(hide);
   }
 
@@ -377,162 +373,164 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.setExpanded(true, false);
   }
 
-  public onStatusSelected(callback: Callback): void {
-    this.mOnStatusSelectedCallbacks.addCallback(callback);
+  public onStatusSelected(cbk: (status: BuddyStatus) => void): void {
+    this.mOnStatusSelectedCallbacks.push(cbk);
   }
 
   private statusSelected(status: BuddyStatus): void {
-    this.mOnStatusSelectedCallbacks.run(status);
+    for (let cbk of this.mOnStatusSelectedCallbacks) cbk(status);
   }
 
-  public onAddFriendOptionSelected(callback: Callback): void {
-    this.mOnAddFriendSelectionCallbacks.addCallback(callback);
+  public onAddFriendOptionSelected(cbk: () => void): void {
+    this.mOnAddFriendSelectionCallbacks.push(cbk);
   }
 
   private addFriendOptionSelected(): void {
-    this.mOnAddFriendSelectionCallbacks.run();
+    for (let cbk of this.mOnAddFriendSelectionCallbacks) cbk();
   }
 
-  public onAddGroupOptionSelected(callback: Callback): void {
-    this.mOnAddGroupSelectionCallbacks.addCallback(callback);
+  public onAddGroupOptionSelected(cbk: () => void): void {
+    this.mOnAddGroupSelectionCallbacks.push(cbk);
   }
 
   private addGroupOptionSelected(): void {
-    this.mOnAddGroupSelectionCallbacks.run();
+    for (let cbk of this.mOnAddGroupSelectionCallbacks) cbk();
   }
 
-  public onSettingsOptionSelected(callback: Callback): void {
-    this.mOnSettingsSelectionCallbacks.addCallback(callback);
+  public onSettingsOptionSelected(cbk: () => void): void {
+    this.mOnSettingsSelectionCallbacks.push(cbk);
   }
 
   private settingsOptionSelected(): void {
-    this.mOnSettingsSelectionCallbacks.run();
+    for (let cbk of this.mOnSettingsSelectionCallbacks) cbk();
   }
 
-  public onShowHideOffline(callback: Callback): void {
-    this.mOnShowHideOfflineCbkMgr.addCallback(callback);
+  public onShowHideOffline(cbk: (hide: boolean) => void): void {
+    this.mOnShowHideOfflineCbkMgr.push(cbk);
   }
 
   public showHideOffline(hide: boolean): void {
-    this.mOnShowHideOfflineCbkMgr.run(hide);
+    for (let cbk of this.mOnShowHideOfflineCbkMgr) cbk(hide);
   }
 
-  public onSetSortMethod(callback: Callback): void {
-    this.mOnSetSortMethodCbkMgr.addCallback(callback);
+  public onSetSortMethod(cbk: (sortMethod: string) => void): void {
+    this.mOnSetSortMethodCbkMgr.push(cbk);
   }
 
   public sortMethodSet(sortMethod: string): void {
-    this.mOnSetSortMethodCbkMgr.run(sortMethod);
+    for (let cbk of this.mOnSetSortMethodCbkMgr) cbk(sortMethod);
   }
 
-  public onBuddySelected(callback: Callback): void {
-    this.mOnBuddySelectedCallbacks.addCallback(callback);
+  public onBuddySelected(cbk: (ev: DwtSelectionEvent) => void): void {
+    this.mOnBuddySelectedCallbacks.push(cbk);
   }
 
-  private buddySelected(ev: DwtEvent): void {
-    this.mOnBuddySelectedCallbacks.run(ev);
+  private buddySelected(ev: DwtSelectionEvent): void {
+    for (let cbk of this.mOnBuddySelectedCallbacks) cbk(ev);
   }
 
-  public onChangeSidebarOrDock(callback: Callback): void {
-    this.mOnChangeSidebarOrDockCallbacks.addCallback(callback);
+  public onChangeSidebarOrDock(cbk: (docked: boolean) => void): void {
+    this.mOnChangeSidebarOrDockCallbacks.push(cbk);
   }
 
   private changeSidebarOrDockSelected(docked: boolean): void {
-    this.mOnChangeSidebarOrDockCallbacks.run(docked);
+    for (let cbk of this.mOnChangeSidebarOrDockCallbacks) cbk(docked);
   }
 
-  public onDeleteBuddy(callback: Callback): void {
-    this.mOnDeleteBuddyCallbacks.addCallback(callback);
+  public onDeleteBuddy(cbk: (buddy: Buddy) => void): void {
+    this.mOnDeleteBuddyCallbacks.push(cbk);
   }
 
   private deleteBuddy(buddy: Buddy): void {
-    this.mOnDeleteBuddyCallbacks.run(buddy);
+    for (let cbk of this.mOnDeleteBuddyCallbacks) cbk(buddy);
   }
 
-  public onRenameBuddy(callback: Callback): void {
-    this.mOnRenameBuddyCallbacks.addCallback(callback);
+  public onRenameBuddy(cbk: (buddy: Buddy) => void): void {
+    this.mOnRenameBuddyCallbacks.push(cbk);
   }
 
   private renameBuddy(buddy: Buddy): void {
-    this.mOnRenameBuddyCallbacks.run(buddy);
+    for (let cbk of this.mOnRenameBuddyCallbacks) cbk(buddy);
   }
 
-  public onSendInvitation(callback: Callback): void {
-    this.mOnSendInvitationCallbacks.addCallback(callback);
+  public onSendInvitation(cbk: (buddy: Buddy) => void): void {
+    this.mOnSendInvitationCallbacks.push(cbk);
   }
 
   private inviteBuddy(buddy: Buddy): void {
-    this.mOnSendInvitationCallbacks.run(buddy);
+    for (let cbk of this.mOnSendInvitationCallbacks) cbk(buddy);
   }
 
-  public onAcceptInvitation(callback: Callback): void {
-    this.mOnAcceptInvitationCallbacks.addCallback(callback);
+  public onAcceptInvitation(cbk: (buddy: Buddy) => void): void {
+    this.mOnAcceptInvitationCallbacks.push(cbk);
   }
 
   private acceptInvitation(buddy: Buddy): void {
-    this.mOnAcceptInvitationCallbacks.run(buddy);
+    for (let cbk of this.mOnAcceptInvitationCallbacks) cbk(buddy);
   }
 
-  public onDeleteGroup(callback: Callback): void {
-    this.mOnDeleteGroupCallbacks.addCallback(callback);
+  public onDeleteGroup(cbk: (group: Group) => void): void {
+    this.mOnDeleteGroupCallbacks.push(cbk);
   }
 
-  private deleteGroup(buddy: Buddy): void {
-    this.mOnDeleteGroupCallbacks.run(buddy);
+  private deleteGroup(group: Group): void {
+    for (let cbk of this.mOnDeleteGroupCallbacks) cbk(group);
   }
 
-  public onRenameGroup(callback: Callback): void {
-    this.mOnRenameGroupCallbacks.addCallback(callback);
+  public onRenameGroup(cbk: (group: Group) => void): void {
+    this.mOnRenameGroupCallbacks.push(cbk);
   }
 
-  private renameGroup(buddy: Buddy): void {
-    this.mOnRenameGroupCallbacks.run(buddy);
+  private renameGroup(group: Group): void {
+    for (let cbk of this.mOnRenameGroupCallbacks) cbk(group);
   }
 
-  public onGroupExpandedOrCollapsed(callback: Callback): void {
-    this.mOnGroupExpandedOrCollapsedCallbacks.addCallback(callback);
+  public onGroupExpandedOrCollapsed(cbk: (item: GroupTreeItem, expand: boolean, save: boolean) => void): void {
+    this.mOnGroupExpandedOrCollapsedCallbacks.push(cbk);
   }
 
   private expandOrCollapseGroup(item: GroupTreeItem, expand: boolean, save: boolean): void {
-    this.mOnGroupExpandedOrCollapsedCallbacks.run(item, expand, save);
+    for (let cbk of this.mOnGroupExpandedOrCollapsedCallbacks) cbk(item, expand, save);
   }
 
-  public onBuddyDroppedInGroup(callback: Callback): void {
-    this.mOnBuddyDroppedInGroupCallbacks.addCallback(callback);
+  public onBuddyDroppedInGroup(cbk: (buddy: Buddy, group: Group) => void): void {
+    this.mOnBuddyDroppedInGroupCallbacks.push(cbk);
   }
 
   private buddyDroppedInGroup(buddy: Buddy, group: Group): void {
-    this.mOnBuddyDroppedInGroupCallbacks.run(buddy, group);
+    for (let cbk of this.mOnBuddyDroppedInGroupCallbacks) cbk(buddy, group);
   }
 
-  public onContactDroppedInGroup(callback: Callback): void {
-    this.mOnContactDroppedInGroupCallbacks.addCallback(callback);
+  public onContactDroppedInGroup(cbk: (contact: ZmContact, group: Group) => void): void {
+    this.mOnContactDroppedInGroupCallbacks.push(cbk);
   }
 
   private contactDroppedInGroup(contact: ZmContact, group: Group): void {
-    this.mOnContactDroppedInGroupCallbacks.run(contact, group);
+    for (let cbk of this.mOnContactDroppedInGroupCallbacks) cbk(contact, group);
   }
 
   private moveToDock(): void {
     this.mOnDock = true;
     this.handleSidebarResize();
-    this.setSize(
-      `${MainWindow.WIDTH}px`,
-      `${MainWindow.HEIGHT}px`
-    );
     this.mTitleBar.setSize(
       `${MainWindow.WIDTH}px`,
       Dwt.DEFAULT
     );
-    // this.mMainMenuButton.setSwitchOnSidebarStatus(false);
+    this.mMainMenuButton.reparent(this.mTitleBar);
+    this.mMainMenuButton.setSwitchOnSidebarStatus(false);
+    this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(true));
+    this.mStatusSelector.setSize(
+      `${MainWindow.WIDTH}px`,
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "45px"
+    );
     this.mBuddyListTree.setSize(
       Dwt.DEFAULT,
       `${MainWindow.HEIGHT - 15 - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
     );
-    // this.mContainerView.setSize(
-    //   Dwt.DEFAULT,
-    //   `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - this.mStatusSelector.getSize().y - this.mSearchInput.getSize().y}px`
-    // );
+    this.mContainerView.setSize(
+      Dwt.DEFAULT,
+      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y}px`
+    );
     this.mContainerView.reparent(this);
     this.setView(this.mContainerView);
     this.popup();
@@ -541,9 +539,23 @@ export class MainWindow extends WindowBase {
   private moveToSidebar(): void {
     this.mOnDock = false;
     this.handleSidebarResize();
-    // this.mMainMenuButton.setSwitchOnSidebarStatus(true);
+    this.mMainMenuButton.reparent(this.mStatusSelectorToolbar);
+    this.mMainMenuButton.setSwitchOnSidebarStatus(true);
+    this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(false));
+    this.mStatusSelector.setSize(
+      `${MainWindow.WIDTH - this.mMainMenuButton.getSize().x}px`,
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "45px"
+    );
     let container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
     this.mContainerView.reparentHtmlElement(container, 0);
+    this.mBuddyListTree.setSize(
+      Dwt.DEFAULT,
+      `${appCtxt.getShell().getSize().y - 107 - 15 - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
+    );
+    this.mContainerView.setSize(
+      Dwt.DEFAULT,
+      `${appCtxt.getShell().getSize().y - 107}px` // 107 is the Zimbra header (more or less...)
+    );
     this.popdown();
     this.setVisible(true);
   }
