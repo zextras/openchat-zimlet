@@ -15,13 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export declare class Bowser {
-  static firefox: boolean;
-  static chrome: boolean;
-  static opera: boolean;
-  static msie: boolean;
-  static msedge: boolean;
-  static chromium: boolean;
-  static safari: boolean;
-  static version: string;
+import {Bowser} from "../libext/bowser";
+
+export class BrowserUtils {
+
+  public static isFirefox(): boolean {
+    return Bowser.firefox;
+  }
+
+  public static isChrome(): boolean {
+    return Bowser.chrome;
+  }
+
+  public static isChromium(): boolean {
+    return Bowser.chromium;
+  }
+
+  public static isSafari(): boolean {
+    return Bowser.safari;
+  }
+
+  public static getMajorVersion(): number {
+    return parseInt(Bowser.version.substring(0, Bowser.version.indexOf(".")));
+  }
 }

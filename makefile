@@ -28,6 +28,11 @@ all: dist/com_zextras_chat_open.zip
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi
 	npm update
+	patch -p0 -N --dry-run --silent < patches/emojione-2.2.7.patch 2>/dev/null; \
+    if [ $$? -eq 0 ]; \
+    then \
+        patch -p0 -N < patches/emojione-2.2.7.patch; \
+    fi
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
@@ -72,7 +77,6 @@ build/com_zextras_chat_open_bundle.js: node_modules \
 	cd src/zimbra && make check-exports
 	# Lint the files
 	./node_modules/.bin/tslint -c tslint.json --project tsconfig.json
-	./node_modules/.bin/coffeelint src/
 	# Create the JS bundle
 	./node_modules/.bin/webpack --config webpack.config-open.js
 

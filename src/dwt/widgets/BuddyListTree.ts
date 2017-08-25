@@ -187,11 +187,11 @@ export class BuddyListTree extends DwtTree {
       }
     }
     this.updateFixedTreeItemsVisibility();
-  };
+  }
 
   // Awful workaround about _dndScrollCallback definition:
   //   in DwtControl refers to static function and method
-  public _dndScrollCallback(): void {};
+  public _dndScrollCallback(): void {}
 
   public getRootGroup(): GroupTreeItem {
     return this.mRootGroup;

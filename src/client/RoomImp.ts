@@ -192,7 +192,7 @@ export class RoomImp implements Room {
       let spliced = this.members.splice(tmpIndex, 1);
       this.onRemovedMemberCallbacks.run(spliced);
     }
-  };
+  }
 
   public containsBuddy(buddy: Buddy): boolean {
     for (let intBuddy of this.members) {
@@ -266,7 +266,7 @@ export class RoomImp implements Room {
    */
   public onSendMessage(callback: Callback) {
     this.onSendMessageCallbacks.addCallback(callback);
-  };
+  }
 
   /**
    * Send a message to the room

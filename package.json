@@ -26,9 +26,6 @@
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.2.1",
-    "coffee-loader": "^0.7.3",
-    "coffee-script": "^1.12.4",
-    "coffeelint": "^1.16.0",
     "json-loader": "^0.5.4",
     "npm-sass": "^2.0.0",
     "sharp-cli": "^1.1.0",

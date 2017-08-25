@@ -36,6 +36,6 @@ export class HistoryPlugin {
     mainWindowPluginManager.registerPlugin(BuddyTreeItemActionMenuFactory.AddMenuItemPlugin, new MainWindowShowHistoryMenuItemPlugin());
     roomWindowManagerPluginManager.registerPlugin(RoomWindowManager.AddRoomWindowPlugin, new RoomWindowManagerIsHistoryEnabledPlugin());
     roomWindowManagerPluginManager.registerPlugin(RoomWindowManager.CreateRoomWindowPluginManager, new RoomWindowManagerHistoryPlugin());
-  };
+  }
 
 }

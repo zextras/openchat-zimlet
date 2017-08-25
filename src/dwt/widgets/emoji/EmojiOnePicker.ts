@@ -27,6 +27,7 @@ import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {DwtPoint} from "../../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {AjxCallback} from "../../../zimbra/ajax/boot/AjxCallback";
 import {ZimbraUtils} from "../../../lib/ZimbraUtils";
+import {WindowBase} from "../../windows/WindowBase";
 
 export class EmojiOnePicker extends DwtMenu {
 
@@ -104,6 +105,7 @@ export class EmojiOnePicker extends DwtMenu {
   public getMenu(parent: DwtComposite, callback: Callback): DwtMenu {
     this.mOnEmojiSelectedCbk = callback;
     // this.reparent(parent); // Reparenting done right does not work... :/
+    this.setZIndex(Math.max(this.getZIndex(), WindowBase.sMaxZIndex + 1));
     return this;
   }
 
