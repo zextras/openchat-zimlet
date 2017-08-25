@@ -328,6 +328,7 @@ export class MainWindow extends WindowBase {
     this.mBrandIcon = icon;
     this.mBrandName = name;
     this.setTitle(name);
+    this.mTitleLbl.setText(name);
   }
 
   public updateMainIcon(): void {
