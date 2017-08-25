@@ -386,11 +386,19 @@ export class RoomWindow extends WindowBase {
   }
 
   public popup(point?: DwtPoint): void {
-    if (this.isPoppedUp()) { return; }
-    let date: Date = this.mDateProvider.getNow();
-    this.mLastPopup = date.getTime();
-    super.popup(point);
-    this.mOnWindowOpenedCallbacks.run(this, point);
+    if (
+      !this.isPoppedUp() &&
+      this.getConversationContainer().parent.getHTMLElId() === this.getHTMLElId()
+    ) {
+      let date: Date = this.mDateProvider.getNow();
+      this.mLastPopup = date.getTime();
+      super.popup(point);
+      this.mOnWindowOpenedCallbacks.run(this, point);
+    }
+    if (this.isMinimized()) {
+      this.setExpanded();
+    }
+    this.inputfieldFocus();
   }
 
   public popdown(): void {
