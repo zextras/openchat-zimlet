@@ -185,8 +185,8 @@ export class ChatZimletBase extends ZmZimletBase {
       (zimbraVersion.indexOf(".") !== -1 ? zimbraVersion.indexOf(".") : zimbraVersion.length)
     );
 
-    if (parseInt(zimbraMajorVersion) < 7) {
-      if (isNaN(parseInt(zimbraMajorVersion))) {
+    if (parseInt(zimbraMajorVersion, 10) < 7) {
+      if (isNaN(parseInt(zimbraMajorVersion, 10))) {
         this.displayStatusMessage(
           {
             msg: StringUtils.getMessage("undetectable_zimbra_version"),

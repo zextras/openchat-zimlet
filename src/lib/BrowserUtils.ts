@@ -36,6 +36,6 @@ export class BrowserUtils {
   }
 
   public static getMajorVersion(): number {
-    return parseInt(Bowser.version.substring(0, Bowser.version.indexOf(".")));
+    return parseInt(Bowser.version.substring(0, Bowser.version.indexOf(".")), 10);
   }
 }
