@@ -180,10 +180,13 @@ export class ChatZimletBase extends ZmZimletBase {
     if (typeof zimbraVersion === "undefined" || zimbraVersion === null) {
       zimbraVersion = "0";
     }
-    let zimbraMajorVersion: string = zimbraVersion.substring(0, 1);
+    let zimbraMajorVersion: string = zimbraVersion.substring(
+      0,
+      (zimbraVersion.indexOf(".") !== -1 ? zimbraVersion.indexOf(".") : zimbraVersion.length)
+    );
 
-    if (zimbraMajorVersion < "7") {
-      if (zimbraMajorVersion === "0") {
+    if (parseInt(zimbraMajorVersion) < 7) {
+      if (isNaN(parseInt(zimbraMajorVersion))) {
         this.displayStatusMessage(
           {
             msg: StringUtils.getMessage("undetectable_zimbra_version"),
@@ -405,9 +408,9 @@ export class ChatZimletBase extends ZmZimletBase {
     let requiredVersion: Version = new Version(eventServerInfo.getInfo("required_zimlet_version"));
     this.mCoreVersion = new Version(eventServerInfo.getInfo("server_version"));
 
-    if (this.needUpdate(requiredVersion, this.mCoreVersion)) {
-      return;
-    }
+    // if (this.needUpdate(requiredVersion, this.mCoreVersion)) {
+    //   return;
+    // }
 
     this.mMainWindow.setCurrentStatus(this.mChatClient.getCurrentStatus());
     this.mMainWindow.enableDisableMainMenuButton(true);

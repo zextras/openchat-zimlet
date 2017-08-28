@@ -45,10 +45,11 @@ import {ArrayUtils} from "../../lib/ArrayUtils";
 import {BuddyStatus} from "../../client/BuddyStatus";
 import {DwtChatTreeItem} from "./DwtChatTreeItem";
 import {SortFcns} from "../SortFcns";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
 
 export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
 
-  public static MAX_LENGTH: number = 217;
+  public static MAX_LENGTH: number = ZimbraUtils.isUniversalUI() ? 217 : 150;
 
   private Log: Logger;
   private mMainWindowPluginManager: ChatPluginManager;

@@ -21,7 +21,7 @@ import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {SettingsManager, GroupData} from "../../settings/SettingsManager";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {BuddyList} from "../../client/BuddyList";
-import {DwtToolBar} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
+import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {StatusSelector} from "../widgets/StatusSelector";
 import {MainMenuButton} from "../widgets/MainMenuButton";
@@ -60,8 +60,9 @@ export class MainWindow extends WindowBase {
   public static BrandPlugin = "Main Window Brand";
 
   public static DEBRAND_ICON   = "ImgZxChat_personalized_brand";
-  public static WIDTH: number  = 315;
-  public static HEIGHT: number = 446;
+
+  public static WIDTH: number  = ZimbraUtils.isUniversalUI() ? 315 : 210;
+  public static HEIGHT: number = ZimbraUtils.isUniversalUI() ? 446 : 340;
   public static RIGHT_PADDING  = 20;
   public static BOTTOM_PADDING  = 28;
 
@@ -158,7 +159,7 @@ export class MainWindow extends WindowBase {
     );
     this.mTitleLbl = new DwtLabel({
       parent: this.mTitleBar,
-      className: `WindowBaseTitleBar${ !ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`
+      className: `WindowBaseTitleBar${ ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`
     });
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
@@ -169,36 +170,36 @@ export class MainWindow extends WindowBase {
       parent: this.mContainerView,
       className: "MainWindowStatusToolbar"
     });
-    if (!ZimbraUtils.isUniversalUI()) {
-      this.mStatusSelectorToolbar.setSize(
-        Dwt.DEFAULT,
-        "45px"
-      );
-    }
+    // if (!ZimbraUtils.isUniversalUI()) {
+    //   this.mStatusSelectorToolbar.setSize(
+    //     Dwt.DEFAULT,
+    //     "45px"
+    //   );
+    // }
     this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar);
     this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
     this.mStatusSelector.setSize(
       `${MainWindow.WIDTH}px`,
-      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "45px"
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px"
     );
     this.mSearchToolBar = new DwtToolBar({
       parent: this.mContainerView,
-      className: "ZToolbar ZWidget ZxChat_MainWindowSearchToolBar"
+      className: `ZToolbar ZWidget ZxChat_MainWindowSearchToolBar${(ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui"}`
     });
     this.mSearchInput = new DwtInputField({
       parent: this.mSearchToolBar,
-      className: `DwtInputField ZxChat_MainWindowSearchInput${ (!ZimbraUtils.isUniversalUI()) ? "-legacy-ui" : "" }`,
+      className: `DwtInputField ZxChat_MainWindowSearchInput${ (ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui" }`,
       hint: ZmMsg.search
     });
     this.mSearchInput.setHandler(DwtEvent.ONKEYUP, (ev) => this.handleSearchKeyUp(ev));
-    this.mSearchButton = new DwtButton({
+    this.mSearchButton = new DwtToolBarButton({
       parent: this.mSearchToolBar,
-      className: `ZToolbarButton ZxChat_MainWindowSearchButton${ (!ZimbraUtils.isUniversalUI()) ? "-legacy-ui" : "" }`
+      className: `ZToolbarButton ZxChat_MainWindowSearchButton${ (ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui" }`
     });
     this.mSearchButton.setImage("Search2");
     this.mSearchButton.addSelectionListener(new AjxListener(this, this.resetSearchField));
     this.mSearchInput.setSize(
-      `${MainWindow.WIDTH - this.mSearchButton.getSize().x}px`,
+      `${MainWindow.WIDTH - (ZimbraUtils.isUniversalUI() ? this.mSearchButton.getSize().x : 29)}px`,
       Dwt.DEFAULT
     );
     this.createBuddyListTree(buddyList);
@@ -284,10 +285,10 @@ export class MainWindow extends WindowBase {
     if (ZimbraUtils.isUniversalUI()) {
       buddyListHeight -= 24;
     } else {
-      buddyListHeight -= 3;
+      buddyListHeight -= 8;
     }
     this.mBuddyListTree.setSize(
-      `${MainWindow.WIDTH + 1}px`,
+      `${MainWindow.WIDTH + 2}px`,
       `${buddyListHeight}px`
     );
   }
@@ -510,6 +511,7 @@ export class MainWindow extends WindowBase {
   }
 
   private moveToDock(): void {
+    if (this.mOnDock) return;
     this.mOnDock = true;
     this.handleSidebarResize();
     this.mTitleBar.setSize(
@@ -521,15 +523,15 @@ export class MainWindow extends WindowBase {
     this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(true));
     this.mStatusSelector.setSize(
       `${MainWindow.WIDTH}px`,
-      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "45px"
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px"
     );
     this.mBuddyListTree.setSize(
-      Dwt.DEFAULT,
-      `${MainWindow.HEIGHT - 15 - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "212px", // problem with DwtTree border
+      `${MainWindow.HEIGHT - (ZimbraUtils.isUniversalUI() ? 15 : 7) - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
     );
     this.mContainerView.setSize(
       Dwt.DEFAULT,
-      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y}px`
+      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - (ZimbraUtils.isUniversalUI() ? 0 : 2)}px` // Fix bottom border
     );
     this.mContainerView.reparent(this);
     this.setView(this.mContainerView);
@@ -537,19 +539,20 @@ export class MainWindow extends WindowBase {
   }
 
   private moveToSidebar(): void {
+    if (!this.mOnDock) return;
     this.mOnDock = false;
     this.handleSidebarResize();
+    this.mStatusSelector.setSize(
+      `${MainWindow.WIDTH - this.mMainMenuButton.getSize().x - (ZimbraUtils.isUniversalUI() ? 0 : 4)}px`, // 4 is the margins
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px"
+    );
     this.mMainMenuButton.reparent(this.mStatusSelectorToolbar);
     this.mMainMenuButton.setSwitchOnSidebarStatus(true);
     this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(false));
-    this.mStatusSelector.setSize(
-      `${MainWindow.WIDTH - this.mMainMenuButton.getSize().x}px`,
-      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "45px"
-    );
     let container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
     this.mContainerView.reparentHtmlElement(container, 0);
     this.mBuddyListTree.setSize(
-      Dwt.DEFAULT,
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "213px", // problem with DwtTree border
       `${appCtxt.getShell().getSize().y - 107 - 15 - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
     );
     this.mContainerView.setSize(
@@ -597,7 +600,10 @@ export class MainWindow extends WindowBase {
       if (typeof container !== "undefined" && container !== null) {
         container.style.paddingLeft = "6px";
         container.style.display = "block";
-        container.style.width = `${width + 10}px`;
+        container.style.width = `${(ZimbraUtils.isUniversalUI()) ? width + 10 : width + 2}px`;
+        if (!ZimbraUtils.isUniversalUI()) {
+          container.style.borderLeft = "1px #e5e5e5 solid";
+        }
       }
       if (typeof tdElement !== "undefined" && tdElement !== null) {
         tdElement.style.display = "table-cell";

@@ -18,7 +18,7 @@
 <template id="com_zextras_chat_open.Windows#BaseWindow">
     <div id='${id}_windowDiv' class='${cssClassesForWindowDiv}'>
         <table role="presentation" >
-            <tr id='${id}_titlebar' class="ZxChat_TitleBar">
+            <tr id='${id}_titlebar' class="ZxChat_TitleBar${legacy}">
                 <$ if (data.doNotRenderTitleBar === true) { $>
                 <$ } else { $>
                 <td class='minWidth ZxChatWindowIcon'>

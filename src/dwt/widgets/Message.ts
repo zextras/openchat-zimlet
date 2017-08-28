@@ -24,6 +24,7 @@ import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {StringUtils} from "../../lib/StringUtils";
 import {Message as MessageObj} from "../../client/Message";
 import {Conversation} from "./Conversation";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
 
 export class Message extends DwtComposite {
 
@@ -103,6 +104,7 @@ export class Message extends DwtComposite {
     data.date = StringUtils.localizeHour(this.mMessage.getDate(), this.mDateProvider.getNow());
     data.dateTooltip = this.formatDate(this.mMessage.getDate());
     data.content = this.mMessage.getHtmlMessage();
+    data.legacy = ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui";
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
     this._senderEl = document.getElementById(data.id + "_sender");
     this._dateEl = document.getElementById(data.id + "_date");
@@ -124,4 +126,5 @@ export interface MessageCreateHtmlData {
   dateTooltip?: string;
   content?: string;
   sender?: string;
+  legacy?: string;
 }

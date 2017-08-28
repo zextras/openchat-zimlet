@@ -118,19 +118,18 @@
   box-shadow: none
   border: none
 
-.ZxChat_Button.ZHover > .ZToolbarButtonBorder
-  box-shadow: none
-  border: none
-  background: #007cc3 none
-
-.ZxChat_Button.ZActive > .ZToolbarButtonBorder
-  box-shadow: none
-  border: none
-  background: #007cc3 none
-
+.ZxChat_Button.ZHover > .ZToolbarButtonBorder,
+.ZxChat_Button.ZActive > .ZToolbarButtonBorder,
 .ZxChat_Button.ZSelected > .ZToolbarButtonBorder
   box-shadow: none
   border: none
   background: #007cc3 none
+
+.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZHover > .ZToolbarButtonBorder,
+.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZActive > .ZToolbarButtonBorder,
+.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZSelected > .ZToolbarButtonBorder
+  box-shadow: none
+  border: none
+  background: #D6D6D6 none
 
 @import "./jquery/JQueryPlugins"
