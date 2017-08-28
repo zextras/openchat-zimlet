@@ -180,10 +180,13 @@ export class ChatZimletBase extends ZmZimletBase {
     if (typeof zimbraVersion === "undefined" || zimbraVersion === null) {
       zimbraVersion = "0";
     }
-    let zimbraMajorVersion: string = zimbraVersion.substring(0, 1);
+    let zimbraMajorVersion: string = zimbraVersion.substring(
+      0,
+      (zimbraVersion.indexOf(".") !== -1 ? zimbraVersion.indexOf(".") : zimbraVersion.length)
+    );
 
-    if (zimbraMajorVersion < "7") {
-      if (zimbraMajorVersion === "0") {
+    if (parseInt(zimbraMajorVersion, 10) < 7) {
+      if (isNaN(parseInt(zimbraMajorVersion, 10))) {
         this.displayStatusMessage(
           {
             msg: StringUtils.getMessage("undetectable_zimbra_version"),

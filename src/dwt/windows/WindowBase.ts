@@ -31,6 +31,8 @@ import {DwtBaseDialog} from "../../zimbra/ajax/dwt/widgets/DwtBaseDialog";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {DwtKeyboardMgr} from "../../zimbra/ajax/dwt/keyboard/DwtKeyboardMgr";
 import {FocusKeeper} from "../../lib/FocusKeeper";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 
 export class WindowBase extends DwtBaseDialog {
   public static BTN_CLOSE: string = "close";
@@ -40,7 +42,7 @@ export class WindowBase extends DwtBaseDialog {
   public static _MINIMIZE_ICON = "ImgZxChat_minimize";
   public static _EXPAND_ICON = "ImgZxChat_expand";
   public static _CLOSE_ICON = "ImgZxChat_close-legacy";
-  public static MAX_TITLE_LENGTH: number = 190;
+  public static MAX_TITLE_LENGTH: number = ZimbraUtils.isUniversalUI() ? 190 : 148;
   public static Z_INDEX: number = 499;
 
   private static sWindows: WindowBase[] = [];
@@ -291,6 +293,7 @@ export class WindowBase extends DwtBaseDialog {
     data["closeIcon"] = WindowBase._CLOSE_ICON;
     data["controlsTemplateId"] = this.CONTROLS_TEMPLATE;
     data["cssClassesForWindowDiv"] = "DwtDialog WindowOuterContainer";
+    data["legacy"] = ZimbraUtils.isUniversalUI() ? "" : "_legacy";
     if (Version.isZ8Up()) {
       data["cssClassesForWindowDiv"] += " FixBordersForZ7";
     }
@@ -436,7 +439,7 @@ export class WindowBase extends DwtBaseDialog {
     obj.focus = ((obj: DwtComposite, callback: Function) =>
       () => {
         for (let window of WindowBase.sWindows) {
-          window.setZIndex(window.getZIndex() - 1);
+          window.setZIndex(Math.max(window.getZIndex() - 1, 499));
         }
         callback(WindowBase.sMaxZIndex);
         WindowBase.prototype.focus.call(obj);
@@ -448,4 +451,13 @@ export class WindowBase extends DwtBaseDialog {
       }
     }
   }
+}
+
+export class ZxPopupMenu extends ZmPopupMenu {
+
+  public popup(delay: number, x: number, y: number, kbGenereated?: boolean) {
+    super.popup(delay, x, y, kbGenereated);
+    this.setZIndex(Math.max(this.getZIndex(), WindowBase.sMaxZIndex + 1));
+  }
+
 }

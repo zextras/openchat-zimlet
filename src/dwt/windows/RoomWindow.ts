@@ -61,8 +61,8 @@ export class RoomWindow extends WindowBase {
   public static AddButtonPlugin: string = "Room Window Add Button";
   public static BuddyStatusChangedPlugin: string = "Room Window Buddy Status Changed";
   public static DEFAULT_ICON: string = "ImgZxChat_personalized_brand";
-  public static WIDTH: number  = 315;
-  public static HEIGHT: number = 446;
+  public static WIDTH: number  = ZimbraUtils.isUniversalUI() ? 315 : 228;
+  public static HEIGHT: number = ZimbraUtils.isUniversalUI() ? 446 : 338;
   public static _SMOOTH_MOVE_DELAY: number = 800;
 
   private Log: Logger;
@@ -149,7 +149,7 @@ export class RoomWindow extends WindowBase {
       className: "ZxChat_TitleBar_Toolbar_Child"}
     );
     this.mTitleDragBar.setSize(
-      `${RoomWindow.WIDTH - 80}px`,
+      `${RoomWindow.WIDTH - (ZimbraUtils.isUniversalUI() ? 80 : 68)}px`,
       Dwt.DEFAULT
     );
     this.mTitleLbl = new DwtLabel({
@@ -157,7 +157,7 @@ export class RoomWindow extends WindowBase {
       className: `WindowBaseTitleBar${!ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`
     });
     // TODO: Dirty hack to modify the title label classname
-    document.getElementById(this.mTitleLbl.getHTMLElId() + "_title").className += " RoomWindowTitleBar-TitleLabel";
+    document.getElementById(this.mTitleLbl.getHTMLElId() + "_title").className += ` RoomWindowTitleBar-TitleLabel${ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`;
     this._initializeDragging(this.mTitleDragBar.getHTMLElId());
     this.setTitle(room.getTitle());
     this.setIcon(room.getRoomStatus().getCSS());
@@ -166,7 +166,7 @@ export class RoomWindow extends WindowBase {
     this.mMainMenuButton = new RoomWindowMenuButton(this, this.mTitleButtonBar, this.mRoomWindowPluginManager);
     this.mCloseButton = new DwtToolBarButton({
       parent: this.mTitleButtonBar,
-      className: "ZToolbarButton ZxChat_Button ZxChat_TitleBar_Button"
+      className: `ZToolbarButton ZxChat_Button ZxChat_TitleBar_Button${ZimbraUtils.isUniversalUI() ? "" : "_legacy"}`
     });
     if (ZimbraUtils.isUniversalUI()) {
       this.mCloseButton.setImage("Close");
@@ -222,9 +222,13 @@ export class RoomWindow extends WindowBase {
       this.mDefaultConversationHeight
     );
     this.mInputField.setSize(
-      `${RoomWindow.WIDTH - 80}px`, // this.emoticonBtn.getSize().x,
+      `${RoomWindow.WIDTH - (ZimbraUtils.isUniversalUI() ? 80 : 62)}px`, // this.emoticonBtn.getSize().x,
       Dwt.DEFAULT
     );
+    // this.setSize(
+    //   `${RoomWindow.WIDTH}px`,
+    //   `${RoomWindow.HEIGHT}px`
+    // );
     this.setView(this.mContainerView);
     this.mTimeoutWrittenStatus = 5000;
     this.setZIndex(499);
@@ -261,7 +265,7 @@ export class RoomWindow extends WindowBase {
   }
 
   public setTitle(title: string): void {
-    if (title.length > 25) {
+    if (title.length > (ZimbraUtils.isUniversalUI() ? 25 : 18)) {
       this.mTitleLbl.setToolTipContent(title);
       title = LearningClipUtils.clip(title, WindowBase.MAX_TITLE_LENGTH, "DwtDialogTitle ZxChatWindowTitle");
     }

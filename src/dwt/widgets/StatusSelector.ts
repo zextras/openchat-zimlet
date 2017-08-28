@@ -19,20 +19,20 @@ import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToo
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
-import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 import {Callback} from "../../lib/callbacks/Callback";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {BuddyStatus} from "../../client/BuddyStatus";
+import {ZxPopupMenu} from "../windows/WindowBase";
 
 export class StatusSelector extends DwtToolBarButton {
 
   public static _DATA_STATUS: string = "status";
 
-  private menu: ZmPopupMenu;
+  private menu: ZxPopupMenu;
   private onStatusSelectedCbkMgr: CallbackManager;
 
-  constructor(parent: DwtToolBar) {
+   constructor(parent: DwtToolBar) {
     super({
       parent: parent,
       className: "ZToolbarButton ZNewButton"
@@ -42,12 +42,12 @@ export class StatusSelector extends DwtToolBarButton {
     this.dontStealFocus();
     this.onStatusSelectedCbkMgr = new CallbackManager();
     this.setAlign(DwtLabel.ALIGN_LEFT);
-    this.menu = new ZmPopupMenu(this);
+    this.menu = new ZxPopupMenu(this);
     this.setMenu(this.menu);
   }
 
   public clear() {
-    this.menu = new ZmPopupMenu(this);
+    this.menu = new ZxPopupMenu(this);
     this.setMenu(this.menu);
   }
 

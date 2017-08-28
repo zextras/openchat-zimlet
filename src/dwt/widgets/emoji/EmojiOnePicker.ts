@@ -105,7 +105,6 @@ export class EmojiOnePicker extends DwtMenu {
   public getMenu(parent: DwtComposite, callback: Callback): DwtMenu {
     this.mOnEmojiSelectedCbk = callback;
     // this.reparent(parent); // Reparenting done right does not work... :/
-    this.setZIndex(Math.max(this.getZIndex(), WindowBase.sMaxZIndex + 1));
     return this;
   }
 
@@ -151,6 +150,11 @@ export class EmojiOnePicker extends DwtMenu {
       button.setToolTipContent(emojiData.name, false);
       button.addSelectionListener(selectionListner);
     }
+  }
+
+  public popup(delay: number, x: number, y: number, kbGenereated?: boolean): void {
+    super.popup(delay, x, y, kbGenereated);
+    this.setZIndex(Math.max(this.getZIndex(), WindowBase.sMaxZIndex + 1));
   }
 
 }

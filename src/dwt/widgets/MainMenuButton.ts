@@ -17,7 +17,6 @@
 
 import {DwtToolBarButton, DwtToolBar} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
-import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 import {StringUtils} from "../../lib/StringUtils";
 import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
@@ -25,6 +24,8 @@ import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {Callback} from "../../lib/callbacks/Callback";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {ZxPopupMenu} from "../windows/WindowBase";
 
 export class MainMenuButton extends DwtToolBarButton {
 
@@ -53,7 +54,7 @@ export class MainMenuButton extends DwtToolBarButton {
   constructor(parent: DwtToolBar, mainWindowPluginManager: ChatPluginManager, image: string) {
     super({
       parent: parent,
-      className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
+      className: `ZxChat_Button ZxChat_TitleBar_Button${ZimbraUtils.isUniversalUI() ? "" : "_legacy"} ZToolbarButton`
     });
     this.setImage(image);
     this.setDropDownImages("", "", "", "");
@@ -64,7 +65,7 @@ export class MainMenuButton extends DwtToolBarButton {
     this.onShowHideOfflineCbkMgr = new CallbackManager();
     this.onSettingsSelectionCbkMgr = new CallbackManager();
     this.onChangeSidebarOrDockCbkMgr = [];
-    const menu = new ZmPopupMenu(this, "ActionMenu", "ZmPopupMenu_ZxChat_MainMenu");
+    const menu = new ZxPopupMenu(this, "ActionMenu", "ZmPopupMenu_ZxChat_MainMenu");
     this.opAddBuddy = menu.createMenuItem(
       MainMenuButton.ADD_BUDDY_MENU_ITEM_ID,
       {
@@ -227,6 +228,7 @@ export class MainMenuButton extends DwtToolBarButton {
     this.onChangeSidebarOrDockCbkMgr.push(cbk);
   }
 
+    // this.setZIndex(Math.max(this.getZIndex(), WindowBase.sMaxZIndex + 1));
 
   /**
    * Disable on changing status to invisible, otherwise enable
