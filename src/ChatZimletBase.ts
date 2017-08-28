@@ -408,9 +408,9 @@ export class ChatZimletBase extends ZmZimletBase {
     let requiredVersion: Version = new Version(eventServerInfo.getInfo("required_zimlet_version"));
     this.mCoreVersion = new Version(eventServerInfo.getInfo("server_version"));
 
-    // if (this.needUpdate(requiredVersion, this.mCoreVersion)) {
-    //   return;
-    // }
+    if (this.needUpdate(requiredVersion, this.mCoreVersion)) {
+      return;
+    }
 
     this.mMainWindow.setCurrentStatus(this.mChatClient.getCurrentStatus());
     this.mMainWindow.enableDisableMainMenuButton(true);
