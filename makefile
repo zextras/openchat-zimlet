@@ -71,7 +71,6 @@ build/com_zextras_chat_open.xml:
 		-e 's/#NAME#/$(NAME)/g' \
 		-e 's/#LABEL#/$(LABEL)/g' \
 		-e 's/#DESCRIPTION#/$(DESCRIPTION)/g' \
-		-e "s/#SPRITE_NAME#/$(SPRITE_NAME)/g" \
 		build/com_zextras_chat_open.xml
 
 build/com_zextras_chat_open_bundle.js: node_modules \

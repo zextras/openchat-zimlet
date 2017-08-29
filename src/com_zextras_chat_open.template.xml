@@ -17,7 +17,7 @@
 
 <zimlet name="#NAME#"
         version="#VERSION#"
-        label="#NAME#"
+        label="#LABEL#"
         description="#DESCRIPTION#">
 
     <include>#NAME#_bundle.js</include>
