@@ -20,6 +20,8 @@ COMMIT_ID_LONG = $(shell git rev-parse HEAD)
 VERSION = $(shell fgrep "\"version\":" package.json | sed -e 's/\s*"version":\s*"\(.*\)",/\1/')
 DESCRIPTION = $(shell fgrep "\"description\":" package.json | sed -e 's/\s*"description":\s*"\(.*\)",/\1/')
 NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')
+SPRITE_NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')_sprite
+LABEL = OpenChat Zimlet
 
 all: dist/com_zextras_chat_open.zip
 
@@ -67,7 +69,9 @@ build/com_zextras_chat_open.xml:
 	cp src/com_zextras_chat_open.template.xml build/com_zextras_chat_open.xml
 	sed -i -e 's/#VERSION#/$(VERSION)/g' \
 		-e 's/#NAME#/$(NAME)/g' \
+		-e 's/#LABEL#/$(LABEL)/g' \
 		-e 's/#DESCRIPTION#/$(DESCRIPTION)/g' \
+		-e "s/#SPRITE_NAME#/$(SPRITE_NAME)/g" \
 		build/com_zextras_chat_open.xml
 
 build/com_zextras_chat_open_bundle.js: node_modules \
