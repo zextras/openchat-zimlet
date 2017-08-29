@@ -358,7 +358,7 @@ export class MainWindow extends WindowBase {
           this.setLocation(posPoint.x, posPoint.y);
         }
         else {
-          this.Log.debug(event, "MainWindow.onShellResize");
+          this.Log.debug(controlEvent, "MainWindow.onShellResize");
           this.resizeSidebar(
             this.getBounds().width,
             controlEvent.newHeight
