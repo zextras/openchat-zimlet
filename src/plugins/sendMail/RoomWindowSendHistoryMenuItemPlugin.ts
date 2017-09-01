@@ -55,16 +55,26 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
       roomWindow.getDateProvider(),
       RoomImp.FORMAT_PLAIN
     );
-    let recipients: string = "",
-      nicknames: string[] = [];
-    for (let buddy of roomWindow.getRoom().getMembers()) {
-      nicknames.push(buddy.getNickname());
-      recipients += "\"" + buddy.getNickname() + "\" <" + buddy.getId() + ">;";
+    let nicknames: string[] = [];
+    let history: Message[] = roomWindow.getRoom().getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName);
+    for (let message of history) {
+      if (message instanceof MessageReceived) {
+        let user = (<MessageReceived>message).getSender().getNickname(),
+          alreadyAdded: boolean = false;
+        for (let nickname of nicknames) {
+          if (nickname === user) {
+            alreadyAdded = true;
+            break;
+          }
+        }
+        if (!alreadyAdded) {
+          nicknames.push(user);
+        }
+      }
     }
     let email: {} = {
       action: ZmOperation.NEW_MESSAGE,
       subjOverride: StringUtils.getMessage("mail_title_prefix_chat_conversation", [nicknames.join(", ")]),
-      toOverride: recipients,
       extraBodyText: body,
       composeMode: "text/plain"
     };
