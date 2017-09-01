@@ -604,7 +604,9 @@ export class ChatZimletBase extends ZmZimletBase {
         currentStatusType === BuddyStatusType.AWAY
       )
     ) {
-      this.mChatClient.setUserStatus(this.mLastStatus);
+      if (typeof this.mLastStatus !== "undefined" && this.mLastStatus !== null) {
+        this.mChatClient.setUserStatus(this.mLastStatus);
+      }
       this.mLastStatus = undefined;
     }
   }
