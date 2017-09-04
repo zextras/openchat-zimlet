@@ -229,15 +229,17 @@ export class RoomWindowManager {
 
   /**
    * Callback function invoked when a message is received.
-   * @param window
+   * @param roomWindow
    * @param message
    */
-  private onMessageReceived(window: RoomWindow, message: MessageReceived): void {
-    // if (!window._isFocused() && window.getChildren().length > 0 && !this.mRoomManager.isStatusBusy()) {
-    if (!window.isFocused() && window.getChildren().length > 0 &&
+  private onMessageReceived(roomWindow: RoomWindow, message: MessageReceived): void {
+    if (roomWindow.getChildren().length > 0) {
+      roomWindow.popup(undefined, this.mZimletContext.getClient().getCurrentStatus().getType() !== BuddyStatusType.BUSY);
+    }
+    if (!roomWindow.isFocused() && roomWindow.getChildren().length > 0 &&
       !(this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY)
     ) {
-      window.startBlinkTitle();
+      roomWindow.startBlinkTitle();
       let icon = (new ContactImg(message.getSender().getId())).getImgUrl();
       if (typeof icon === "undefined" || icon === null) {
         icon = this.mZimletContext.getNotificationImage();
@@ -295,10 +297,10 @@ export class RoomWindowManager {
         this.getYWindowLocation(window)
       );
     }
-    // if (this.mRoomManager.isStatusBusy()) {
-    if (this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY) {
-      window.setMinimized();
-    }
+    // // if (this.mRoomManager.isStatusBusy()) {
+    // if (this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY) {
+    //   window.setMinimized();
+    // }
   }
 
   /**

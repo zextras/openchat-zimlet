@@ -186,7 +186,8 @@ export class RoomWindow extends WindowBase {
     this.mRoom.onBuddyStatusChange(new Callback(this, this.onBuddyStatusChange));
     this.mRoom.onMemberRemoved(new Callback(this, this.onMemberRemoved));
     this.mRoom.onTitleChange(new Callback(this, this.setTitle));
-    this.mRoom.onTriggeredPopup(new Callback(this, this.popup));
+    this.mRoom.onTriggeredPopup(() => this.popup(undefined, true));
+    this.mRoom.onTriggeredInputFocus(() => this.inputfieldFocus());
     this.mLastPopup = 0;
     let inputToolbar: DwtToolBar = new DwtToolBar({parent: this.mContainerView, className: "ZxChat_RoomToolbar"});
 
@@ -375,9 +376,6 @@ export class RoomWindow extends WindowBase {
   }
 
   private onAddMessageReceived(message: MessageReceived): void {
-    if (!this.isPoppedUp() && this.getChildren().length > 0) {
-      this.popup();
-    }
     this.mOnMessageReceivedCallbacks.run(this, message);
     this.mConversation.addMessageReceived(message);
   }
@@ -387,7 +385,7 @@ export class RoomWindow extends WindowBase {
     this.updateWritingDots(writingStatus.getValue());
   }
 
-  public popup(point?: DwtPoint): void {
+  public popup(point?: DwtPoint, setExpand?: boolean): void {
     if (
       !this.isPoppedUp() &&
       this.getConversationContainer().parent.getHTMLElId() === this.getHTMLElId()
@@ -396,11 +394,13 @@ export class RoomWindow extends WindowBase {
       this.mLastPopup = date.getTime();
       super.popup(point);
       this.mOnWindowOpenedCallbacks.run(this, point);
+      if (setExpand === true) {
+        this.setExpanded();
+      }
+      else if (setExpand === false) {
+        this.setMinimized();
+      }
     }
-    if (this.isMinimized()) {
-      this.setExpanded();
-    }
-    this.inputfieldFocus();
   }
 
   public popdown(): void {

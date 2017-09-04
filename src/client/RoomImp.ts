@@ -61,7 +61,8 @@ export class RoomImp implements Room {
   private onBuddyStatusChangeCallbacks: CallbackManager;
   private onRoomStatusChangeCallbacks: CallbackManager;
   private onBuddyWritingStatusCallbacks: CallbackManager;
-  private onTriggeredPopupCallbacks: CallbackManager;
+  private mTriggerPopup: () => void;
+  private mTriggerInputFocus: () => void;
   private mRoomPluginManager: ChatPluginManager;
   protected Log: Logger;
 
@@ -91,7 +92,6 @@ export class RoomImp implements Room {
     this.onBuddyStatusChange(new Callback(this, this.updateRoomStatus));
     this.onRoomStatusChangeCallbacks = new CallbackManager();
     this.onBuddyWritingStatusCallbacks = new CallbackManager();
-    this.onTriggeredPopupCallbacks = new CallbackManager();
     this.mRoomPluginManager = roomPluginManager;
     this.mRoomPluginManager.switchOn(this);
   }
@@ -394,12 +394,24 @@ export class RoomImp implements Room {
     return this.mLastActivity;
   }
 
-  public onTriggeredPopup(callback: Callback): void {
-    this.onTriggeredPopupCallbacks.addCallback(callback);
+  public onTriggeredPopup(callback: () => void): void {
+      this.mTriggerPopup = callback;
   }
 
   public triggerPopup(): void {
-    this.onTriggeredPopupCallbacks.run();
+    if (typeof this.mTriggerPopup !== "undefined" && this.mTriggerPopup !== null) {
+      this.mTriggerPopup();
+    }
+  }
+
+  public onTriggeredInputFocus(callback: () => void): void {
+      this.mTriggerInputFocus = callback;
+  }
+
+  public triggerInputFocus(): void {
+    if (typeof this.mTriggerInputFocus !== "undefined" && this.mTriggerInputFocus !== null) {
+      this.mTriggerInputFocus();
+    }
   }
 
 }

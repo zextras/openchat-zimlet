@@ -685,7 +685,8 @@ export class ChatZimletBase extends ZmZimletBase {
         room.addMember(buddy);
       }
       roomWindow = this.mRoomWindowManager.getRoomWindowById(buddy.getId());
-      roomWindow.popup();
+      roomWindow.popup(undefined, true);
+      roomWindow.inputfieldFocus();
     }
   }
 
