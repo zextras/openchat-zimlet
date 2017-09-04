@@ -61,8 +61,8 @@ export class RoomImp implements Room {
   private onBuddyStatusChangeCallbacks: CallbackManager;
   private onRoomStatusChangeCallbacks: CallbackManager;
   private onBuddyWritingStatusCallbacks: CallbackManager;
-  private mTriggerPopup: () => void;
-  private mTriggerInputFocus: () => void;
+  private mTriggerPopupCallbacks: (() => void)[] = [];
+  private mTriggerInputFocusCallbacks: (() => void)[] = [];
   private mRoomPluginManager: ChatPluginManager;
   protected Log: Logger;
 
@@ -395,22 +395,22 @@ export class RoomImp implements Room {
   }
 
   public onTriggeredPopup(callback: () => void): void {
-      this.mTriggerPopup = callback;
+      this.mTriggerPopupCallbacks.push(callback);
   }
 
   public triggerPopup(): void {
-    if (typeof this.mTriggerPopup !== "undefined" && this.mTriggerPopup !== null) {
-      this.mTriggerPopup();
+    for (let callback of this.mTriggerPopupCallbacks) {
+      callback();
     }
   }
 
   public onTriggeredInputFocus(callback: () => void): void {
-      this.mTriggerInputFocus = callback;
+      this.mTriggerInputFocusCallbacks.push(callback);
   }
 
   public triggerInputFocus(): void {
-    if (typeof this.mTriggerInputFocus !== "undefined" && this.mTriggerInputFocus !== null) {
-      this.mTriggerInputFocus();
+    for (let callback of this.mTriggerInputFocusCallbacks) {
+      callback();
     }
   }
 
