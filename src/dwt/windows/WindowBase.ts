@@ -169,7 +169,7 @@ export class WindowBase extends DwtBaseDialog {
   }
 
   public setMinimized(save: boolean = true): void {
-    if (!this.mEnabled) return;
+    if (!this.mEnabled || this.mMinimized) return;
     this.mMinimized = true;
     Dwt.setDisplay(this.mMinimizeIconEl, Dwt.DISPLAY_NONE);
     Dwt.setDisplay(this.mExpandIconEl, Dwt.DISPLAY_BLOCK);
@@ -179,7 +179,7 @@ export class WindowBase extends DwtBaseDialog {
   }
 
   public setExpanded(save: boolean = true): void {
-    if (!this.mEnabled) return;
+    if (!this.mEnabled || !this.mMinimized) return;
     this.mMinimized = false;
     Dwt.setDisplay(this.mMinimizeIconEl, Dwt.DISPLAY_BLOCK);
     Dwt.setDisplay(this.mExpandIconEl, Dwt.DISPLAY_NONE);

@@ -169,8 +169,12 @@ export interface Room {
 
   getLastActivity(): number;
 
-  onTriggeredPopup(callback: Callback): void;
+  onTriggeredPopup(callback: () => void): void;
 
   triggerPopup(): void;
+
+  onTriggeredInputFocus(callback: () => void): void;
+
+  triggerInputFocus(): void;
 
 }
