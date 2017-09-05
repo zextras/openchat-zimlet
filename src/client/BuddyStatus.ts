@@ -279,6 +279,14 @@ export class BuddyStatus {
   }
 
   /**
+   * Get if the status represent an "Available" status
+   * @return {boolean}
+   */
+  public isAvailable(): boolean {
+    return this.mType === BuddyStatusType.ONLINE;
+  }
+
+  /**
    * Get if the status represent an "Invited" status
    * @return {boolean}
    */
