@@ -233,12 +233,11 @@ export class RoomWindowManager {
    * @param message
    */
   private onMessageReceived(roomWindow: RoomWindow, message: MessageReceived): void {
+    let onBusyStatus: boolean = this.mZimletContext.getClient().getUserStatusManager().onBusyStatus();
     if (roomWindow.getChildren().length > 0) {
-      roomWindow.popup(undefined, this.mZimletContext.getClient().getCurrentStatus().getType() !== BuddyStatusType.BUSY);
+      roomWindow.popup(undefined, !onBusyStatus);
     }
-    if (!roomWindow.isFocused() && roomWindow.getChildren().length > 0 &&
-      !(this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY)
-    ) {
+    if (!roomWindow.isFocused() && roomWindow.getChildren().length > 0 && !onBusyStatus) {
       roomWindow.startBlinkTitle();
       let icon = (new ContactImg(message.getSender().getId())).getImgUrl();
       if (typeof icon === "undefined" || icon === null) {

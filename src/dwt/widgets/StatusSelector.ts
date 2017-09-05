@@ -55,32 +55,31 @@ export class StatusSelector extends DwtToolBarButton {
     this.onStatusSelectedCbkMgr.addCallback(callback);
   }
 
-  public setOptionStatuses(statuses: BuddyStatus[]): void {
-    for (let status of statuses) {
-      let item = this.menu.createMenuItem("DwtStatusMenuItem_" + (status.getId()), {
-        text: status.getMessage(true),
+  public setOptionStatuses(userStatuses: BuddyStatus[]): void {
+    for (let userStatus of userStatuses) {
+      let item = this.menu.createMenuItem("DwtStatusMenuItem_" + (userStatus.getId()), {
+        text: userStatus.getMessage(true),
         style: DwtMenuItem.RADIO_STYLE,
-        image: status.getCSS(),
+        image: userStatus.getCSS(),
         enabled: true
       });
-      item.setData(StatusSelector._DATA_STATUS, status);
-      item.addSelectionListener(new AjxListener(this, this._statusSelected, [status]));
+      item.setData(StatusSelector._DATA_STATUS, userStatus);
+      item.addSelectionListener(new AjxListener(this, this.statusSelected, [userStatus]));
     }
   }
 
-  public setCurrentStatus(status: BuddyStatus): void {
-    this.setText(status.getMessage(true));
+  public setCurrentStatus(userStatus: BuddyStatus): void {
+    this.setText(userStatus.getMessage(true));
     let menuItems: DwtMenuItem[] = this.menu.getMenuItems();
     let results = [];
     for (let item of menuItems) {
       let itemStatus = item.getData(StatusSelector._DATA_STATUS);
-      results.push(item._setChecked(status.getId().toString() === itemStatus.getId(), null, true));
+      results.push(item._setChecked(userStatus.getId().toString() === itemStatus.getId(), null, true));
     }
   }
 
-  public _statusSelected(status: BuddyStatus): void {
-    // Log.debug(status, "Status Changed");
-    this.onStatusSelectedCbkMgr.run(status);
+  private statusSelected(userStatus: BuddyStatus): void {
+    this.onStatusSelectedCbkMgr.run(userStatus);
   }
 
 }

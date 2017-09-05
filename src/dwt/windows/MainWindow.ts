@@ -293,14 +293,14 @@ export class MainWindow extends WindowBase {
     );
   }
 
-  public setUserStatuses(statuses: BuddyStatus[]): void {
+  public setUserStatuses(userStatuses: BuddyStatus[]): void {
     this.mStatusSelector.clear();
-    this.mStatusSelector.setOptionStatuses(statuses);
+    this.mStatusSelector.setOptionStatuses(userStatuses);
   }
 
-  public setCurrentStatus(status: BuddyStatus): void {
-    this.mMainWindowPluginManager.triggerPlugins(MainWindow.StatusChangedPlugin, status);
-    this.mStatusSelector.setCurrentStatus(status);
+  public setCurrentStatus(userStatus: BuddyStatus): void {
+    this.mMainWindowPluginManager.triggerPlugins(MainWindow.StatusChangedPlugin, userStatus);
+    this.mStatusSelector.setCurrentStatus(userStatus);
   }
 
   public setSortMethod(sortMethod: string): void {

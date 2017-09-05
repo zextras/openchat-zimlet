@@ -80,6 +80,7 @@ import {JQueryPlugins} from "./jquery/JQueryPlugins";
 import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
 import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
 import {ChatClientImp} from "./client/ChatClientImp";
+import {UserStatusManagerImp} from "./client/UserStatusManagerImp";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -110,8 +111,6 @@ export class ChatZimletBase extends ZmZimletBase {
   private mNotificationManager: NotificationManager;
   private mStoreGroupsDataCallback: Callback;
   private mRoomWindowManager: RoomWindowManager;
-  private mUserStatuses: BuddyStatus[];
-  private mLastStatus: BuddyStatus;
 
   private mAddBuddyDialog: AddBuddyDialog;
   private mAddGroupDialog: AddGroupDialog;
@@ -227,7 +226,7 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mChatClient.onServerOnline(new Callback(this, this.handleServerOnline));
     this.mChatClient.onServerOffline(new Callback(this, this.handleServerOffline));
     this.mChatClient.onProxyError(new Callback(this, this.handle502Error));
-    this.mChatClient.onStatusChange(new Callback(this, this.setStatusAsCurrent));
+    this.mChatClient.onStatusChange(new Callback(this, this.refreshStatusInMainWindow));
     this.mChatClient.onEndProcessResponses(new Callback(this, this.onEndProcessResponses));
 
     this.mNotificationManager = new NotificationManager(
@@ -412,18 +411,18 @@ export class ChatZimletBase extends ZmZimletBase {
       return;
     }
 
-    this.mMainWindow.setCurrentStatus(this.mChatClient.getCurrentStatus());
     this.mMainWindow.enableDisableMainMenuButton(true);
-    this.mUserStatuses = [
+    let userStatuses: BuddyStatus[] = [
       new BuddyStatus(BuddyStatusType.ONLINE, "", 1),
       new BuddyStatus(BuddyStatusType.BUSY, "", 2),
       new BuddyStatus(BuddyStatusType.AWAY, "", 3),
       new BuddyStatus(BuddyStatusType.INVISIBLE, "", 4)
     ];
-    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.SetStatusesPlugin, this.mUserStatuses);
-    let currentStatus: BuddyStatus = this.mChatClient.getCurrentStatus();
-    this.mMainWindow.setCurrentStatus(currentStatus);
-    this.mMainWindow.setUserStatuses(this.mUserStatuses);
+    this.mChatClient.getUserStatusManager().setUserStatuses(userStatuses);
+    this.mMainWindow.setUserStatuses(userStatuses);
+    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.SetStatusesPlugin, userStatuses);
+    this.refreshStatusInMainWindow(new BuddyStatus(0, "Offline", 0));
+    this.mChatClient.getUserStatusManager().setSelectedStatus(new BuddyStatus(1, "Available", 1));
 
     this.mChatClient.startPing();
 
@@ -563,51 +562,18 @@ export class ChatZimletBase extends ZmZimletBase {
     return false;
   }
 
-  private setStatusAsCurrent(status: BuddyStatus) {
+  // The status show by the status selector is only the received from the ContactInformationEventHandler, except for the start
+  private refreshStatusInMainWindow(status: BuddyStatus) {
     this.mMainWindow.setCurrentStatus(status);
-    if (typeof this.mIdleTimer !== "undefined" && this.mIdleTimer !== null && this.mIdleTimer.isIdle()) {
-      this.handleIdle(this.mIdleTimer.isIdle());
-    }
   }
 
   private handleIdle(idleStatus: boolean): void {
-    let idleString: string = idleStatus ? "Away" : "Presence detected",
-      currentStatusType: BuddyStatusType = this.mChatClient.getCurrentStatus().getType();
+    let idleString: string = idleStatus ? "Away" : "Presence detected";
     this.Log.debug(idleString, "Invoked Auto-Away routine");
-    let firstAway: BuddyStatus;
-    for (let status of this.mUserStatuses) {
-      if (status.getType() === BuddyStatusType.AWAY) {
-        firstAway = status;
-        break;
+    if (typeof this.mChatClient.getUserStatusManager() !== "undefined" && this.mChatClient.getUserStatusManager() !== null) {
+      if (this.mChatClient.getUserStatusManager().setAutoAway(idleStatus)) {
+        this.mChatClient.setUserStatus(this.mChatClient.getUserStatusManager().getCurrentStatus());
       }
-    }
-    if (typeof firstAway === "undefined" || firstAway === null) {
-      return;
-    }
-
-    if (
-        idleStatus === true &&
-        (
-          currentStatusType !== BuddyStatusType.AWAY &&
-          currentStatusType !== BuddyStatusType.BUSY &&
-          currentStatusType !== BuddyStatusType.INVISIBLE
-        )
-    ) {
-      this.mLastStatus = this.mChatClient.getCurrentStatus();
-      this.mChatClient.setUserAutoAwayStatus(
-        firstAway
-      );
-    }
-    if (
-      idleStatus === false &&
-      (
-        currentStatusType === BuddyStatusType.AWAY
-      )
-    ) {
-      if (typeof this.mLastStatus !== "undefined" && this.mLastStatus !== null) {
-        this.mChatClient.setUserStatus(this.mLastStatus);
-      }
-      this.mLastStatus = undefined;
     }
   }
 
@@ -652,17 +618,15 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mMainWindow.triggerSortGroups();
   }
 
-  public setStatus(status: BuddyStatus): void {
-    if (status.getType() !== this.mChatClient.getCurrentStatus().getType()) {
-      this.mChatClient.setUserStatus(status);
-    }
-    this.mMainWindow.setCurrentStatus(this.mChatClient.getCurrentStatus());
-  }
-
-  private statusSelected(status: BuddyStatus): void {
-    let callback: Callback = new Callback(this, this.setStatus);
+  public statusSelected(status: BuddyStatus): void {
+    let callback: Callback = new Callback(this, this.statusSelectedCallback);
     this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.StatusSelectedPlugin, status, callback);
     callback.run(status);
+  }
+
+  private statusSelectedCallback(userStatus: BuddyStatus): void {
+    this.mChatClient.getUserStatusManager().setSelectedStatus(userStatus);
+    this.mChatClient.setUserStatus(userStatus);
   }
 
   private buddySelected(event: DwtSelectionEvent): void {

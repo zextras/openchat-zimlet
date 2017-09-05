@@ -53,6 +53,8 @@ import {EventManager} from "./events/EventManager";
 import {RoomManager} from "./RoomManager";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {ChatClient} from "./ChatClient";
+import {UserStatusManagerImp} from "./UserStatusManagerImp";
+import {UserStatusManager} from "./UserStatusManager";
 
 export class ChatClientImp implements ChatClient {
 
@@ -81,6 +83,7 @@ export class ChatClientImp implements ChatClient {
   private mOnUserStatusesReceived: CallbackManager;
   private mEventManager: EventManager;
   private mChatClientPluginManager: ChatPluginManager;
+  private mUserStatusManager: UserStatusManager;
 
   constructor(
     sessionInfoProvider: SessionInfoProvider,
@@ -105,12 +108,13 @@ export class ChatClientImp implements ChatClient {
     this.mEventManager = eventManager;
     this.mMessageAckWaiter = new MessageAckWaiter();
     this.mRoomManager = roomManager;
+    this.mUserStatusManager = new UserStatusManagerImp();
     this.mBuddylist = new BuddyList();
     this.mBuddylist.onRemoveBuddy(new Callback(this.mRoomManager, this.mRoomManager.removeBuddyFromAllRooms));
     this.mBuddylist.onAddBuddy(new Callback(this.mRoomManager, this.mRoomManager.addBuddyToHisRooms));
     this.mRoomManager.onSendEvent(new Callback(this, this.sendEvent));
     this.mRoomManager.onSendMessage(new Callback(this, this._sendMessage));
-    this.mCurrentStatus = new BuddyStatus(0, "Offline", 0);
+    // this.mCurrentStatus = new BuddyStatus(0, "Offline", 0);
     this.mOnStatusChangeCallbackManager = new CallbackManager();
     this.mOnRegistrationErrorCallbackManager = new CallbackManager();
     this.mOnServerOnlineCallbackManager = new CallbackManager();
@@ -361,15 +365,14 @@ export class ChatClientImp implements ChatClient {
     this.sendEvent(event, callback, errorCallback);
   }
 
-  /**
-   * Set a status for the user.
-   */
-  public setUserStatus(status: BuddyStatus, callback?: Callback, errorCallback?: Callback): void {
-    this.mCurrentStatus = status;
-    this.mRoomManager.statusChanged(this.mCurrentStatus);
+  public getUserStatusManager(): UserStatusManager {
+    return this.mUserStatusManager;
+  }
+
+  public setUserStatus(userStatus: BuddyStatus, callback?: Callback, errorCallback?: Callback): void {
     this.sendEvent(
       new SetStatusEvent(
-        `${this.mCurrentStatus.getId()}`,
+        `${userStatus.getId()}`,
         this.mDateProvider.getNow(),
         false
       ),
@@ -378,37 +381,9 @@ export class ChatClientImp implements ChatClient {
     );
   }
 
-  /**
-   * Set an auto-away status for the user.
-   */
-  public setUserAutoAwayStatus(status: BuddyStatus, callback?: Callback, errorCallback?: Callback): void {
-    this.mCurrentStatus = status;
-    this.mRoomManager.statusChanged(this.mCurrentStatus);
-    this.sendEvent(
-      new SetStatusEvent(
-        `${this.mCurrentStatus.getId()}`,
-        this.mDateProvider.getNow(),
-        true
-      ),
-      callback,
-      errorCallback
-    );
-  }
-
-  /**
-   * Get the current status.
-   */
-  public getCurrentStatus(): BuddyStatus {
-    return this.mCurrentStatus;
-  }
-
-  /**
-   * Set the  current status
-   * @param status
-   */
-  public setCurrentStatus(status: BuddyStatus): void {
-    this.mCurrentStatus = status;
-    this.mOnStatusChangeCallbackManager.run(status);
+  public statusChanged(statusChanged: BuddyStatus): void {
+    this.mRoomManager.statusChanged(statusChanged);
+    this.mOnStatusChangeCallbackManager.run(statusChanged);
   }
 
   /**
