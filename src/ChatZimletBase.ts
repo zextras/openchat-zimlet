@@ -626,7 +626,7 @@ export class ChatZimletBase extends ZmZimletBase {
 
   private statusSelectedCallback(userStatus: BuddyStatus): void {
     this.mChatClient.getUserStatusManager().setSelectedStatus(userStatus);
-    this.mChatClient.setUserStatus(userStatus);
+    this.mChatClient.setUserStatus(this.mChatClient.getUserStatusManager().getCurrentStatus());
   }
 
   private buddySelected(event: DwtSelectionEvent): void {
