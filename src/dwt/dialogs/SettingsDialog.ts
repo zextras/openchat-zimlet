@@ -78,7 +78,7 @@ export class SettingsDialog extends DwtDialog {
   private mDateProvider: DateProvider;
   private mSettingsObjs: { [key: string]: DwtControl };
   private mOriginals: { [key: string]: string | boolean };
-  private mTabIds: { [tab: string]: string };
+  private mTabIds: { [tab: string]: number };
   private mOnPopDownSwitchToFirstTabCallback: Callback;
   private mDebugTabButton: DwtTabButton;
   private mDebugInfoCheckbox: DwtCheckbox;
