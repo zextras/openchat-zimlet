@@ -33,17 +33,17 @@ export class UserStatusManagerImp implements UserStatusManager {
 
   public getCurrentStatus(): BuddyStatus {
     let status = this.mSelectedStatus;
-    if (this.mAutoBusy && status.isOnline()) {
+    if (this.mAutoAway && status.isOnline()) {
       for (let userStatus of this.mUserStatuses) {
-        if (userStatus.getType() === BuddyStatusType.BUSY) {
+        if (userStatus.getType() === BuddyStatusType.AWAY) {
           status = userStatus;
           break;
         }
       }
     }
-    else if (this.mAutoAway && status.isOnline()) {
+    else if (this.mAutoBusy && status.isOnline()) {
       for (let userStatus of this.mUserStatuses) {
-        if (userStatus.getType() === BuddyStatusType.AWAY) {
+        if (userStatus.getType() === BuddyStatusType.BUSY) {
           status = userStatus;
           break;
         }
