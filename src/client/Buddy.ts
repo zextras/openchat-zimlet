@@ -37,7 +37,7 @@ export interface Buddy {
   onNicknameChange(callback: Callback): void;
   /**
    * Callback function params:
-   * (buddy: Buddy, status: BuddyStatus)
+   * (buddy: Buddy)
    */
   onStatusChange(callback: Callback): void;
   filterTest(regex: RegExp): boolean;

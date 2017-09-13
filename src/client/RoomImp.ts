@@ -18,7 +18,7 @@
 import {Room} from "./Room";
 import {BuddyStatusType} from "./BuddyStatusType";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {DateProvider} from "../lib/DateProvider";
 import {Buddy} from "./Buddy";
 import {Callback} from "../lib/callbacks/Callback";
@@ -32,6 +32,7 @@ import {Logger} from "../lib/log/Logger";
 import {MessageWritingStatus} from "./MessageWritingStatus";
 import {MessageType} from "./events/chat/MessageEvent";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class RoomImp implements Room {
 
@@ -49,7 +50,7 @@ export class RoomImp implements Room {
   private mDateProvider: DateProvider;
   private mLastActivity: number = 0;
   private members: Buddy[];
-  private roomStatus: BuddyStatus;
+  private mRoomStatus: BuddyStatus;
   private onTitleChangeCallbacks: CallbackManager;
   private onAddMemberCallbacks: CallbackManager;
   private onRemovedMemberCallbacks: CallbackManager;
@@ -76,7 +77,7 @@ export class RoomImp implements Room {
     this.title = title;
     this.mDateProvider = dateProvider;
     this.members = [];
-    this.roomStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
+    this.mRoomStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
     this.onTitleChangeCallbacks = new CallbackManager();
     this.onAddMemberCallbacks = new CallbackManager();
     this.onAddMember(new Callback(this, this.updateRoomStatus));
@@ -344,7 +345,7 @@ export class RoomImp implements Room {
    * Get the current room status
    */
   public getRoomStatus(): BuddyStatus {
-    return this.roomStatus;
+    return this.mRoomStatus;
   }
 
   /**
@@ -352,7 +353,7 @@ export class RoomImp implements Room {
    * the room members.
    */
   private _calculateRoomStatus(): BuddyStatus {
-    let bestStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
+    let bestStatus: BuddyStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
     for (let buddy of this.members) {
       if (buddy.getStatus().isMoreAvailableThan(bestStatus)) {
         bestStatus = buddy.getStatus();
@@ -365,11 +366,11 @@ export class RoomImp implements Room {
    * Try to update the room status, if is changed, run the callback.
    */
   public updateRoomStatus(): void {
-    let oldStatusType = this.roomStatus.getType();
+    let oldStatusType = this.mRoomStatus.getType();
     let newStatus = this._calculateRoomStatus();
     if (oldStatusType !== newStatus.getType()) {
-      this.roomStatus = newStatus;
-      this._onRoomStatusChange(this.roomStatus);
+      this.mRoomStatus = newStatus;
+      this._onRoomStatusChange(this.mRoomStatus);
     }
   }
 

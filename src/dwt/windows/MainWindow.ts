@@ -28,7 +28,7 @@ import {MainMenuButton} from "../widgets/MainMenuButton";
 import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
 import {BuddyListTree} from "../widgets/BuddyListTree";
 import {Callback} from "../../lib/callbacks/Callback";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {BuddyStatusImp} from "../../client/BuddyStatusImp";
 import {DwtControlEvent} from "../../zimbra/ajax/dwt/events/DwtControlEvent";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
@@ -51,6 +51,7 @@ import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
+import {BuddyStatus} from "../../client/BuddyStatus";
 
 export class MainWindow extends WindowBase {
 

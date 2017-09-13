@@ -38,6 +38,4 @@ export interface UserStatusManager {
   setUserStatuses(userStatuses: BuddyStatus[]): void;
 
   getUserStatuses(): BuddyStatus[];
-
-  onBusyStatus(): boolean;
 }

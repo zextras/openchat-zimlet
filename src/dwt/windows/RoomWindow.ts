@@ -52,8 +52,9 @@ import {DwtDraggable} from "../../zimbra/ajax/dwt/core/DwtDraggable";
 import {Buddy} from "../../client/Buddy";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {BuddyStatusImp} from "../../client/BuddyStatusImp";
 import {MessageSent} from "../../client/MessageSent";
+import {BuddyStatus} from "../../client/BuddyStatus";
 
 export class RoomWindow extends WindowBase {
 

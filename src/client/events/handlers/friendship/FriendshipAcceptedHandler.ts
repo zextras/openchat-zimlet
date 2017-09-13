@@ -18,7 +18,7 @@
 import {FriendshipAcceptedEvent} from "../../chat/friendship/FriendshipAcceptedEvent";
 import {ChatClient} from "../../../ChatClient";
 import {BuddyStatusType} from "../../../BuddyStatusType";
-import {BuddyStatus} from "../../../BuddyStatus";
+import {BuddyStatusImp} from "../../../BuddyStatusImp";
 import {ChatEvent} from "../../ChatEvent";
 import {ChatEventHandler} from "../ChatEventHandler";
 
@@ -33,7 +33,7 @@ export class FriendshipAcceptedHandler implements ChatEventHandler {
       buddyList = client.getBuddyList(),
       buddy = buddyList.getBuddyById(friendshipEvent.getSender());
     if (buddy != null) {
-      buddy.setStatus(new BuddyStatus(BuddyStatusType.OFFLINE));
+      buddy.setStatus(new BuddyStatusImp(BuddyStatusType.OFFLINE));
     }
     return true;
   }

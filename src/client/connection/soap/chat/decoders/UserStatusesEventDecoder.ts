@@ -21,6 +21,7 @@ import {UserStatusesEvent} from "../../../../events/chat/UserStatusesEvent";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {BuddyStatus} from "../../../../BuddyStatus";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {BuddyStatusImp} from "../../../../BuddyStatusImp";
 
 export class UserStatusesEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -40,8 +41,8 @@ export class UserStatusesEventDecoder extends SoapEventDecoder {
   }
 
   private static decodeBuddyStatus(status: UserStatusObj): BuddyStatus {
-    return new BuddyStatus(
-      BuddyStatus.GetTypeFromNumber(status["type"]),
+    return new BuddyStatusImp(
+      BuddyStatusImp.GetTypeFromNumber(status["type"]),
       status["message"],
       status["id"]
     );

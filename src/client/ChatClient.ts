@@ -20,7 +20,6 @@ import {SessionInfoProvider} from "./SessionInfoProvider";
 import {DateProvider} from "../lib/DateProvider";
 import {Callback} from "../lib/callbacks/Callback";
 import {BuddyList} from "./BuddyList";
-import {BuddyStatus} from "./BuddyStatus";
 import {MessageAckWaiter} from "./MessageAckWaiter";
 import {ChatEvent} from "./events/ChatEvent";
 import {MessageReceived} from "./MessageReceived";
@@ -31,6 +30,7 @@ import {RoomManager} from "./RoomManager";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {Logger} from "../lib/log/Logger";
 import {UserStatusManager} from "./UserStatusManager";
+import {BuddyStatus} from "./BuddyStatus";
 
 export interface ChatClient {
 

@@ -233,7 +233,7 @@ export class RoomWindowManager {
    * @param message
    */
   private onMessageReceived(roomWindow: RoomWindow, message: MessageReceived): void {
-    let onBusyStatus: boolean = this.mZimletContext.getClient().getUserStatusManager().onBusyStatus();
+    let onBusyStatus: boolean = this.mZimletContext.getClient().getUserStatusManager().getCurrentStatus().isBusy();
     if (roomWindow.getChildren().length > 0) {
       roomWindow.popup(undefined, !onBusyStatus);
     }

@@ -22,8 +22,9 @@ import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
 import {Callback} from "../../lib/callbacks/Callback";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {BuddyStatusImp} from "../../client/BuddyStatusImp";
 import {ZxPopupMenu} from "../windows/WindowBase";
+import {BuddyStatus} from "../../client/BuddyStatus";
 
 export class StatusSelector extends DwtToolBarButton {
 

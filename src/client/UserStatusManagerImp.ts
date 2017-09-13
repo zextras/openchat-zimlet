@@ -15,13 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {BuddyStatusType} from "./BuddyStatusType";
 import {UserStatusManager} from "./UserStatusManager";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class UserStatusManagerImp implements UserStatusManager {
 
-  private mSelectedStatus: BuddyStatus = new BuddyStatus(0, "Available", 0);
+  private mSelectedStatus: BuddyStatus = new BuddyStatusImp(0, "Available", 0);
   private mUserStatuses: BuddyStatus[];
   private mAutoAway: boolean = false;
   private mAutoBusy: boolean = false;
@@ -71,7 +72,4 @@ export class UserStatusManagerImp implements UserStatusManager {
     return this.mUserStatuses;
   }
 
-  public onBusyStatus(): boolean {
-    return (this.getCurrentStatus().getType() === BuddyStatusType.BUSY);
-  }
 }

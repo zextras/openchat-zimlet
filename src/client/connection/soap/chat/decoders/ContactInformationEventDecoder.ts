@@ -18,7 +18,7 @@
 import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {ContactInformationEvent} from "../../../../events/chat/ContactInformationEvent";
-import {BuddyStatus} from "../../../../BuddyStatus";
+import {BuddyStatusImp} from "../../../../BuddyStatusImp";
 import {DateProvider} from "../../../../../lib/DateProvider";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
@@ -46,8 +46,8 @@ export class ContactInformationEventDecoder extends SoapEventDecoder {
       eventObj["from"],
       this.mDateProvider.getDate(eventObj["timestampSent"]),
       this.mDateProvider.getNow(),
-      new BuddyStatus(
-        BuddyStatus.GetTypeFromNumber(eventObj["statusType"]),
+      new BuddyStatusImp(
+        BuddyStatusImp.GetTypeFromNumber(eventObj["statusType"]),
         eventObj["message"],
         eventObj["id"]
       ),

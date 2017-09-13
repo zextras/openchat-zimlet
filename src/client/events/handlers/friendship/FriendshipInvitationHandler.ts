@@ -19,7 +19,7 @@ import {FriendshipInvitationEvent} from "../../chat/friendship/FriendshipInvitat
 import {ChatClient} from "../../../ChatClient";
 import {Buddy} from "../../../Buddy";
 import {BuddyStatusType} from "../../../BuddyStatusType";
-import {BuddyStatus} from "../../../BuddyStatus";
+import {BuddyStatusImp} from "../../../BuddyStatusImp";
 import {ChatEventHandler} from "../ChatEventHandler";
 import {ChatEvent} from "../../ChatEvent";
 import {StringUtils} from "../../../../lib/StringUtils";
@@ -48,7 +48,7 @@ export class FriendshipInvitationHandler implements ChatEventHandler {
       buddy.addGroup(defaultGroup);
       defaultGroup.addBuddy(buddy);
     }
-    buddy.setStatus(new BuddyStatus(BuddyStatusType.NEED_RESPONSE));
+    buddy.setStatus(new BuddyStatusImp(BuddyStatusType.NEED_RESPONSE));
     client.friendshipInvitationReceived(buddy);
     let title: string = StringUtils.getMessage("accept_friends_title");
     let message: string = StringUtils.getMessage("accept_friends_text", [buddy.getNickname()]);

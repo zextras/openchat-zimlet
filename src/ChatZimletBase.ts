@@ -45,7 +45,7 @@ import {ZxError} from "./lib/error/ZxError";
 import {ZxErrorCode} from "./lib/error/ZxErrorCode";
 import {ZmCsfeException} from "./zimbra/zimbra/csfe/ZmCsfeException";
 import {AjxException} from "./zimbra/ajax/core/AjxException";
-import {BuddyStatus} from "./client/BuddyStatus";
+import {BuddyStatusImp} from "./client/BuddyStatusImp";
 import {RemoveFriendshipEvent} from "./client/events/chat/RemoveFriendshipEvent";
 import {IdleTimer} from "./lib/IdleTimer";
 import {BuddyStatusType} from "./client/BuddyStatusType";
@@ -81,6 +81,7 @@ import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
 import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
 import {ChatClientImp} from "./client/ChatClientImp";
 import {UserStatusManagerImp} from "./client/UserStatusManagerImp";
+import {BuddyStatus} from "./client/BuddyStatus";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -413,16 +414,16 @@ export class ChatZimletBase extends ZmZimletBase {
 
     this.mMainWindow.enableDisableMainMenuButton(true);
     let userStatuses: BuddyStatus[] = [
-      new BuddyStatus(BuddyStatusType.ONLINE, "", 1),
-      new BuddyStatus(BuddyStatusType.BUSY, "", 2),
-      new BuddyStatus(BuddyStatusType.AWAY, "", 3),
-      new BuddyStatus(BuddyStatusType.INVISIBLE, "", 4)
+      new BuddyStatusImp(BuddyStatusType.ONLINE, "", 1),
+      new BuddyStatusImp(BuddyStatusType.BUSY, "", 2),
+      new BuddyStatusImp(BuddyStatusType.AWAY, "", 3),
+      new BuddyStatusImp(BuddyStatusType.INVISIBLE, "", 4)
     ];
     this.mChatClient.getUserStatusManager().setUserStatuses(userStatuses);
     this.mMainWindow.setUserStatuses(userStatuses);
     this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.SetStatusesPlugin, userStatuses);
-    this.refreshStatusInMainWindow(new BuddyStatus(0, "Offline", 0));
-    this.mChatClient.getUserStatusManager().setSelectedStatus(new BuddyStatus(1, "Available", 1));
+    this.refreshStatusInMainWindow(new BuddyStatusImp(0, "Offline", 0));
+    this.mChatClient.getUserStatusManager().setSelectedStatus(new BuddyStatusImp(1, "Available", 1));
 
     this.mChatClient.startPing();
 

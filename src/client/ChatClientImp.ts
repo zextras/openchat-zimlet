@@ -22,7 +22,6 @@ import {DateProvider} from "../lib/DateProvider";
 import {ConnectionManager} from "./connection/ConnectionManager";
 import {Callback} from "../lib/callbacks/Callback";
 import {BuddyList} from "./BuddyList";
-import {BuddyStatus} from "./BuddyStatus";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
 import {Version} from "../lib/Version";
 import {MessageAckWaiter} from "./MessageAckWaiter";
@@ -55,6 +54,7 @@ import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {ChatClient} from "./ChatClient";
 import {UserStatusManagerImp} from "./UserStatusManagerImp";
 import {UserStatusManager} from "./UserStatusManager";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class ChatClientImp implements ChatClient {
 
@@ -72,7 +72,6 @@ export class ChatClientImp implements ChatClient {
   private mMessageAckWaiter: MessageAckWaiter;
   private mRoomManager: RoomManager;
   private mBuddylist: BuddyList;
-  private mCurrentStatus: BuddyStatus;
   private mOnStatusChangeCallbackManager: CallbackManager;
   private mOnRegistrationErrorCallbackManager: CallbackManager;
   private mOnServerOnlineCallbackManager: CallbackManager;
@@ -114,7 +113,6 @@ export class ChatClientImp implements ChatClient {
     this.mBuddylist.onAddBuddy(new Callback(this.mRoomManager, this.mRoomManager.addBuddyToHisRooms));
     this.mRoomManager.onSendEvent(new Callback(this, this.sendEvent));
     this.mRoomManager.onSendMessage(new Callback(this, this._sendMessage));
-    // this.mCurrentStatus = new BuddyStatus(0, "Offline", 0);
     this.mOnStatusChangeCallbackManager = new CallbackManager();
     this.mOnRegistrationErrorCallbackManager = new CallbackManager();
     this.mOnServerOnlineCallbackManager = new CallbackManager();

@@ -17,12 +17,13 @@
 
 import {Message, MessageCreateHtmlData} from "./Message";
 import {Buddy} from "../../client/Buddy";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {BuddyStatusImp} from "../../client/BuddyStatusImp";
 import {DateProvider} from "../../lib/DateProvider";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {Conversation} from "./Conversation";
 import {MessageReceived} from "../../client/MessageReceived";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
+import {BuddyStatus} from "../../client/BuddyStatus";
 
 export class MessageStatus extends Message {
 

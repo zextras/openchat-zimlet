@@ -20,9 +20,10 @@ import {BuddySessionKeeper} from "./BuddySessionKeeper";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
 import {Group} from "./Group";
 import {ArrayUtils} from "../lib/ArrayUtils";
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {Callback} from "../lib/callbacks/Callback";
 import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class BuddyImp implements Buddy {
 
