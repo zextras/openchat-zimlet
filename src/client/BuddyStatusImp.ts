@@ -285,7 +285,7 @@ export class BuddyStatusImp implements BuddyStatus {
    * @return {boolean}
    */
   public isBusy(): boolean {
-    return this.mType === BuddyStatusType.ONLINE;
+    return this.mType === BuddyStatusType.BUSY;
   }
 
   /**
@@ -293,7 +293,7 @@ export class BuddyStatusImp implements BuddyStatus {
    * @return {boolean}
    */
   public isAway(): boolean {
-    return this.mType === BuddyStatusType.ONLINE;
+    return this.mType === BuddyStatusType.AWAY;
   }
 
   /**

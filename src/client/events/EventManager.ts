@@ -40,7 +40,8 @@ export class EventManager {
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
     let handled: boolean = false;
-    if (this.mHandlersMap.hasOwnProperty(chatEvent.getCode().toString())) {
+    // chatEvent can be disposed on page reload
+    if (typeof chatEvent !== "undefined" && this.mHandlersMap.hasOwnProperty(chatEvent.getCode().toString())) {
       for (let handler of this.mHandlersMap[chatEvent.getCode()]) {
         try {
           handled = handler.handleEvent(chatEvent, client);
