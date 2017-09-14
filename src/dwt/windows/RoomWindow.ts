@@ -312,10 +312,14 @@ export class RoomWindow extends WindowBase {
       let realMessage: string = this.mInputField.getValue(),
         message: string = realMessage;
       if (Bowser.msie) {
-        message = `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
+        if (realMessage.substring(currentInputPosition, currentInputPosition + 2) === "\r\n") {
+          message = `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
+        }
       }
       else {
-        message = `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
+        if (realMessage.substring(currentInputPosition - 1, currentInputPosition) === "\n") {
+          message = `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
+        }
       }
       message = StringUtils.trim(message);
       this.mInputField.clear();
