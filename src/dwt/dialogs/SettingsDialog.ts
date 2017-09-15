@@ -61,7 +61,7 @@ import {Bowser} from "../../libext/bowser";
 export class SettingsDialog extends DwtDialog {
 
   private static width: number = 480;
-  private static height: number = 297;
+  private static height: number = 327;
   private static PREF_TAB: string = "pref_tab";
   private static CONTENTS_TAB: string = "contents_tab";
   private static INFO_TAB: string = "info_tab";
