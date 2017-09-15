@@ -309,13 +309,19 @@ export class RoomWindow extends WindowBase {
 
     if (DwtKeyEvent.getCharCode(event) === DwtKeyEvent.KEY_ENTER && !event.shiftKey) {
       let currentInputPosition: number = this.getCurrentInputPosition(<ExtendedHTMLInputElement> this.mInputField.getInputElement());
-      let realMessage: string = this.mInputField.getValue(),
+      let realMessage: string = this.mInputField.getInputElement().value, // this.mInputField.getValue execute trim
         message: string = realMessage;
       if (Bowser.msie) {
-        message = `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
+        if (realMessage.substring(currentInputPosition, currentInputPosition + 2) === "\r\n") {
+          message = `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
+        }
+        else return; // It isn't a send DwtKeyEvent.KEY_ENTER
       }
       else {
-        message = `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
+        if (realMessage.substring(currentInputPosition - 1, currentInputPosition) === "\n") {
+          message = `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
+        }
+        else return; // It isn't a send DwtKeyEvent.KEY_ENTER
       }
       message = StringUtils.trim(message);
       this.mInputField.clear();
