@@ -50,13 +50,6 @@ export class FriendshipInvitationHandler implements ChatEventHandler {
     }
     buddy.setStatus(new BuddyStatusImp(BuddyStatusType.NEED_RESPONSE));
     client.friendshipInvitationReceived(buddy);
-    let title: string = StringUtils.getMessage("accept_friends_title");
-    let message: string = StringUtils.getMessage("accept_friends_text", [buddy.getNickname()]);
-    message = message.replace(/<b>/g, "");
-    message = message.replace(/<\/b>/g, "");
-    message = message.replace(/<br>/g, " ");
-    this.mZimletContext.displayNotification(title, message, this.mZimletContext.getNotificationImage(), true);
-    this.mZimletContext.displayNotification(title, message, this.mZimletContext.getNotificationImage(), false);
     return true;
   }
 }
