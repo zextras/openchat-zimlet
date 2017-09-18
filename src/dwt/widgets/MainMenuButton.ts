@@ -128,7 +128,7 @@ export class MainMenuButton extends DwtToolBarButton {
       new AjxListener(this, this._onSettingsSelected, [])
     );
     mainWindowPluginManager.triggerPlugins(MainMenuButton.AddMenuItemPlugin, menu);
-    this.setMenu(menu);
+    this.setMenu(menu, false, false, true);
     Dwt.delClass(this.getHtmlElement(), "ZHasDropDown");
   }
 

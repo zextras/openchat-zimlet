@@ -25,11 +25,15 @@ const sorFcn = (a: string, b: string) => { return a.length - b.length; };
 
 export class TextCompletePlugin implements JQueryPlugin {
 
+  private static sInstalled: boolean = false;
+
   public install(): void {
     let imported = JQueryTextComplete;
+    TextCompletePlugin.sInstalled = true;
   }
 
   public static installOnTextField(el: string|HTMLElement): void {
+    if (!TextCompletePlugin.sInstalled) return;
     $(el).textcomplete(
       [
         {

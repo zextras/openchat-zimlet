@@ -20,8 +20,8 @@ import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindow} from "./RoomWindow";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
-import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
-import {WindowBase, ZxPopupMenu} from "./WindowBase";
+import {ZxPopupMenu} from "./WindowBase";
+import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 
 export class RoomWindowMenuButton extends DwtToolBarButton {
 
@@ -52,6 +52,7 @@ export class RoomWindowMenuButton extends DwtToolBarButton {
     this.mMenu = new ZxPopupMenu(this, "ActionMenu ZmPopupMenu_ZxChat_MainMenu");
     roomWindowPluginManager.triggerPlugins(RoomWindowMenuButton.AddMenuItemPlugin, this.mMenu);
     this.setMenu(this.mMenu, false, false, true);
+    Dwt.delClass(this.getHtmlElement(), "ZHasDropDown");
     if (this.mMenu.getItemCount() === 0) {
       this.setVisible(false);
     }

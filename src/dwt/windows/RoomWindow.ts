@@ -52,9 +52,10 @@ import {DwtDraggable} from "../../zimbra/ajax/dwt/core/DwtDraggable";
 import {Buddy} from "../../client/Buddy";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
 import {MessageSent} from "../../client/MessageSent";
 import {BuddyStatus} from "../../client/BuddyStatus";
+import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
+import {EmojiData} from "../widgets/emoji/EmojiTemplate";
 
 export class RoomWindow extends WindowBase {
 
@@ -144,7 +145,14 @@ export class RoomWindow extends WindowBase {
       parentElement: this._titleBarEl,
       className: "ZxChat_TitleBar_Toolbar"
     });
-    this.mTitlebar.getHtmlElement().onmouseup = undefined;
+    // Fix between versions
+    this.mTitlebar.getHtmlElement().onmouseup = function(ev: MouseEvent) {
+      let target: HTMLElement = <HTMLElement> ev.target;
+      if (target.className === "ImgZxChat_preferences" || target.className === "ImgZxChat_close") {
+        // Run default handler
+        DwtControl.__mouseUpHdlr(ev);
+      }
+    };
     this.mTitleDragBar = new DwtToolBar({
       parent: this.mTitlebar,
       className: "ZxChat_TitleBar_Toolbar_Child"}
@@ -196,7 +204,7 @@ export class RoomWindow extends WindowBase {
     this.mInputField = new DwtInputField({
       parent: inputToolbar,
       className: "DwtInputField RoomWindowConversationInput",
-      hint: StringUtils.getMessage("type_a_message"),
+      hint: ZimbraUtils.isZimbraVersionLessThan85() ? undefined : StringUtils.getMessage("type_a_message"),
       forceMultiRow: true,
       rows: 1
     });
@@ -555,8 +563,8 @@ export class RoomWindow extends WindowBase {
     return (this.mLastPopup > this.mRoom.getLastActivity()) ? this.mLastPopup : this.mRoom.getLastActivity();
   }
 
-  private onEmojiSelected(ev: Event, emoji: string): void {
-    this.addTextToInput(emoji);
+  private onEmojiSelected(ev: Event, emoji: EmojiData): void {
+    this.addTextToInput(emoji.name);
   }
 
   public getOriginalZIndex(): number {

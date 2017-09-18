@@ -52,6 +52,8 @@ import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {BuddyStatus} from "../../client/BuddyStatus";
+import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
+import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
 
 export class MainWindow extends WindowBase {
 
@@ -102,6 +104,7 @@ export class MainWindow extends WindowBase {
   private mTitleLbl: DwtLabel;
   private mSearchButton: DwtButton;
   private mSearchToolBar: DwtToolBar;
+  private mTitleExpandBar: DwtToolBar;
 
   constructor(appCtxt: ZmAppCtxt, settingsManager: SettingsManager, buddyList: BuddyList, mainWindowPluginManager: ChatPluginManager) {
 
@@ -148,25 +151,31 @@ export class MainWindow extends WindowBase {
         return true;
       }
     );
+    // Start
     this.mTitleBar = new DwtToolBar({
       parent: this.mContainerView,
       parentElement: this._titleBarEl,
       className: "ZxChat_TitleBar_Toolbar"
     });
-    this.mTitleBar.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleBar.setSize(
       `${MainWindow.WIDTH}px`,
       Dwt.DEFAULT
     );
-    this.mTitleLbl = new DwtLabel({
+    this.mTitleExpandBar = new DwtToolBar({
       parent: this.mTitleBar,
+      className: "ZxChat_TitleBar_Toolbar"
+    });
+    this.mTitleExpandBar.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
+    this.mTitleLbl = new DwtLabel({
+      parent: this.mTitleExpandBar,
       className: `WindowBaseTitleBar${ ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`
     });
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
-    this.mTitleBar.addFiller();
+    this.mTitleExpandBar.addFiller();
     this.mMainMenuButton  = this.createMainMenuButton(this.mTitleBar, true);
     this.mMainMenuButton.setEnabled(false);
+    this.mTitleExpandBar.setSize(this.mTitleBar.getSize().x - this.mMainMenuButton.getSize().x - 5, Dwt.DEFAULT);
     this.mStatusSelectorToolbar = new DwtToolBar({
       parent: this.mContainerView,
       className: "MainWindowStatusToolbar"
@@ -204,6 +213,10 @@ export class MainWindow extends WindowBase {
       Dwt.DEFAULT
     );
     this.createBuddyListTree(buddyList);
+    this.mContainerView.setSize(
+      Dwt.DEFAULT,
+      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - (ZimbraUtils.isUniversalUI() ? 0 : 2)}px` // Fix bottom border
+    );
     this.setView(this.mContainerView);
     this.onMinimize(new Callback(this, this.handleMinimized, true));
     this.onExpand(new Callback(this, this.handleMinimized, false));
@@ -282,11 +295,12 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.onContactDroppedInGroup(new Callback(this, this.contactDroppedInGroup));
     this.mBuddyListTree.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
     this.mBuddyListTree.onGroupExpandCollapse(new Callback(this, this.expandOrCollapseGroup));
-    let buddyListHeight = MainWindow.HEIGHT - this.mTitleBar.getSize().y - this.mStatusSelector.getSize().y - this.mSearchInput.getSize().y;
+    let buddyListHeight = MainWindow.HEIGHT - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y;
+    // - (ZimbraUtils.isUniversalUI() ? 15 : 7)
     if (ZimbraUtils.isUniversalUI()) {
-      buddyListHeight -= 24;
+      buddyListHeight -= 15;
     } else {
-      buddyListHeight -= 8;
+      buddyListHeight -= 7;
     }
     this.mBuddyListTree.setSize(
       `${MainWindow.WIDTH + 2}px`,
@@ -613,7 +627,18 @@ export class MainWindow extends WindowBase {
     }
   }
 
-  private titleClickCallback(): void {
+  private titleClickCallback(ev: MouseEventWithPath): void {
+    let path: HTMLElement[] = ev.path;
+    if (typeof path !== "undefined") {
+      for (let el of path) {
+        if (
+          typeof el.className !== "undefined" && el.className !== null &&
+          (el.className.indexOf("ZxChat_TitleBar_Button") !== -1 || el.className.indexOf("ZxChat_TitleBar_Button_legacy") !== -1)
+        ) {
+          return;
+        }
+      }
+    }
     if (this.isMinimized()) {
       this.setExpanded();
     }
@@ -677,4 +702,7 @@ export class MainWindowSortFunction implements ChatFieldPlugin {
 
 interface IE8HtmlElement extends HTMLElement {
   attachEvent(ev: string, hdlr: () => any): void;
+}
+interface MouseEventWithPath extends MouseEvent {
+  path?: HTMLElement[];
 }
