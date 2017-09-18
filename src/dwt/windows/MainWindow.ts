@@ -224,14 +224,14 @@ export class MainWindow extends WindowBase {
     this.onSetSortMethod((sortMethod) => this.setSortMethod(sortMethod));
     this.onChangeSidebarOrDock((docked) => this.changeSidebarOrDock(docked));
     this.mOnDock = true;
-    if (this._titleBarEl.addEventListener) {
-      this._titleBarEl.addEventListener(
+    if (this.mTitleExpandBar.getHtmlElement().addEventListener) {
+      this.mTitleExpandBar.getHtmlElement().addEventListener(
         "click",
         <(ev: MouseEvent) => any>(new Callback(this, this.titleClickCallback)).toClosure(),
         false
       );
-    } else if ((<IE8HtmlElement>this._titleBarEl).attachEvent)  {
-      (<IE8HtmlElement>this._titleBarEl).attachEvent("onclick", (new Callback(this, this.titleClickCallback)).toClosure());
+    } else if ((<IE8HtmlElement>this.mTitleExpandBar.getHtmlElement()).attachEvent)  {
+      (<IE8HtmlElement>this.mTitleExpandBar.getHtmlElement()).attachEvent("onclick", (new Callback(this, this.titleClickCallback)).toClosure());
     }
     this.mAppCtxt.getShell().addListener(DwtEvent.CONTROL, new AjxListener(this, this.onShellResize));
     this.updateMainIcon();
@@ -628,17 +628,6 @@ export class MainWindow extends WindowBase {
   }
 
   private titleClickCallback(ev: MouseEventWithPath): void {
-    let path: HTMLElement[] = ev.path;
-    if (typeof path !== "undefined") {
-      for (let el of path) {
-        if (
-          typeof el.className !== "undefined" && el.className !== null &&
-          (el.className.indexOf("ZxChat_TitleBar_Button") !== -1 || el.className.indexOf("ZxChat_TitleBar_Button_legacy") !== -1)
-        ) {
-          return;
-        }
-      }
-    }
     if (this.isMinimized()) {
       this.setExpanded();
     }
