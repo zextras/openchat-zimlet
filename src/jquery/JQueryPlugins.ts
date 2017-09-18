@@ -17,6 +17,8 @@
 
 import {JQueryPlugin} from "./JQueryPlugin";
 
+declare let $: any;
+
 export class JQueryPlugins {
 
   private mPlugins: JQueryPlugin[];
@@ -26,8 +28,10 @@ export class JQueryPlugins {
   }
 
   public installPlugins() {
-    for (let plugin of this.mPlugins) {
-      plugin.install();
+    if (typeof $ !== "undefined") {
+      for (let plugin of this.mPlugins) {
+        plugin.install();
+      }
     }
   }
 

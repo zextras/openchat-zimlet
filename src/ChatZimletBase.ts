@@ -21,7 +21,6 @@ import {LogEngine} from "./lib/log/LogEngine";
 import {Logger} from "./lib/log/Logger";
 import {emojione} from "./libext/emojione";
 import {Callback} from "./lib/callbacks/Callback";
-import {ZmSetting} from "./zimbra/zimbraMail/share/model/ZmSetting";
 import {StringUtils} from "./lib/StringUtils";
 import {ZmStatusView} from "./zimbra/zimbraMail/share/view/ZmStatusView";
 import {Version} from "./lib/Version";
@@ -80,8 +79,8 @@ import {JQueryPlugins} from "./jquery/JQueryPlugins";
 import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
 import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
 import {ChatClientImp} from "./client/ChatClientImp";
-import {UserStatusManagerImp} from "./client/UserStatusManagerImp";
 import {BuddyStatus} from "./client/BuddyStatus";
+import {ZimbraUtils} from "./lib/ZimbraUtils";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -176,17 +175,8 @@ export class ChatZimletBase extends ZmZimletBase {
     emojione.setCacheBustParams("");
     emojione.setImagePath(this.getResource(ChatZimletBase.EMOJI_ASSETS_PATH));
 
-    let zimbraVersion: string = appCtxt.get(ZmSetting.CLIENT_VERSION);
-    if (typeof zimbraVersion === "undefined" || zimbraVersion === null) {
-      zimbraVersion = "0";
-    }
-    let zimbraMajorVersion: string = zimbraVersion.substring(
-      0,
-      (zimbraVersion.indexOf(".") !== -1 ? zimbraVersion.indexOf(".") : zimbraVersion.length)
-    );
-
-    if (parseInt(zimbraMajorVersion, 10) < 7) {
-      if (isNaN(parseInt(zimbraMajorVersion, 10))) {
+    if (ZimbraUtils.getZimbraMajorVersion() < 7) {
+      if (isNaN(ZimbraUtils.getZimbraMajorVersion())) {
         this.displayStatusMessage(
           {
             msg: StringUtils.getMessage("undetectable_zimbra_version"),
@@ -332,7 +322,7 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mChatClient.onFriendshipInvitation(new Callback(this, this.handleNewFriendshipInvitation));
     this.mObjectHandler = new ObjectHandler();
     this.registerSettings();
-    ZmObjectManager.registerHandler(this.mObjectHandler, null, this._zimletContext.priority);
+    ZmObjectManager.registerHandler(ZimbraUtils.isZimbraVersionLessThan85() ? ObjectHandler : this.mObjectHandler, null, this._zimletContext.priority);
     this.mTimedCallbackFactory.createTimedCallback(
       new Callback(this.mChatClient, this.mChatClient.registerSession),
       100

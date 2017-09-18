@@ -18,14 +18,18 @@
 define(
   [
     "require",
-    "exports",
-    "jquery-textcomplete"
+    "exports"
   ],
   function (
     require,
-    exports,
-    jquery_textcomplete_1
+    exports
   ) {
-    exports.JQueryTextComplete = jquery_textcomplete_1.fn.textcomplete;
+    if (typeof $ !== "undefined") {
+      var jquery_textcomplete_1 = require("jquery-textcomplete");
+      exports.JQueryTextComplete = jquery_textcomplete_1.fn.textcomplete;
+    }
+    else {
+      exports.JQueryTextComplete = void 0;
+    }
   }
 );
