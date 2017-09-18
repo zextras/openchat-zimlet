@@ -165,7 +165,6 @@ export class MainWindow extends WindowBase {
       parent: this.mTitleBar,
       className: "ZxChat_TitleBar_Toolbar"
     });
-    this.mTitleExpandBar.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl = new DwtLabel({
       parent: this.mTitleExpandBar,
       className: `WindowBaseTitleBar${ ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`
