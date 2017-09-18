@@ -12,6 +12,8 @@
     "url": "https://github.com/ZeXtras/openchat-zimlet.git"
   },
   "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
+    "pretest": "npm run lint",
     "postinstall": "patch -p0 < patches/emojione-2.2.7.patch"
   },
   "dependencies": {

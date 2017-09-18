@@ -131,7 +131,7 @@ export class SoapRequest implements Request {
   }
 
   private processResponse(response: ZmCsfeResult): void {
-    let resp: {error?: Error, responses?: string} = response.getResponse().response;
+    let resp: {error?: Error, responses?: string} = <{}> response.getResponse().response;
 
     if (typeof resp !== "undefined" && typeof resp.error !== "undefined") {
       this.processErrorResponse(ZxError.fromResponse(<{error: Error}>resp));
