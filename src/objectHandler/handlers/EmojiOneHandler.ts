@@ -16,7 +16,7 @@
  */
 
 import {ZmObjectHandler} from "../../zimbra/zimbraMail/share/model/ZmObjectHandler";
-import {emojione, toImage} from "../../libext/emojione";
+import {emojione, emojioneList, toImage} from "../../libext/emojione";
 
 export class EmojiOneHandler extends ZmObjectHandler {
 
@@ -51,14 +51,16 @@ export class EmojiOneHandler extends ZmObjectHandler {
   }
 
   public generateSpan(html: string[], idx: number, obj: string, spanId?: string, context?: string, options?: {}): number {
-    emojione.setSprites(false);
-    let imgDiv = toImage(obj).replace(`>${obj}</`, `>${obj.replace(/:/g, "")}</`);
-    emojione.setSprites(true);
+    // emojione.setSprites(false);
+    let imgDiv = toImage(obj);
+    // emojione.setSprites(true);
     emojione.asciiRegexp.lastIndex = 0;
-    let removeEmoji = emojione.asciiRegexp.test(obj) ? "cursor: pointer;\" id=\"" + spanId : "";
-    html[idx] = `<span style="height: 16px; width: 16px; ${removeEmoji}" title="${obj}">
-                   ${imgDiv}
-                 </span>`;
+    let removeEmoji: string = "",
+      match: RegExpExecArray | null = emojione.asciiRegexp.exec(obj);
+    if (match !== null && match.index === 0) {
+      removeEmoji = `style="cursor: pointer;" id="${spanId}"`;
+    }
+    html[idx] = imgDiv.replace("<span", `<span ${removeEmoji}`);
     idx += 1;
     return idx;
   }
@@ -83,6 +85,19 @@ export class EmojiOneHandler extends ZmObjectHandler {
     } else {
       return 0;
     }
+  }
+
+  // Don't change class on mouseover
+  public getHoveredClassName(object: string, context: string, id: string): string {
+    return document.getElementById(id).className;
+  }
+
+  public getClassName(object: string, context: string, id: string): string {
+    return document.getElementById(id).className;
+  }
+
+  public getActiveClassName(object: string, context: string, id: string): string {
+    return document.getElementById(id).className;
   }
 }
 
