@@ -52,9 +52,12 @@ src/ZimletVersion.ts:
 
 src/emojione.sprites.css: node_modules
 	# Build sprites (emojione and icons)
+	mkdir -p build/images/emojione/png-fullsize
 	mkdir -p build/images/emojione/png
-	./node_modules/.bin/sharp resize 16 16 -i node_modules/emojione/assets/png/* -o build/images/emojione/png
+	cp `node utils/GenerateEmojiMenus.js -f` build/images/emojione/png-fullsize/
+	./node_modules/.bin/sharp resize 16 16 -i build/images/emojione/png-fullsize/* -o build/images/emojione/png
 	./node_modules/.bin/spritesmith
+	rm -rf build/images/emojione
 
 build/com_zextras_chat_open.css: node_modules \
 								src/emojione.sprites.css

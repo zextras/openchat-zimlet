@@ -19,10 +19,19 @@
 var emojione = require('emojione');
 var emoji_map = require("../node_modules/emojione/emoji.json");
 var toneReg = /_tone([0-9]+):$/;
+var emoji_path = "./node_modules/emojione/assets/png/";
+
+var onlyFileNames = false;
+
+process.argv.forEach(function (val, index, array) {
+  if (val === "-f") {
+    onlyFileNames = true;
+  }
+});
 
 // Extract emoji pages:
 var emojiCategories = {};
-var emojiName;
+var emojiName, emojiCode;
 for (emojiName in emoji_map) {
   if (!emoji_map.hasOwnProperty(emojiName)) { continue; }
   var emojiData = emoji_map[emojiName];
@@ -55,7 +64,7 @@ var getCategory = function(name) {
       //   toRet.push(categoryContent[i].shortname);
       // }
     } else {
-      toRet.push(categoryContent[i].shortname);
+      toRet.push({shortname: categoryContent[i].shortname, unicode: categoryContent[i].unicode});
     }
   }
   return toRet;
@@ -78,6 +87,7 @@ emojione.imagePathSVG = '#imagePathSVG#';
 emojione.imagePathSVGSprites = "#imagePathSVGSprites#emojione.sprites.svg";
 
 var toRet = [],
+  toRetOnlyFileNames = [],
   pageNames = [],
   pageNamesDataSprite = [],
   emojiCount = 0,
@@ -126,8 +136,10 @@ for (pageName in EMOJI_PAGES) {
   toRet.push('    [');
   for (i = 0; i < page.length; i++) {
     ++emojiCount;
-    emojiName = page[i];
+    emojiName = page[i].shortname;
+    emojiCode = page[i].unicode;
     toRet.push('      { name: "' + emojiName + '", data: "' + emojione.shortnameToImage(emojiName).replace(/"/g, '\'').replace(/>[^<]+</, '>' + emojiName + '<') + '" }' + ((page.length -1 !== i) ? ',': ''));
+    toRetOnlyFileNames.push(emoji_path + emojiCode + ".png");
   }
   toRet.push('    ],');
 }
@@ -147,4 +159,9 @@ toRet.push('  name: string;');
 toRet.push('  data: string;');
 toRet.push('}');
 
-console.log(toRet.join('\n'));
+if (onlyFileNames) {
+  console.log(toRetOnlyFileNames.join('\n'));
+}
+else {
+  console.log(toRet.join('\n'));
+}
