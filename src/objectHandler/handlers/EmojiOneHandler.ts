@@ -16,12 +16,26 @@
  */
 
 import {ZmObjectHandler} from "../../zimbra/zimbraMail/share/model/ZmObjectHandler";
-import {emojione, emojioneList, toImage} from "../../libext/emojione";
+import {emojione} from "../../libext/emojione";
+import {ZimletVersion} from "../../ZimletVersion";
 
 export class EmojiOneHandler extends ZmObjectHandler {
 
   private static DATE_TEST: RegExp = /(\d{1,2}:\d{1,2})/g;
-
+  private static SPAN_PROPERTIES: string[] = [
+    "width",
+    "height",
+    "text-indent",
+    "image-rendering",
+    "font-size",
+    "position",
+    "display",
+    "line-height",
+    "vertical-align",
+    "background-repeat",
+    "background-image",
+    "background-position"
+  ];
   constructor() {
     super("EmojiOne");
   }
@@ -38,7 +52,7 @@ export class EmojiOneHandler extends ZmObjectHandler {
       let snR: RegExpExecArray = emojione.shortnamesRegexp.exec(content);
       if (snR !== null) results.push(new MatchResult(emojione.shortnamesRegexp.lastIndex, snR, 1));
       let ucR: RegExpExecArray = emojione.unicodeRegexp.exec(content);
-      if (ucR !== null) results.push(new MatchResult(emojione.unicodeRegexp.lastIndex, ucR, 3));
+      if (ucR !== null) results.push(new MatchResult(emojione.unicodeRegexp.lastIndex, ucR, 2));
       let asciiR: RegExpExecArray = emojione.asciiRegexp.exec(content);
       if (asciiR !== null) results.push(new MatchResult(emojione.asciiRegexp.lastIndex, asciiR, 2));
       if (results.length > 0) {
@@ -52,21 +66,32 @@ export class EmojiOneHandler extends ZmObjectHandler {
 
   public generateSpan(html: string[], idx: number, obj: string, spanId?: string, context?: string, options?: {}): number {
     // emojione.setSprites(false);
-    let imgDiv = toImage(obj);
+    // let imgDiv = toImage(obj);
     // emojione.setSprites(true);
+    let converted: string = emojione.asciiList[obj] || emojione.jsEscapeMap[obj] || emojione.emojioneList[obj].unicode[emojione.emojioneList[obj].unicode.length - 1];
+    let hiddenSpan = document.createElement("span");
+    hiddenSpan.className = `emojione emojione-${converted}`;
+    document.body.appendChild(hiddenSpan);
+    let styleDeclaration: CSSStyleDeclaration = getComputedStyle(hiddenSpan),
+      calculatedStyle: string = "";
+
+    for (let prop of EmojiOneHandler.SPAN_PROPERTIES) {
+      calculatedStyle += `${prop}:${styleDeclaration.getPropertyValue(prop)};`;
+    }
+    document.body.removeChild(hiddenSpan);
     emojione.asciiRegexp.lastIndex = 0;
     let removeEmoji: string = "",
       match: RegExpExecArray | null = emojione.asciiRegexp.exec(obj);
     if (match !== null && match.index === 0) {
-      removeEmoji = `style="cursor: pointer;" id="${spanId}"`;
+      calculatedStyle += "cursor: pointer;";
+      removeEmoji = `id='${spanId}'`;
     }
-    html[idx] = imgDiv.replace("<span", `<span ${removeEmoji}`);
-    idx += 1;
+    html[idx++] = `<span style='${calculatedStyle}' ${removeEmoji} title='${obj}'></span>`;
     return idx;
   }
 
   public clicked(spanElement: HTMLElement, contentObjText: string, matchContext?: any, canvas?: any): void {
-    spanElement.parentNode.replaceChild(document.createTextNode(contentObjText), spanElement);
+    spanElement.parentNode.replaceChild(document.createTextNode(spanElement.getAttribute("title")), spanElement);
   }
 
   private static sortResultsFcn(a: MatchResult, b: MatchResult): number {
@@ -89,15 +114,30 @@ export class EmojiOneHandler extends ZmObjectHandler {
 
   // Don't change class on mouseover
   public getHoveredClassName(object: string, context: string, id: string): string {
-    return document.getElementById(id).className;
+    let spanEl: HTMLElement = document.getElementById(id);
+    return (typeof spanEl !== "undefined" && spanEl !== null) ? spanEl.className : "";
   }
 
   public getClassName(object: string, context: string, id: string): string {
-    return document.getElementById(id).className;
+    let spanEl: HTMLElement = document.getElementById(id);
+    return (typeof spanEl !== "undefined" && spanEl !== null) ? spanEl.className : "";
   }
 
   public getActiveClassName(object: string, context: string, id: string): string {
-    return document.getElementById(id).className;
+    let spanEl: HTMLElement = document.getElementById(id);
+    return (typeof spanEl !== "undefined" && spanEl !== null) ? spanEl.className : "";
+  }
+
+  private addLinkToFrame(document: Document): void {
+    // check if already added
+    for (let i: number = 0; i < document.styleSheets.length; i++) {
+      if (document.styleSheets[i].href.indexOf("emojione.sprites.css") !== -1) return;
+    }
+    let linkEl: HTMLLinkElement = document.createElement("link");
+    linkEl.type = "text/css";
+    linkEl.type = "stylesheet";
+    linkEl.href = `/service/zimlet/${ZimletVersion.PACKAGE_NAME}/emojione.sprites.css`;
+    document.head.appendChild(linkEl);
   }
 }
 

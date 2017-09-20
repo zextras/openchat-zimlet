@@ -48,6 +48,7 @@ src/ZimletVersion.ts:
 			-e s/#IS_STAGING#/false/g \
 			-e s/#IS_TESTING#/false/g \
 			-e s/#ZIMLET_NAME#/OpenChat/g \
+			-e s/#PACKAGE_NAME#/com_zextras_chat_open/g \
 		src/ZimletVersion.ts
 
 src/emojione.sprites.css: node_modules
