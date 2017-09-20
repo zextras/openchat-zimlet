@@ -22,22 +22,28 @@ import {ZimletVersion} from "../../ZimletVersion";
 export class EmojiOneHandler extends ZmObjectHandler {
 
   private static DATE_TEST: RegExp = /(\d{1,2}:\d{1,2})/g;
-  private static SPAN_PROPERTIES: string[] = [
-    "width",
-    "height",
-    "text-indent",
-    "image-rendering",
-    "font-size",
-    "position",
-    "display",
-    "line-height",
-    "vertical-align",
-    "background-repeat",
-    "background-image",
-    "background-position"
-  ];
+  private mEmojiPositionMap: {[code: string]: number};
+
   constructor() {
     super("EmojiOne");
+    this.mEmojiPositionMap = {};
+    let emojiStyleSheet: CSSStyleSheet;
+    for (let i = 0; i < document.styleSheets.length; i++) {
+      if (typeof document.styleSheets[i].href !== "undefined" && document.styleSheets[i].href.indexOf("emojione.sprites.css") !== -1) {
+        emojiStyleSheet = <CSSStyleSheet> document.styleSheets[i];
+        break;
+      }
+    }
+    // populate map
+    for (let i = 0; i < emojiStyleSheet.cssRules.length; i++) {
+      let cssText: string = emojiStyleSheet.cssRules[i].cssText;
+      if (cssText.indexOf("background-position") !== -1 ) {
+        // example cssText: ".emojione-0030-20e3 { background-image: url("images/emojione.sprites.png"); background-position: 0px -32px; width: 16px; height: 16px; }"
+        // 26 = "background-position: 0px -".length; 10 = ".emojione-".length
+        let startingIndex: number = cssText.indexOf("background-position") + 26;
+        this.mEmojiPositionMap[cssText.substring(10, cssText.indexOf(" "))] = parseInt(cssText.substring(startingIndex, startingIndex + cssText.substring(startingIndex).indexOf("px")), 10);
+      }
+    }
   }
 
   public match(content: string, startIndex: number): RegExpExecArray {
@@ -65,20 +71,20 @@ export class EmojiOneHandler extends ZmObjectHandler {
   }
 
   public generateSpan(html: string[], idx: number, obj: string, spanId?: string, context?: string, options?: {}): number {
-    // emojione.setSprites(false);
-    // let imgDiv = toImage(obj);
-    // emojione.setSprites(true);
     let converted: string = emojione.asciiList[obj] || emojione.jsEscapeMap[obj] || emojione.emojioneList[obj].unicode[emojione.emojioneList[obj].unicode.length - 1];
-    let hiddenSpan = document.createElement("span");
-    hiddenSpan.className = `emojione emojione-${converted}`;
-    document.body.appendChild(hiddenSpan);
-    let styleDeclaration: CSSStyleDeclaration = getComputedStyle(hiddenSpan),
-      calculatedStyle: string = "";
+    let calculatedStyle: string = `height: 16px;` +
+       `width: 16px;` +
+       `min-height: 16px;` +
+       `min-width: 16px;` +
+       `display: inline-block;` +
+       `position: relative;` +
+       `vertical-align: middle;` +
+       `line-height: normal;` +
+       `font-size: inherit;` +
+       `background-image: url("/service/zimlet/${ZimletVersion.PACKAGE_NAME}/images/emojione.sprites.png");` +
+       `background-position: 0px -${this.mEmojiPositionMap[converted]}px;` +
+       `background-repeat: no-repeat;`;
 
-    for (let prop of EmojiOneHandler.SPAN_PROPERTIES) {
-      calculatedStyle += `${prop}:${styleDeclaration.getPropertyValue(prop)};`;
-    }
-    document.body.removeChild(hiddenSpan);
     emojione.asciiRegexp.lastIndex = 0;
     let removeEmoji: string = "",
       match: RegExpExecArray | null = emojione.asciiRegexp.exec(obj);
