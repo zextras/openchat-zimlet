@@ -29,18 +29,22 @@ export class EmojiOneHandler extends ZmObjectHandler {
     this.mEmojiPositionMap = {};
     let emojiStyleSheet: CSSStyleSheet;
     for (let i = 0; i < document.styleSheets.length; i++) {
-      if (typeof document.styleSheets[i].href !== "undefined" && document.styleSheets[i].href.indexOf("emojione.sprites.css") !== -1) {
+      if (
+        typeof document.styleSheets[i].href !== "undefined" &&
+        (document.styleSheets[i].href.indexOf("Zimlets-nodev") !== -1 || document.styleSheets[i].href.indexOf("emojione.sprites.css") !== -1)
+      ) {
         emojiStyleSheet = <CSSStyleSheet> document.styleSheets[i];
         break;
       }
     }
     // populate map
+    if (typeof emojiStyleSheet === "undefined") return;
     for (let i = 0; i < emojiStyleSheet.cssRules.length; i++) {
       let cssText: string = emojiStyleSheet.cssRules[i].cssText;
-      if (cssText.indexOf("background-position") !== -1 ) {
+      if ((cssText.indexOf("emojione.sprites.png") !== -1)) {
         // example cssText: ".emojione-0030-20e3 { background-image: url("images/emojione.sprites.png"); background-position: 0px -32px; width: 16px; height: 16px; }"
         // 26 = "background-position: 0px -".length; 10 = ".emojione-".length
-        let startingIndex: number = cssText.indexOf("background-position") + 26;
+        let startingIndex: number = cssText.indexOf("background-position") + 25;
         this.mEmojiPositionMap[cssText.substring(10, cssText.indexOf(" "))] = parseInt(cssText.substring(startingIndex, startingIndex + cssText.substring(startingIndex).indexOf("px")), 10);
       }
     }
@@ -58,7 +62,7 @@ export class EmojiOneHandler extends ZmObjectHandler {
       let snR: RegExpExecArray = emojione.shortnamesRegexp.exec(content);
       if (snR !== null) results.push(new MatchResult(emojione.shortnamesRegexp.lastIndex, snR, 1));
       let ucR: RegExpExecArray = emojione.unicodeRegexp.exec(content);
-      if (ucR !== null) results.push(new MatchResult(emojione.unicodeRegexp.lastIndex, ucR, 2));
+      if (ucR !== null) results.push(new MatchResult(emojione.unicodeRegexp.lastIndex, ucR, 3));
       let asciiR: RegExpExecArray = emojione.asciiRegexp.exec(content);
       if (asciiR !== null) results.push(new MatchResult(emojione.asciiRegexp.lastIndex, asciiR, 2));
       if (results.length > 0) {
@@ -82,7 +86,7 @@ export class EmojiOneHandler extends ZmObjectHandler {
        `line-height: normal;` +
        `font-size: inherit;` +
        `background-image: url("/service/zimlet/${ZimletVersion.PACKAGE_NAME}/images/emojione.sprites.png");` +
-       `background-position: 0px -${this.mEmojiPositionMap[converted]}px;` +
+       `background-position: 0px ${this.mEmojiPositionMap[converted]}px;` +
        `background-repeat: no-repeat;`;
 
     emojione.asciiRegexp.lastIndex = 0;
@@ -102,12 +106,41 @@ export class EmojiOneHandler extends ZmObjectHandler {
 
   private static sortResultsFcn(a: MatchResult, b: MatchResult): number {
     if (a.hasResult() && b.hasResult()) {
-      if (a.getPriority() < b.getPriority()) {
-        return -1;
-      } else if (a.getPriority() > b.getPriority()) {
-        return 1;
+      if (a.getLastIndex() < b.getLastIndex()) {
+        if (a.getPriority() > b.getPriority()) {
+          // checkNoIntersection
+          if (a.getLastIndex() <= b.getLastIndex() - b.getResult()[0].length) {
+            return -1;
+          }
+          else {
+            return 1;
+          }
+        }
+        else {
+          return -1;
+        }
+      } else if (a.getLastIndex() > b.getLastIndex()) {
+        if (a.getPriority() < b.getPriority()) {
+          if (a.getLastIndex() - a.getResult()[0].length >= b.getLastIndex()) {
+            return 1;
+          }
+          else {
+            return -1;
+          }
+        }
+        else {
+          return 1;
+        }
       } else {
-        return 0;
+        if (a.getPriority() > b.getPriority()) {
+          return 1;
+        }
+        else if (a.getPriority() < b.getPriority()) {
+          return -1;
+        }
+        else {
+          return 0;
+        }
       }
     } else if (a.getResult() != null) {
       return -1;
