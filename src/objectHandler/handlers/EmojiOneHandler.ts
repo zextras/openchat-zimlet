@@ -91,8 +91,8 @@ export class EmojiOneHandler extends ZmObjectHandler {
 
     emojione.asciiRegexp.lastIndex = 0;
     let removeEmoji: string = "",
-      match: RegExpExecArray | null = emojione.asciiRegexp.exec(obj);
-    if (match !== null && match.index === 0) {
+      match: string = emojione.asciiList[obj];
+    if (typeof match !== "undefined" && match !== null) {
       calculatedStyle += "cursor: pointer;";
       removeEmoji = `id='${spanId}'`;
     }

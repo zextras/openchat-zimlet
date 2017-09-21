@@ -35,6 +35,11 @@ node_modules:
     then \
         patch -p0 -N < patches/emojione-2.2.7.patch; \
     fi
+	patch -p0 -N --dry-run --silent < patches/jquery-textcomplete.patch 2>/dev/null; \
+    if [ $$? -eq 0 ]; \
+    then \
+        patch -p0 -N < patches/jquery-textcomplete.patch; \
+    fi
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
