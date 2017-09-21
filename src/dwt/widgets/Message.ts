@@ -72,9 +72,9 @@ export class Message extends DwtComposite {
       // TODO: Review these conditions
       manager.setHandlerAttr(ZmObjectManager.DATE, ZmObjectManager.ATTR_CURRENT_DATE, this.mMessage.getDate != null ? this.mMessage.getDate() : this.mDateProvider.getNow());
       if (manager.processObjectsInNode != null) {
-        manager.processObjectsInNode(document, this._contentEl.parentElement);
+        manager.processObjectsInNode(document, this._contentEl);
       } else {
-        manager.findObjectsInNode(this._contentEl.parentElement);
+        manager.findObjectsInNode(this._contentEl);
       }
     } catch (ign) {}
     if (this.mConversation.scrollToTop != null) {

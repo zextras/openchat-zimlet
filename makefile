@@ -35,6 +35,11 @@ node_modules:
     then \
         patch -p0 -N < patches/emojione-2.2.7.patch; \
     fi
+	patch -p0 -N --dry-run --silent < patches/jquery-textcomplete.patch 2>/dev/null; \
+    if [ $$? -eq 0 ]; \
+    then \
+        patch -p0 -N < patches/jquery-textcomplete.patch; \
+    fi
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
@@ -48,6 +53,7 @@ src/ZimletVersion.ts:
 			-e s/#IS_STAGING#/false/g \
 			-e s/#IS_TESTING#/false/g \
 			-e s/#ZIMLET_NAME#/OpenChat/g \
+			-e s/#PACKAGE_NAME#/com_zextras_chat_open/g \
 		src/ZimletVersion.ts
 
 src/emojione.sprites.css: node_modules
