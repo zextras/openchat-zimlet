@@ -30,16 +30,7 @@ all: dist/com_zextras_chat_open.zip
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi
 	npm update
-	patch -p0 -N --dry-run --silent < patches/emojione-2.2.7.patch 2>/dev/null; \
-    if [ $$? -eq 0 ]; \
-    then \
-        patch -p0 -N < patches/emojione-2.2.7.patch; \
-    fi
-	patch -p0 -N --dry-run --silent < patches/jquery-textcomplete.patch 2>/dev/null; \
-    if [ $$? -eq 0 ]; \
-    then \
-        patch -p0 -N < patches/jquery-textcomplete.patch; \
-    fi
+	./utils/patchNodeModules
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
