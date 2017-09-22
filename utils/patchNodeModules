@@ -3,10 +3,10 @@
 patch -p0 -N --dry-run --silent < patches/emojione-2.2.7.patch 2>/dev/null;
 if [ $? -eq 0 ];
 then
-    patch -p0 -N < $(pwd)/patches/emojione-2.2.7.patch;
+    patch -p0 -N < patches/emojione-2.2.7.patch;
 fi
 patch -p0 -N --dry-run --silent < patches/jquery-textcomplete.patch 2>/dev/null;
 if [ $? -eq 0 ];
 then
-    patch -p0 -N < $(pwd)/patches/jquery-textcomplete.patch;
+    patch -p0 -N < patches/jquery-textcomplete.patch;
 fi
