@@ -15,14 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {RoomWindowManager} from "../../dwt/windows/RoomWindowManager";
-import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
+import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindowSendHistoryMenuItemPlugin} from "./RoomWindowSendHistoryMenuItemPlugin";
 
 export class RoomWindowManagerSendMailPlugin implements ChatPlugin {
-  trigger(roomWindowManager: RoomWindowManager, roomWindowPluginManager: ChatPluginManager): void {
-    roomWindowPluginManager.registerPlugin(RoomWindowMenuButton.AddMenuItemPlugin, new RoomWindowSendHistoryMenuItemPlugin());
+  public trigger(roomWindowManager: RoomWindowManager, roomWindowPluginManager: ChatPluginManager): void {
+    roomWindowPluginManager.registerPlugin(
+      RoomWindowMenuButton.AddMenuItemPlugin,
+      new RoomWindowSendHistoryMenuItemPlugin(),
+    );
   }
 }

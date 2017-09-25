@@ -25,8 +25,7 @@ export interface SettingsHandlerInterface {
   /**
    * Store a setting.
    */
-  set(key: string, value: string, callback: Callback): void;
-  set(key: string, value: number, callback: Callback): void;
+  set(key: string, value: string|number, callback: Callback): void;
 
   /**
    * Get a setting.

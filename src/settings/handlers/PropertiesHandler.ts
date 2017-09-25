@@ -15,16 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
+import {ChatZimletBase} from "../../ChatZimletBase";
 import {Callback} from "../../lib/callbacks/Callback";
-import {SettingsUtils} from "../SettingsUtils";
-import {Setting} from "../Setting";
-import {AjxSoapDoc} from "../../zimbra/ajax/soap/AjxSoapDoc";
 import {AjxCallback} from "../../zimbra/ajax/boot/AjxCallback";
+import {AjxSoapDoc} from "../../zimbra/ajax/soap/AjxSoapDoc";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {ZmZimbraMail} from "../../zimbra/zimbraMail/core/ZmZimbraMail";
-import {ChatZimletBase} from "../../ChatZimletBase";
 import {ZmZimletContext} from "../../zimbra/zimbraMail/share/model/ZmZimletContext";
+import {Setting} from "../Setting";
+import {SettingsUtils} from "../SettingsUtils";
+import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
 
 export class PropertiesHandler implements SettingsHandlerInterface {
 
@@ -35,38 +35,38 @@ export class PropertiesHandler implements SettingsHandlerInterface {
   }
 
   public set(key: string, value: string|number, callback: Callback): void {
-    let soapDoc = AjxSoapDoc.create("ModifyPropertiesRequest", "urn:zimbraAccount");
-    let props = (<ZmZimletContext>this.mZimletContext.xmlObj()).userProperties;
-    let check = this.mZimletContext.checkProperties(props);
-    (<ZmZimletContext>this.mZimletContext.xmlObj()).setPropValue(key, value);
+    const soapDoc = AjxSoapDoc.create("ModifyPropertiesRequest", "urn:zimbraAccount");
+    const props = (this.mZimletContext.xmlObj() as ZmZimletContext).userProperties;
+    const check = this.mZimletContext.checkProperties(props);
+    (this.mZimletContext.xmlObj() as ZmZimletContext).setPropValue(key, value);
     if (!check) {
       return;
     }
     if (typeof check === "string") {
-      return this.mZimletContext.displayErrorMessage(<string>check);
+      return this.mZimletContext.displayErrorMessage(check as string);
     }
     if (typeof this.mZimletContext._propertyEditor !== "undefined") {
       if (!this.mZimletContext._propertyEditor.validateData()) {
         return;
       }
     }
-    for (let property of props) {
-      let p = soapDoc.set("prop", property.value);
-      p.setAttribute("zimlet", <string>this.mZimletContext.xmlObj("name"));
+    for (const property of props) {
+      const p = soapDoc.set("prop", property.value);
+      p.setAttribute("zimlet", this.mZimletContext.xmlObj("name") as string);
       p.setAttribute("name", property.name);
     }
     let ajxCallback = null;
     if (typeof callback !== "undefined") {
       ajxCallback = new AjxCallback(callback, callback.run);
     }
-    let params = {
-      soapDoc: soapDoc,
-      callback: ajxCallback,
+    const params = {
       asyncMode: true,
+      callback: ajxCallback,
+      noAuthToken: true,
       sensitive: false,
-      noAuthToken: true
+      soapDoc: soapDoc,
     };
-    (<ZmZimbraMail>appCtxt.getAppController()).sendRequest(params);
+    (appCtxt.getAppController() as ZmZimbraMail).sendRequest(params);
     if (typeof this.mZimletContext._dlg_propertyEditor !== "undefined") {
       this.mZimletContext._dlg_propertyEditor.popdown();
       this.mZimletContext._dlg_propertyEditor.dispose();
@@ -90,7 +90,7 @@ export class PropertiesHandler implements SettingsHandlerInterface {
       Setting.IM_USR_PREF_URL_IN_HIST,
       Setting.IM_USR_PREF_URL_IN_MAIL,
       Setting.IM_USR_PREF_SHOW_DEBUG_INFO,
-      Setting.ENABLE_ERROR_REPORT
+      Setting.ENABLE_ERROR_REPORT,
     ];
   }
 

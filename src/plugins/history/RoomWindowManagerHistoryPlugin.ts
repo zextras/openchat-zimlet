@@ -15,16 +15,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
 import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindowShowHistoryMenuItemPlugin} from "./RoomWindowShowHistoryMenuItemPlugin";
-import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
 
 export class RoomWindowManagerHistoryPlugin implements ChatPlugin {
 
   // This plugin integrate history menu items in the RoomWindow
   public trigger(roomWindowManager: RoomWindowManagerHistoryPlugin, roomWindowPluginManager: ChatPluginManager): void {
-    roomWindowPluginManager.registerPlugin(RoomWindowMenuButton.AddMenuItemPlugin, new RoomWindowShowHistoryMenuItemPlugin());
+    roomWindowPluginManager.registerPlugin(
+      RoomWindowMenuButton.AddMenuItemPlugin,
+      new RoomWindowShowHistoryMenuItemPlugin(),
+    );
   }
 
 }

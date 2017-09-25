@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 import {Message} from "../../client/Message";
+import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 
 export class RoomHistoryFieldPlugin implements ChatFieldPlugin {
 

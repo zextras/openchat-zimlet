@@ -15,81 +15,87 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ZmZimletBase} from "./zimbra/zimbraMail/share/model/ZmZimletBase";
-import {ZimbraPatcher} from "./lib/ZimbraPatcher";
-import {LogEngine} from "./lib/log/LogEngine";
-import {Logger} from "./lib/log/Logger";
-import {emojione} from "./libext/emojione";
-import {Callback} from "./lib/callbacks/Callback";
-import {StringUtils} from "./lib/StringUtils";
-import {ZmStatusView} from "./zimbra/zimbraMail/share/view/ZmStatusView";
-import {Version} from "./lib/Version";
-import {SettingsManager, GroupData} from "./settings/SettingsManager";
-import {Setting} from "./settings/Setting";
-import {ChatClient} from "./client/ChatClient";
-import {NotificationManager} from "./lib/notifications/NotificationManager";
-import {Group} from "./client/Group";
-import {MainWindow} from "./dwt/windows/MainWindow";
-import {AjxListener} from "./zimbra/ajax/events/AjxListener";
-import {RoomWindowManager} from "./dwt/windows/RoomWindowManager";
-import {ObjectHandler} from "./objectHandler/ObjectHandler";
-import {ZmObjectManager} from "./zimbra/zimbraMail/share/model/ZmObjectManager";
-import {ZmNewWindow} from "./zimbra/zimbraMail/core/ZmNewWindow";
-import {DwtMessageDialog} from "./zimbra/ajax/dwt/widgets/DwtMessageDialog";
-import {DwtDialog} from "./zimbra/ajax/dwt/widgets/DwtDialog";
-import {IdGenerator} from "./dwt/IdGenerator";
-import {EventSessionRegistered} from "./client/events/chat/EventSessionRegistered";
-import {TimedCallback} from "./lib/callbacks/TimedCallback";
-import {ZxError} from "./lib/error/ZxError";
-import {ZxErrorCode} from "./lib/error/ZxErrorCode";
-import {ZmCsfeException} from "./zimbra/zimbra/csfe/ZmCsfeException";
-import {AjxException} from "./zimbra/ajax/core/AjxException";
-import {BuddyStatusImp} from "./client/BuddyStatusImp";
-import {RemoveFriendshipEvent} from "./client/events/chat/RemoveFriendshipEvent";
-import {IdleTimer} from "./lib/IdleTimer";
-import {BuddyStatusType} from "./client/BuddyStatusType";
-import {DwtSelectionEvent} from "./zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {Buddy} from "./client/Buddy";
-import {BuddyTreeItem} from "./dwt/widgets/BuddyTreeItem";
-import {RoomWindow} from "./dwt/windows/RoomWindow";
-import {DeleteBuddyDialog} from "./dwt/dialogs/DeleteBuddyDialog";
-import {RenameBuddyDialog} from "./dwt/dialogs/RenameBuddyDialog";
-import {AcceptFriendshipDialog} from "./dwt/dialogs/AcceptFriendshipDialog";
-import {AddGroupDialog} from "./dwt/dialogs/AddGroupDialog";
-import {SettingsDialog} from "./dwt/dialogs/SettingsDialog";
-import {RenameGroupDialog} from "./dwt/dialogs/RenameGroupDialog";
-import {GroupTreeItem} from "./dwt/widgets/GroupTreeItem";
-import {ZmContact} from "./zimbra/zimbraMail/abook/model/ZmContact";
-import {HTMLUtils} from "./lib/HTMLUtils";
+import {BuddyStatus} from "./client/BuddyStatus";
+import {BuddyStatusImp} from "./client/BuddyStatusImp";
+import {BuddyStatusType} from "./client/BuddyStatusType";
+import {ChatClient} from "./client/ChatClient";
+import {ChatClientImp} from "./client/ChatClientImp";
+import {ConnectionManager} from "./client/connection/ConnectionManager";
+import {EventSessionRegistered} from "./client/events/chat/EventSessionRegistered";
+import {RemoveFriendshipEvent} from "./client/events/chat/RemoveFriendshipEvent";
+import {EventManager} from "./client/events/EventManager";
+import {Group} from "./client/Group";
 import {GroupStats} from "./client/GroupStats";
 import {Room} from "./client/Room";
-import {AddBuddyDialog} from "./dwt/dialogs/AddBuddyDialog";
 import {RoomManager} from "./client/RoomManager";
-import {TimedCallbackFactory} from "./lib/callbacks/TimedCallbackFactory";
-import {DateProvider} from "./lib/DateProvider";
 import {SessionInfoProvider} from "./client/SessionInfoProvider";
-import {ConnectionManager} from "./client/connection/ConnectionManager";
-import {EventManager} from "./client/events/EventManager";
-import {ChatPluginManager} from "./lib/plugin/ChatPluginManager";
-import {ZmMailMsg} from "./zimbra/zimbraMail/mail/model/ZmMailMsg";
-import {ZimletVersion} from "./ZimletVersion";
-import {DwtEvent} from "./zimbra/ajax/dwt/events/DwtEvent";
-import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
+import {AcceptFriendshipDialog} from "./dwt/dialogs/AcceptFriendshipDialog";
+import {AddBuddyDialog} from "./dwt/dialogs/AddBuddyDialog";
+import {AddGroupDialog} from "./dwt/dialogs/AddGroupDialog";
+import {DeleteBuddyDialog} from "./dwt/dialogs/DeleteBuddyDialog";
+import {RenameBuddyDialog} from "./dwt/dialogs/RenameBuddyDialog";
+import {RenameGroupDialog} from "./dwt/dialogs/RenameGroupDialog";
+import {SettingsDialog} from "./dwt/dialogs/SettingsDialog";
+import {IdGenerator} from "./dwt/IdGenerator";
+import {BuddyTreeItem} from "./dwt/widgets/BuddyTreeItem";
+import {GroupTreeItem} from "./dwt/widgets/GroupTreeItem";
+import {MainWindow} from "./dwt/windows/MainWindow";
+import {RoomWindow} from "./dwt/windows/RoomWindow";
+import {RoomWindowManager} from "./dwt/windows/RoomWindowManager";
 import {JQueryPlugins} from "./jquery/JQueryPlugins";
 import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
 import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
-import {ChatClientImp} from "./client/ChatClientImp";
-import {BuddyStatus} from "./client/BuddyStatus";
+import {Callback} from "./lib/callbacks/Callback";
+import {TimedCallback} from "./lib/callbacks/TimedCallback";
+import {TimedCallbackFactory} from "./lib/callbacks/TimedCallbackFactory";
+import {DateProvider} from "./lib/DateProvider";
+import {ZxError} from "./lib/error/ZxError";
+import {ZxErrorCode} from "./lib/error/ZxErrorCode";
+import {HTMLUtils} from "./lib/HTMLUtils";
+import {IdleTimer} from "./lib/IdleTimer";
+import {LogEngine} from "./lib/log/LogEngine";
+import {Logger} from "./lib/log/Logger";
+import {NotificationManager} from "./lib/notifications/NotificationManager";
+import {ChatPluginManager} from "./lib/plugin/ChatPluginManager";
+import {StringUtils} from "./lib/StringUtils";
+import {Version} from "./lib/Version";
+import {ZimbraPatcher} from "./lib/ZimbraPatcher";
 import {ZimbraUtils} from "./lib/ZimbraUtils";
+import {emojione} from "./libext/emojione";
+import {ObjectHandler} from "./objectHandler/ObjectHandler";
+import {Setting} from "./settings/Setting";
+import {GroupData, SettingsManager} from "./settings/SettingsManager";
+import {AjxException} from "./zimbra/ajax/core/AjxException";
+import {DwtEvent} from "./zimbra/ajax/dwt/events/DwtEvent";
+import {DwtSelectionEvent} from "./zimbra/ajax/dwt/events/DwtSelectionEvent";
+import {DwtDialog} from "./zimbra/ajax/dwt/widgets/DwtDialog";
+import {DwtMessageDialog} from "./zimbra/ajax/dwt/widgets/DwtMessageDialog";
+import {AjxListener} from "./zimbra/ajax/events/AjxListener";
+import {ZmCsfeException} from "./zimbra/zimbra/csfe/ZmCsfeException";
+import {ZmContact} from "./zimbra/zimbraMail/abook/model/ZmContact";
+import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
+import {ZmNewWindow} from "./zimbra/zimbraMail/core/ZmNewWindow";
+import {ZmMailMsg} from "./zimbra/zimbraMail/mail/model/ZmMailMsg";
+import {ZmObjectManager} from "./zimbra/zimbraMail/share/model/ZmObjectManager";
+import {ZmZimletBase} from "./zimbra/zimbraMail/share/model/ZmZimletBase";
+import {ZmStatusView} from "./zimbra/zimbraMail/share/view/ZmStatusView";
+import {ZimletVersion} from "./ZimletVersion";
 
 export class ChatZimletBase extends ZmZimletBase {
+
+  public static alreadyInit: boolean;
+  public static INSTANCE: ChatZimletBase;
+
+  public static getVersion(): Version {
+    const version: Version = new Version(ZimletVersion.VERSION);
+    version.setCommit(ZimletVersion.COMMIT);
+    return version;
+  }
 
   private static RETRY_CONNECT_TIMEOUT: number = 300000;
   private static TIMEOUT_502_DISMISS: number = 300000;
   private static EMOJI_ASSETS_PATH: string = "";
-
-  static alreadyInit: boolean;
-  static INSTANCE: ChatZimletBase;
 
   protected Log: Logger = LogEngine.getLogger(LogEngine.CHAT);
   private mTimedCallbackFactory: TimedCallbackFactory;
@@ -126,20 +132,14 @@ export class ChatZimletBase extends ZmZimletBase {
     if (typeof ChatZimletBase.INSTANCE === "undefined" || ChatZimletBase.INSTANCE === null) {
       ChatZimletBase.INSTANCE = this;
     }
-    let originalConfirmExitMethod: Function = ZmNewWindow._confirmExitMethod;
-    ZmNewWindow._confirmExitMethod = <() => void>(new Callback(this, this.clientShutdownBeforeExit, originalConfirmExitMethod)).toClosure();
+    const originalConfirmExitMethod: () => void = ZmNewWindow._confirmExitMethod;
+    ZmNewWindow._confirmExitMethod =
+      (new Callback(this, this.clientShutdownBeforeExit, originalConfirmExitMethod)).toClosure() as () => void;
     window.onbeforeunload = ZmNewWindow._confirmExitMethod;
     this.mJQueryPlugins = new JQueryPlugins(
       new LoadingDotsPlugin(),
-      new TextCompletePlugin()
+      new TextCompletePlugin(),
     );
-  }
-
-  private clientShutdownBeforeExit(originalConfirmExitMethod: Function, event: DwtEvent): void {
-    if (typeof this.getClient() !== "undefined" && this.getClient() !== null) {
-      this.getClient().shutdown();
-    }
-    originalConfirmExitMethod(event);
   }
 
   public initChatZimlet(
@@ -152,7 +152,7 @@ export class ChatZimletBase extends ZmZimletBase {
     roomManagerPluginManager: ChatPluginManager,
     chatClientPluginManager: ChatPluginManager,
     mainWindowPluginManager: ChatPluginManager,
-    roomWindowManagerPluginManager: ChatPluginManager
+    roomWindowManagerPluginManager: ChatPluginManager,
   ): void {
 
     ZimbraPatcher.patch();
@@ -167,7 +167,7 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mEventManager = eventManager;
     this.mRoomManager = new RoomManager(
       this.mDateProvider,
-      roomManagerPluginManager
+      roomManagerPluginManager,
     );
     emojione.setSprites(true);
     emojione.setAscii(true);
@@ -179,17 +179,16 @@ export class ChatZimletBase extends ZmZimletBase {
       if (isNaN(ZimbraUtils.getZimbraMajorVersion())) {
         this.displayStatusMessage(
           {
+            level: ZmStatusView.LEVEL_CRITICAL,
             msg: StringUtils.getMessage("undetectable_zimbra_version"),
-            level: ZmStatusView.LEVEL_CRITICAL
-          }
+          },
         );
-      }
-      else {
+      } else {
         this.displayStatusMessage(
           {
+            level: ZmStatusView.LEVEL_CRITICAL,
             msg: StringUtils.getMessage("zimbra_not_supported"),
-            level: ZmStatusView.LEVEL_CRITICAL
-          }
+          },
         );
         return;
       }
@@ -211,7 +210,7 @@ export class ChatZimletBase extends ZmZimletBase {
       this.mConnectionManager,
       this.mEventManager,
       this.mRoomManager,
-      chatClientPluginManager
+      chatClientPluginManager,
     );
     this.mChatClient.onRegistrationError(new Callback(this, this.registrationErrorCallback));
     this.mChatClient.onServerOnline(new Callback(this, this.handleServerOnline));
@@ -224,31 +223,31 @@ export class ChatZimletBase extends ZmZimletBase {
         StringUtils.getMessage("default_notification_title"),
         location.protocol + "//" + location.hostname + (this.getResource("images/desktop-chat_128.png")),
         this.mTimedCallbackFactory,
-        appCtxt
+        appCtxt,
     );
     this.mNotificationManager.setSoundEnabled(
-      this.mSettingsManager.get(Setting.IM_PREF_NOTIFY_SOUNDS)
+      this.mSettingsManager.get(Setting.IM_PREF_NOTIFY_SOUNDS),
     );
     this.mNotificationManager.setTitlebarEnabled(
-      this.mSettingsManager.get(Setting.IM_PREF_FLASH_BROWSER)
+      this.mSettingsManager.get(Setting.IM_PREF_FLASH_BROWSER),
     );
     this.mNotificationManager.setDesktopEnabled(
-      this.mSettingsManager.get(Setting.IM_PREF_DESKTOP_ALERT)
+      this.mSettingsManager.get(Setting.IM_PREF_DESKTOP_ALERT),
     );
     this.mSettingsManager.onSettingChange(
       Setting.IM_PREF_NOTIFY_SOUNDS,
-      new Callback(this.mNotificationManager, this.mNotificationManager.setSoundEnabled)
+      new Callback(this.mNotificationManager, this.mNotificationManager.setSoundEnabled),
     );
     this.mSettingsManager.onSettingChange(
       Setting.IM_PREF_FLASH_BROWSER,
-      new Callback(this.mNotificationManager, this.mNotificationManager.setTitlebarEnabled)
+      new Callback(this.mNotificationManager, this.mNotificationManager.setTitlebarEnabled),
     );
     this.mSettingsManager.onSettingChange(
       Setting.IM_PREF_DESKTOP_ALERT,
-      new Callback(this.mNotificationManager, this.mNotificationManager.setDesktopEnabled)
+      new Callback(this.mNotificationManager, this.mNotificationManager.setDesktopEnabled),
     );
-    let userGroupsData: GroupData[] = this.mSettingsManager.loadGroupsData();
-    for (let groupData of userGroupsData) {
+    const userGroupsData: GroupData[] = this.mSettingsManager.loadGroupsData();
+    for (const groupData of userGroupsData) {
       this.mChatClient.getBuddyList().addGroup(new Group(groupData.name));
     }
 
@@ -256,7 +255,7 @@ export class ChatZimletBase extends ZmZimletBase {
       appCtxt,
       this.mSettingsManager,
       this.mChatClient.getBuddyList(),
-      mainWindowPluginManager
+      mainWindowPluginManager,
     );
 
     this.mMainWindow.onStatusSelected((status) => this.statusSelected(status));
@@ -278,33 +277,38 @@ export class ChatZimletBase extends ZmZimletBase {
 
     this.mSettingsManager.onSettingChange(
       Setting.IM_PREF_BUDDY_SORT,
-      new Callback(this.mMainWindow, this.mMainWindow.sortMethodSet)
+      new Callback(this.mMainWindow, this.mMainWindow.sortMethodSet),
     );
 
-    let onDock: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK);
+    const onDock: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK);
     if ((typeof onDock === "undefined" || onDock === null) || onDock) {
       this.mMainWindow.popup();
       this.mMainWindow.changeSidebarOrDock(true);
-      let isUp: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK_UP);
+      const isUp: boolean = this.mSettingsManager.get(Setting.IM_USR_PREF_DOCK_UP);
       if (isUp) {
         this.mMainWindow.setExpanded(false);
-      }
-      else {
+      } else {
         this.mMainWindow.setMinimized(false);
       }
     } else {
       this.mMainWindow.changeSidebarOrDock(false);
     }
 
-    this.mMainWindow.onChangeSidebarOrDock((onDock) => this.onChangeSidebarOrDock(onDock));
-    this.mStoreGroupsDataCallback = new Callback(this.mSettingsManager, this.mSettingsManager.storeGroupsData, this.mMainWindow);
+    this.mMainWindow.onChangeSidebarOrDock((docked) => this.onChangeSidebarOrDock(docked));
+    this.mStoreGroupsDataCallback = new Callback(
+      this.mSettingsManager,
+      this.mSettingsManager.storeGroupsData,
+      this.mMainWindow,
+    );
     this.mChatClient.getBuddyList().onAddGroup(this.mStoreGroupsDataCallback);
     this.mChatClient.getBuddyList().onRemoveGroup(this.mStoreGroupsDataCallback);
     this.mChatClient.getBuddyList().onRenameGroup(this.mStoreGroupsDataCallback);
 
     // Set the visibility of loaded groups and show the main window
     this.mMainWindow.setGroupsData(userGroupsData);
-    this.mMainWindow.onGroupExpandedOrCollapsed((item, expand, save) => this.onGroupExpandedOrCollapsed(item, expand, save));
+    this.mMainWindow.onGroupExpandedOrCollapsed(
+      (item, expand, save) => this.onGroupExpandedOrCollapsed(item, expand, save),
+    );
 
     this.mRoomWindowManager = new RoomWindowManager(
       appCtxt,
@@ -316,26 +320,21 @@ export class ChatZimletBase extends ZmZimletBase {
       this.mSessionInfoProvider,
       this.mDateProvider,
       this.mRoomManager,
-      roomWindowManagerPluginManager
+      roomWindowManagerPluginManager,
     );
 
     this.mChatClient.onFriendshipInvitation(new Callback(this, this.handleNewFriendshipInvitation));
     this.mObjectHandler = new ObjectHandler();
     this.registerSettings();
-    ZmObjectManager.registerHandler(ZimbraUtils.isZimbraVersionLessThan85() ? ObjectHandler : this.mObjectHandler, null, this._zimletContext.priority);
+    ZmObjectManager.registerHandler(
+      ZimbraUtils.isZimbraVersionLessThan85() ? ObjectHandler : this.mObjectHandler,
+      null,
+      this._zimletContext.priority,
+    );
     this.mTimedCallbackFactory.createTimedCallback(
       new Callback(this.mChatClient, this.mChatClient.registerSession),
-      100
+      100,
     ).start();
-  }
-
-  /**
-   * Getters
-   */
-  public static getVersion(): Version {
-    let version: Version = new Version(ZimletVersion.VERSION);
-    version.setCommit(ZimletVersion.COMMIT);
-    return version;
   }
 
   public getClient(): ChatClient {
@@ -350,41 +349,158 @@ export class ChatZimletBase extends ZmZimletBase {
     return this.mRoomWindowManager;
   }
 
+  public statusSelected(status: BuddyStatus): void {
+    const callback: Callback = new Callback(this, this.statusSelectedCallback);
+    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.StatusSelectedPlugin, status, callback);
+    callback.run(status);
+  }
+
+  public onBuddyDeleted(event: RemoveFriendshipEvent): void {
+    const room: Room = this.mChatClient.getRoomManager().getRoomById(event.getDestination());
+    if (typeof room !== "undefined" && room !== null) {
+      const roomWindow: RoomWindow = this.mRoomWindowManager.getRoomWindowById(event.getDestination());
+      if (typeof roomWindow !== "undefined" && roomWindow !== null) {
+        roomWindow.popdown();
+      }
+    }
+  }
+
+  public displayNotification(title: string, message: string, image: string, toast: boolean = false): void {
+    this.mNotificationManager.notify(message, title, image, toast);
+  }
+
+  public getNotificationImage(): string {
+    const differentImage: string = this.mMainWindow.getPluginManager().getFieldPlugin(MainWindow.ChatImageFieldPlugin);
+    const defaultUrl = this.getResource("images/desktop-chat_128.png");
+    if (typeof differentImage !== "undefined" && differentImage !== null) {
+      return differentImage;
+    }
+    return defaultUrl;
+  }
+
+  public onFindMsgObjects(message: ZmMailMsg, manager: ZmObjectManager): void {
+    if (typeof this.mObjectHandler !== "undefined" && this.mObjectHandler !== null) {
+      this.mObjectHandler.onFindMsgObjects(message, manager);
+    }
+  }
+
+  protected addBuddy() {
+    const contactsEnabled = this.mSettingsManager.get(Setting.CONTACTS_ENABLED);
+    const galEnabled = this.mSettingsManager.get(Setting.GAL_ENABLED);
+    const aliases: string[] = [];
+    aliases.push(appCtxt.getUsername());
+    for (const alias of this.mSettingsManager.get(Setting.MAIL_ALIASES)) {
+      aliases.push(alias);
+    }
+    if (typeof this.mAddBuddyDialog === "undefined" || this.mAddBuddyDialog === null) {
+      this.mAddBuddyDialog = new AddBuddyDialog(
+        {
+          dataClass: appCtxt.getAutocompleter(),
+          enableAutoComplete: contactsEnabled || galEnabled,
+          parent: appCtxt.getShell(),
+        },
+        this.mChatClient,
+        aliases,
+      );
+    }
+    this.mAddBuddyDialog.cleanInput();
+    this.mAddBuddyDialog.popup();
+  }
+
+  protected addGroup() {
+    if (typeof this.mAddGroupDialog === "undefined" || this.mAddGroupDialog) {
+      this.mAddGroupDialog = new AddGroupDialog(
+        { parent: appCtxt.getShell() },
+        this.mChatClient,
+        appCtxt,
+      );
+    }
+    this.mAddGroupDialog.cleanInput();
+    this.mAddGroupDialog.popup();
+  }
+
+  protected deleteGroup(group: Group) {
+    if (group.isEmpty()) {
+      if (typeof this.mDeleteGroupDialog === "undefined" || this.mDeleteGroupDialog === null) {
+        this.mDeleteGroupDialog = new DwtMessageDialog({
+          buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
+          id: IdGenerator.generateId("ZxChat_DeleteGroupDialog"),
+          parent: appCtxt.getShell(),
+        });
+      }
+      this.mDeleteGroupDialog.setMessage(
+        StringUtils.getMessage("delete_group_text", [group.getName()]),
+        DwtMessageDialog.WARNING_STYLE,
+        StringUtils.getMessage("delete_group_title"),
+      );
+      this.mDeleteGroupDialog.setButtonListener(
+        DwtDialog.YES_BUTTON,
+        new AjxListener(
+          this,
+          this.deleteGroupDialogYesCallback,
+          group,
+        ),
+      );
+      this.mDeleteGroupDialog.popup();
+    } else {
+      if (typeof this.mWarnDeleteGroupDialog === "undefined" || this.mWarnDeleteGroupDialog === null) {
+        this.mWarnDeleteGroupDialog = new DwtMessageDialog({
+          buttons: [DwtDialog.DISMISS_BUTTON],
+          id: IdGenerator.generateId("ZxChat_WarnDeleteGroupDialog"),
+          parent: appCtxt.getShell(),
+        });
+      }
+      this.mWarnDeleteGroupDialog.setMessage(
+        StringUtils.getMessage("cannot_delete_not_empty_group", [group.getName()]),
+        DwtMessageDialog.CRITICAL_STYLE,
+        StringUtils.getMessage("delete_group_title"),
+      );
+      this.mWarnDeleteGroupDialog.popup();
+    }
+  }
+
+  private clientShutdownBeforeExit(originalConfirmExitMethod: (ev?: DwtEvent) => void, event: DwtEvent): void {
+    if (typeof this.getClient() !== "undefined" && this.getClient() !== null) {
+      this.getClient().shutdown();
+    }
+    originalConfirmExitMethod(event);
+  }
+
   private needUpdate(
     requiredZimletVersion: Version,
-    coreVersionDeclared: Version
+    coreVersionDeclared: Version,
   ): boolean {
     let needUpdate = false;
     if (ChatZimletBase.getVersion().lessThan(requiredZimletVersion)) {
-      let updateMessage: DwtMessageDialog = new DwtMessageDialog(
+      const updateMessage: DwtMessageDialog = new DwtMessageDialog(
         {
           buttons: [DwtDialog.DISMISS_BUTTON],
+          id: IdGenerator.generateId("ZxChat_UpgradeZimletMessageDialog"),
           parent: appCtxt.getShell(),
-          id: IdGenerator.generateId("ZxChat_UpgradeZimletMessageDialog")
-        }
+        },
       );
       updateMessage.setMessage(
         StringUtils.getMessage("need_update_zimlet") +
         "<br/>Current <b>ZxChat Zimlet</b> version: " +
         ChatZimletBase.getVersion().toString() +
         "<br/> Needed <b>ZxChat Zimlet</b> version: " +
-        requiredZimletVersion
+        requiredZimletVersion,
       );
       updateMessage.popup();
       needUpdate = true;
     }
     if (coreVersionDeclared.lessThan(this.mRequiredCoreVersion) && !needUpdate) {
-      let updateMessage: DwtMessageDialog = new DwtMessageDialog({
+      const updateMessage: DwtMessageDialog = new DwtMessageDialog({
         buttons: [DwtDialog.DISMISS_BUTTON],
+        id: IdGenerator.generateId("ZxChat_UpgradeCoreMessageDialog"),
         parent: appCtxt.getShell(),
-        id: IdGenerator.generateId("ZxChat_UpgradeCoreMessageDialog")
       });
       updateMessage.setMessage(
         StringUtils.getMessage("need_update_core") +
         "<br/>Current <b>ZxChat Core</b> version: " +
         coreVersionDeclared +
         "<br/> Needed <b>ZxChat Core</b> version: " +
-        this.mRequiredCoreVersion
+        this.mRequiredCoreVersion,
       );
       updateMessage.popup();
       needUpdate = true;
@@ -395,7 +511,7 @@ export class ChatZimletBase extends ZmZimletBase {
   private handleServerOnline(eventServerInfo: EventSessionRegistered): void {
     this.mOnline = true;
     this.mCoreNotFoundNotified = false;
-    let requiredVersion: Version = new Version(eventServerInfo.getInfo("required_zimlet_version"));
+    const requiredVersion: Version = new Version(eventServerInfo.getInfo("required_zimlet_version"));
     this.mCoreVersion = new Version(eventServerInfo.getInfo("server_version"));
 
     if (this.needUpdate(requiredVersion, this.mCoreVersion)) {
@@ -403,11 +519,11 @@ export class ChatZimletBase extends ZmZimletBase {
     }
 
     this.mMainWindow.enableDisableMainMenuButton(true);
-    let userStatuses: BuddyStatus[] = [
+    const userStatuses: BuddyStatus[] = [
       new BuddyStatusImp(BuddyStatusType.ONLINE, "", 1),
       new BuddyStatusImp(BuddyStatusType.BUSY, "", 2),
       new BuddyStatusImp(BuddyStatusType.AWAY, "", 3),
-      new BuddyStatusImp(BuddyStatusType.INVISIBLE, "", 4)
+      new BuddyStatusImp(BuddyStatusType.INVISIBLE, "", 4),
     ];
     this.mChatClient.getUserStatusManager().setUserStatuses(userStatuses);
     this.mMainWindow.setUserStatuses(userStatuses);
@@ -419,16 +535,16 @@ export class ChatZimletBase extends ZmZimletBase {
 
     this.mSettingsManager.onSettingChange(
       Setting.IM_PREF_REPORT_IDLE,
-      new Callback(this, this.reportIdle)
+      new Callback(this, this.reportIdle),
     );
 
     if (this.mSettingsManager.get(Setting.IM_PREF_REPORT_IDLE)) {
       this.startIdleTimer();
     }
 
-    let checkPendingRequestTimedCallback: TimedCallback = new TimedCallback(
+    const checkPendingRequestTimedCallback: TimedCallback = new TimedCallback(
       new Callback(this, this.checkPendingRequest),
-      5000
+      5000,
     );
     checkPendingRequestTimedCallback.start();
   }
@@ -436,21 +552,20 @@ export class ChatZimletBase extends ZmZimletBase {
   private reportIdle(reportIdle: boolean) {
     if (reportIdle) {
       this.startIdleTimer();
-    }
-    else {
+    } else {
       this.stopIdleTimer();
     }
   }
 
   private handleServerOffline() {
-    let oldValue: boolean = this.mOnline;
+    const oldValue: boolean = this.mOnline;
     this.mOnline = false;
     if (oldValue) {
       this.displayStatusMessage(
         {
+          level: ZmStatusView.LEVEL_CRITICAL,
           msg: StringUtils.getMessage("error_contact_server"),
-          level: ZmStatusView.LEVEL_CRITICAL
-        }
+        },
       );
     }
   }
@@ -459,19 +574,19 @@ export class ChatZimletBase extends ZmZimletBase {
     this.m502Errors += 1;
     this.Log.err(error, "Proxy Error found");
     if (this.m502Errors === 3) {
-      let msgDialog: DwtMessageDialog = new DwtMessageDialog({
+      const msgDialog: DwtMessageDialog = new DwtMessageDialog({
         buttons: [DwtDialog.DISMISS_BUTTON],
-        parent: appCtxt.getShell()
+        parent: appCtxt.getShell(),
       });
       msgDialog.setMessage(
         StringUtils.getMessage("error_502_message", [error.getDetail("detail").toString()]),
         DwtMessageDialog.WARNING_STYLE,
-        StringUtils.getMessage("error_502_title")
+        StringUtils.getMessage("error_502_title"),
       );
       msgDialog.popup();
       this.mTimedCallbackFactory.createTimedCallback(
         new Callback(msgDialog, msgDialog.popdown),
-        ChatZimletBase.TIMEOUT_502_DISMISS
+        ChatZimletBase.TIMEOUT_502_DISMISS,
       ).start();
     }
   }
@@ -479,9 +594,14 @@ export class ChatZimletBase extends ZmZimletBase {
   private registrationErrorCallback(error: ZxError): boolean {
     let msg: string;
     if (
-      typeof error !== "undefined" && error !== null &&
-      typeof error.getCause !== "undefined" && typeof error.getCause() !== "undefined" && error.getCause() !== null &&
-      typeof error.getCause().getCode !== "undefined" && error.getCause().getCode !== null && error.getCause().getCode() === ZxErrorCode.DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT
+      typeof error !== "undefined"
+      && error !== null
+      && typeof error.getCause !== "undefined"
+      && typeof error.getCause() !== "undefined"
+      && error.getCause() !== null
+      && typeof error.getCause().getCode !== "undefined"
+      && error.getCause().getCode !== null
+      && error.getCause().getCode() === ZxErrorCode.DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT
     ) {
       this.mSettingsManager.DELEGATED_ACCESS = true;
       msg = StringUtils.getMessage("delegated_or_resources_not_allowed");
@@ -496,32 +616,30 @@ export class ChatZimletBase extends ZmZimletBase {
       this.mCoreNotFoundNotified = true;
       this.displayStatusMessage(
         {
+          level: ZmStatusView.LEVEL_WARNING,
           msg: msg,
-          level: ZmStatusView.LEVEL_WARNING
-        }
+        },
       );
     }
     if (this.registrationShouldRetry(error)) {
       this.Log.warn(
         "Trying in " + (ChatZimletBase.RETRY_CONNECT_TIMEOUT / 1000) + "s",
-        "Register session error"
+        "Register session error",
       );
       this.mTimedCallbackFactory.createTimedCallback(
         new Callback(this.mChatClient, this.mChatClient.registerSession),
-        ChatZimletBase.RETRY_CONNECT_TIMEOUT
+        ChatZimletBase.RETRY_CONNECT_TIMEOUT,
       ).start();
-    }
-    else {
+    } else {
       if (this.mSettingsManager.DELEGATED_ACCESS) {
         this.Log.warn(
           error,
-          "Register session error"
+          "Register session error",
         );
-      }
-      else {
+      } else {
         this.Log.warn(
           error,
-          "Register session error"
+          "Register session error",
         );
       }
     }
@@ -529,7 +647,7 @@ export class ChatZimletBase extends ZmZimletBase {
   }
 
   private registrationShouldRetry(error: ZxError): boolean {
-    let digested: ZxError = ZxError.convertError(error);
+    const digested: ZxError = ZxError.convertError(error);
     if (typeof digested.getCode === "undefined" ||
       digested.getCode() === null ||
       ! digested.getDetail("code")
@@ -553,15 +671,19 @@ export class ChatZimletBase extends ZmZimletBase {
     return false;
   }
 
-  // The status show by the status selector is only the received from the ContactInformationEventHandler, except for the start
+  // The status show by the status selector is only the received from the
+  // ContactInformationEventHandler, except for the start
   private refreshStatusInMainWindow(status: BuddyStatus) {
     this.mMainWindow.setCurrentStatus(status);
   }
 
   private handleIdle(idleStatus: boolean): void {
-    let idleString: string = idleStatus ? "Away" : "Presence detected";
+    const idleString: string = idleStatus ? "Away" : "Presence detected";
     this.Log.debug(idleString, "Invoked Auto-Away routine");
-    if (typeof this.mChatClient.getUserStatusManager() !== "undefined" && this.mChatClient.getUserStatusManager() !== null) {
+    if (
+      typeof this.mChatClient.getUserStatusManager() !== "undefined"
+      && this.mChatClient.getUserStatusManager() !== null
+    ) {
       if (this.mChatClient.getUserStatusManager().setAutoAway(idleStatus)) {
         this.mChatClient.setUserStatus(this.mChatClient.getUserStatusManager().getCurrentStatus());
       }
@@ -573,21 +695,19 @@ export class ChatZimletBase extends ZmZimletBase {
       if (typeof this.mIdleTimer === "undefined" || this.mIdleTimer === null) {
         this.mIdleTimer = new IdleTimer (
           this.mSettingsManager.get(Setting.IM_PREF_IDLE_TIMEOUT) * 60000,
-          new Callback(this, this.handleIdle)
+          new Callback(this, this.handleIdle),
         );
         this.mSettingsManager.onSettingChange(
           Setting.IM_PREF_IDLE_TIMEOUT,
-          new Callback(this, this.setIdleTime)
+          new Callback(this, this.setIdleTime),
         );
-      }
-      else {
+      } else {
         this.setIdleTime(
-          this.mSettingsManager.get(Setting.IM_PREF_IDLE_TIMEOUT)
+          this.mSettingsManager.get(Setting.IM_PREF_IDLE_TIMEOUT),
         );
         this.mIdleTimer.start();
       }
-    }
-    catch (error) {
+    } catch (error) {
       this.Log.err(error, "Unable to start Idle");
     }
   }
@@ -609,34 +729,30 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mMainWindow.triggerSortGroups();
   }
 
-  public statusSelected(status: BuddyStatus): void {
-    let callback: Callback = new Callback(this, this.statusSelectedCallback);
-    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.StatusSelectedPlugin, status, callback);
-    callback.run(status);
-  }
-
   private statusSelectedCallback(userStatus: BuddyStatus): void {
     this.mChatClient.getUserStatusManager().setSelectedStatus(userStatus);
     this.mChatClient.setUserStatus(this.mChatClient.getUserStatusManager().getCurrentStatus());
   }
 
   private buddySelected(event: DwtSelectionEvent): void {
-    let buddyTreeItemSelected: BuddyTreeItem = <BuddyTreeItem> event.dwtObj,
-      buddy: Buddy = buddyTreeItemSelected.getBuddy(),
-      buddyStatus: BuddyStatus = buddy.getStatus();
+    const buddyTreeItemSelected: BuddyTreeItem = event.dwtObj as BuddyTreeItem;
+    const buddy: Buddy = buddyTreeItemSelected.getBuddy();
+    const buddyStatus: BuddyStatus = buddy.getStatus();
     if (buddyStatus.getType() === BuddyStatusType.INVITED) {
       if (typeof buddyTreeItemSelected.onAction !== "undefined" && buddyTreeItemSelected.onAction === null) {
         buddyTreeItemSelected.onAction(event);
       }
-    }
-    else if (buddyStatus.getType() === BuddyStatusType.NEED_RESPONSE) {
+    } else if (buddyStatus.getType() === BuddyStatusType.NEED_RESPONSE) {
       this.acceptInvitation(buddy);
-    }
-    else {
+    } else {
       let roomWindow: RoomWindow = this.mRoomWindowManager.getRoomWindowById(buddy.getId());
       if (typeof roomWindow === "undefined" || roomWindow === null) {
-        let roomPluginManager = new ChatPluginManager();
-        let room: Room = this.mChatClient.getRoomManager().createRoom(buddy.getId(), buddy.getNickname(), roomPluginManager);
+        const roomPluginManager = new ChatPluginManager();
+        const room: Room = this.mChatClient.getRoomManager().createRoom(
+          buddy.getId(),
+          buddy.getNickname(),
+          roomPluginManager,
+        );
         room.addMember(buddy);
       }
       roomWindow = this.mRoomWindowManager.getRoomWindowById(buddy.getId());
@@ -646,30 +762,20 @@ export class ChatZimletBase extends ZmZimletBase {
   }
 
   private deleteBuddy(buddy: Buddy): void {
-    let dialog: DeleteBuddyDialog = DeleteBuddyDialog.getDialog(
+    const dialog: DeleteBuddyDialog = DeleteBuddyDialog.getDialog(
       appCtxt.getShell(),
       this.mChatClient,
-      new Callback(this, this.onBuddyDeleted)
+      new Callback(this, this.onBuddyDeleted),
     );
     dialog.setBuddy(buddy);
     dialog.popup();
   }
 
-  public onBuddyDeleted(event: RemoveFriendshipEvent): void {
-    let room: Room = this.mChatClient.getRoomManager().getRoomById(event.getDestination());
-    if (typeof room !== "undefined" && room !== null) {
-      let roomWindow: RoomWindow = this.mRoomWindowManager.getRoomWindowById(event.getDestination());
-      if (typeof roomWindow !== "undefined" && roomWindow !== null) {
-        roomWindow.popdown();
-      }
-    }
-  }
-
   private renameBuddy(buddy: Buddy): void {
-    let dialog: RenameBuddyDialog = new RenameBuddyDialog(
+    const dialog: RenameBuddyDialog = new RenameBuddyDialog(
       {parent: appCtxt.getShell()},
       this.mChatClient,
-      buddy
+      buddy,
     );
     dialog.popup();
   }
@@ -678,7 +784,7 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mChatClient.sendFriendship(
       buddy.getId(),
       buddy.getNickname(),
-      buddy.getGroups()[0].getName()
+      buddy.getGroups()[0].getName(),
     );
   }
 
@@ -686,7 +792,7 @@ export class ChatZimletBase extends ZmZimletBase {
     AcceptFriendshipDialog.getDialog(
       {parent: appCtxt.getShell()},
       this.mChatClient,
-      buddy
+      buddy,
     ).popup();
   }
 
@@ -696,35 +802,36 @@ export class ChatZimletBase extends ZmZimletBase {
 
   private contactDroppedInGroup(contact: ZmContact, group: Group): void {
     this.Log.debug(contact, "Contact dropped in the group " + group.getName());
-    let buddyId: string = contact.getEmail(),
-      nickname: string = contact.getHeader(),
-      chatGroup: string = group.getName(),
-      buddyIsCurrentUserOrAlias: boolean = (buddyId === appCtxt.getUsername()),
-      buddy: Buddy = this.mChatClient.getBuddyList().getBuddyById(buddyId);
-    for (let alias of this.mSettingsManager.get(Setting.MAIL_ALIASES)) {
+    const buddyId: string = contact.getEmail();
+    const nickname: string = contact.getHeader();
+    const chatGroup: string = group.getName();
+    let buddyIsCurrentUserOrAlias: boolean = (buddyId === appCtxt.getUsername());
+    const buddy: Buddy = this.mChatClient.getBuddyList().getBuddyById(buddyId);
+    for (const alias of this.mSettingsManager.get(Setting.MAIL_ALIASES)) {
       if (buddyId === alias) {
         buddyIsCurrentUserOrAlias = true;
       }
     }
-    if (typeof buddy !== "undefined" && buddy !== null &&
-        buddy.getStatus().getType() !== BuddyStatusType.INVITED) {
-      let msgDialog: DwtMessageDialog = appCtxt.getMsgDialog();
+    if (
+      typeof buddy !== "undefined"
+      && buddy !== null
+      && buddy.getStatus().getType() !== BuddyStatusType.INVITED
+    ) {
+      const msgDialog: DwtMessageDialog = appCtxt.getMsgDialog();
       msgDialog.setMessage(StringUtils.getMessage("friend_already_added"));
       msgDialog.popup();
-    }
-    else if (buddyIsCurrentUserOrAlias) {
-      let msgDialog: DwtMessageDialog = appCtxt.getMsgDialog();
+    } else if (buddyIsCurrentUserOrAlias) {
+      const msgDialog: DwtMessageDialog = appCtxt.getMsgDialog();
       msgDialog.setMessage(
         StringUtils.getMessage("err_adding_friend"),
-        DwtMessageDialog.WARNING_STYLE
+        DwtMessageDialog.WARNING_STYLE,
       );
       msgDialog.popup();
-    }
-    else {
+    } else {
       this.mChatClient.sendFriendship(
         buddyId,
         HTMLUtils.htmlEscape(nickname),
-        HTMLUtils.htmlEscape(chatGroup)
+        HTMLUtils.htmlEscape(chatGroup),
       );
     }
   }
@@ -743,14 +850,8 @@ export class ChatZimletBase extends ZmZimletBase {
     }
   }
 
-  public onFindMsgObjects(message: ZmMailMsg, manager: ZmObjectManager): void {
-    if (typeof this.mObjectHandler !== "undefined" && this.mObjectHandler !== null) {
-      this.mObjectHandler.onFindMsgObjects(message, manager);
-    }
-  }
-
   private handleNewFriendshipInvitation(buddy: Buddy) {
-    let title: string = StringUtils.getMessage("accept_friends_title");
+    const title: string = StringUtils.getMessage("accept_friends_title");
     let message: string = StringUtils.getMessage("accept_friends_text", [buddy.getNickname()]);
     message = message.replace(/<b>/g, "");
     message = message.replace(/<\/b>/g, "");
@@ -759,115 +860,23 @@ export class ChatZimletBase extends ZmZimletBase {
     this.displayNotification(title, message, this.getNotificationImage(), false);
   }
 
-  public displayNotification(title: string, message: string, image: string, toast: boolean = false): void {
-    this.mNotificationManager.notify(message, title, image, toast);
-  }
-
-  public getNotificationImage(): string {
-    let differentImage: string = this.mMainWindow.getPluginManager().getFieldPlugin(MainWindow.ChatImageFieldPlugin),
-      defaultUrl = this.getResource("images/desktop-chat_128.png");
-    if (typeof differentImage !== "undefined" && differentImage !== null) {
-      return differentImage;
-    }
-    return defaultUrl;
-  }
-
   private checkPendingRequest() {
-    let stats: GroupStats = this.mChatClient.getBuddyList().getStatistics();
+    const stats: GroupStats = this.mChatClient.getBuddyList().getStatistics();
     if (stats.getWaitingForResponseBuddiesCount() > 0) {
-      let title: string = StringUtils.getMessage("accept_friends_title"),
-        message: string = StringUtils.getMessage("accept_friends_check_text");
+      const title: string = StringUtils.getMessage("accept_friends_title");
+      const message: string = StringUtils.getMessage("accept_friends_check_text");
       this.displayNotification(title, message, this.getNotificationImage(), true);
     }
   }
 
-  /**
-   * Show Dialogs
-   */
-  protected addBuddy() {
-    let contactsEnabled = this.mSettingsManager.get(Setting.CONTACTS_ENABLED),
-      galEnabled = this.mSettingsManager.get(Setting.GAL_ENABLED),
-      aliases: string[] = [];
-    aliases.push(appCtxt.getUsername());
-    for (let alias of this.mSettingsManager.get(Setting.MAIL_ALIASES)) {
-      aliases.push(alias);
-    }
-    if (typeof this.mAddBuddyDialog === "undefined" || this.mAddBuddyDialog === null) {
-      this.mAddBuddyDialog = new AddBuddyDialog(
-        {
-          parent: appCtxt.getShell(),
-          enableAutoComplete: contactsEnabled || galEnabled,
-          dataClass: appCtxt.getAutocompleter()
-        },
-        this.mChatClient,
-        aliases
-      );
-    }
-    this.mAddBuddyDialog.cleanInput();
-    this.mAddBuddyDialog.popup();
-  }
-
-  protected addGroup() {
-    if (typeof this.mAddGroupDialog === "undefined" || this.mAddGroupDialog) {
-      this.mAddGroupDialog = new AddGroupDialog(
-        { parent: appCtxt.getShell() },
-        this.mChatClient,
-        appCtxt
-      );
-    }
-    this.mAddGroupDialog.cleanInput();
-    this.mAddGroupDialog.popup();
-  }
-
   private renameGroup(group: Group) {
-    let dialog: RenameGroupDialog = new RenameGroupDialog(
+    const dialog: RenameGroupDialog = new RenameGroupDialog(
       { parent: appCtxt.getShell() },
       this.mChatClient,
       appCtxt,
-      group
+      group,
     );
     dialog.popup();
-  }
-
-  protected deleteGroup(group: Group) {
-    if (group.isEmpty()) {
-      if (typeof this.mDeleteGroupDialog === "undefined" || this.mDeleteGroupDialog === null) {
-        this.mDeleteGroupDialog = new DwtMessageDialog({
-          parent: appCtxt.getShell(),
-          buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
-          id: IdGenerator.generateId("ZxChat_DeleteGroupDialog")
-        });
-      }
-      this.mDeleteGroupDialog.setMessage(
-        StringUtils.getMessage("delete_group_text", [group.getName()]),
-        DwtMessageDialog.WARNING_STYLE,
-        StringUtils.getMessage("delete_group_title")
-      );
-      this.mDeleteGroupDialog.setButtonListener(
-        DwtDialog.YES_BUTTON,
-        new AjxListener(
-          this,
-          this.deleteGroupDialogYesCallback,
-          group
-        )
-      );
-      this.mDeleteGroupDialog.popup();
-    }
-    else {
-      if (typeof this.mWarnDeleteGroupDialog === "undefined" || this.mWarnDeleteGroupDialog === null) {
-        this.mWarnDeleteGroupDialog = new DwtMessageDialog({
-          parent: appCtxt.getShell(),
-          buttons: [DwtDialog.DISMISS_BUTTON],
-          id: IdGenerator.generateId("ZxChat_WarnDeleteGroupDialog")
-        });
-      }
-      this.mWarnDeleteGroupDialog.setMessage(
-        StringUtils.getMessage("cannot_delete_not_empty_group", [group.getName()]),
-        DwtMessageDialog.CRITICAL_STYLE,
-        StringUtils.getMessage("delete_group_title")
-      );
-      this.mWarnDeleteGroupDialog.popup();
-    }
   }
 
   private deleteGroupDialogYesCallback(group: Group, event: DwtSelectionEvent) {
@@ -883,7 +892,7 @@ export class ChatZimletBase extends ZmZimletBase {
       this.mSessionInfoProvider,
       this.mSettingsManager,
       this.mTimedCallbackFactory,
-      this.mDateProvider
+      this.mDateProvider,
     ).popup();
   }
 
@@ -891,33 +900,33 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mObjectHandler.setEmojiEnabledInConv(this.mSettingsManager.enabledEmojiInChatConversation());
     this.mSettingsManager.onSettingChange(
       Setting.IM_USR_PREF_EMOJI_IN_CONV,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInConv)
+      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInConv),
     );
     this.mObjectHandler.setEmojiEnabledInHist(this.mSettingsManager.enabledEmojiInChatHistory());
     this.mSettingsManager.onSettingChange(
       Setting.IM_USR_PREF_EMOJI_IN_HIST,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInHist)
+      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInHist),
     );
     this.mObjectHandler.setEmojiEnabledInMail(this.mSettingsManager.enabledEmojiInMail());
     this.mSettingsManager.onSettingChange(
       Setting.IM_USR_PREF_EMOJI_IN_MAIL,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInMail)
+      new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInMail),
     );
 
     this.mObjectHandler.setUrlEnabledInConv(this.mSettingsManager.enabledUrlInChatConversation());
     this.mSettingsManager.onSettingChange(
       Setting.IM_USR_PREF_URL_IN_CONV,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInConv)
+      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInConv),
     );
     this.mObjectHandler.setUrlEnabledInHist(this.mSettingsManager.enabledUrlInChatHistory());
     this.mSettingsManager.onSettingChange(
       Setting.IM_USR_PREF_URL_IN_HIST,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInHist)
+      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInHist),
     );
     this.mObjectHandler.setUrlEnabledInMail(this.mSettingsManager.enabledUrlInMail());
     this.mSettingsManager.onSettingChange(
       Setting.IM_USR_PREF_URL_IN_MAIL,
-      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInMail)
+      new Callback(this.mObjectHandler, this.mObjectHandler.setUrlEnabledInMail),
     );
   }
 }

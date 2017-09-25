@@ -16,31 +16,38 @@
  */
 
 import {ChatZimletBase} from "./ChatZimletBase";
-import {LogEngine} from "./lib/log/LogEngine";
-import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
+import {ChatConnectionManager} from "./client/connection/ChatConnectionManager";
+import {CommandFactory} from "./client/connection/CommandFactory";
+import {SoapEventParser} from "./client/connection/soap/chat/SoapEventParser";
+import {SoapEventParserUtils} from "./client/connection/soap/chat/SoapEventParserUtils";
+import {DosFilterImp} from "./client/connection/soap/dos/DosFilterImp";
+import {PingManagerImp} from "./client/connection/soap/PingManagerImp";
+import {SoapCommands} from "./client/connection/soap/SoapCommands";
+import {SoapConnection} from "./client/connection/soap/SoapConnection";
+import {SoapRequestFactory} from "./client/connection/soap/SoapRequestFactory";
+import {EventManager} from "./client/events/EventManager";
+import {HandlerRegister} from "./client/events/HandlerRegister";
+import {SessionInfoProvider} from "./client/SessionInfoProvider";
 import {TimedCallbackFactory} from "./lib/callbacks/TimedCallbackFactory";
 import {DateProvider} from "./lib/DateProvider";
-import {SessionInfoProvider} from "./client/SessionInfoProvider";
-import {SoapEventParser} from "./client/connection/soap/chat/SoapEventParser";
-import {PingManagerImp} from "./client/connection/soap/PingManagerImp";
-import {ChatConnectionManager} from "./client/connection/ChatConnectionManager";
-import {DosFilterImp} from "./client/connection/soap/dos/DosFilterImp";
-import {SoapRequestFactory} from "./client/connection/soap/SoapRequestFactory";
-import {SoapConnection} from "./client/connection/soap/SoapConnection";
-import {SoapEventParserUtils} from "./client/connection/soap/chat/SoapEventParserUtils";
-import {EventManager} from "./client/events/EventManager";
-import {SettingsManager} from "./settings/SettingsManager";
-import {HandlerRegister} from "./client/events/HandlerRegister";
+import {LogEngine} from "./lib/log/LogEngine";
 import {ChatPluginManager} from "./lib/plugin/ChatPluginManager";
-import {CommandFactory} from "./client/connection/CommandFactory";
-import {SoapCommands} from "./client/connection/soap/SoapCommands";
+import {StringUtils} from "./lib/StringUtils";
 import {HistoryPlugin} from "./plugins/HistoryPlugin";
 import {SendMailPlugin} from "./plugins/SendMailPlugin";
-import {StringUtils} from "./lib/StringUtils";
+import {SettingsManager} from "./settings/SettingsManager";
+import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
 
 declare const com_zextras_chat_open: {[label: string]: string};
 
 export class OpenChatZimlet extends ChatZimletBase {
+
+  /**
+   * @deprecated
+   */
+  public static getInstance(): OpenChatZimlet {
+    return ChatZimletBase.INSTANCE as OpenChatZimlet;
+  }
 
   constructor() {
     try {
@@ -61,67 +68,66 @@ export class OpenChatZimlet extends ChatZimletBase {
 
     try {
       ChatZimletBase.alreadyInit = true;
-      let timedCallbackFactory: TimedCallbackFactory = new TimedCallbackFactory();
-      let dateProvider: DateProvider = new DateProvider();
-      let sessionInfoProvider: SessionInfoProvider = new SessionInfoProvider(
+      const timedCallbackFactory: TimedCallbackFactory = new TimedCallbackFactory();
+      const dateProvider: DateProvider = new DateProvider();
+      const sessionInfoProvider: SessionInfoProvider = new SessionInfoProvider(
         appCtxt.getUsername(),
         appCtxt.getActiveAccount().getDisplayName(),
-        ChatZimletBase.getVersion()
+        ChatZimletBase.getVersion(),
       );
 
-      let settingsManager = new SettingsManager(
+      const settingsManager = new SettingsManager(
         this,
         appCtxt.getSettings(),
-        timedCallbackFactory
+        timedCallbackFactory,
       );
 
-      let newParser: SoapEventParser = new SoapEventParser();
+      const newParser: SoapEventParser = new SoapEventParser();
       SoapEventParserUtils.PopulateChatSoapEventParser(newParser, dateProvider);
 
-      let soapCommandFactory: CommandFactory = new CommandFactory();
+      const soapCommandFactory: CommandFactory = new CommandFactory();
       SoapCommands.registerCommands(soapCommandFactory);
 
-      let connectionManager: ChatConnectionManager = new ChatConnectionManager(
+      const connectionManager: ChatConnectionManager = new ChatConnectionManager(
         new SoapConnection(
           new SoapRequestFactory(
             appCtxt.getAppController(),
-            sessionInfoProvider
+            sessionInfoProvider,
           ),
           sessionInfoProvider,
           new DosFilterImp(
             dateProvider,
-            timedCallbackFactory
+            timedCallbackFactory,
           ),
           new PingManagerImp(
             timedCallbackFactory,
-            sessionInfoProvider
-          )
+            sessionInfoProvider,
+          ),
         ),
         soapCommandFactory,
-        newParser
+        newParser,
       );
 
-      let eventManager: EventManager = new EventManager();
+      const eventManager: EventManager = new EventManager();
       HandlerRegister.registerHandlers(eventManager, this);
 
-
-      let chatClientPluginManager = new ChatPluginManager();
-      let roomManagerPluginManager = new ChatPluginManager();
-      let mainWindowPluginManager = new ChatPluginManager();
-      let roomWindowManagerPluginManager = new ChatPluginManager();
+      const chatClientPluginManager = new ChatPluginManager();
+      const roomManagerPluginManager = new ChatPluginManager();
+      const mainWindowPluginManager = new ChatPluginManager();
+      const roomWindowManagerPluginManager = new ChatPluginManager();
 
       // Open Plugins
       // SendMail Plugin
       SendMailPlugin.plugin(
         roomManagerPluginManager,
         mainWindowPluginManager,
-        roomWindowManagerPluginManager
+        roomWindowManagerPluginManager,
       );
       // History Plugin
       HistoryPlugin.plugin(
         eventManager,
         mainWindowPluginManager,
-        roomWindowManagerPluginManager
+        roomWindowManagerPluginManager,
       );
 
       StringUtils.setTranslationMap(com_zextras_chat_open);
@@ -136,19 +142,12 @@ export class OpenChatZimlet extends ChatZimletBase {
         roomManagerPluginManager,
         chatClientPluginManager,
         mainWindowPluginManager,
-        roomWindowManagerPluginManager
+        roomWindowManagerPluginManager,
       );
     } catch (err) {
       ChatZimletBase.alreadyInit = false;
       this.Log.err(err, "Error on ZxChatZimlet Initialization");
     }
-  }
-
-  /**
-   * @deprecated
-   */
-  public static getInstance(): OpenChatZimlet {
-    return <OpenChatZimlet>ChatZimletBase.INSTANCE;
   }
 
   /**
@@ -161,9 +160,13 @@ export class OpenChatZimlet extends ChatZimletBase {
 }
 
 interface OpenChatZimletWindow extends Window {
+  // tslint:disable-next-line:ban-types
   com_zextras_chat_open_hdlr: Function;
 }
 
-if (typeof window !== "undefined" && typeof (<OpenChatZimletWindow>window).com_zextras_chat_open_hdlr === "undefined") {
-  (<OpenChatZimletWindow>window).com_zextras_chat_open_hdlr = OpenChatZimlet;
+if (
+  typeof window !== "undefined"
+  && typeof (window as OpenChatZimletWindow).com_zextras_chat_open_hdlr === "undefined"
+) {
+  (window as OpenChatZimletWindow).com_zextras_chat_open_hdlr = OpenChatZimlet;
 }

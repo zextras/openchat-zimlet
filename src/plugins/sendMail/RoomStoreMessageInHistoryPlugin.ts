@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {Message} from "../../client/Message";
 import {Room} from "../../client/Room";
+import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 
 export class RoomStoreMessageInHistoryPlugin implements ChatPlugin {

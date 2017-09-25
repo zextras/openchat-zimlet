@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Group} from "./Group";
-import {BuddyStatus} from "./BuddyStatus";
 import {Callback} from "../lib/callbacks/Callback";
+import {BuddyStatus} from "./BuddyStatus";
+import {Group} from "./Group";
 
 export interface Buddy {
 
@@ -26,7 +26,7 @@ export interface Buddy {
   getNickname(): string;
   addGroup(group: Group): void;
   removeGroup(groupName: string): void;
-  getGroups(filterFcn?: Function): Group[];
+  getGroups(filterFcn?: (g: Group) => boolean): Group[];
   setStatus(status: BuddyStatus, resource?: string): void;
   clearStatuses(): void;
   getStatus(): BuddyStatus;

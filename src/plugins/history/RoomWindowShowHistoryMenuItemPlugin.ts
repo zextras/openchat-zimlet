@@ -15,49 +15,53 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {RoomWindowHistoryEnablePlugin} from "./RoomWindowHistoryEnablePlugin";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
-import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
 import {RoomWindow} from "../../dwt/windows/RoomWindow";
-import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
-import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
+import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
+import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {StringUtils} from "../../lib/StringUtils";
+import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {ZmSearchControllerSearchParams} from "../../zimbra/zimbraMail/share/controller/ZmSearchController";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
+import {ZmSearchControllerSearchParams} from "../../zimbra/zimbraMail/share/controller/ZmSearchController";
+import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
+import {RoomWindowHistoryEnablePlugin} from "./RoomWindowHistoryEnablePlugin";
 
 export class RoomWindowShowHistoryMenuItemPlugin implements ChatPlugin {
 
   public static Name = RoomWindowMenuButton.AddMenuItemPlugin;
 
-  public trigger(roomWindow: RoomWindow, menu: ZmPopupMenu): void {
-    let historyMenuItem: DwtMenuItem = menu.createMenuItem(
-      "ZxChat_MenuItem_History",
-      {
-        text: StringUtils.getMessage("friend_history")
-      }
-    );
-    historyMenuItem.addSelectionListener(
-      new AjxListener(null, RoomWindowShowHistoryMenuItemPlugin.showHistory, [roomWindow])
-    );
-    roomWindow.getPluginManager().registerPlugin(RoomWindowHistoryEnablePlugin.Name, new RoomWindowHistoryEnablePlugin(historyMenuItem));
-  }
-
   private static showHistory(roomWindow: RoomWindow): void {
-    let ids: string[] = [];
-    for (let buddy of roomWindow.getRoom().getMembers()) {
+    const ids: string[] = [];
+    for (const buddy of roomWindow.getRoom().getMembers()) {
       ids.push("from:(" + (buddy.getId()) + ")");
     }
     appCtxt.getSearchController().search(
-      <ZmSearchControllerSearchParams> {
+      {
+        getHtml: true,
+        isEmpty: false,
+        origin: "Search",
         query: "in:chats " + (ids.join(" or ")),
         searchFor: "MAIL",
-        userText: true,
         userInitiated: true,
-        getHtml: true,
-        origin: "Search",
-        isEmpty: false
-      }
+        userText: true,
+      } as ZmSearchControllerSearchParams,
     );
   }
+
+  public trigger(roomWindow: RoomWindow, menu: ZmPopupMenu): void {
+    const historyMenuItem: DwtMenuItem = menu.createMenuItem(
+      "ZxChat_MenuItem_History",
+      {
+        text: StringUtils.getMessage("friend_history"),
+      },
+    );
+    historyMenuItem.addSelectionListener(
+      new AjxListener(null, RoomWindowShowHistoryMenuItemPlugin.showHistory, [roomWindow]),
+    );
+    roomWindow.getPluginManager().registerPlugin(
+      RoomWindowHistoryEnablePlugin.Name,
+      new RoomWindowHistoryEnablePlugin(historyMenuItem),
+    );
+  }
+
 }

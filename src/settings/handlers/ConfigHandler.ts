@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
+import {ChatZimletBase} from "../../ChatZimletBase";
 import {Callback} from "../../lib/callbacks/Callback";
+import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
 import {Setting} from "../Setting";
 import {SettingsUtils} from "../SettingsUtils";
-import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
-import {ChatZimletBase} from "../../ChatZimletBase";
+import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
 
 export class ConfigHandler implements SettingsHandlerInterface {
 
@@ -45,7 +45,7 @@ export class ConfigHandler implements SettingsHandlerInterface {
     return [
       Setting.TURN_URL,
       Setting.TURN_CREDENTIAL,
-      Setting.TURN_USERNAME
+      Setting.TURN_USERNAME,
     ];
   }
 
