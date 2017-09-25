@@ -16,6 +16,6 @@
  */
 
 export declare class JSON3 {
-  public static stringify(source: any, filter?: Function|Function[], width?: number): string;
+  public static stringify(source: any, filter?: () => boolean|Array<() => boolean>, width?: number): string;
   public static parse(str: string): any;
 }

@@ -18,8 +18,8 @@
 import {TraceLine} from "./stacktrace-js";
 
 export declare class XRegExp extends RegExp {
-  constructor(regex: string|RegExp, flags?: string);
-
-  public test(str: string): boolean;
   public static exec(str: TraceLine, regex: RegExp): any;
+
+  constructor(regex: string|RegExp, flags?: string);
+  public test(str: string): boolean;
 }

@@ -17,12 +17,33 @@
 
 export class URLParser {
 
+  public static getParameter(key: string): string {
+    const location: Location = (typeof window !== "undefined" && typeof window.location !== "undefined") ?
+      window.location :
+      {
+        assign: (url: string) => {},
+        hash: "",
+        host: "",
+        hostname: "",
+        href: "",
+        origin: "",
+        pathname: "",
+        port: "",
+        protocol: "",
+        reload: (forcedReload?: boolean) => {},
+        replace: (url: string) => {},
+        search: "",
+        toString: () => "",
+      } as Location;
+    return (new URLParser(location)).getParameter(key);
+  }
+
   private mParameters: {[key: string]: string};
 
   constructor(location: Location) {
     this.mParameters = {};
-    let parameterString: string = "",
-      parameterArr: string[] = [];
+    let parameterString: string = "";
+    let parameterArr: string[] = [];
     if (typeof location !== "undefined" && typeof location.search !== "undefined" && location.search !== "") {
       if (/^\?/.test(location.search)) {
         parameterString = location.search.substr(1);
@@ -31,15 +52,15 @@ export class URLParser {
       }
       parameterArr = parameterString.split("&");
     }
-    for (let i: number = 0; i < parameterArr.length; i++) {
-      let tmpArr = parameterArr[i].split("=");
+    for (const param of parameterArr) {
+      const tmpArr = param.split("=");
       this.mParameters[tmpArr[0]] = tmpArr[1];
     }
   }
 
   public getKeys(): string[] {
-    let tmp: string[] = [];
-    for (let paramName in this.mParameters) {
+    const tmp: string[] = [];
+    for (const paramName in this.mParameters) {
       if (!this.mParameters.hasOwnProperty(paramName)) { continue; }
       tmp.push(paramName);
     }
@@ -55,32 +76,11 @@ export class URLParser {
   }
 
   public isZxDevMode(): boolean {
-    for (let paramName in this.mParameters) {
+    for (const paramName in this.mParameters) {
       if (!this.mParameters.hasOwnProperty(paramName)) { continue; }
       if (paramName.toUpperCase() === "ZXDEV") { return true; }
     }
     return false;
-  }
-
-  public static getParameter(key: string): string {
-    let location: Location = (typeof window !== "undefined" && typeof window.location !== "undefined") ?
-      window.location :
-      {
-        hash: "",
-        host: "",
-        hostname: "",
-        href: "",
-        origin: "",
-        pathname: "",
-        port: "",
-        protocol: "",
-        search: "",
-        assign: function(url: string): void {},
-        reload: function(forcedReload?: boolean): void {},
-        replace: function(url: string): void {},
-        toString: function(): string { return ""; }
-      };
-    return (new URLParser(location)).getParameter(key);
   }
 
 }
