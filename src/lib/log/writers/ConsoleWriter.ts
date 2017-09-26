@@ -15,23 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {LoggerWriter} from "./LoggerWriter";
-import {LogLine} from "../LogLine";
-import {LogLevel} from "../LogLevel";
 import {AjxDebug, DBG} from "../../../zimbra/ajax/debug/AjxDebug";
+import {LogLevel} from "../LogLevel";
+import {LogLine} from "../LogLine";
+import {LoggerWriter} from "./LoggerWriter";
+
+// tslint:disable:no-console
 
 export class ConsoleWriter implements LoggerWriter {
 
-  public write(line: LogLine): void {
-    if (typeof console !== "undefined") {
-      ConsoleWriter.writeOnConsole(line);
-    }
-    // Fallback, write always on Zimbra Logger
-    ConsoleWriter.writeOnZimbraDebug(line);
-  }
-
   private static writeOnConsole(line: LogLine) {
-    let hasGroup: boolean = (typeof console.group === "function" && typeof console.groupEnd === "function");
+    const hasGroup: boolean = (typeof console.group === "function" && typeof console.groupEnd === "function");
 
     if (hasGroup) {
       console.group(line.getTitle());
@@ -92,6 +86,14 @@ export class ConsoleWriter implements LoggerWriter {
         DBG.println(level, "<b>Unable to dump Object</b>");
       }
     }
+  }
+
+  public write(line: LogLine): void {
+    if (typeof console !== "undefined") {
+      ConsoleWriter.writeOnConsole(line);
+    }
+    // Fallback, write always on Zimbra Logger
+    ConsoleWriter.writeOnZimbraDebug(line);
   }
 
 }

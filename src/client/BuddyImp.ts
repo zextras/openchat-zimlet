@@ -78,7 +78,7 @@ export class BuddyImp implements Buddy {
     }
   }
 
-  public getGroups(filterFcn?: Function): Group[] {
+  public getGroups(filterFcn?: (val: any) => boolean): Group[] {
     if (typeof filterFcn !== "function") {
       filterFcn = BuddyImp.filterFcnReturnTrue;
     }

@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NotificationTaskType} from "./NotificationTaskType";
-import {NotificationTask} from "./NotificationTask";
-import {ZmToast} from "../../zimbra/zimbraMail/share/view/ZmStatusView";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {ZmToast} from "../../zimbra/zimbraMail/share/view/ZmStatusView";
 import {ZmToastFadeType} from "../../zimbra/zimbraMail/share/view/ZmStatusView";
+import {NotificationTask} from "./NotificationTask";
+import {NotificationTaskType} from "./NotificationTaskType";
 
 export class ToastNotification implements NotificationTask {
   private static TASKID: number = 0;
@@ -41,9 +41,9 @@ export class ToastNotification implements NotificationTask {
   }
 
   public start(): void {
-    if (this.isNotified()) return;
-    let transitions: ZmToastFadeType[] = [],
-      remaining: number = this.duration;
+    if (this.isNotified()) { return; }
+    const transitions: ZmToastFadeType[] = [];
+    let remaining: number = this.duration;
     transitions.push(ZmToast.FADE_IN);
     for (remaining; remaining > 0; remaining -= 1200) {
       transitions.push(ZmToast.PAUSE);
@@ -53,8 +53,8 @@ export class ToastNotification implements NotificationTask {
     this.context.setStatusMsg(
       {
         msg        : this.text,
-        transitions: transitions
-      }
+        transitions: transitions,
+      },
     );
     this.notified = true;
   }

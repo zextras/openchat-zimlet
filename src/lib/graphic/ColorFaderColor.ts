@@ -21,70 +21,45 @@ export class ColorFaderColor {
   public static BLACK: ColorFaderColor = new ColorFaderColor(0, 0, 0);
   public static WHITE: ColorFaderColor = new ColorFaderColor(255, 255, 255);
 
-  public r: number;
-  public g: number;
-  public b: number;
-
-  constructor(r: number, g: number, b: number) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-  }
-
-  public toHEX(): string {
-    return "#" + ColorFaderColor.componentToHex(this.r) +
-      ColorFaderColor.componentToHex(this.g) +
-      ColorFaderColor.componentToHex(this.b);
-  }
-
-  public toRGB(): string {
-    return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
-  }
-
   public static fromRGB(rgbString: string): ColorFaderColor {
-    let result: string[] = /^rgb\(([0-9]+), ([0-9]+), ([0-9]+)\)$/i.exec(rgbString);
+    const result: string[] = /^rgb\(([0-9]+), ([0-9]+), ([0-9]+)\)$/i.exec(rgbString);
     if (typeof result !== "undefined") {
       return new ColorFaderColor(
         parseInt(result[1], 10),
         parseInt(result[2], 10),
-        parseInt(result[3], 10)
+        parseInt(result[3], 10),
       );
     }
     return new ColorFaderColor(0, 0, 0);
   }
 
   public static fromHEX(hexString: string): ColorFaderColor {
-    let result: string[] = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexString);
+    const result: string[] = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexString);
     if (typeof result !== "undefined") {
       return new ColorFaderColor(
         parseInt(result[1], 16),
         parseInt(result[2], 16),
-        parseInt(result[3], 16)
+        parseInt(result[3], 16),
       );
     }
     return new ColorFaderColor(0, 0, 0);
   }
 
   public static from3DigitHEX(hexString: string): ColorFaderColor  {
-    let result: string[] = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hexString);
+    const result: string[] = /^#?([a-f\d])([a-f\d])([a-f\d])$/i.exec(hexString);
     if (typeof result !== "undefined") {
       return new ColorFaderColor(
         parseInt(result[1] + result[1], 16),
         parseInt(result[2] + result[2], 16),
-        parseInt(result[3] + result[3], 16)
+        parseInt(result[3] + result[3], 16),
       );
     }
     return new ColorFaderColor(0, 0, 0);
   }
 
-  private static componentToHex(c: number): string {
-    let hex: string = c.toString(16);
-    if (hex.length === 1) return "0" + hex;
-    else return hex;
-  }
   // This can be useful
   public static fromName(colour: string): ColorFaderColor {
-    let colours: {[name: string]: string} = {
+    const colours: {[name: string]: string} = {
       "aliceblue": "#f0f8ff",             "antiquewhite": "#faebd7",    "aqua": "#00ffff",
       "aquamarine": "#7fffd4",            "azure": "#f0ffff",           "beige": "#f5f5dc",
       "bisque": "#ffe4c4",                "black": "#000000",           "blanchedalmond": "#ffebcd",
@@ -107,7 +82,7 @@ export class ColorFaderColor {
       "ivory": "#fffff0",                 "khaki": "#f0e68c",           "lavender": "#e6e6fa",
       "lavenderblush": "#fff0f5",         "lawngreen": "#7cfc00",       "lemonchiffon": "#fffacd",
       "lightblue": "#add8e6",             "lightcoral": "#f08080",      "lightcyan": "#e0ffff",
-      "lightgoldenrodyellow": "#fafad2",  "lightgrey": "#d3d3d3",       "lightgreen": "#90ee90",
+      "lightgoldenrodyellow": "#fafad2",  "lightgreen": "#90ee90",      "lightgrey": "#d3d3d3",
       "lightpink": "#ffb6c1",             "lightsalmon": "#ffa07a",     "lightseagreen": "#20b2aa",
       "lightskyblue": "#87cefa",          "lightslategray": "#778899",  "lightsteelblue": "#b0c4de",
       "lightyellow": "#ffffe0",           "lime": "#00ff00",            "limegreen": "#32cd32",
@@ -131,64 +106,74 @@ export class ColorFaderColor {
       "tan": "#d2b48c",                   "teal": "#008080",            "thistle": "#d8bfd8",
       "tomato": "#ff6347",                "turquoise": "#40e0d0",       "violet": "#ee82ee",
       "wheat": "#f5deb3",                 "white": "#ffffff",           "whitesmoke": "#f5f5f5",
-      "yellow": "#ffff00",                "yellowgreen": "#9acd32"
+      "yellow": "#ffff00",                "yellowgreen": "#9acd32",
     };
-    if (typeof colours[colour.toLowerCase()] !== "undefined")
+    if (typeof colours[colour.toLowerCase()] !== "undefined") {
       return this.fromHEX(colours[colour.toLowerCase()]);
+    }
     return undefined;
   }
+
   public static average(color1: ColorFaderColor, color2: ColorFaderColor, ratio: number = 0.5) {
     return new ColorFaderColor(
       Math.floor(color1.r * ratio + color2.r * (1 - ratio)),
       Math.floor(color1.g * ratio + color2.g * (1 - ratio)),
-      Math.floor(color1.b * ratio + color2.b * (1 - ratio))
+      Math.floor(color1.b * ratio + color2.b * (1 - ratio)),
     );
   }
+
   public static averageFromStringWithRGB(property: string): ColorFaderColor {
-    let firstColor: ColorFaderColor, secondColor: ColorFaderColor;
-    let regex: RegExp = /rgb\(([0-9]+), ([0-9]+), ([0-9]+)\)/g;
-    let firstResult: string[] = regex.exec(property);
+    let firstColor: ColorFaderColor;
+    let secondColor: ColorFaderColor;
+    const regex: RegExp = /rgb\(([0-9]+), ([0-9]+), ([0-9]+)\)/g;
+    const firstResult: string[] = regex.exec(property);
     if (typeof firstResult !== "undefined" && firstResult !== null) {
       firstColor = new ColorFaderColor(
         parseInt(firstResult[1], 10),
         parseInt(firstResult[2], 10),
-        parseInt(firstResult[3], 10)
+        parseInt(firstResult[3], 10),
       );
-      let secondResult: string[] = regex.exec(property);
+      const secondResult: string[] = regex.exec(property);
       if (typeof secondResult !== "undefined" && firstResult !== null) {
         secondColor = new ColorFaderColor(
           parseInt(secondResult[1], 10),
           parseInt(secondResult[2], 10),
-          parseInt(secondResult[3], 10)
+          parseInt(secondResult[3], 10),
         );
         return ColorFaderColor.average(firstColor, secondColor);
+      } else {
+        return firstColor;
       }
-      else return firstColor;
+    } else {
+      return undefined;
     }
-    else return undefined;
   }
+
   public static averageFromStringWithHEX(property: string): ColorFaderColor {
-    let firstColor: ColorFaderColor, secondColor: ColorFaderColor;
-    let regex: RegExp = /#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})/g;
-    let firstResult: string[] = regex.exec(property);
+    let firstColor: ColorFaderColor;
+    let secondColor: ColorFaderColor;
+    const regex: RegExp = /#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})/g;
+    const firstResult: string[] = regex.exec(property);
     if (typeof firstResult !== "undefined" && firstResult !== null) {
       firstColor = new ColorFaderColor(
         parseInt(firstResult[1], 16),
         parseInt(firstResult[2], 16),
-        parseInt(firstResult[3], 16)
+        parseInt(firstResult[3], 16),
       );
-      let secondResult: string[] = regex.exec(property);
+      const secondResult: string[] = regex.exec(property);
       if (typeof secondResult !== "undefined" && firstResult !== null) {
         secondColor = new ColorFaderColor(
           parseInt(secondResult[1], 16),
           parseInt(secondResult[2], 16),
-          parseInt(secondResult[3], 16)
+          parseInt(secondResult[3], 16),
         );
         return ColorFaderColor.average(firstColor, secondColor);
+      } else {
+        return firstColor;
       }
-      else return firstColor;
+    } else {
+      return undefined;
     }
-    else return undefined;
   }
 
   public static brightenColor(color: ColorFaderColor, ratio: number): ColorFaderColor {
@@ -201,5 +186,34 @@ export class ColorFaderColor {
     // ratio 0 return black
     // ratio 1 return color
     return ColorFaderColor.average(color, ColorFaderColor.BLACK, ratio);
+  }
+
+  private static componentToHex(c: number): string {
+    const hex: string = c.toString(16);
+    if (hex.length === 1) {
+      return "0" + hex;
+    } else {
+      return hex;
+    }
+  }
+
+  public r: number;
+  public g: number;
+  public b: number;
+
+  constructor(r: number, g: number, b: number) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+  }
+
+  public toHEX(): string {
+    return "#" + ColorFaderColor.componentToHex(this.r) +
+      ColorFaderColor.componentToHex(this.g) +
+      ColorFaderColor.componentToHex(this.b);
+  }
+
+  public toRGB(): string {
+    return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
   }
 }

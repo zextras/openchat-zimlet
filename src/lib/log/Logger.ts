@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {LogLine} from "./LogLine";
-import {LogLevel} from "./LogLevel";
-import {FeedbackReporter} from "./FeedbackReporter";
-import {DateProvider} from "../DateProvider";
-import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
 import {Callback} from "../callbacks/Callback";
+import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
+import {DateProvider} from "../DateProvider";
+import {FeedbackReporter} from "./FeedbackReporter";
+import {LogLevel} from "./LogLevel";
+import {LogLine} from "./LogLine";
 import {LoggerWriter} from "./writers/LoggerWriter";
 
 export class Logger {
@@ -41,7 +41,7 @@ export class Logger {
     loggerWriter: LoggerWriter,
     dateProvider: DateProvider,
     timedCallbackFactory: TimedCallbackFactory,
-    name: string
+    name: string,
   ) {
     this.mLoggerWriter = loggerWriter;
     this.mDateProvider = dateProvider;
@@ -92,7 +92,7 @@ export class Logger {
       this.mName,
       obj,
       title,
-      LogLevel.debug
+      LogLevel.debug,
     ));
   }
 
@@ -106,7 +106,7 @@ export class Logger {
       this.mName,
       obj,
       title,
-      LogLevel.error
+      LogLevel.error,
     ));
   }
 
@@ -116,7 +116,7 @@ export class Logger {
       this.mName,
       obj,
       title,
-      LogLevel.info
+      LogLevel.info,
     ));
   }
 
@@ -126,7 +126,7 @@ export class Logger {
       this.mName,
       obj,
       title,
-      LogLevel.log
+      LogLevel.log,
     ));
   }
 
@@ -136,7 +136,7 @@ export class Logger {
       this.mName,
       obj,
       title,
-      LogLevel.warn
+      LogLevel.warn,
     ));
   }
 
@@ -148,15 +148,15 @@ export class Logger {
 
     this.mTimedCallbackFactory.createTimedCallback(
       new Callback(this, this.reportAndPrune, line),
-      10
+      10,
     ).start();
   }
 
   private reportAndPrune(line: LogLine): void {
-    for (let reporterName in this.mReporters) {
+    for (const reporterName in this.mReporters) {
       if (!this.mReporters.hasOwnProperty(reporterName)) { continue; }
 
-      let reporter: FeedbackReporter = this.mReporters[reporterName];
+      const reporter: FeedbackReporter = this.mReporters[reporterName];
 
       switch (line.getLevel()) {
         case LogLevel.debug:
@@ -181,7 +181,7 @@ export class Logger {
     }
     this.mLog.push(line.toString());
     if (this.mLog.length > Logger.MAX_LOG_LINES) {
-      let howToRemove: number = this.mLog.length - Logger.MAX_LOG_LINES;
+      const howToRemove: number = this.mLog.length - Logger.MAX_LOG_LINES;
       this.mLog.splice(0, howToRemove);
     }
   }

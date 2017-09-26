@@ -23,10 +23,10 @@ export class Map {
   }
 
   public size(): number {
-    let i: string,
-      count: number = 0;
+    let i: string;
+    let count: number = 0;
     for (i in this.map) {
-      if (!this.map.hasOwnProperty(i)) continue;
+      if (!this.map.hasOwnProperty(i)) { continue; }
       count++;
     }
     return count;
@@ -35,7 +35,7 @@ export class Map {
   public isEmpty(): boolean {
     let i: string;
     for (i in this.map) {
-      if (!this.map.hasOwnProperty(i)) continue;
+      if (!this.map.hasOwnProperty(i)) { continue; }
       return false;
     }
     return true;
@@ -52,13 +52,13 @@ export class Map {
   }
 
   public put(key: string, value: any): any {
-    let prevValue = this.map[key];
+    const prevValue = this.map[key];
     this.map[key] = value;
     return prevValue;
   }
 
   public remove(key: string): any {
-    let prevValue = this.map[key];
+    const prevValue = this.map[key];
     delete this.map[key];
     return prevValue;
   }
@@ -66,7 +66,7 @@ export class Map {
   public putAll(map: Map): void {
     let i: string;
     for (i in map) {
-      if (!map.hasOwnProperty(i)) continue;
+      if (!map.hasOwnProperty(i)) { continue; }
       this.map[i] = map.map[i];
     }
   }
@@ -74,7 +74,7 @@ export class Map {
   public clear(): void {
     let i: string;
     for (i in this.map) {
-      if (!this.map.hasOwnProperty(i)) continue;
+      if (!this.map.hasOwnProperty(i)) { continue; }
       delete this.map[i];
     }
   }
@@ -84,20 +84,20 @@ export class Map {
   }
 
   public values(): any[] {
-    let i: string,
-      values: any[] = [];
+    let i: string;
+    const values: any[] = [];
     for (i in this.map) {
-      if (!this.map.hasOwnProperty(i)) continue;
+      if (!this.map.hasOwnProperty(i)) { continue; }
       values.push(this.map[i]);
     }
     return values;
   }
 
   public entrySet(): any[] {
-    let i: string,
-      entrySet: any[] = [];
+    let i: string;
+    const entrySet: any[] = [];
     for (i in this.map) {
-      if (!this.map.hasOwnProperty(i)) continue;
+      if (!this.map.hasOwnProperty(i)) { continue; }
       entrySet.push([i, this.map[i]]);
     }
     return entrySet;
@@ -106,24 +106,24 @@ export class Map {
   private getKeys(): string[] {
     if (typeof Object.keys !== "undefined") {
       return Object.keys(this);
-    }
-    else {
+    } else {
+      // tslint:disable-next-line:no-unused-expression
       "use strict";
-      let hasOwnProperty: Function = Object.prototype.hasOwnProperty,
-        hasDontEnumBug: boolean = !({toString: null}).propertyIsEnumerable("toString"),
-        dontEnums: string[] = [
-          "toString",
-          "toLocaleString",
-          "valueOf",
-          "hasOwnProperty",
-          "isPrototypeOf",
-          "propertyIsEnumerable",
-          "constructor"
-        ],
-        dontEnumsLength: number = dontEnums.length,
-        result: string[] = [],
-        prop: string,
-        i: number;
+      const hasOwnProperty: (v: string) => boolean = Object.prototype.hasOwnProperty;
+      const hasDontEnumBug: boolean = !({toString: null}).propertyIsEnumerable("toString");
+      const dontEnums: string[] = [
+        "toString",
+        "toLocaleString",
+        "valueOf",
+        "hasOwnProperty",
+        "isPrototypeOf",
+        "propertyIsEnumerable",
+        "constructor",
+      ];
+      const dontEnumsLength: number = dontEnums.length;
+      const result: string[] = [];
+      let prop: string;
+      let i: number;
 
       for (prop in this) {
         if (hasOwnProperty.call(this, prop)) {

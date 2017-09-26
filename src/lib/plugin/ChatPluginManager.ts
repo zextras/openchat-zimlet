@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "./ChatPlugin";
 import {ChatFieldPlugin} from "./ChatFieldPlugin";
+import {ChatPlugin} from "./ChatPlugin";
 
 export class ChatPluginManager {
 
@@ -44,10 +44,10 @@ export class ChatPluginManager {
 
   public triggerPlugins(title: string, ...args: any[]): void {
     if (typeof this.mPluginMap[title] !== "undefined" && this.mPluginMap !== null) {
-      for (let plugin of this.mPluginMap[title]) {
+      for (const plugin of this.mPluginMap[title]) {
         plugin.trigger.apply(
           plugin,
-          [].concat(this.mContext).concat(args)
+          [].concat(this.mContext).concat(args),
         );
       }
     }
@@ -62,9 +62,9 @@ export class ChatPluginManager {
   }
 
   public getFieldPlugin(fieldName: string): any {
-    if (typeof this.mFieldPluginMap[fieldName] !== "undefined" && this.mFieldPluginMap[fieldName] !== null)
+    if (typeof this.mFieldPluginMap[fieldName] !== "undefined" && this.mFieldPluginMap[fieldName] !== null) {
       return this.mFieldPluginMap[fieldName].getField();
-    else {
+    } else {
       return undefined;
     }
   }

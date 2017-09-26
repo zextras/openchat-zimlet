@@ -23,17 +23,19 @@ export class DesktopNotificationFactory {
   public static DENIED: string = "denied";
   public static DEFAULT: string = "default";
 
-  public static getNotification(title: string,
-                                options?: NotificationOptions): Notification {
-    if (!!window && "Notification" in window)
+  public static getNotification(
+    title: string,
+    options?: NotificationOptions,
+  ): Notification {
+    if (!!window && "Notification" in window) {
       return new Notification(title, options);
+    }
   }
 
   public static getPermission(): string {
     if (!!window && "Notification" in window) {
       return Notification.permission;
-    }
-    else {
+    } else {
       return "";
     }
   }

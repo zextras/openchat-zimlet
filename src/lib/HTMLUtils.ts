@@ -17,21 +17,21 @@
 
 export class HTMLUtils {
   public static getCSSDefinition(name: string): CSSStyleDeclaration {
-    let i: number,
-      j: number,
-      styleSheets: StyleSheetList,
-      styleSheet: CSSStyleSheet,
-      rules: CSSRuleList,
-      rule: CSSStyleRule;
+    let i: number;
+    let j: number;
+    let styleSheets: StyleSheetList;
+    let styleSheet: CSSStyleSheet;
+    let rules: CSSRuleList;
+    let rule: CSSStyleRule;
     if (typeof document !== "undefined" && typeof document.styleSheets !== "undefined") {
       styleSheets = document.styleSheets;
 
       for (i = 0; i < styleSheets.length; i++) {
-        styleSheet = <CSSStyleSheet> styleSheets[i];
+        styleSheet = styleSheets[i] as CSSStyleSheet;
         if (typeof styleSheet.rules !== "undefined" || typeof styleSheet.cssRules !== "undefined") {
           rules = styleSheet.rules || styleSheet.cssRules;
           for (j = 0; j < rules.length; j++) {
-            rule = <CSSStyleRule> rules[j];
+            rule = rules[j] as CSSStyleRule;
             if (name === rule.selectorText) {
               return rule.style;
             }

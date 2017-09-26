@@ -15,18 +15,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DesktopNotificationFactory} from "./DesktopNotificationFactory";
-import {CallbackManager} from "../callbacks/CallbackManager";
+import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
+import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {Callback} from "../callbacks/Callback";
-import {ToastNotification} from "./ToastNotification";
+import {CallbackManager} from "../callbacks/CallbackManager";
+import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
 import {DesktopNotification} from "./DesktopNotification";
+import {DesktopNotificationFactory} from "./DesktopNotificationFactory";
+import {NotificationTask} from "./NotificationTask";
+import {NotificationTaskType} from "./NotificationTaskType";
 import {SoundNotification} from "./SoundNotification";
 import {TitlebarNotification} from "./TitlebarNotification";
-import {NotificationTaskType} from "./NotificationTaskType";
-import {NotificationTask} from "./NotificationTask";
-import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
-import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
-import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
+import {ToastNotification} from "./ToastNotification";
 
 export class NotificationManager {
   private static TIMEOUT: number = 10000;
@@ -44,7 +44,7 @@ export class NotificationManager {
   constructor(defaultTitle: string,
               defaultIcon: string,
               timedCallbackFactory: TimedCallbackFactory,
-              context?: ZmAppCtxt
+              context?: ZmAppCtxt,
   ) {
     if (typeof AjxDispatcher !== "undefined") {
       AjxDispatcher.require(["Alert"], false);
@@ -81,11 +81,16 @@ export class NotificationManager {
                 toast: boolean = false) {
     if (toast) {
       this.pushNotification(new ToastNotification(message));
-    }
-    else {
-      if (this.enableDesktop) this.pushNotification(new DesktopNotification(title, message, icon, this.mTimedCallbackFactory));
-      if (this.enableSound) this.pushNotification(new SoundNotification());
-      if (this.enableTitlebar) this.pushNotification(new TitlebarNotification(title));
+    } else {
+      if (this.enableDesktop) {
+        this.pushNotification(new DesktopNotification(title, message, icon, this.mTimedCallbackFactory));
+      }
+      if (this.enableSound) {
+        this.pushNotification(new SoundNotification());
+      }
+      if (this.enableTitlebar) {
+        this.pushNotification(new TitlebarNotification(title));
+      }
     }
   }
 
@@ -99,23 +104,21 @@ export class NotificationManager {
 
     switch (task.getType()) {
       case NotificationTaskType.SOUND:
-        if (this.enableSound) task.start();
+        if (this.enableSound) { task.start(); }
         break;
       case NotificationTaskType.DESKTOP:
         if (this.enableDesktop) {
           if (DesktopNotificationFactory.getPermission() === DesktopNotificationFactory.GRANTED) {
             task.start();
-          }
-          else if (DesktopNotificationFactory.getPermission() === DesktopNotificationFactory.DENIED) {
+          } else if (DesktopNotificationFactory.getPermission() === DesktopNotificationFactory.DENIED) {
             // Do nothing :(
-          }
-          else {
+          } else {
             this.requestNotificationPermission(task);
           }
         }
         break;
       case NotificationTaskType.TITLEBAR:
-        if (this.enableTitlebar) task.start();
+        if (this.enableTitlebar) { task.start(); }
         break;
       default:
         task.start();
@@ -134,7 +137,7 @@ export class NotificationManager {
    * Callback invoked when the permission is requested successfully.
    * @param permission
    */
-  private onPermissionRequested(task: NotificationTask, permission: string, ): void {
+  private onPermissionRequested(task: NotificationTask, permission: string): void {
     if (permission === DesktopNotificationFactory.GRANTED) {
       this.onPermissionGrantedCbkMgr.run();
     }

@@ -34,4 +34,5 @@ export class DateProvider {
   public onTimeChange(callback: Callback): void {
     return undefined;
   }
+
 }

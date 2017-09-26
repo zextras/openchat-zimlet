@@ -15,64 +15,66 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Map} from "./Map";
 import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
+import {Map} from "./Map";
 
 export class LearningClipUtils {
 
-  private static clipUtilsDiv: HTMLDivElement;
-  private static mapContainer: Map = new Map();
-  private static _ellipsis: string = "ellipsis";
+  public static clip(label: string, maxLength: number, styleClass: string = "noClassMap"): string {
+    if (!LearningClipUtils.alreadyInit) {
+      LearningClipUtils.alreadyInit = LearningClipUtils.init();
+    }
+    let currentMap: Map = this.sMapContainer.get(styleClass);
+    if (currentMap == null) {
+      currentMap = new Map();
+      currentMap.put(LearningClipUtils.sEllipsis, LearningClipUtils._testString(" ...", styleClass));
+      this.sMapContainer.put(styleClass, currentMap);
+    }
+    let labelWidth: number = LearningClipUtils._testString(label, styleClass);
+    if (labelWidth <= maxLength) { return label; }
+    let getChar: string;
+    let truncatedLabelWidth: number;
+    for (let i = label.length - 1; i > 0; i--) {
+      getChar = label[i];
+      if (currentMap.containsKey(getChar)) {
+        truncatedLabelWidth = labelWidth - currentMap.get(getChar);
+      } else {
+        // learning step
+        truncatedLabelWidth = LearningClipUtils._testString(label.substring(0, i), styleClass);
+        currentMap.put(getChar, labelWidth - truncatedLabelWidth);
+      }
+      labelWidth = truncatedLabelWidth;
+      if (labelWidth + currentMap.get(LearningClipUtils.sEllipsis) <= maxLength) {
+        return label.substring(0, i) + " ...";
+      }
+    }
+    return label;
+  }
+
+  private static sClipUtilsDiv: HTMLDivElement;
+  private static sMapContainer: Map = new Map();
+  private static sEllipsis: string = "ellipsis";
+
+  private static alreadyInit: boolean = LearningClipUtils.init();
 
   private static init(): boolean {
     try {
-      LearningClipUtils.clipUtilsDiv = document.createElement("div");
-      LearningClipUtils.clipUtilsDiv.style.zIndex = "0";
-      LearningClipUtils.clipUtilsDiv.style.position = "absolute";
-      LearningClipUtils.clipUtilsDiv.style.visibility = "hidden";
-      LearningClipUtils.clipUtilsDiv.style.whiteSpace = "pre";
-      LearningClipUtils.clipUtilsDiv.style.width = "auto";
-      document.body.appendChild(LearningClipUtils.clipUtilsDiv);
+      LearningClipUtils.sClipUtilsDiv = document.createElement("div");
+      LearningClipUtils.sClipUtilsDiv.style.zIndex = "0";
+      LearningClipUtils.sClipUtilsDiv.style.position = "absolute";
+      LearningClipUtils.sClipUtilsDiv.style.visibility = "hidden";
+      LearningClipUtils.sClipUtilsDiv.style.whiteSpace = "pre";
+      LearningClipUtils.sClipUtilsDiv.style.width = "auto";
+      document.body.appendChild(LearningClipUtils.sClipUtilsDiv);
       return true;
     } catch (err) {
       return false;
     }
   }
 
-  private static alreadyInit: boolean = LearningClipUtils.init();
-
-  public static clip(label: string, maxLength: number, styleClass: string = "noClassMap"): string {
-    if (!LearningClipUtils.alreadyInit) {
-      LearningClipUtils.alreadyInit = LearningClipUtils.init();
-    }
-    let currentMap: Map = this.mapContainer.get(styleClass);
-    if (currentMap == null) {
-      currentMap = new Map();
-      currentMap.put(LearningClipUtils._ellipsis, LearningClipUtils._testString(" ...", styleClass));
-      this.mapContainer.put(styleClass, currentMap);
-    }
-    let labelWidth: number = LearningClipUtils._testString(label, styleClass);
-    if (labelWidth <= maxLength) return label;
-    let getChar: string, truncatedLabelWidth: number;
-    for (let i = label.length - 1; i > 0; i--) {
-      getChar = label[i];
-      if (currentMap.containsKey(getChar)) {
-        truncatedLabelWidth = labelWidth - currentMap.get(getChar);
-      }
-      else {
-        // learning step
-        truncatedLabelWidth = LearningClipUtils._testString(label.substring(0, i), styleClass);
-        currentMap.put(getChar, labelWidth - truncatedLabelWidth);
-      }
-      labelWidth = truncatedLabelWidth;
-      if (labelWidth + currentMap.get(LearningClipUtils._ellipsis) <= maxLength) return label.substring(0, i) + " ...";
-    }
-    return label;
-  }
-
   private static _testString(str: string, className: string): number {
-    LearningClipUtils.clipUtilsDiv.className = className;
-    LearningClipUtils.clipUtilsDiv.innerHTML = AjxStringUtil.htmlEncode(str);
-    return LearningClipUtils.clipUtilsDiv.offsetWidth;
+    LearningClipUtils.sClipUtilsDiv.className = className;
+    LearningClipUtils.sClipUtilsDiv.innerHTML = AjxStringUtil.htmlEncode(str);
+    return LearningClipUtils.sClipUtilsDiv.offsetWidth;
   }
 }

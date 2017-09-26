@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {LogLevel} from "./LogLevel";
-import {JSON3} from "../../libext/json3";
 import {json_prune} from "../../libext/json-prune";
+import {JSON3} from "../../libext/json3";
+import {LogLevel} from "./LogLevel";
 
 export class LogLine {
 
@@ -32,7 +32,7 @@ export class LogLine {
     loggerName: string,
     obj: any,
     title: string = "",
-    level: LogLevel = LogLevel.log
+    level: LogLevel = LogLevel.log,
   ) {
     this.mTime = time;
     this.mLoggerName = loggerName;
@@ -58,16 +58,19 @@ export class LogLine {
   }
 
   public getTitle(removeDate: boolean = false): string {
-    let tmp: string[] = [],
-      nameLine = ["[", this.mLoggerName, "]"].join(""),
-      priorityLine = LogLevel[this.mLevel].toUpperCase(),
-      dateLine = [this.mTime.getDate(), (this.mTime.getMonth() + 1), this.mTime.getFullYear()].join("-"),
-      timeLine = [[this.mTime.getHours(), this.mTime.getMinutes(), this.mTime.getSeconds()].join(":"), this.mTime.getMilliseconds()].join(","),
-      titleLine = (this.mTitle === "") ? "" : ["[", this.mTitle, "]"].join("");
+    const tmp: string[] = [];
+    const nameLine = ["[", this.mLoggerName, "]"].join("");
+    const priorityLine = LogLevel[this.mLevel].toUpperCase();
+    const dateLine = [this.mTime.getDate(), (this.mTime.getMonth() + 1), this.mTime.getFullYear()].join("-");
+    const timeLine = [
+      [this.mTime.getHours(), this.mTime.getMinutes(), this.mTime.getSeconds()].join(":"),
+      this.mTime.getMilliseconds(),
+    ].join(",");
+    const titleLine = (this.mTitle === "") ? "" : ["[", this.mTitle, "]"].join("");
 
     tmp.push(nameLine);
-    if (!removeDate) tmp.push(dateLine);
-    if (!removeDate) tmp.push(timeLine);
+    if (!removeDate) { tmp.push(dateLine); }
+    if (!removeDate) { tmp.push(timeLine); }
     tmp.push(priorityLine);
     tmp.push(titleLine);
 
@@ -86,7 +89,7 @@ export class LogLine {
     let text: string;
 
     if (typeof this.mObject === "string" || typeof this.mObject === "number") {
-      text = <string>this.mObject;
+      text = this.mObject as string;
     } else {
       try {
         if (prettyPrint) {

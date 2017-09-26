@@ -15,14 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Logger} from "./Logger";
-import {DateProvider} from "../DateProvider";
-import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
-import {URLParser} from "../URLParser";
-import {LogLevel} from "./LogLevel";
-import {LoggerWriter} from "./writers/LoggerWriter";
-import {ConsoleWriter} from "./writers/ConsoleWriter";
 import {Bowser} from "../../libext/bowser";
+import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
+import {DateProvider} from "../DateProvider";
+import {URLParser} from "../URLParser";
+import {Logger} from "./Logger";
+import {LogLevel} from "./LogLevel";
+import {ConsoleWriter} from "./writers/ConsoleWriter";
+import {LoggerWriter} from "./writers/LoggerWriter";
 
 export class LogEngineImp {
 
@@ -41,7 +41,7 @@ export class LogEngineImp {
     loggerWriter: LoggerWriter,
     dateProvider: DateProvider,
     timedCallbackFactory: TimedCallbackFactory,
-    devMode: boolean
+    devMode: boolean,
   ) {
     this.mLoggerWriter = loggerWriter;
     this.mDateProvider = dateProvider;
@@ -51,21 +51,21 @@ export class LogEngineImp {
 
   public getLogger(name: string = LogEngineImp.DEFAULT_LOGGER_NAME): Logger {
     if (!this.mLoggers.hasOwnProperty(name)) {
-      let logger = new Logger(
+      const logger = new Logger(
         this.mLoggerWriter,
         this.mDateProvider,
         this.mTimedCallbackFactory,
-        name
+        name,
       );
-      if (this.mIsDev) logger.setLevel(LogLevel.debug);
+      if (this.mIsDev) { logger.setLevel(LogLevel.debug); }
       this.mLoggers[name] = logger;
     }
     return this.mLoggers[name];
   }
 
   public getLoggerNames(): string[] {
-    let names: string[] = [];
-    for (let name in this.mLoggers) {
+    const names: string[] = [];
+    for (const name in this.mLoggers) {
       if (!this.mLoggers.hasOwnProperty(name)) { continue; }
       names.push(name);
     }
@@ -74,8 +74,8 @@ export class LogEngineImp {
 
   public exportLog(loggerName: string = LogEngineImp.ALL): string {
     if (loggerName === LogEngineImp.ALL) {
-      let tmpLog: string[] = [];
-      for (let name in this.mLoggers) {
+      const tmpLog: string[] = [];
+      for (const name in this.mLoggers) {
         if (!this.mLoggers.hasOwnProperty(name)) { continue; }
         this.mLoggers[name].debug(Bowser, "Browser data");
         tmpLog.push(this.mLoggers[name].exportLog());
@@ -89,24 +89,31 @@ export class LogEngineImp {
 
   public exportToFile(
     loggerName: string = LogEngineImp.ALL,
-    fileName: string = ["ZeXtras_log_", loggerName, "_", this.mDateProvider.getCurrentTimeMillis(), ".log"].join("")
+    fileName: string = ["ZeXtras_log_", loggerName, "_", this.mDateProvider.getCurrentTimeMillis(), ".log"].join(""),
   ): void {
     this.getLogger(LogEngineImp.DEFAULT_LOGGER_NAME).info(
       "Preparing your log file...",
-      "LogEngine"
+      "LogEngine",
     );
 
-    let data = "data:text/plain," + encodeURIComponent(this.exportLog(loggerName)),
-      a = document.createElement("a");
+    const data = "data:text/plain," + encodeURIComponent(this.exportLog(loggerName));
+    const a = document.createElement("a");
 
     document.body.appendChild(a);
     a.href = data;
     a.target = "_blank";
     a.download = fileName;
     try {
-      let event = document.createEvent("MouseEvents");
+      const event = document.createEvent("MouseEvents");
       event.initMouseEvent(
-        "click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null
+        "click", true,
+        false, window,
+        0, 0,
+        0, 0,
+        0, false,
+        false, false,
+        false, 0,
+        null,
       );
       a.dispatchEvent(event);
     } catch (err) {
@@ -118,15 +125,16 @@ export class LogEngineImp {
 
     this.getLogger(LogEngineImp.DEFAULT_LOGGER_NAME).info(
       "Log exported, send it to the developer team!",
-      "LogEngine"
+      "LogEngine",
     );
   }
 
 }
 
-let location: Location = (typeof window !== "undefined" && typeof window.location !== "undefined") ?
+const location: Location = (typeof window !== "undefined" && typeof window.location !== "undefined") ?
   window.location :
   {
+    assign: (url: string) =>  {},
     hash: "",
     host: "",
     hostname: "",
@@ -135,19 +143,17 @@ let location: Location = (typeof window !== "undefined" && typeof window.locatio
     pathname: "",
     port: "",
     protocol: "",
+    reload: (forcedReload?: boolean) => {},
+    replace: (url: string) => {},
     search: "",
-    assign: function(url: string): void {},
-    reload: function(forcedReload?: boolean): void {},
-    replace: function(url: string): void {},
-    toString: function(): string { return ""; }
+    toString: () => "",
   };
 
-let urlParser = new URLParser(location);
+const urlParser = new URLParser(location);
 
 export let LogEngine = new LogEngineImp(
   new ConsoleWriter(),
   new DateProvider(),
   new TimedCallbackFactory(),
-  urlParser.isDevMode() || urlParser.isZxDevMode()
+  urlParser.isDevMode() || urlParser.isZxDevMode(),
 );
-

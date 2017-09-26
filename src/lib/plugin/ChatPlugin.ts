@@ -15,7 +15,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 export interface ChatPlugin {
 
   trigger(context: any, ...args: any[]): void;

@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NotificationTaskType} from "./NotificationTaskType";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {NotificationTaskType} from "./NotificationTaskType";
 
 export interface NotificationTask {
   getId(): string;

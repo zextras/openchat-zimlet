@@ -27,15 +27,15 @@ export class ContactImg {
   constructor(id: string, imgSize: number = ContactImg.CONTACT_IMAGE_SIZE_W) {
     this.imgUrl = null;
     try {
-      let zimbraContact = (<ZmContactList>AjxDispatcher.run("GetContacts")).getContactByEmail(id);
+      const zimbraContact = (AjxDispatcher.run("GetContacts") as ZmContactList).getContactByEmail(id);
       if (zimbraContact) {
         this.imgUrl = zimbraContact.getImageUrl(
           imgSize,
-          imgSize * 1.23
+          imgSize * 1.23,
         );
       }
     } catch (ignored) {}
-      this.imgUrl = null;
+    this.imgUrl = null;
   }
 
   public getImgUrl(): string {

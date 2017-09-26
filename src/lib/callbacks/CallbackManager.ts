@@ -29,7 +29,7 @@ export class CallbackManager {
    * @param cbk
    */
   public addCallback(cbk: Callback): void {
-    let callback: Callback = Callback.standardize(cbk);
+    const callback: Callback = Callback.standardize(cbk);
     this.callbacks.push(callback);
   }
 
@@ -38,18 +38,17 @@ export class CallbackManager {
    * @param args
    */
   public run(...args: any[]): any[] {
-    let i: number,
-      cbk: Callback,
-      responses: any[] = [];
+    let i: number;
+    let cbk: Callback;
+    const responses: any[] = [];
 
     for (i = 0; i < this.callbacks.length; i++) {
       cbk = this.callbacks[i];
       try {
         responses.push(
-          cbk.run.apply(cbk, args)
+          cbk.run.apply(cbk, args),
         );
-      }
-      catch (error) {
+      } catch (error) {
         // TODO: Add a logger
       }
     }
@@ -62,9 +61,10 @@ export class CallbackManager {
    * WARNING: DO NOT USE THIS FUNCTION IN PROJECT CODE!
    * @return {Function}
    */
-  public asFunction(): Function {
-    return (function (_this: CallbackManager): Function {
-      return function (...args: any[]) {
+  public asFunction(): (...args: any[]) => any {
+    // tslint:disable-next-line:variable-name
+    return ((_this: CallbackManager) => {
+      return (...args: any[]) => {
         _this.run.apply(_this, args);
       };
     })(this);

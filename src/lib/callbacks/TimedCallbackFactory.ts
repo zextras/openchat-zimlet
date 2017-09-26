@@ -15,21 +15,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {DateProvider} from "../DateProvider";
 import {Callback} from "./Callback";
 import {TimedCallback} from "./TimedCallback";
-import {DateProvider} from "../DateProvider";
+
+// tslint:disable:max-classes-per-file
 
 export class TimedCallbackFactory {
 
   public createTimedCallback(
     callback: Callback,
     timeout: number,
-    repeat: boolean = false
+    repeat: boolean = false,
   ): TimedCallback {
     return new TimedCallback(
       callback,
       timeout,
-      repeat
+      repeat,
     );
   }
 }
@@ -44,13 +46,13 @@ export class FakeTimedCallbackFactory {
   public createTimedCallback(
     callback: Callback,
     timeout: number,
-    repeat: boolean = false
+    repeat: boolean = false,
   ) {
     return new FakeTimedCallback(
       callback,
       timeout,
       repeat,
-      this.mDateProvider
+      this.mDateProvider,
     );
   }
 }
@@ -58,7 +60,6 @@ export class FakeTimedCallbackFactory {
 export class FakeTimedCallback extends TimedCallback {
   private mDateProvider: DateProvider;
   private mStartingTime: number;
-  private mWrapped: Function;
 
   constructor(callback: Callback, timeout: number, repeat: boolean = false, dateProvider: DateProvider) {
     super(callback, timeout, repeat);
@@ -68,11 +69,13 @@ export class FakeTimedCallback extends TimedCallback {
   }
 
   public start(): any {
-    // If mDateProvider is defined the FakeTimedCallback is managed by mDateProvider, else execute timed callback immediatly
-    // Removed any ...args as parameters of start method, in case they should be inserted in this.mCallback constructor
+    // If mDateProvider is defined the FakeTimedCallback is managed by mDateProvider,
+    // else execute timed callback immediatly
+    // Removed any ...args as parameters of start method,
+    // in case they should be inserted in this.mCallback constructor
     if (typeof this.mDateProvider !== "undefined") {
       this.mStartingTime = this.mDateProvider.getCurrentTimeMillis();
-      let checkTimeCallback = function () {
+      const checkTimeCallback = () => {
         if (this.mDateProvider.getCurrentTimeMillis() >= this.mStartingTime + this.mTimeout) {
           this.mCallback.run();
           this.mCallback.run = void 0;
@@ -81,11 +84,10 @@ export class FakeTimedCallback extends TimedCallback {
       this.mDateProvider.onTimeChange(
         new Callback(
           this,
-          checkTimeCallback
-        )
+          checkTimeCallback,
+        ),
       );
-    }
-    else {
+    } else {
       this.mCallback.run();
     }
   }

@@ -32,9 +32,9 @@ export class ArrayUtils {
    * @param {function} callback
    * @return {any[]}
    */
-  public static filter(array: any[], callback: Function): any[] {
-    let toRet: any[] = [],
-      i: number;
+  public static filter(array: any[], callback: (val: any) => boolean): any[] {
+    const toRet: any[] = [];
+    let i: number;
     for (i = 0; i < array.length; i++) {
       if (callback(array[i])) {
         toRet.push(array[i]);
@@ -56,8 +56,7 @@ export class ArrayUtils {
   public static indexOf(array: any[], searchElement: any, fromIndex: number = 0): number {
     if (!![].indexOf) {
       return [].indexOf.call(array, searchElement, fromIndex);
-    }
-    else {
+    } else {
       return ArrayUtils._indexOf(array, searchElement, fromIndex);
     }
   }
@@ -71,12 +70,13 @@ export class ArrayUtils {
       throw new TypeError("'this' is null or not defined");
     }
 
-    let O = <Array<Object>>Object(array);
+    const O = Object(array) as object[];
 
     // 2. Let lenValue be the result of calling the Get
     //    internal method of O with the argument "length".
     // 3. Let len be ToUint32(lenValue).
-    let len = O.length >>> 0;
+    // tslint:disable-next-line:no-bitwise
+    const len = O.length >>> 0;
 
     // 4. If len is 0, return -1.
     if (len === 0) {

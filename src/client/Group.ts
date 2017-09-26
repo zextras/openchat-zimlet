@@ -77,7 +77,7 @@ export class Group {
    * @param {function} filterFcn
    * @return {Buddy[]}
    */
-  public getBuddies(filterFcn: Function = Group.buddyFilterFcnReturnTrue): Buddy[] {
+  public getBuddies(filterFcn: (val: any) => boolean = Group.buddyFilterFcnReturnTrue): Buddy[] {
     return ArrayUtils.filter(this.mBuddies, filterFcn);
   }
 
