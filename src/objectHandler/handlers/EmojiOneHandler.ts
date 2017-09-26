@@ -30,7 +30,7 @@ export class EmojiOneHandler extends ZmObjectHandler {
     let emojiStyleSheet: CSSStyleSheet;
     for (let i = 0; i < document.styleSheets.length; i++) {
       if (
-        typeof document.styleSheets[i].href !== "undefined" &&
+        typeof document.styleSheets[i].href !== "undefined" && document.styleSheets[i].href !== null &&
         (document.styleSheets[i].href.indexOf("Zimlets-nodev") !== -1 || document.styleSheets[i].href.indexOf("emojione.sprites.css") !== -1)
       ) {
         emojiStyleSheet = <CSSStyleSheet> document.styleSheets[i];
