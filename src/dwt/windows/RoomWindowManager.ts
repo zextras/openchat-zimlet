@@ -35,7 +35,7 @@ import {WindowDragTask} from "./manager/WindowDragTask";
 import {RoomManager} from "../../client/RoomManager";
 import {MainWindow} from "./MainWindow";
 
-import {Room} from "../../client/Room";
+import {IRoom} from "../../client/IRoom";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
 import {SessionInfoProvider} from "../../client/SessionInfoProvider";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
@@ -134,10 +134,10 @@ export class RoomWindowManager {
 
   /**
    * Manage the adding of a new room
-   * @param {Room} room
+   * @param {IRoom} room
    * @private
    */
-  private onRoomAdded(room: Room) {
+  private onRoomAdded(room: IRoom) {
     let roomWindowPluginManager = new ChatPluginManager();
     this.mRoomWindowManagerPluginManager.triggerPlugins(RoomWindowManager.CreateRoomWindowPluginManager, roomWindowPluginManager);
     let roomWindow: RoomWindow = new RoomWindow(

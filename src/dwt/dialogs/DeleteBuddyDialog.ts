@@ -17,23 +17,23 @@
 
 import {DwtMessageDialog} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
 import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
-import {ChatClient} from "../../client/ChatClient";
+import {IChatClient} from "../../client/IChatClient";
 import {Callback} from "../../lib/callbacks/Callback";
 import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {IdGenerator} from "../IdGenerator";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {StringUtils} from "../../lib/StringUtils";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {Buddy} from "../../client/Buddy";
+import {IBuddy} from "../../client/IBuddy";
 
 export class DeleteBuddyDialog extends DwtMessageDialog {
 
   private static _dialog: DeleteBuddyDialog = null;
-  private client: ChatClient;
-  private buddy: Buddy = null;
+  private client: IChatClient;
+  private buddy: IBuddy = null;
   private onDeletedCallback: Callback;
 
-  constructor(shell: DwtShell, client: ChatClient, callback: Callback) {
+  constructor(shell: DwtShell, client: IChatClient, callback: Callback) {
     super({
       parent: shell,
       buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
@@ -47,7 +47,7 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
     this.addListener(DwtEvent.ENTER, new AjxListener(this, this._yesBtnListener));
   }
 
-  public static getDialog(shell: DwtShell, client: ChatClient, callback: Callback) {
+  public static getDialog(shell: DwtShell, client: IChatClient, callback: Callback) {
     if (DeleteBuddyDialog._dialog == null) {
       DeleteBuddyDialog._dialog = new DeleteBuddyDialog(shell, client, callback);
     }
@@ -55,7 +55,7 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
     return DeleteBuddyDialog._dialog;
   }
 
-  public setBuddy(buddy: Buddy): void {
+  public setBuddy(buddy: IBuddy): void {
     this.buddy = buddy;
     DeleteBuddyDialog._dialog.setMessage(StringUtils.getMessage("delete_friends_text", [buddy.getNickname()]), DwtMessageDialog.WARNING_STYLE);
   }

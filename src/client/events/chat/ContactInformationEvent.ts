@@ -15,19 +15,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IBuddyStatus} from "../../IBuddyStatus";
 import {ChatEvent} from "../ChatEvent";
-import {BuddyStatusImp} from "../../BuddyStatusImp";
 import {MessageType} from "./MessageEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
-import {BuddyStatus} from "../../BuddyStatus";
 
 export class ContactInformationEvent extends ChatEvent {
 
   private mEventDate: Date;
-  private mStatus: BuddyStatus;
+  private mStatus: IBuddyStatus;
   private mIsGroupChat: boolean;
 
-  constructor(from: string, eventDate: Date, creationDate: Date, status: BuddyStatus, isGroupChat: boolean = false) {
+  constructor(from: string, eventDate: Date, creationDate: Date, status: IBuddyStatus, isGroupChat: boolean = false) {
     super(OpenChatEventCode.CONTACT_INFORMATION, creationDate, true);
     this.setSender(from);
     this.mEventDate = eventDate;
@@ -39,7 +38,7 @@ export class ContactInformationEvent extends ChatEvent {
     return this.mEventDate;
   }
 
-  public getStatus(): BuddyStatus {
+  public getStatus(): IBuddyStatus {
     return this.mStatus;
   }
 

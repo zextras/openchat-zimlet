@@ -15,23 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {SetStatusEvent} from "../../../../events/chat/SetStatusEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {SoapEventEncoder} from "./SoapEventEncoder";
+import {IBuddyStatus} from "./IBuddyStatus";
 
-export class SetStatusEventEncoder extends SoapEventEncoder {
+export interface IUserStatusManager {
 
-  constructor() {
-    super(OpenChatEventCode.SET_STATUS);
-  }
+  setSelectedStatus(status: IBuddyStatus): void;
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: SetStatusEvent = event as SetStatusEvent;
-    return {
-      status_id: ev.getStatusId(), // ,
-      // rooms: ev.getRooms()
-    };
-  }
+  getCurrentStatus(): IBuddyStatus;
 
+  /**
+   * @param {boolean} enabled
+   * @return {boolean} statusHasChanged
+   */
+  setAutoAway(enabled: boolean): boolean;
+
+  /**
+   * @param {boolean} enabled
+   * @return {boolean} statusHasChanged
+   */
+  setAutoBusy(enabled: boolean): boolean;
+
+  setUserStatuses(userStatuses: IBuddyStatus[]): void;
+
+  getUserStatuses(): IBuddyStatus[];
 }

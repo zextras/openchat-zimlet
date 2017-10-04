@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {RoomImp} from "../../client/RoomImp";
+import {Room} from "../../client/Room";
 import {RoomManager} from "../../client/RoomManager";
 import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
@@ -27,9 +27,9 @@ export class RoomManagerHistoryPlugin implements ChatPlugin {
   public trigger(roomManager: RoomManager, roomPluginManager: ChatPluginManager): void {
     roomPluginManager.registerFieldPlugin(RoomHistoryFieldPlugin.FieldName, new RoomHistoryFieldPlugin());
     const messageStore: RoomStoreMessageInHistoryPlugin = new RoomStoreMessageInHistoryPlugin();
-    roomPluginManager.registerPlugin(RoomImp.MessageSentPlugin, messageStore);
-    roomPluginManager.registerPlugin(RoomImp.MessageSentFromAnotherSessionPlugin, messageStore);
-    roomPluginManager.registerPlugin(RoomImp.MessageReceivedPlugin, messageStore);
+    roomPluginManager.registerPlugin(Room.MessageSentPlugin, messageStore);
+    roomPluginManager.registerPlugin(Room.MessageSentFromAnotherSessionPlugin, messageStore);
+    roomPluginManager.registerPlugin(Room.MessageReceivedPlugin, messageStore);
   }
 
 }

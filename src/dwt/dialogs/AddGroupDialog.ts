@@ -17,7 +17,7 @@
 
 import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
-import {ChatClient} from "../../client/ChatClient";
+import {IChatClient} from "../../client/IChatClient";
 import {StringUtils} from "../../lib/StringUtils";
 import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {IdGenerator} from "../IdGenerator";
@@ -32,10 +32,10 @@ import {Group} from "../../client/Group";
 export class AddGroupDialog extends ZmDialog {
 
   private appCtxt: ZmAppCtxt;
-  private client: ChatClient;
+  private client: IChatClient;
   private _groupNameEl: HTMLInputElement;
 
-  constructor(params: ZmDialogParams, client: ChatClient, appCtxt: ZmAppCtxt) {
+  constructor(params: ZmDialogParams, client: IChatClient, appCtxt: ZmAppCtxt) {
     params.title = StringUtils.getMessage("create_group_title");
     params.standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];
     params.id = IdGenerator.generateId("ZxChat_AddGroupDialog");

@@ -22,10 +22,7 @@ export class EventSessionRegistered extends ChatEvent {
 
   private mEventSessionInfo: any;
 
-  constructor(
-    eventSessionInfo: any,
-    creationDate: Date
-  ) {
+  constructor(eventSessionInfo: any, creationDate: Date) {
     super(OpenChatEventCode.REGISTER_SESSION, creationDate, true);
     this.mEventSessionInfo = eventSessionInfo;
   }

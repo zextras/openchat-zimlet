@@ -15,21 +15,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ConnectionEventParser} from "./ConnectionEventParser";
 import {BasicEvent} from "../BasicEvent";
+import {IConnectionEventParser} from "./IConnectionEventParser";
 
-export class BasicEventParser implements ConnectionEventParser {
+export class BasicEventParser implements IConnectionEventParser {
 
   public encodeEvent(connectionEvent: BasicEvent): {} {
     return {
       code: connectionEvent.getCode(),
-      data: connectionEvent.getData()
+      data: connectionEvent.getData(),
     };
   }
 
   public decodeEvent(originEvent: BasicEvent, object: {code?: number}): BasicEvent {
-    let code = (typeof object["code"] !== "undefined") ? object["code"] : -1;
-    let event = new BasicEvent(code, false);
+    const code = (typeof object.code !== "undefined") ? object.code : -1;
+    const event = new BasicEvent(code, false);
     event.setData(object);
     return event;
   }

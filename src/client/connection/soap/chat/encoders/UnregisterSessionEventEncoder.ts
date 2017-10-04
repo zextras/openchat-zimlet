@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventEncoder} from "./SoapEventEncoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {UnregisterSessionEvent} from "../../../../events/chat/UnregisterSessionEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {UnregisterSessionEvent} from "../../../../events/chat/UnregisterSessionEvent";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventEncoder} from "./SoapEventEncoder";
 
 export class UnregisterSessionEventEncoder extends SoapEventEncoder {
 
@@ -27,7 +27,7 @@ export class UnregisterSessionEventEncoder extends SoapEventEncoder {
   }
 
   protected getEventDetails(event: ChatEvent): {} {
-    let ev: UnregisterSessionEvent = <UnregisterSessionEvent> event;
+    const ev: UnregisterSessionEvent = event as UnregisterSessionEvent;
     return {}; // Session id is attached by the soap engine
   }
 

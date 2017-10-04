@@ -33,7 +33,7 @@ export class DosDirector {
     timeSpan: number,
     limit: number,
     onAccept: Callback,
-    onReject: Callback
+    onReject: Callback,
   ) {
     this.mDateProvider = dateProvider;
     this.mTimeSpan = timeSpan;
@@ -43,7 +43,7 @@ export class DosDirector {
   }
 
   public filter(obj: any): boolean {
-    let now: number = this.mDateProvider.getCurrentTimeMillis();
+    const now: number = this.mDateProvider.getCurrentTimeMillis();
     if (typeof this.mReferenceTime === "undefined") {
       this.mReferenceTime = now;
     }

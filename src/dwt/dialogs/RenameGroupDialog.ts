@@ -16,7 +16,7 @@
  */
 
 import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
-import {ChatClient} from "../../client/ChatClient";
+import {IChatClient} from "../../client/IChatClient";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {Group} from "../../client/Group";
 import {StringUtils} from "../../lib/StringUtils";
@@ -33,11 +33,11 @@ import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 export class RenameGroupDialog extends ZmDialog {
 
   private appCtxt: ZmAppCtxt;
-  private client: ChatClient;
+  private client: IChatClient;
   private group: Group;
   private _groupNameEl: HTMLInputElement;
 
-  constructor(params: ZmDialogParams, client: ChatClient, appCtxt: ZmAppCtxt, group: Group) {
+  constructor(params: ZmDialogParams, client: IChatClient, appCtxt: ZmAppCtxt, group: Group) {
     params.title = StringUtils.getMessage("rename_group_title");
     params.standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];
     params.id = IdGenerator.generateId("ZxChat_RenameGroupDialog_" + (group.getName()));

@@ -21,7 +21,6 @@ export class ClientEvent extends BasicEvent {
 
   private mCreationDate: Date;
 
-
   constructor(code: number, creationDate: Date, hasResponse: boolean) {
     super(code, hasResponse);
     this.mCreationDate = creationDate;

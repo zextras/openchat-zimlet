@@ -21,16 +21,16 @@ import {IdGenerator} from "../IdGenerator";
 import {StringUtils} from "../../lib/StringUtils";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {ChatClient} from "../../client/ChatClient";
-import {Buddy} from "../../client/Buddy";
+import {IChatClient} from "../../client/IChatClient";
+import {IBuddy} from "../../client/IBuddy";
 
 export class AcceptFriendshipDialog extends DwtMessageDialog {
 
   private static _dialog: AcceptFriendshipDialog = null;
-  private client: ChatClient;
-  private buddy: Buddy;
+  private client: IChatClient;
+  private buddy: IBuddy;
 
-  constructor(params: DwtMessageDialogParams, client: ChatClient, buddy: Buddy) {
+  constructor(params: DwtMessageDialogParams, client: IChatClient, buddy: IBuddy) {
     super({
       parent: params.parent,
       buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
@@ -58,7 +58,7 @@ export class AcceptFriendshipDialog extends DwtMessageDialog {
     this.popdown();
   }
 
-  public static getDialog(params: DwtMessageDialogParams, client: ChatClient, buddy: Buddy): AcceptFriendshipDialog {
+  public static getDialog(params: DwtMessageDialogParams, client: IChatClient, buddy: IBuddy): AcceptFriendshipDialog {
     if (AcceptFriendshipDialog._dialog === null) {
       AcceptFriendshipDialog._dialog = new AcceptFriendshipDialog(params, client, buddy);
     }

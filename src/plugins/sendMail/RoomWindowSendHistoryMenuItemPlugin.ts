@@ -18,8 +18,8 @@
 import {Message} from "../../client/Message";
 import {MessageReceived} from "../../client/MessageReceived";
 import {MessageSent} from "../../client/MessageSent";
+import {IRoom} from "../../client/IRoom";
 import {Room} from "../../client/Room";
-import {RoomImp} from "../../client/RoomImp";
 import {RoomWindow} from "../../dwt/windows/RoomWindow";
 import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
 import {DateProvider} from "../../lib/DateProvider";
@@ -41,7 +41,7 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
     const body = RoomWindowSendHistoryMenuItemPlugin.getFormattedConversionHistory(
       roomWindow.getRoom(),
       roomWindow.getDateProvider(),
-      RoomImp.FORMAT_PLAIN,
+      Room.FORMAT_PLAIN,
     );
     const nicknames: string[] = [];
     const history: Message[] = roomWindow.getRoom().getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName);
@@ -76,12 +76,12 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
    * Get the history of the conversation in a human-readable format
    */
   private static getFormattedConversionHistory(
-    room: Room,
+    room: IRoom,
     dateProvider: DateProvider,
-    format: string = RoomImp.FORMAT_PLAIN,
+    format: string = Room.FORMAT_PLAIN,
   ): string {
     switch (format) {
-      case RoomImp.FORMAT_HTML:
+      case Room.FORMAT_HTML:
         return RoomWindowSendHistoryMenuItemPlugin.getHtmlFormattedHistory(room, dateProvider);
       default:
         return RoomWindowSendHistoryMenuItemPlugin.getPlainFormattedHistory(room, dateProvider);
@@ -91,14 +91,14 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
   /**
    * Get the history of the conversation in HTML
    */
-  private static getHtmlFormattedHistory(room: Room, dateProvider: DateProvider): string {
+  private static getHtmlFormattedHistory(room: IRoom, dateProvider: DateProvider): string {
     return RoomWindowSendHistoryMenuItemPlugin.getPlainFormattedHistory(room, dateProvider);
   }
 
   /**
    * Get the history of the conversation in plain text
    */
-  private static getPlainFormattedHistory(room: Room, dateProvider: DateProvider): string {
+  private static getPlainFormattedHistory(room: IRoom, dateProvider: DateProvider): string {
     const textPlain = [];
     const history: Message[] = room.getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName);
     for (const message of history) {

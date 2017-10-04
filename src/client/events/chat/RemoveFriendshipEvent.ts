@@ -24,8 +24,9 @@ export class RemoveFriendshipEvent extends ChatEvent {
 
   constructor(buddyId: string, nickname: string, creationDate: Date) {
     super(OpenChatEventCode.REMOVE_FRIENDSHIP, creationDate, false);
-    if (typeof buddyId !== "undefined" && buddyId !== null)
+    if (typeof buddyId !== "undefined" && buddyId !== null) {
       this.setDestination(buddyId);
+    }
     this.mNickname = nickname;
   }
 

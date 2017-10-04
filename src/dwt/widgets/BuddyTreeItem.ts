@@ -16,7 +16,7 @@
  */
 
 import {DwtTreeItem} from "../../zimbra/ajax/dwt/widgets/DwtTreeItem";
-import {Buddy} from "../../client/Buddy";
+import {IBuddy} from "../../client/IBuddy";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {LearningClipUtils} from "../../lib/LearningClipUtils";
@@ -27,7 +27,7 @@ import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {AjxCallback} from "../../zimbra/ajax/boot/AjxCallback";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {BuddyTreeItemActionMenuFactory} from "./BuddyTreeItemActionMenuFactory";
 import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {GroupTreeItem} from "./GroupTreeItem";
@@ -44,7 +44,7 @@ export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
   public static MAX_LENGTH: number = ZimbraUtils.isUniversalUI() ? 200 : 133;
 
   private appCtxt: ZmAppCtxt;
-  private refBuddy: Buddy;
+  private refBuddy: IBuddy;
   private mainWindowPluginManager: ChatPluginManager;
   private hideIfOffline: boolean;
   private historyEnabled: boolean;
@@ -53,7 +53,7 @@ export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
   private onSendInvitationCallbacks: CallbackManager;
   private onAcceptInvitationCallbacks: CallbackManager;
 
-  constructor(parent: GroupTreeItem, buddy: Buddy, appCtxt: ZmAppCtxt, mainWindowPluginManager: ChatPluginManager) {
+  constructor(parent: GroupTreeItem, buddy: IBuddy, appCtxt: ZmAppCtxt, mainWindowPluginManager: ChatPluginManager) {
     super({
       parent: parent,
       text: "",
@@ -95,7 +95,7 @@ export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     return true;
   }
 
-  public getBuddy(): Buddy {
+  public getBuddy(): IBuddy {
     return this.refBuddy;
   }
 
@@ -135,7 +135,7 @@ export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.setText(treeText);
   }
 
-  private _onStatusChange(buddy: Buddy, status: BuddyStatus): void {
+  private _onStatusChange(buddy: IBuddy, status: IBuddyStatus): void {
     this.setImage(status.getCSS());
     this._updateVisibility();
   }
@@ -168,7 +168,7 @@ export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.onAcceptInvitationCallbacks.run(this.refBuddy);
   }
 
-  private _onBuddyDelete(buddy: Buddy): void {
+  private _onBuddyDelete(buddy: IBuddy): void {
     let remove = false;
     let ref = <BuddyTreeItem[]>(<GroupTreeItem>this.parent).getChildren();
     for (let i = 0, len = ref.length; i < len; i++) {

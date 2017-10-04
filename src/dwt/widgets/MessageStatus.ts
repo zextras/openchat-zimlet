@@ -16,22 +16,22 @@
  */
 
 import {Message, MessageCreateHtmlData} from "./Message";
-import {Buddy} from "../../client/Buddy";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
+import {IBuddy} from "../../client/IBuddy";
+import {BuddyStatusImp} from "../../client/BuddyStatus";
 import {DateProvider} from "../../lib/DateProvider";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {Conversation} from "./Conversation";
 import {MessageReceived} from "../../client/MessageReceived";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 
 export class MessageStatus extends Message {
 
   private mDate: Date;
-  private mBuddy: Buddy;
-  private mStatus: BuddyStatus;
+  private mBuddy: IBuddy;
+  private mStatus: IBuddyStatus;
 
-  constructor(parent: Conversation, buddy: Buddy, status: BuddyStatus, dateProvider: DateProvider) {
+  constructor(parent: Conversation, buddy: IBuddy, status: IBuddyStatus, dateProvider: DateProvider) {
     super(
       parent,
       new MessageReceived("", buddy, dateProvider.getNow(), status.getMessage()),

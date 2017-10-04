@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message} from "./Message";
-import {CallbackManager} from "../lib/callbacks/CallbackManager";
 import {Callback} from "../lib/callbacks/Callback";
+import {CallbackManager} from "../lib/callbacks/CallbackManager";
+import {Message} from "./Message";
 
 export class MessageSent extends Message {
 

@@ -15,10 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
+import {Callback} from "../../lib/callbacks/Callback";
+import {IRequest} from "./IRequest";
 
-export interface ChatEventHandler {
-  getEventCode(): number;
-  handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean;
+export interface IConnection {
+
+  sendObject(command: string, object: {[key: string]: any}, callback: Callback, errorCallback: Callback): IRequest;
+  openStream(): void;
+  closeStream(): void;
+  isStreamOpened(): boolean;
+  onStreamEvent(callback: Callback): void;
+  onStreamError(callback: Callback): void;
+  onEndProcessResponses(callback: Callback): void;
+
 }

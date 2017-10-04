@@ -33,7 +33,7 @@ import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
-import {Buddy} from "../../client/Buddy";
+import {IBuddy} from "../../client/IBuddy";
 import {Logger} from "../../lib/log/Logger";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {GroupStats} from "../../client/GroupStats";
@@ -42,7 +42,7 @@ import {GroupTreeItemActionMenuFactory} from "./GroupTreeItemActionMenuFactory";
 import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {DwtDropEvent} from "../../zimbra/ajax/dwt/dnd/DwtDropEvent";
 import {ArrayUtils} from "../../lib/ArrayUtils";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {DwtChatTreeItem} from "./DwtChatTreeItem";
 import {SortFcns} from "../SortFcns";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
@@ -199,7 +199,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     }
   }
 
-  private addBuddy(buddy: Buddy, sort: boolean = true): void {
+  private addBuddy(buddy: IBuddy, sort: boolean = true): void {
     let buddyItem: BuddyTreeItem = new BuddyTreeItem(this, buddy, this.mAppCtxt, this.mMainWindowPluginManager);
     buddyItem.onDeleteBuddy(new Callback(this, this.buddyDelete));
     buddyItem.onRenameBuddy(new Callback(this, this.buddyRename));
@@ -221,7 +221,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     }
   }
 
-  public removeBuddy(buddy: Buddy): boolean {
+  public removeBuddy(buddy: IBuddy): boolean {
     this.Log.debug({
       id: buddy.getId(),
       name: buddy.getNickname()
@@ -269,7 +269,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnDeleteBuddyCbkMgr.addCallback(callback);
   }
 
-  private buddyDelete(buddy: Buddy): void {
+  private buddyDelete(buddy: IBuddy): void {
     this.mOnDeleteBuddyCbkMgr.run(buddy);
   }
 
@@ -277,7 +277,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnRenameBuddyCbkMgr.addCallback(callback);
   }
 
-  private buddyRename(buddy: Buddy): void {
+  private buddyRename(buddy: IBuddy): void {
     this.mOnRenameBuddyCbkMgr.run(buddy);
   }
 
@@ -285,7 +285,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnSendInvitationCbkMgr.addCallback(callback);
   }
 
-  private invitationSent(buddy: Buddy): void {
+  private invitationSent(buddy: IBuddy): void {
     this.mOnSendInvitationCbkMgr.run(buddy);
   }
 
@@ -293,7 +293,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnAcceptInvitationCbkMgr.addCallback(callback);
   }
 
-  private invitationAccepted(buddy: Buddy): void {
+  private invitationAccepted(buddy: IBuddy): void {
     this.mOnAcceptInvitationCbkMgr.run(buddy);
   }
 
@@ -317,7 +317,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnBuddyStatusChangeCbkMgr.addCallback(callback);
   }
 
-  private buddyStatusChanged(buddy: Buddy, status: BuddyStatus): void {
+  private buddyStatusChanged(buddy: IBuddy, status: IBuddyStatus): void {
     this.updateCounter();
     this.mOnBuddyStatusChangeCbkMgr.run(buddy, status);
   }
@@ -372,7 +372,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
         typeof ev.srcData !== "undefined" && ev.srcData !== null &&
         typeof ev.srcData.getBuddy !== "undefined" && ev.srcData.getBuddy !== null
       ) {
-        let buddy: Buddy = this.getGroup().getBuddyById((<BuddyTreeItem>ev.srcData).getBuddy().getId());
+        let buddy: IBuddy = this.getGroup().getBuddyById((<BuddyTreeItem>ev.srcData).getBuddy().getId());
         if (typeof buddy !== "undefined" && buddy !== null) {
           ev.doIt = false;
           return true;

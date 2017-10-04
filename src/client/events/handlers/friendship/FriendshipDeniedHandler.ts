@@ -15,19 +15,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IChatClient} from "../../../IChatClient";
 import {FriendshipDeniedEvent} from "../../chat/friendship/FriendshipDeniedEvent";
-import {ChatClient} from "../../../ChatClient";
-import {ChatEventHandler} from "../ChatEventHandler";
 import {ChatEvent} from "../../ChatEvent";
+import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipDeniedHandler implements ChatEventHandler {
+export class FriendshipDeniedHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return FriendshipDeniedEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let friendshipEvent = <FriendshipDeniedEvent> chatEvent;
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const friendshipEvent = chatEvent as FriendshipDeniedEvent;
     client.Log.warn(event, "Event deprecated");
     return true;
   }

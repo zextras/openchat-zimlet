@@ -31,10 +31,12 @@ export class WritingStatusEvent extends ChatEvent {
 
   constructor(sender: string, destination: string, eventDate: Date, creationDate: Date, value: number = WritingStatusEvent.RESET) {
     super(OpenChatEventCode.WRITING_STATUS, creationDate, false);
-    if (typeof sender !== "undefined" && sender !== null)
+    if (typeof sender !== "undefined" && sender !== null) {
       this.setSender(sender);
-    if (typeof destination !== "undefined" && destination !== null)
+    }
+    if (typeof destination !== "undefined" && destination !== null) {
       this.setDestination(destination);
+    }
     this.mValue = value;
     this.mDate = eventDate;
   }

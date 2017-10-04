@@ -17,27 +17,30 @@
 
 import {JSON3} from "../../libext/json3";
 
-import {ConnectionManager} from "./ConnectionManager";
+import {ArrayUtils} from "../../lib/ArrayUtils";
 import {Callback} from "../../lib/callbacks/Callback";
-import {BasicEvent} from "../events/BasicEvent";
-import {ChatEvent} from "../events/ChatEvent";
-import {Connection} from "./Connection";
-import {CommandFactory} from "./CommandFactory";
-import {ConnectionEventParser} from "../events/parsers/ConnectionEventParser";
-import {LogEngine} from "../../lib/log/LogEngine";
 import {ZxError} from "../../lib/error/ZxError";
 import {ZxErrorCode} from "../../lib/error/ZxErrorCode";
+import {LogEngine} from "../../lib/log/LogEngine";
 import {ZmCsfeException} from "../../zimbra/zimbra/csfe/ZmCsfeException";
-import {ArrayUtils} from "../../lib/ArrayUtils";
+import {BasicEvent} from "../events/BasicEvent";
+import {ChatEvent} from "../events/ChatEvent";
+import {IConnectionEventParser} from "../events/parsers/IConnectionEventParser";
+import {CommandFactory} from "./CommandFactory";
+import {IConnection} from "./IConnection";
+import {IConnectionManager} from "./IConnectionManager";
 
-export class ChatConnectionManager implements ConnectionManager {
+export class ChatConnectionManager implements IConnectionManager {
+
+  private static defaultErrorFcn(cbk: Callback, error: Error): boolean {
+    return cbk.run(void 0, error);
+  }
+
+  public mEventParser: IConnectionEventParser;
 
   private Log = LogEngine.getLogger(LogEngine.CHAT);
-
-  private mConnection: Connection;
+  private mConnection: IConnection;
   private mCommandFactory: CommandFactory;
-  public mEventParser: ConnectionEventParser;
-
   private mOnEventCbk: Callback;
   private mOnErrorCbk: Callback;
   private mOnEndProcessResponsesCbk: Callback;
@@ -47,9 +50,9 @@ export class ChatConnectionManager implements ConnectionManager {
   private mOnNetworkErrorCbk: Callback;
 
   constructor(
-    connection: Connection,
+    connection: IConnection,
     commandFactory: CommandFactory,
-    eventParser: ConnectionEventParser
+    eventParser: IConnectionEventParser,
   ) {
     this.mConnection = connection;
     this.mCommandFactory = commandFactory;
@@ -63,36 +66,36 @@ export class ChatConnectionManager implements ConnectionManager {
   public sendEvent(
     event: BasicEvent,
     callback: Callback = new Callback(this, this.returnTrueFcn),
-    errorCallback?: Callback
+    errorCallback?: Callback,
   ): void {
     callback = Callback.standardize(callback);
     if (typeof errorCallback === "undefined") {
       errorCallback = new Callback(
         void 0,
         ChatConnectionManager.defaultErrorFcn,
-        callback
+        callback,
       );
     } else {
       errorCallback = Callback.standardize(errorCallback);
     }
 
-    let eventObject: {} = void 0,
-      error: ZxError = void 0;
+    let eventObject: {} = void 0;
+    let error: ZxError = void 0;
 
     try {
-      eventObject = this.mEventParser.encodeEvent(<ChatEvent>event);
+      eventObject = this.mEventParser.encodeEvent(event as ChatEvent);
     } catch (err) {
       error = new ZxError(ZxErrorCode.UNABLE_TO_ENCODE_EVENT_OBJECT, err);
-      error.setDetail("object", JSON3.stringify(<ChatEvent>event, null, 2));
+      error.setDetail("object", JSON3.stringify(event as ChatEvent, null, 2));
     }
 
     if (typeof eventObject !== "undefined") {
       try {
         this.mConnection.sendObject(
-          this.mCommandFactory.getCommand(<ChatEvent>event),
+          this.mCommandFactory.getCommand(event as ChatEvent),
           eventObject,
-          new Callback(this, this.processResponse, <ChatEvent>event, callback, errorCallback),
-          new Callback(this, this.processError, <ChatEvent>event, errorCallback)
+          new Callback(this, this.processResponse, event as ChatEvent, callback, errorCallback),
+          new Callback(this, this.processError, event as ChatEvent, errorCallback),
         );
       } catch (err) {
         error = new ZxError(ZxErrorCode.UNABLE_TO_SEND_EVENT_OBJECT, err);
@@ -103,10 +106,6 @@ export class ChatConnectionManager implements ConnectionManager {
     if (typeof error !== "undefined") {
       errorCallback.run(error);
     }
-  }
-
-  private static defaultErrorFcn(cbk: Callback, error: Error): boolean {
-    return cbk.run(void 0, error);
   }
 
   public onEvent(callback: Callback): void {
@@ -145,22 +144,20 @@ export class ChatConnectionManager implements ConnectionManager {
     this.mConnection.closeStream();
   }
 
-  public getEventParser(): ConnectionEventParser {
+  public getEventParser(): IConnectionEventParser {
     return this.mEventParser;
   }
 
-  private processResponse(originEvent: BasicEvent, callback: Callback, errorCallback: Callback, responses: BasicEvent): void;
-  private processResponse(originEvent: BasicEvent, callback: Callback, errorCallback: Callback, responses: BasicEvent[]): void;
-  private processResponse(originEvent: BasicEvent, callback: Callback, errorCallback: Callback, responses: any): void {
+  private processResponse(originEvent: BasicEvent, callback: Callback, errorCallback: Callback, responses: BasicEvent | BasicEvent[] | any): void {
     if (!ArrayUtils.isArray(responses)) { // TODO: Investigate about it
-      responses = [<BasicEvent>responses];
+      responses = [responses as BasicEvent];
     }
-    for (let i: number = 0; i < responses.length; i += 1) {
+    for (const response of responses) {
       let event: BasicEvent = void 0;
       try {
-        event = this.mEventParser.decodeEvent(originEvent, responses[i]);
+        event = this.mEventParser.decodeEvent(originEvent, response);
       } catch (err) {
-        let error = new ZxError(ZxErrorCode.UNABLE_TO_DECODE_EVENT_OBJECT, err);
+        const error = new ZxError(ZxErrorCode.UNABLE_TO_DECODE_EVENT_OBJECT, err);
         error.setDetail("object", JSON3.stringify(event, null, 2));
         error.setDetail("originEvent", JSON3.stringify(originEvent, null, 2));
         if (typeof errorCallback !== "undefined") {
@@ -173,7 +170,7 @@ export class ChatConnectionManager implements ConnectionManager {
           callback.run(event);
         }
       } catch (err) {
-        let error = new ZxError(ZxErrorCode.UNABLE_TO_HANDLE_EVENT_ERROR, err);
+        const error = new ZxError(ZxErrorCode.UNABLE_TO_HANDLE_EVENT_ERROR, err);
         error.setDetail("event", JSON3.stringify(event, null, 2));
         if (typeof errorCallback !== "undefined") {
           errorCallback.run(error);
@@ -194,7 +191,7 @@ export class ChatConnectionManager implements ConnectionManager {
   }
 
   private handleStreamEvent(event: BasicEvent): void {
-    let decodedEvent = this.mEventParser.decodeEvent(void 0, event);
+    const decodedEvent = this.mEventParser.decodeEvent(void 0, event);
     this.Log.debug(decodedEvent, "Received and event on stream");
     if (typeof this.mOnEventCbk !== "undefined") {
       this.mOnEventCbk.run(decodedEvent);

@@ -15,21 +15,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IBuddy} from "../../../IBuddy";
+import {IChatClient} from "../../../IChatClient";
 import {FriendshipRemovedEvent} from "../../chat/friendship/FriendshipRemovedEvent";
-import {ChatClient} from "../../../ChatClient";
-import {ChatEventHandler} from "../ChatEventHandler";
 import {ChatEvent} from "../../ChatEvent";
+import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipRemovedHandler implements ChatEventHandler {
+export class FriendshipRemovedHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return FriendshipRemovedEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let friendshipEvent = <FriendshipRemovedEvent> chatEvent,
-      buddyList = client.getBuddyList(),
-      buddy = buddyList.getBuddyById(friendshipEvent.getSender());
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const friendshipEvent = chatEvent as FriendshipRemovedEvent;
+    const buddyList = client.getBuddyList();
+    const buddy: IBuddy = buddyList.getBuddyById(friendshipEvent.getSender());
     if (buddy != null) {
       buddyList.removeBuddy(buddy);
     }

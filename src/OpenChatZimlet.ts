@@ -20,8 +20,8 @@ import {ChatConnectionManager} from "./client/connection/ChatConnectionManager";
 import {CommandFactory} from "./client/connection/CommandFactory";
 import {SoapEventParser} from "./client/connection/soap/chat/SoapEventParser";
 import {SoapEventParserUtils} from "./client/connection/soap/chat/SoapEventParserUtils";
-import {DosFilterImp} from "./client/connection/soap/dos/DosFilterImp";
-import {PingManagerImp} from "./client/connection/soap/PingManagerImp";
+import {DosFilter} from "./client/connection/soap/dos/DosFilter";
+import {PingManager} from "./client/connection/soap/PingManager";
 import {SoapCommands} from "./client/connection/soap/SoapCommands";
 import {SoapConnection} from "./client/connection/soap/SoapConnection";
 import {SoapRequestFactory} from "./client/connection/soap/SoapRequestFactory";
@@ -95,11 +95,11 @@ export class OpenChatZimlet extends ChatZimletBase {
             sessionInfoProvider,
           ),
           sessionInfoProvider,
-          new DosFilterImp(
+          new DosFilter(
             dateProvider,
             timedCallbackFactory,
           ),
-          new PingManagerImp(
+          new PingManager(
             timedCallbackFactory,
             sessionInfoProvider,
           ),

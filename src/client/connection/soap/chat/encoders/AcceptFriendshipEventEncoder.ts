@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventEncoder} from "./SoapEventEncoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {AcceptFriendshipEvent} from "../../../../events/chat/AcceptFriendshipEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventEncoder} from "./SoapEventEncoder";
 
 export class AcceptFriendshipEventEncoder extends SoapEventEncoder {
 
@@ -27,10 +27,10 @@ export class AcceptFriendshipEventEncoder extends SoapEventEncoder {
   }
 
   protected getEventDetails(event: ChatEvent): {} {
-    let ev: AcceptFriendshipEvent = <AcceptFriendshipEvent> event;
+    const ev: AcceptFriendshipEvent = event as AcceptFriendshipEvent;
     return {
       target_address: ev.getDestination(),
-      target_username: ev.getNickname()
+      target_username: ev.getNickname(),
     };
   }
 

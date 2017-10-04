@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Buddy} from "../../client/Buddy";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddy} from "../../client/IBuddy";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {WritingStatusEvent} from "../../client/events/chat/WritingStatusEvent";
 import {MessageReceived} from "../../client/MessageReceived";
 import {MessageSent} from "../../client/MessageSent";
 import {MessageWritingStatus} from "../../client/MessageWritingStatus";
-import {Room} from "../../client/Room";
+import {IRoom} from "../../client/IRoom";
 import {SessionInfoProvider} from "../../client/SessionInfoProvider";
 import {TextCompletePlugin} from "../../jquery/TextCompletePlugin";
 import {Callback} from "../../lib/callbacks/Callback";
@@ -86,7 +86,7 @@ export class RoomWindow extends WindowBase {
   private Log: Logger;
   private mTimedCallbackFactory: TimedCallbackFactory;
   private mSessionInfoProvider: SessionInfoProvider;
-  private mRoom: Room;
+  private mRoom: IRoom;
   private mNotificationManager: NotificationManager;
   private mDateProvider: DateProvider;
   private mRoomWindowPluginManager: ChatPluginManager;
@@ -117,7 +117,7 @@ export class RoomWindow extends WindowBase {
   constructor(
     shell: DwtShell,
     timedCallbackFactory: TimedCallbackFactory,
-    room: Room,
+    room: IRoom,
     notificationManager: NotificationManager,
     dateProvider: DateProvider,
     sessionInfoProvider: SessionInfoProvider,
@@ -262,7 +262,7 @@ export class RoomWindow extends WindowBase {
 
   }
 
-  public getRoom(): Room {
+  public getRoom(): IRoom {
     return this.mRoom;
   }
 
@@ -546,19 +546,19 @@ export class RoomWindow extends WindowBase {
     return caretOffset;
   }
 
-  private onMemberRemoved(buddy: Buddy): void {
+  private onMemberRemoved(buddy: IBuddy): void {
     // Commented: while doing a register session the reset of the buddy list results in closing all the room windows
     // if (this.mRoom.getMembers().length < 1) {
     //   this.popdown();
     // }
   }
 
-  private onBuddyStatusChange(buddy: Buddy, status: BuddyStatus): void {
+  private onBuddyStatusChange(buddy: IBuddy, status: IBuddyStatus): void {
     this.mConversation.addMessageStatus(buddy, status);
     this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.BuddyStatusChangedPlugin, status);
   }
 
-  private onRoomStatusChange(status: BuddyStatus): void {
+  private onRoomStatusChange(status: IBuddyStatus): void {
     const css: string = status.getCSS();
     this.setIcon(css);
   }

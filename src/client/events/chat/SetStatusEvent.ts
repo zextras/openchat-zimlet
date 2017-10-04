@@ -15,11 +15,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../ChatEvent";
 import {Command} from "../../connection/soap/Command";
+import {ChatEvent} from "../ChatEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class SetStatusEvent extends ChatEvent {
+
+  public static getCommandFromSetStatusEvent(setStatusEvent: SetStatusEvent) {
+    if (setStatusEvent.isAuto()) {
+      return Command.SET_AUTO_AWAY_STATUS;
+    } else {
+      return Command.SET_STATUS;
+    }
+  }
 
   private mStatusId: string;
   // private mRooms: string[];
@@ -39,13 +47,6 @@ export class SetStatusEvent extends ChatEvent {
 
   public isAuto(): boolean {
     return this.mAuto;
-  }
-
-  public static getCommandFromSetStatusEvent(setStatusEvent: SetStatusEvent) {
-    if (setStatusEvent.isAuto())
-      return Command.SET_AUTO_AWAY_STATUS;
-    else
-      return Command.SET_STATUS;
   }
 
   // public getRooms(): string[] {

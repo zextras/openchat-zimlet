@@ -15,18 +15,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
+import {IChatClient} from "../../IChatClient";
 import {FriendshipEvent} from "../chat/FriendshipEvent";
-import {EventManager} from "../EventManager";
-import {ChatEventHandler} from "./ChatEventHandler";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {EventManager} from "../EventManager";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class FriendshipEventHandler extends EventManager implements ChatEventHandler {
+export class FriendshipEventHandler extends EventManager implements IChatEventHandler {
 
-  constructor(...subHandlers: ChatEventHandler[]) {
+  constructor(...subHandlers: IChatEventHandler[]) {
     super();
-    for (let handler of subHandlers) {
+    for (const handler of subHandlers) {
       this.addEventHandler(handler);
     }
   }
@@ -35,11 +35,11 @@ export class FriendshipEventHandler extends EventManager implements ChatEventHan
     return OpenChatEventCode.FRIENDSHIP;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let friendshipEvent: FriendshipEvent = <FriendshipEvent> chatEvent,
-      handled: boolean = false;
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const friendshipEvent: FriendshipEvent = chatEvent as FriendshipEvent;
+    let handled: boolean = false;
     if (this.mHandlersMap.hasOwnProperty(friendshipEvent.getFriendshipStatus().toString())) {
-      for (let handler of this.mHandlersMap[friendshipEvent.getFriendshipStatus()]) {
+      for (const handler of this.mHandlersMap[friendshipEvent.getFriendshipStatus()]) {
         handled = handler.handleEvent(friendshipEvent, client);
       }
     }

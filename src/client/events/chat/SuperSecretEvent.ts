@@ -28,7 +28,7 @@ export class SuperSecretEvent extends MessageEvent {
     type: number,
     sender: string,
     destination: string,
-    creationDate: Date
+    creationDate: Date,
   ) {
     // noinspection TypeScriptValidateTypes
     super("", sender, destination, "{}", MessageEvent.convertFromMessageType(MessageType.CHAT), creationDate, creationDate);
@@ -36,10 +36,10 @@ export class SuperSecretEvent extends MessageEvent {
   }
 
   public setMessageData(obj: any) {
-    obj["type"] = this.mTypeSecret;
-    obj["from"] = this.getSender();
-    obj["to"] = this.getDestination();
-    obj["timestampSent"] = this.getDate().getTime();
+    obj.type = this.mTypeSecret;
+    obj.from = this.getSender();
+    obj.to = this.getDestination();
+    obj.timestampSent = this.getDate().getTime();
     this.mMessage = JSON3.stringify(obj, null, 2);
   }
 

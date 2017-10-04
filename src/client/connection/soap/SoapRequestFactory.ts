@@ -15,22 +15,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Request} from "../Request";
 import {Callback} from "../../../lib/callbacks/Callback";
-import {SoapRequest} from "./SoapRequest";
-import {SessionInfoProvider} from "../../SessionInfoProvider";
-import {RequestFactory} from "../RequestFactory";
 import {ZmController} from "../../../zimbra/zimbraMail/share/controller/ZmController";
+import {SessionInfoProvider} from "../../SessionInfoProvider";
 import {DummyRequestBehavior} from "../dummy/DummyRequest";
+import {IRequest} from "../IRequest";
+import {IRequestFactory} from "../IRequestFactory";
+import {SoapRequest} from "./SoapRequest";
 
-export class SoapRequestFactory implements RequestFactory {
+export class SoapRequestFactory implements IRequestFactory {
 
   private mAppController: ZmController;
   private mSessionInfoProvider: SessionInfoProvider;
 
   constructor(
     appController: ZmController,
-    sessionInfoProvider: SessionInfoProvider
+    sessionInfoProvider: SessionInfoProvider,
   ) {
     this.mAppController = appController;
     this.mSessionInfoProvider = sessionInfoProvider;
@@ -41,8 +41,8 @@ export class SoapRequestFactory implements RequestFactory {
     command: string,
     params: {[key: string]: any},
     callback: Callback = new Callback(this, this.voidFcn),
-    errorCallback: Callback = new Callback(this, this.voidFcn)
-  ): Request {
+    errorCallback: Callback = new Callback(this, this.voidFcn),
+  ): IRequest {
 
     callback = Callback.standardize(callback);
     errorCallback = Callback.standardize(errorCallback);
@@ -54,13 +54,13 @@ export class SoapRequestFactory implements RequestFactory {
       command,
       params,
       callback,
-      errorCallback
+      errorCallback,
     );
   }
 
-  public setRequestBehavior (
-      behavior: DummyRequestBehavior
-  ): void {}
+  public setRequestBehavior(
+      behavior: DummyRequestBehavior,
+  ): void { return; }
 
-  private voidFcn(): void {}
+  private voidFcn(): void { return; }
 }

@@ -40,6 +40,6 @@ export enum OpenChatEventCode {
   RENAME_FRIENDSHIP     = 23,
   RENAME_GROUP          = 24,
   SET_STATUS            = 26,
-  SECRET_TEST           = 30
+  SECRET_TEST           = 30,
 
 }

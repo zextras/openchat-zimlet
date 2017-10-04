@@ -15,15 +15,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IBuddy} from "./IBuddy";
 import {Message} from "./Message";
-import {Buddy} from "./Buddy";
 
 export class MessageWritingStatus extends Message {
 
-  private mSender: Buddy;
+  private mSender: IBuddy;
   private mWritingValue: number;
 
-  constructor(sender: Buddy, date: Date, value: number) {
+  constructor(sender: IBuddy, date: Date, value: number) {
     super("", date, `${value}`);
     this.mSender = sender;
     this.mWritingValue = value;
@@ -33,7 +33,7 @@ export class MessageWritingStatus extends Message {
     return this.mWritingValue;
   }
 
-  public getSender(): Buddy {
+  public getSender(): IBuddy {
     return this.mSender;
   }
 

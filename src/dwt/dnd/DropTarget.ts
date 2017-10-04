@@ -25,7 +25,7 @@ export class DropTarget extends DwtDropTarget {
   constructor(types: TransferType[] = []) {
     super([]);
     this.mTypes = [];
-    for (let type of types) {
+    for (const type of types) {
       this.addTransferType(type);
     }
   }

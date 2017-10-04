@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FriendshipInvitationEvent} from "../../events/chat/friendship/FriendshipInvitationEvent";
+import {OpenChatEventCode} from "../../events/chat/OpenChatEventCode";
+import {SetStatusEvent} from "../../events/chat/SetStatusEvent";
 import {CommandFactory} from "../CommandFactory";
 import {Command} from "./Command";
-import {FriendshipInvitationEvent} from "../../events/chat/friendship/FriendshipInvitationEvent";
-import {SetStatusEvent} from "../../events/chat/SetStatusEvent";
-import {OpenChatEventCode} from "../../events/chat/OpenChatEventCode";
 
 export class SoapCommands {
 

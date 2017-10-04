@@ -21,12 +21,12 @@ import {DateProvider} from "../../lib/DateProvider";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
 import {MessageSent as MessageSentObj} from "../../client/MessageSent";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
-import {Buddy} from "../../client/Buddy";
+import {BuddyStatusImp} from "../../client/BuddyStatus";
+import {IBuddy} from "../../client/IBuddy";
 import {MessageReceived} from "./MessageReceived";
 import {MessageSent} from "./MessageSent";
 import {MessageStatus} from "./MessageStatus";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 
 export class Conversation extends DwtComposite {
 
@@ -56,7 +56,7 @@ export class Conversation extends DwtComposite {
     this.scrollToTop();
   }
 
-  public addMessageStatus(buddy: Buddy, buddyStatus: BuddyStatus): void {
+  public addMessageStatus(buddy: IBuddy, buddyStatus: IBuddyStatus): void {
     if (this.mLastBuddyStatusMessages.hasOwnProperty(buddy.getId())) {
       this.mLastBuddyStatusMessages[buddy.getId()].setVisible(false);
     }

@@ -27,21 +27,21 @@ import {ZmAutocomplete, ZmAutocompleteMatch} from "../../zimbra/zimbraMail/share
 import {DwtMessageDialog} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
 import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 import {BuddyStatusType} from "../../client/BuddyStatusType";
-import {ChatClient} from "../../client/ChatClient";
+import {IChatClient} from "../../client/IChatClient";
 import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
-import {Buddy} from "../../client/Buddy";
+import {IBuddy} from "../../client/IBuddy";
 import {ArrayUtils} from "../../lib/ArrayUtils";
 
 export class AddBuddyDialog extends ZmDialog {
 
   private static NAME_FROM_MAIL_REGEXP: RegExp = /^(.*)@/;
 
-  private client: ChatClient;
+  private client: IChatClient;
   private userAliases: string[];
   private _buddyAddressEl: HTMLElement;
   private _buddyNicknameEl: HTMLElement;
 
-  constructor(params: AddBuddyDialogParams, client: ChatClient, userAliases: string[]) {
+  constructor(params: AddBuddyDialogParams, client: IChatClient, userAliases: string[]) {
     if (params.enableAutoComplete == null) {
       params.enableAutoComplete = false;
     }
@@ -123,7 +123,7 @@ export class AddBuddyDialog extends ZmDialog {
     let buddyId: string = (<HTMLInputElement>this._buddyAddressEl).value.replace(/([^ ;,:]*@[^ ;,:]*).*/, "$1");
     let nickname: string = (<HTMLInputElement>this._buddyNicknameEl).value;
     let group: string = "";
-    let buddy: Buddy = this.client.getBuddyList().getBuddyById(buddyId);
+    let buddy: IBuddy = this.client.getBuddyList().getBuddyById(buddyId);
     let msgDialog: DwtMessageDialog;
     if ((buddy != null) && buddy.getStatus().getType() !== BuddyStatusType.INVITED) {
       this.popdown();

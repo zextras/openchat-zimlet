@@ -16,13 +16,13 @@
  */
 
 import {Message} from "../../client/Message";
-import {Room} from "../../client/Room";
+import {IRoom} from "../../client/IRoom";
 import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 
 export class RoomStoreMessageInHistoryPlugin implements ChatPlugin {
 
-  public trigger(room: Room, message: Message): void {
+  public trigger(room: IRoom, message: Message): void {
     room.getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName).push(message);
   }
 

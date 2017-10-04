@@ -16,8 +16,8 @@
  */
 
 import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
-import {ChatClient} from "../../client/ChatClient";
-import {Buddy} from "../../client/Buddy";
+import {IChatClient} from "../../client/IChatClient";
+import {IBuddy} from "../../client/IBuddy";
 import {StringUtils} from "../../lib/StringUtils";
 import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {IdGenerator} from "../IdGenerator";
@@ -32,10 +32,10 @@ import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 export class RenameBuddyDialog extends ZmDialog {
   private _buddyNicknameEl: HTMLInputElement;
   private shell: DwtControl;
-  private client: ChatClient;
-  private buddy: Buddy;
+  private client: IChatClient;
+  private buddy: IBuddy;
 
-  constructor(params: ZmDialogParams, client: ChatClient, buddy: Buddy) {
+  constructor(params: ZmDialogParams, client: IChatClient, buddy: IBuddy) {
     params.title = StringUtils.getMessage("friend_rename");
     params.standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];
     params.id = IdGenerator.generateId("ZxChat_RenameBuddyDialog");

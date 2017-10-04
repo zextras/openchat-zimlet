@@ -36,8 +36,8 @@ import {LogEngine} from "../../lib/log/LogEngine";
 import {Setting} from "../../settings/Setting";
 import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 import {AjxCallback} from "../../zimbra/ajax/boot/AjxCallback";
-import {Buddy} from "../../client/Buddy";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddy} from "../../client/IBuddy";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {DwtUiEvent} from "../../zimbra/ajax/dwt/events/DwtUiEvent";
 import {BuddyTreeItem} from "./BuddyTreeItem";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
@@ -281,7 +281,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnAddBuddyCbkMgr.run(callback);
   }
 
-  private buddyAdded(buddy: Buddy): void {
+  private buddyAdded(buddy: IBuddy): void {
     this.updateFixedTreeItemsVisibility();
     this.mOnAddBuddyCbkMgr.run(buddy);
   }
@@ -290,7 +290,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnBuddyStatusChangeCbkMgr.addCallback(callback);
   }
 
-  private buddyStatusChanged(buddy: Buddy, status: BuddyStatus): void {
+  private buddyStatusChanged(buddy: IBuddy, status: IBuddyStatus): void {
     this.updateFixedTreeItemsVisibility();
     this.applyFilterOnStatusChange();
     this.mOnBuddyStatusChangeCbkMgr.run(buddy, status);
@@ -300,7 +300,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnRemoveBuddyCbkMgr.addCallback(callback);
   }
 
-  private buddyRemoved(buddy: Buddy): void {
+  private buddyRemoved(buddy: IBuddy): void {
     this.updateFixedTreeItemsVisibility();
     this.mOnRemoveBuddyCbkMgr.run(buddy);
   }
@@ -309,7 +309,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnDeleteBuddyCbkMgr.addCallback(callback);
   }
 
-  private buddyDeleted(buddy: Buddy): void {
+  private buddyDeleted(buddy: IBuddy): void {
     this.mOnDeleteBuddyCbkMgr.run(buddy);
   }
 
@@ -317,7 +317,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnRenameBuddyCbkMgr.addCallback(callback);
   }
 
-  private buddyRenamed(buddy: Buddy): void {
+  private buddyRenamed(buddy: IBuddy): void {
     this.mOnRenameBuddyCbkMgr.run(buddy);
   }
 
@@ -325,7 +325,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnSendInvitationCbkMgr.addCallback(callback);
   }
 
-  private invitationSent(buddy: Buddy): void {
+  private invitationSent(buddy: IBuddy): void {
     this.mOnSendInvitationCbkMgr.run(buddy);
   }
 
@@ -333,7 +333,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnAcceptInvitationCbkMgr.addCallback(callback);
   }
 
-  private invitationAccepted(buddy: Buddy): void {
+  private invitationAccepted(buddy: IBuddy): void {
     this.mOnAcceptInvitationCbkMgr.run(buddy);
   }
 

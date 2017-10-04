@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {ErrorEvent} from "../../../../events/chat/ErrorEvent";
-import {ZxError} from "../../../../../lib/error/ZxError";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {ZxError} from "../../../../../lib/error/ZxError";
+import {ErrorEvent} from "../../../../events/chat/ErrorEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class ErrorEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -33,7 +33,7 @@ export class ErrorEventDecoder extends SoapEventDecoder {
   public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {
     return new ErrorEvent(
       ZxError.fromResponse({ error: eventObj }),
-      this.mDateProvider.getNow()
+      this.mDateProvider.getNow(),
     );
   }
 

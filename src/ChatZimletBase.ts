@@ -15,19 +15,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Buddy} from "./client/Buddy";
-import {BuddyStatus} from "./client/BuddyStatus";
-import {BuddyStatusImp} from "./client/BuddyStatusImp";
+import {IBuddy} from "./client/IBuddy";
+import {IBuddyStatus} from "./client/IBuddyStatus";
+import {BuddyStatusImp} from "./client/BuddyStatus";
 import {BuddyStatusType} from "./client/BuddyStatusType";
+import {IChatClient} from "./client/IChatClient";
 import {ChatClient} from "./client/ChatClient";
-import {ChatClientImp} from "./client/ChatClientImp";
-import {ConnectionManager} from "./client/connection/ConnectionManager";
+import {IConnectionManager} from "./client/connection/IConnectionManager";
 import {EventSessionRegistered} from "./client/events/chat/EventSessionRegistered";
 import {RemoveFriendshipEvent} from "./client/events/chat/RemoveFriendshipEvent";
 import {EventManager} from "./client/events/EventManager";
 import {Group} from "./client/Group";
 import {GroupStats} from "./client/GroupStats";
-import {Room} from "./client/Room";
+import {IRoom} from "./client/IRoom";
 import {RoomManager} from "./client/RoomManager";
 import {SessionInfoProvider} from "./client/SessionInfoProvider";
 import {AcceptFriendshipDialog} from "./dwt/dialogs/AcceptFriendshipDialog";
@@ -102,12 +102,12 @@ export class ChatZimletBase extends ZmZimletBase {
   private mDateProvider: DateProvider;
   private mSettingsManager: SettingsManager;
   private mSessionInfoProvider: SessionInfoProvider;
-  private mConnectionManager: ConnectionManager;
+  private mConnectionManager: IConnectionManager;
   private mEventManager: EventManager;
   private mRoomManager: RoomManager;
   private mIdleTimer: IdleTimer;
   private mMainWindow: MainWindow;
-  private mChatClient: ChatClient;
+  private mChatClient: IChatClient;
   private mObjectHandler: ObjectHandler;
   private mPoweredByAlreadyShown: boolean;
   private mUpdateNotified: boolean;
@@ -147,7 +147,7 @@ export class ChatZimletBase extends ZmZimletBase {
     dateProvider: DateProvider,
     settingsManager: SettingsManager,
     sessionInfoProvider: SessionInfoProvider,
-    connectionManager: ConnectionManager,
+    connectionManager: IConnectionManager,
     eventManager: EventManager,
     roomManagerPluginManager: ChatPluginManager,
     chatClientPluginManager: ChatPluginManager,
@@ -204,7 +204,7 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mCoreNotFoundNotified = false;
     this.m502Errors = 0;
 
-    this.mChatClient = new ChatClientImp(
+    this.mChatClient = new ChatClient(
       this.mSessionInfoProvider,
       this.mDateProvider,
       this.mConnectionManager,
@@ -337,7 +337,7 @@ export class ChatZimletBase extends ZmZimletBase {
     ).start();
   }
 
-  public getClient(): ChatClient {
+  public getClient(): IChatClient {
     return this.mChatClient;
   }
 
@@ -349,14 +349,14 @@ export class ChatZimletBase extends ZmZimletBase {
     return this.mRoomWindowManager;
   }
 
-  public statusSelected(status: BuddyStatus): void {
+  public statusSelected(status: IBuddyStatus): void {
     const callback: Callback = new Callback(this, this.statusSelectedCallback);
-    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.StatusSelectedPlugin, status, callback);
+    this.mChatClient.getPluginManager().triggerPlugins(ChatClient.StatusSelectedPlugin, status, callback);
     callback.run(status);
   }
 
   public onBuddyDeleted(event: RemoveFriendshipEvent): void {
-    const room: Room = this.mChatClient.getRoomManager().getRoomById(event.getDestination());
+    const room: IRoom = this.mChatClient.getRoomManager().getRoomById(event.getDestination());
     if (typeof room !== "undefined" && room !== null) {
       const roomWindow: RoomWindow = this.mRoomWindowManager.getRoomWindowById(event.getDestination());
       if (typeof roomWindow !== "undefined" && roomWindow !== null) {
@@ -519,7 +519,7 @@ export class ChatZimletBase extends ZmZimletBase {
     }
 
     this.mMainWindow.enableDisableMainMenuButton(true);
-    const userStatuses: BuddyStatus[] = [
+    const userStatuses: IBuddyStatus[] = [
       new BuddyStatusImp(BuddyStatusType.ONLINE, "", 1),
       new BuddyStatusImp(BuddyStatusType.BUSY, "", 2),
       new BuddyStatusImp(BuddyStatusType.AWAY, "", 3),
@@ -527,7 +527,7 @@ export class ChatZimletBase extends ZmZimletBase {
     ];
     this.mChatClient.getUserStatusManager().setUserStatuses(userStatuses);
     this.mMainWindow.setUserStatuses(userStatuses);
-    this.mChatClient.getPluginManager().triggerPlugins(ChatClientImp.SetStatusesPlugin, userStatuses);
+    this.mChatClient.getPluginManager().triggerPlugins(ChatClient.SetStatusesPlugin, userStatuses);
     this.refreshStatusInMainWindow(new BuddyStatusImp(0, "Offline", 0));
     this.mChatClient.getUserStatusManager().setSelectedStatus(new BuddyStatusImp(1, "Available", 1));
 
@@ -673,7 +673,7 @@ export class ChatZimletBase extends ZmZimletBase {
 
   // The status show by the status selector is only the received from the
   // ContactInformationEventHandler, except for the start
-  private refreshStatusInMainWindow(status: BuddyStatus) {
+  private refreshStatusInMainWindow(status: IBuddyStatus) {
     this.mMainWindow.setCurrentStatus(status);
   }
 
@@ -729,15 +729,15 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mMainWindow.triggerSortGroups();
   }
 
-  private statusSelectedCallback(userStatus: BuddyStatus): void {
+  private statusSelectedCallback(userStatus: IBuddyStatus): void {
     this.mChatClient.getUserStatusManager().setSelectedStatus(userStatus);
     this.mChatClient.setUserStatus(this.mChatClient.getUserStatusManager().getCurrentStatus());
   }
 
   private buddySelected(event: DwtSelectionEvent): void {
     const buddyTreeItemSelected: BuddyTreeItem = event.dwtObj as BuddyTreeItem;
-    const buddy: Buddy = buddyTreeItemSelected.getBuddy();
-    const buddyStatus: BuddyStatus = buddy.getStatus();
+    const buddy: IBuddy = buddyTreeItemSelected.getBuddy();
+    const buddyStatus: IBuddyStatus = buddy.getStatus();
     if (buddyStatus.getType() === BuddyStatusType.INVITED) {
       if (typeof buddyTreeItemSelected.onAction !== "undefined" && buddyTreeItemSelected.onAction === null) {
         buddyTreeItemSelected.onAction(event);
@@ -748,7 +748,7 @@ export class ChatZimletBase extends ZmZimletBase {
       let roomWindow: RoomWindow = this.mRoomWindowManager.getRoomWindowById(buddy.getId());
       if (typeof roomWindow === "undefined" || roomWindow === null) {
         const roomPluginManager = new ChatPluginManager();
-        const room: Room = this.mChatClient.getRoomManager().createRoom(
+        const room: IRoom = this.mChatClient.getRoomManager().createRoom(
           buddy.getId(),
           buddy.getNickname(),
           roomPluginManager,
@@ -761,7 +761,7 @@ export class ChatZimletBase extends ZmZimletBase {
     }
   }
 
-  private deleteBuddy(buddy: Buddy): void {
+  private deleteBuddy(buddy: IBuddy): void {
     const dialog: DeleteBuddyDialog = DeleteBuddyDialog.getDialog(
       appCtxt.getShell(),
       this.mChatClient,
@@ -771,7 +771,7 @@ export class ChatZimletBase extends ZmZimletBase {
     dialog.popup();
   }
 
-  private renameBuddy(buddy: Buddy): void {
+  private renameBuddy(buddy: IBuddy): void {
     const dialog: RenameBuddyDialog = new RenameBuddyDialog(
       {parent: appCtxt.getShell()},
       this.mChatClient,
@@ -780,7 +780,7 @@ export class ChatZimletBase extends ZmZimletBase {
     dialog.popup();
   }
 
-  private sendInvitation(buddy: Buddy): void {
+  private sendInvitation(buddy: IBuddy): void {
     this.mChatClient.sendFriendship(
       buddy.getId(),
       buddy.getNickname(),
@@ -788,7 +788,7 @@ export class ChatZimletBase extends ZmZimletBase {
     );
   }
 
-  private acceptInvitation(buddy: Buddy): void {
+  private acceptInvitation(buddy: IBuddy): void {
     AcceptFriendshipDialog.getDialog(
       {parent: appCtxt.getShell()},
       this.mChatClient,
@@ -796,7 +796,7 @@ export class ChatZimletBase extends ZmZimletBase {
     ).popup();
   }
 
-  private changeBuddyGroup(buddy: Buddy, group: Group): void {
+  private changeBuddyGroup(buddy: IBuddy, group: Group): void {
     this.mChatClient.changeBuddyGroup(buddy, group);
   }
 
@@ -806,7 +806,7 @@ export class ChatZimletBase extends ZmZimletBase {
     const nickname: string = contact.getHeader();
     const chatGroup: string = group.getName();
     let buddyIsCurrentUserOrAlias: boolean = (buddyId === appCtxt.getUsername());
-    const buddy: Buddy = this.mChatClient.getBuddyList().getBuddyById(buddyId);
+    const buddy: IBuddy = this.mChatClient.getBuddyList().getBuddyById(buddyId);
     for (const alias of this.mSettingsManager.get(Setting.MAIL_ALIASES)) {
       if (buddyId === alias) {
         buddyIsCurrentUserOrAlias = true;
@@ -850,7 +850,7 @@ export class ChatZimletBase extends ZmZimletBase {
     }
   }
 
-  private handleNewFriendshipInvitation(buddy: Buddy) {
+  private handleNewFriendshipInvitation(buddy: IBuddy) {
     const title: string = StringUtils.getMessage("accept_friends_title");
     let message: string = StringUtils.getMessage("accept_friends_text", [buddy.getNickname()]);
     message = message.replace(/<b>/g, "");

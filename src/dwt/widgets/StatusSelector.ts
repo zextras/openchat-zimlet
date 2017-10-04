@@ -22,9 +22,9 @@ import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
 import {Callback} from "../../lib/callbacks/Callback";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
+import {BuddyStatusImp} from "../../client/BuddyStatus";
 import {ZxPopupMenu} from "../windows/WindowBase";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 
 export class StatusSelector extends DwtToolBarButton {
 
@@ -56,7 +56,7 @@ export class StatusSelector extends DwtToolBarButton {
     this.onStatusSelectedCbkMgr.addCallback(callback);
   }
 
-  public setOptionStatuses(userStatuses: BuddyStatus[]): void {
+  public setOptionStatuses(userStatuses: IBuddyStatus[]): void {
     for (let userStatus of userStatuses) {
       let item = this.menu.createMenuItem("DwtStatusMenuItem_" + (userStatus.getId()), {
         text: userStatus.getMessage(true),
@@ -69,7 +69,7 @@ export class StatusSelector extends DwtToolBarButton {
     }
   }
 
-  public setCurrentStatus(userStatus: BuddyStatus): void {
+  public setCurrentStatus(userStatus: IBuddyStatus): void {
     this.setText(userStatus.getMessage(true));
     let menuItems: DwtMenuItem[] = this.menu.getMenuItems();
     let results = [];
@@ -79,7 +79,7 @@ export class StatusSelector extends DwtToolBarButton {
     }
   }
 
-  private statusSelected(userStatus: BuddyStatus): void {
+  private statusSelected(userStatus: IBuddyStatus): void {
     this.onStatusSelectedCbkMgr.run(userStatus);
   }
 

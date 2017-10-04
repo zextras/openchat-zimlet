@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JSON3} from "../../../../../libext/json3";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {JSON3} from "../../../../../libext/json3";
 import {SuperSecretEvent} from "../../../../events/chat/SuperSecretEvent";
-import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class SuperSecretEventDecoder extends SoapEventDecoder {
 
@@ -32,18 +32,18 @@ export class SuperSecretEventDecoder extends SoapEventDecoder {
   }
 
   public decodeEvent(eventObj: {[p: string]: any}, originEvent?: ChatEvent): ChatEvent {
-    let internalEvent = JSON3.parse(eventObj["message"]);
+    const internalEvent = JSON3.parse(eventObj.message);
     let eventCode: number;
-    if (typeof internalEvent["type"] === "number") {
-      eventCode = internalEvent["type"];
+    if (typeof internalEvent.type === "number") {
+      eventCode = internalEvent.type;
     } else {
-      eventCode = parseInt(internalEvent["type"], 10);
+      eventCode = parseInt(internalEvent.type, 10);
     }
     if (!this.mDecoders.hasOwnProperty(`${eventCode}`)) {
       throw new Error("Unable to find decoder for event " + eventCode + ".");
     }
-    let decoded: SuperSecretEvent = <SuperSecretEvent>this.mDecoders[`${eventCode}`].decodeEvent(internalEvent, originEvent);
-    decoded.setMessageId(eventObj["ID"]);
+    const decoded: SuperSecretEvent = this.mDecoders[`${eventCode}`].decodeEvent(internalEvent, originEvent) as SuperSecretEvent;
+    decoded.setMessageId(eventObj.ID);
     decoded.setCode(eventCode);
     return decoded;
   }

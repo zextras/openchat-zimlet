@@ -15,23 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {SetStatusEvent} from "../../../../events/chat/SetStatusEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {SoapEventEncoder} from "./SoapEventEncoder";
+import {IChatClient} from "../../IChatClient";
+import {ChatEvent} from "../ChatEvent";
 
-export class SetStatusEventEncoder extends SoapEventEncoder {
-
-  constructor() {
-    super(OpenChatEventCode.SET_STATUS);
-  }
-
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: SetStatusEvent = event as SetStatusEvent;
-    return {
-      status_id: ev.getStatusId(), // ,
-      // rooms: ev.getRooms()
-    };
-  }
-
+export interface IChatEventHandler {
+  getEventCode(): number;
+  handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean;
 }

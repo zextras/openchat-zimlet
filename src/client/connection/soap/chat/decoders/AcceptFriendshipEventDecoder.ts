@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {AcceptFriendshipEvent} from "../../../../events/chat/AcceptFriendshipEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class AcceptFriendshipEventDecoder extends SoapEventDecoder {
 
@@ -27,7 +27,7 @@ export class AcceptFriendshipEventDecoder extends SoapEventDecoder {
   }
 
   public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {
-    return <AcceptFriendshipEvent>originEvent;
+    return originEvent as AcceptFriendshipEvent;
   }
 
 }

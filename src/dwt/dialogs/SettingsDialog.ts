@@ -18,7 +18,7 @@
 import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
-import {ChatClient} from "../../client/ChatClient";
+import {IChatClient} from "../../client/IChatClient";
 import {SessionInfoProvider} from "../../client/SessionInfoProvider";
 import {SettingsManager} from "../../settings/SettingsManager";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
@@ -71,7 +71,7 @@ export class SettingsDialog extends DwtDialog {
 
   private mLog: Logger = LogEngine.getLogger(LogEngine.CHAT);
   private mAppCtxt: ZmAppCtxt;
-  private mClient: ChatClient;
+  private mClient: IChatClient;
   private mSessionInfoProvider: SessionInfoProvider;
   private mPreferenceManager: SettingsManager;
   private mTimedCallbackFactory: TimedCallbackFactory;
@@ -88,7 +88,7 @@ export class SettingsDialog extends DwtDialog {
 
   constructor(appCtxt: ZmAppCtxt,
               shell: DwtShell,
-              client: ChatClient,
+              client: IChatClient,
               sessionInfoProvider: SessionInfoProvider,
               preferenceManager: SettingsManager,
               timedCallbackFactory: TimedCallbackFactory,
@@ -601,7 +601,7 @@ export class SettingsDialog extends DwtDialog {
   public static getDialog(
     appCtxt: ZmAppCtxt,
     shell: DwtShell,
-    client: ChatClient,
+    client: IChatClient,
     sessionInfoProvider: SessionInfoProvider,
     preferenceManager: SettingsManager,
     timedCallbackFactory: TimedCallbackFactory,

@@ -28,12 +28,12 @@ import {MainMenuButton} from "../widgets/MainMenuButton";
 import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
 import {BuddyListTree} from "../widgets/BuddyListTree";
 import {Callback} from "../../lib/callbacks/Callback";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
+import {BuddyStatusImp} from "../../client/BuddyStatus";
 import {DwtControlEvent} from "../../zimbra/ajax/dwt/events/DwtControlEvent";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {Buddy} from "../../client/Buddy";
+import {IBuddy} from "../../client/IBuddy";
 import {GroupTreeItem} from "../widgets/GroupTreeItem";
 import {Group} from "../../client/Group";
 import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
@@ -51,7 +51,7 @@ import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
 
@@ -80,19 +80,19 @@ export class MainWindow extends WindowBase {
   private mBuddyListTree: BuddyListTree;
 
   private mMainWindowPluginManager: ChatPluginManager;
-  private mOnStatusSelectedCallbacks: ((status: BuddyStatus) => void)[];
+  private mOnStatusSelectedCallbacks: ((status: IBuddyStatus) => void)[];
   private mOnAddFriendSelectionCallbacks: (() => void)[];
   private mOnAddGroupSelectionCallbacks: (() => void)[];
   private mOnSettingsSelectionCallbacks: (() => void)[];
   private mOnBuddySelectedCallbacks: ((ev: DwtSelectionEvent) => void)[];
-  private mOnDeleteBuddyCallbacks: ((buddy: Buddy) => void)[];
-  private mOnRenameBuddyCallbacks: ((buddy: Buddy) => void)[];
-  private mOnSendInvitationCallbacks: ((buddy: Buddy) => void)[];
-  private mOnAcceptInvitationCallbacks: ((buddy: Buddy) => void)[];
+  private mOnDeleteBuddyCallbacks: ((buddy: IBuddy) => void)[];
+  private mOnRenameBuddyCallbacks: ((buddy: IBuddy) => void)[];
+  private mOnSendInvitationCallbacks: ((buddy: IBuddy) => void)[];
+  private mOnAcceptInvitationCallbacks: ((buddy: IBuddy) => void)[];
   private mOnRenameGroupCallbacks: ((group: Group) => void)[];
   private mOnDeleteGroupCallbacks: ((group: Group) => void)[];
   private mOnGroupExpandedOrCollapsedCallbacks: ((item: GroupTreeItem, expand: boolean, save: boolean) => void)[];
-  private mOnBuddyDroppedInGroupCallbacks: ((buddy: Buddy, group: Group) => void)[];
+  private mOnBuddyDroppedInGroupCallbacks: ((buddy: IBuddy, group: Group) => void)[];
   private mOnContactDroppedInGroupCallbacks: ((contact: ZmContact, group: Group) => void)[];
   private mOnChangeSidebarOrDockCallbacks: ((docked: boolean) => void)[];
   private mOnShowHideOfflineCbkMgr: ((hide: boolean) => void)[];
@@ -307,12 +307,12 @@ export class MainWindow extends WindowBase {
     );
   }
 
-  public setUserStatuses(userStatuses: BuddyStatus[]): void {
+  public setUserStatuses(userStatuses: IBuddyStatus[]): void {
     this.mStatusSelector.clear();
     this.mStatusSelector.setOptionStatuses(userStatuses);
   }
 
-  public setCurrentStatus(userStatus: BuddyStatus): void {
+  public setCurrentStatus(userStatus: IBuddyStatus): void {
     this.mMainWindowPluginManager.triggerPlugins(MainWindow.StatusChangedPlugin, userStatus);
     this.mStatusSelector.setCurrentStatus(userStatus);
   }
@@ -388,11 +388,11 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.setExpanded(true, false);
   }
 
-  public onStatusSelected(cbk: (status: BuddyStatus) => void): void {
+  public onStatusSelected(cbk: (status: IBuddyStatus) => void): void {
     this.mOnStatusSelectedCallbacks.push(cbk);
   }
 
-  private statusSelected(status: BuddyStatus): void {
+  private statusSelected(status: IBuddyStatus): void {
     for (let cbk of this.mOnStatusSelectedCallbacks) cbk(status);
   }
 
@@ -452,35 +452,35 @@ export class MainWindow extends WindowBase {
     for (let cbk of this.mOnChangeSidebarOrDockCallbacks) cbk(docked);
   }
 
-  public onDeleteBuddy(cbk: (buddy: Buddy) => void): void {
+  public onDeleteBuddy(cbk: (buddy: IBuddy) => void): void {
     this.mOnDeleteBuddyCallbacks.push(cbk);
   }
 
-  private deleteBuddy(buddy: Buddy): void {
+  private deleteBuddy(buddy: IBuddy): void {
     for (let cbk of this.mOnDeleteBuddyCallbacks) cbk(buddy);
   }
 
-  public onRenameBuddy(cbk: (buddy: Buddy) => void): void {
+  public onRenameBuddy(cbk: (buddy: IBuddy) => void): void {
     this.mOnRenameBuddyCallbacks.push(cbk);
   }
 
-  private renameBuddy(buddy: Buddy): void {
+  private renameBuddy(buddy: IBuddy): void {
     for (let cbk of this.mOnRenameBuddyCallbacks) cbk(buddy);
   }
 
-  public onSendInvitation(cbk: (buddy: Buddy) => void): void {
+  public onSendInvitation(cbk: (buddy: IBuddy) => void): void {
     this.mOnSendInvitationCallbacks.push(cbk);
   }
 
-  private inviteBuddy(buddy: Buddy): void {
+  private inviteBuddy(buddy: IBuddy): void {
     for (let cbk of this.mOnSendInvitationCallbacks) cbk(buddy);
   }
 
-  public onAcceptInvitation(cbk: (buddy: Buddy) => void): void {
+  public onAcceptInvitation(cbk: (buddy: IBuddy) => void): void {
     this.mOnAcceptInvitationCallbacks.push(cbk);
   }
 
-  private acceptInvitation(buddy: Buddy): void {
+  private acceptInvitation(buddy: IBuddy): void {
     for (let cbk of this.mOnAcceptInvitationCallbacks) cbk(buddy);
   }
 
@@ -508,11 +508,11 @@ export class MainWindow extends WindowBase {
     for (let cbk of this.mOnGroupExpandedOrCollapsedCallbacks) cbk(item, expand, save);
   }
 
-  public onBuddyDroppedInGroup(cbk: (buddy: Buddy, group: Group) => void): void {
+  public onBuddyDroppedInGroup(cbk: (buddy: IBuddy, group: Group) => void): void {
     this.mOnBuddyDroppedInGroupCallbacks.push(cbk);
   }
 
-  private buddyDroppedInGroup(buddy: Buddy, group: Group): void {
+  private buddyDroppedInGroup(buddy: IBuddy, group: Group): void {
     for (let cbk of this.mOnBuddyDroppedInGroupCallbacks) cbk(buddy, group);
   }
 

@@ -39,12 +39,11 @@ export class ChatEvent extends ClientEvent {
    */
   public setSender(address: string): ChatEvent {
     if (typeof address !== "undefined" && address !== null) {
-      let parts: string[] = address.split("/");
+      const parts: string[] = address.split("/");
       this.mSender = parts[0];
       if (parts.length > 1) {
         this.mSenderResource = parts[1];
-      }
-      else {
+      } else {
         this.mSenderResource = parts[2];
       }
     }
@@ -72,11 +71,10 @@ export class ChatEvent extends ClientEvent {
    * @return {string}
    */
   public getSenderWithResource(): string {
-    if (typeof this.mSender === "undefined") return "";
+    if (typeof this.mSender === "undefined") { return ""; }
     if (typeof this.mSenderResource === "undefined") {
       return this.mSender;
-    }
-    else {
+    } else {
       return this.mSender + "/" + this.mSenderResource;
     }
   }
@@ -90,12 +88,11 @@ export class ChatEvent extends ClientEvent {
   public setDestination(address: string): ChatEvent {
     if (typeof address !== "undefined") {
       if (/\//.test(address)) {
-        let parts: string[] = address.split("/");
+        const parts: string[] = address.split("/");
         this.mDestination = parts[0];
         if (parts.length > 1) {
           this.mDestinationResource = parts[1];
-        }
-        else {
+        } else {
           this.mDestinationResource = parts[2];
         }
       } else {
@@ -126,11 +123,10 @@ export class ChatEvent extends ClientEvent {
    * @return {string}
    */
   public getDestinationWithResource(): string {
-    if (typeof this.mDestination === "undefined") return "";
+    if (typeof this.mDestination === "undefined") { return ""; }
     if (typeof this.mDestinationResource === "undefined") {
       return this.mDestination;
-    }
-    else {
+    } else {
       return this.mDestination + "/" + this.mDestinationResource;
     }
   }

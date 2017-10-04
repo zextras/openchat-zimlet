@@ -20,14 +20,14 @@ import {DateProvider} from "../../lib/DateProvider";
 import {Conversation} from "./Conversation";
 import {Callback} from "../../lib/callbacks/Callback";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
-import {Buddy} from "../../client/Buddy";
+import {IBuddy} from "../../client/IBuddy";
 
 export class MessageReceived extends Message {
 
   constructor(parent: Conversation, message: MessageReceivedObj, dateProvider: DateProvider) {
     super(parent, message, dateProvider);
     (<HTMLElement>this.getHtmlElement().childNodes[0]).setAttribute("sender", "true");
-    let buddy: Buddy = message.getSender();
+    let buddy: IBuddy = message.getSender();
     buddy.onNicknameChange(new Callback(this, this._updateBuddyNickname));
   }
 

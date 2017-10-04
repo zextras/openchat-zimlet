@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventEncoder} from "./SoapEventEncoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {MessageEvent} from "../../../../events/chat/MessageEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventEncoder} from "./SoapEventEncoder";
 
 export class SendMessageEventEncoder extends SoapEventEncoder {
 
@@ -27,14 +27,14 @@ export class SendMessageEventEncoder extends SoapEventEncoder {
   }
 
   protected getEventDetails(event: ChatEvent): {} {
-    let ev: MessageEvent = <MessageEvent> event;
+    const ev: MessageEvent = event as MessageEvent;
     return {
       ID: ev.getMessageId(),
       from: event.getSender(),
-      to: event.getDestination(),
       message: ev.getMessage(),
+      message_type: MessageEvent.convertFromMessageType(ev.getType()),
       timestampSent: ev.getDate().getTime(),
-      message_type: MessageEvent.convertFromMessageType(ev.getType())
+      to: event.getDestination(),
     };
   }
 

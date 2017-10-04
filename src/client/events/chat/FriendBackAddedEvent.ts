@@ -15,20 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IBuddy} from "../../IBuddy";
 import {ChatEvent} from "../ChatEvent";
-import {Buddy} from "../../Buddy";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class FriendBackAddedEvent extends ChatEvent {
 
-  private mBuddy: Buddy;
+  private mBuddy: IBuddy;
 
-  constructor(buddy: Buddy, creationDate: Date) {
+  constructor(buddy: IBuddy, creationDate: Date) {
     super(OpenChatEventCode.FRIEND_BACK_ADDED, creationDate, false);
     this.mBuddy = buddy;
   }
 
-  public getBuddy(): Buddy {
+  public getBuddy(): IBuddy {
     return this.mBuddy;
   }
 }

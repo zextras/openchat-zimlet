@@ -15,31 +15,113 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ArrayUtils} from "../lib/ArrayUtils";
 import {Callback} from "../lib/callbacks/Callback";
-import {BuddyStatus} from "./BuddyStatus";
+import {CallbackManager} from "../lib/callbacks/CallbackManager";
+import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
+import {BuddySessionKeeper} from "./BuddySessionKeeper";
+import {IBuddyStatus} from "./IBuddyStatus";
 import {Group} from "./Group";
+import {IBuddy} from "./IBuddy";
 
-export interface Buddy {
+export class Buddy implements IBuddy {
 
-  getId(): string;
-  setNickname(newNick: string): void;
-  getNickname(): string;
-  addGroup(group: Group): void;
-  removeGroup(groupName: string): void;
-  getGroups(filterFcn?: (g: Group) => boolean): Group[];
-  setStatus(status: BuddyStatus, resource?: string): void;
-  clearStatuses(): void;
-  getStatus(): BuddyStatus;
+  private static filterFcnReturnTrue(group: Group): boolean {
+    return true;
+  }
+
+  private mSessionKeeper: BuddySessionKeeper = new BuddySessionKeeper();
+  private mOnStatusChangeCbkMgr: CallbackManager = new CallbackManager();
+  private mOnNicknameChangeCbkMgr: CallbackManager = new CallbackManager();
+
+  private mId: string;
+  private mNickname: string;
+  private mGroups: Group[];
+
+  constructor(
+    id: string,
+    nickname: string,
+    groups: Group[] = [],
+  ) {
+    this.mId = id;
+    this.mNickname = nickname;
+    this.mGroups = groups;
+  }
+
+  public getId(): string {
+    return this.mId;
+  }
+
+  public setNickname(newNick: string): void {
+    const isChanged: boolean = (this.mNickname !== newNick);
+    this.mNickname = newNick;
+    if (isChanged) {
+     this.mOnNicknameChangeCbkMgr.run(this.getNickname());
+    }
+  }
+
+  public getNickname(): string {
+    return AjxStringUtil.htmlEncode(this.mNickname);
+  }
+
+  public addGroup(group: Group): void {
+    this.mGroups.push(group);
+  }
+
+  public removeGroup(groupName: string): void {
+    const indexes: number[] = [];
+    for (let i = 0; i < this.mGroups.length; i += 1) {
+      if (groupName === this.mGroups[i].getName()) {
+        indexes.push(i);
+      }
+    }
+    indexes.reverse();
+    for (const index of indexes) {
+      this.mGroups.splice(index, 1);
+    }
+  }
+
+  public getGroups(filterFcn?: (val: any) => boolean): Group[] {
+    if (typeof filterFcn !== "function") {
+      filterFcn = Buddy.filterFcnReturnTrue;
+    }
+    return ArrayUtils.filter(this.mGroups, filterFcn);
+  }
+
+  public setStatus(status: IBuddyStatus, resource: string = "default"): void {
+    const currentStatus: IBuddyStatus = this.getStatus();
+    this.mSessionKeeper.writeStatus(resource, status);
+    if (!currentStatus.equals(this.getStatus())) {
+      this.mOnStatusChangeCbkMgr.run(this, this.getStatus());
+    }
+  }
+
+  public clearStatuses(): void {
+    this.mSessionKeeper.clear();
+  }
+
+  public getStatus(): IBuddyStatus {
+    return this.mSessionKeeper.getMostAvailableStatus();
+  }
+
   /**
    * Callback function params:
    * (nickName: string)
    */
-  onNicknameChange(callback: Callback): void;
+  public onNicknameChange(callback: Callback): void {
+    this.mOnNicknameChangeCbkMgr.addCallback(Callback.standardize(callback));
+  }
+
   /**
    * Callback function params:
-   * (buddy: Buddy)
+   * (buddy: IBuddy, status: IBuddyStatus)
    */
-  onStatusChange(callback: Callback): void;
-  filterTest(regex: RegExp): boolean;
+  public onStatusChange(callback: Callback): void {
+    this.mOnStatusChangeCbkMgr.addCallback(Callback.standardize(callback));
+  }
+
+  public filterTest(regex: RegExp): boolean {
+    return (regex.test(this.mId) || regex.test(this.mNickname));
+  }
 
 }
