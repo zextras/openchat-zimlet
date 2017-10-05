@@ -23,7 +23,7 @@ export class WindowsMap extends Map {
 
   public put(key: string|RoomWindow, value?: any): any;
   public put(key: any, value?: any): any {
-    let wnd: RoomWindow = key;
+    const wnd: RoomWindow = key;
     return super.put(wnd.getId(), wnd);
   }
 

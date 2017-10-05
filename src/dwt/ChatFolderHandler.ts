@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {appCtxt} from "../zimbra/zimbraMail/appCtxt";
 import {DwtTreeItem} from "../zimbra/ajax/dwt/widgets/DwtTreeItem";
+import {appCtxt} from "../zimbra/zimbraMail/appCtxt";
 import {ZmApp} from "../zimbra/zimbraMail/core/ZmApp";
 import {ZmOverview} from "../zimbra/zimbraMail/share/view/ZmOverview";
 

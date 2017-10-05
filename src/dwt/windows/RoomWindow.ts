@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {WritingStatusEvent} from "../../client/events/chat/WritingStatusEvent";
 import {IBuddy} from "../../client/IBuddy";
 import {IBuddyStatus} from "../../client/IBuddyStatus";
-import {WritingStatusEvent} from "../../client/events/chat/WritingStatusEvent";
+import {IRoom} from "../../client/IRoom";
 import {MessageReceived} from "../../client/MessageReceived";
 import {MessageSent} from "../../client/MessageSent";
 import {MessageWritingStatus} from "../../client/MessageWritingStatus";
-import {IRoom} from "../../client/IRoom";
 import {SessionInfoProvider} from "../../client/SessionInfoProvider";
 import {TextCompletePlugin} from "../../jquery/TextCompletePlugin";
 import {Callback} from "../../lib/callbacks/Callback";
