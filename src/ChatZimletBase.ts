@@ -15,11 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IBuddy} from "./client/IBuddy";
-import {IBuddyStatus} from "./client/IBuddyStatus";
 import {BuddyStatusImp} from "./client/BuddyStatus";
 import {BuddyStatusType} from "./client/BuddyStatusType";
-import {IChatClient} from "./client/IChatClient";
 import {ChatClient} from "./client/ChatClient";
 import {IConnectionManager} from "./client/connection/IConnectionManager";
 import {EventSessionRegistered} from "./client/events/chat/EventSessionRegistered";
@@ -27,6 +24,9 @@ import {RemoveFriendshipEvent} from "./client/events/chat/RemoveFriendshipEvent"
 import {EventManager} from "./client/events/EventManager";
 import {Group} from "./client/Group";
 import {GroupStats} from "./client/GroupStats";
+import {IBuddy} from "./client/IBuddy";
+import {IBuddyStatus} from "./client/IBuddyStatus";
+import {IChatClient} from "./client/IChatClient";
 import {IRoom} from "./client/IRoom";
 import {RoomManager} from "./client/RoomManager";
 import {SessionInfoProvider} from "./client/SessionInfoProvider";

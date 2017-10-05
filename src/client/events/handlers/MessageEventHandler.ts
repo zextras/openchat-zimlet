@@ -18,10 +18,10 @@
 import {ChatPluginManager} from "../../../lib/plugin/ChatPluginManager";
 import {IBuddy} from "../../IBuddy";
 import {IChatClient} from "../../IChatClient";
+import {IRoom} from "../../IRoom";
 import {MessageReceived} from "../../MessageReceived";
 import {MessageSent} from "../../MessageSent";
 import {MessageWritingStatus} from "../../MessageWritingStatus";
-import {IRoom} from "../../IRoom";
 import {MessageEvent, MessageType} from "../chat/MessageEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 import {WritingStatusEvent} from "../chat/WritingStatusEvent";
@@ -44,7 +44,11 @@ export class MessageEventHandler implements IChatEventHandler {
           let destRoom = client.getRoomManager().getRoomById(dest);
           if (typeof destRoom === "undefined") {
             const roomPluginManager = new ChatPluginManager();
-            destRoom = client.getRoomManager().createRoom(destBuddy.getId(), destBuddy.getNickname(), roomPluginManager);
+            destRoom = client.getRoomManager().createRoom(
+              destBuddy.getId(),
+              destBuddy.getNickname(),
+              roomPluginManager,
+              );
             destRoom.addMember(destBuddy);
           }
           const messageSent = new MessageSent(
@@ -64,7 +68,11 @@ export class MessageEventHandler implements IChatEventHandler {
         if (originBuddy != null) {
           if (typeof originRoom === "undefined") {
             const roomPluginManager = new ChatPluginManager();
-            originRoom = client.getRoomManager().createRoom(originBuddy.getId(), originBuddy.getNickname(), roomPluginManager);
+            originRoom = client.getRoomManager().createRoom(
+              originBuddy.getId(),
+              originBuddy.getNickname(),
+              roomPluginManager,
+            );
             originRoom.addMember(originBuddy);
           }
           const messageReceived: MessageReceived = new MessageReceived(

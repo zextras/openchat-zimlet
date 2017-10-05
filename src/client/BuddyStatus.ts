@@ -152,8 +152,11 @@ export class BuddyStatusImp implements IBuddyStatus {
       case BuddyStatusType.OFFLINE:
         return "st_offline";
       case BuddyStatusType.INVISIBLE:
-        if (returnReal) return "st_invisible";
-        else return "st_offline";
+        if (returnReal) {
+          return "st_invisible";
+        } else {
+          return "st_offline";
+        }
       default:
         return this.mMessage;
     }

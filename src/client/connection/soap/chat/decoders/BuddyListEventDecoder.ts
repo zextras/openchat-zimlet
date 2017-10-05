@@ -16,13 +16,13 @@
  */
 
 import {DateProvider} from "../../../../../lib/DateProvider";
-import {IBuddy} from "../../../../IBuddy";
 import {Buddy} from "../../../../Buddy";
 import {BuddyStatusImp} from "../../../../BuddyStatus";
 import {BuddyListEvent} from "../../../../events/chat/BuddyListEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {Group} from "../../../../Group";
+import {IBuddy} from "../../../../IBuddy";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class BuddyListEventDecoder extends SoapEventDecoder {
@@ -33,7 +33,17 @@ export class BuddyListEventDecoder extends SoapEventDecoder {
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {buddy_list: Array<{id: string, nickname: string, group: string, statusType: number}>}, originEvent?: ChatEvent): ChatEvent {
+  public decodeEvent(
+    eventObj: {
+      buddy_list: Array<{
+        group: string,
+        id: string,
+        nickname: string,
+        statusType: number,
+      }>,
+    },
+    originEvent?: ChatEvent,
+  ): ChatEvent {
     const event: BuddyListEvent = new BuddyListEvent(this.mDateProvider.getNow());
     const groups: Group[] = [];
 

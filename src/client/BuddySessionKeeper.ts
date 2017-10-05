@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IBuddyStatus} from "./IBuddyStatus";
 import {BuddyStatusImp} from "./BuddyStatus";
 import {BuddyStatusType} from "./BuddyStatusType";
+import {IBuddyStatus} from "./IBuddyStatus";
 
 export class BuddySessionKeeper {
 

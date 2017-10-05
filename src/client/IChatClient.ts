@@ -26,11 +26,11 @@ import {ChatEvent} from "./events/ChatEvent";
 import {Group} from "./Group";
 import {IBuddy} from "./IBuddy";
 import {IBuddyStatus} from "./IBuddyStatus";
+import {IUserStatusManager} from "./IUserStatusManager";
 import {MessageAckWaiter} from "./MessageAckWaiter";
 import {MessageReceived} from "./MessageReceived";
 import {RoomManager} from "./RoomManager";
 import {SessionInfoProvider} from "./SessionInfoProvider";
-import {IUserStatusManager} from "./IUserStatusManager";
 
 export interface IChatClient {
 

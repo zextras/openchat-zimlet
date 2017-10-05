@@ -279,7 +279,13 @@ export class Room implements IRoom {
   public sendWritingStatus(value: number, callback?: Callback, errorCallback?: Callback): void {
     // if (!this.isGroupChat()) {
       for (const member of this.members) {
-        const event = new WritingStatusEvent(null, member.getId(), this.mDateProvider.getNow(), this.mDateProvider.getNow(), value);
+        const event = new WritingStatusEvent(
+          null,
+          member.getId(),
+          this.mDateProvider.getNow(),
+          this.mDateProvider.getNow(),
+          value,
+        );
         this._sendEvent(event, callback, errorCallback);
       }
     // }

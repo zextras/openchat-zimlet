@@ -42,7 +42,10 @@ export class SuperSecretEventDecoder extends SoapEventDecoder {
     if (!this.mDecoders.hasOwnProperty(`${eventCode}`)) {
       throw new Error("Unable to find decoder for event " + eventCode + ".");
     }
-    const decoded: SuperSecretEvent = this.mDecoders[`${eventCode}`].decodeEvent(internalEvent, originEvent) as SuperSecretEvent;
+    const decoded: SuperSecretEvent = this.mDecoders[`${eventCode}`].decodeEvent(
+      internalEvent,
+      originEvent,
+    ) as SuperSecretEvent;
     decoded.setMessageId(eventObj.ID);
     decoded.setCode(eventCode);
     return decoded;

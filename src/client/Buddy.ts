@@ -20,9 +20,9 @@ import {Callback} from "../lib/callbacks/Callback";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
 import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
 import {BuddySessionKeeper} from "./BuddySessionKeeper";
-import {IBuddyStatus} from "./IBuddyStatus";
 import {Group} from "./Group";
 import {IBuddy} from "./IBuddy";
+import {IBuddyStatus} from "./IBuddyStatus";
 
 export class Buddy implements IBuddy {
 

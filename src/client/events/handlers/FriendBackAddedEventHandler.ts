@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IBuddy} from "../../IBuddy";
 import {BuddyList} from "../../BuddyList";
-import {IChatClient} from "../../IChatClient";
 import {Group} from "../../Group";
+import {IBuddy} from "../../IBuddy";
+import {IChatClient} from "../../IChatClient";
 import {FriendBackAddedEvent} from "../chat/FriendBackAddedEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 import {ChatEvent} from "../ChatEvent";

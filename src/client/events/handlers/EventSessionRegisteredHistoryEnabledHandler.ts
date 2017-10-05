@@ -30,7 +30,9 @@ export class EventSessionRegisteredHistoryEnabledHandler implements IChatEventHa
   }
 
   public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    // client.getSessionInfoProvider().setHistoryEnabled((<EventSessionRegistered> chatEvent).getInfo("history_enabled"));
+    // client.getSessionInfoProvider().setHistoryEnabled(
+    //   (<EventSessionRegistered> chatEvent).getInfo("history_enabled"),
+    // );
     const chatFolderHandler = new ChatFolderHandler(
       ZmFolder.ID_CHATS,
       ZmFolder.HIDE_ID,

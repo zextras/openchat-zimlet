@@ -25,7 +25,10 @@ export class SoapCommands {
 
   public static registerCommands(commandFactory: CommandFactory): void {
     commandFactory.addCommand(OpenChatEventCode.MESSAGE, Command.SEND_MESSAGE);
-    commandFactory.addSpecialCommand(OpenChatEventCode.FRIENDSHIP, FriendshipInvitationEvent.getCommandFromFriendshipEvent);
+    commandFactory.addSpecialCommand(
+      OpenChatEventCode.FRIENDSHIP,
+      FriendshipInvitationEvent.getCommandFromFriendshipEvent,
+    );
     commandFactory.addCommand(OpenChatEventCode.WRITING_STATUS, Command.NOTIFY_WRITING);
     commandFactory.addCommand(OpenChatEventCode.MESSAGE_ACK, Command.NOTIFY_MSG_RECEIVED);
     commandFactory.addCommand(OpenChatEventCode.PING, Command.PING);

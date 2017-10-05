@@ -28,16 +28,24 @@ import {IBuddy} from "../../client/IBuddy";
 
 export class DeleteBuddyDialog extends DwtMessageDialog {
 
-  private static _dialog: DeleteBuddyDialog = null;
+  public static getDialog(shell: DwtShell, client: IChatClient, callback: Callback) {
+    if (DeleteBuddyDialog._DIALOG == null) {
+      DeleteBuddyDialog._DIALOG = new DeleteBuddyDialog(shell, client, callback);
+    }
+    DeleteBuddyDialog._DIALOG.clear();
+    return DeleteBuddyDialog._DIALOG;
+  }
+
+  private static _DIALOG: DeleteBuddyDialog = null;
   private client: IChatClient;
   private buddy: IBuddy = null;
   private onDeletedCallback: Callback;
 
   constructor(shell: DwtShell, client: IChatClient, callback: Callback) {
     super({
-      parent: shell,
       buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
-      id: IdGenerator.generateId("ZxChat_DeleteBuddyDialog")
+      id: IdGenerator.generateId("ZxChat_DeleteBuddyDialog"),
+      parent: shell,
     });
     this.client = client;
     this.onDeletedCallback = callback;
@@ -47,17 +55,15 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
     this.addListener(DwtEvent.ENTER, new AjxListener(this, this._yesBtnListener));
   }
 
-  public static getDialog(shell: DwtShell, client: IChatClient, callback: Callback) {
-    if (DeleteBuddyDialog._dialog == null) {
-      DeleteBuddyDialog._dialog = new DeleteBuddyDialog(shell, client, callback);
-    }
-    DeleteBuddyDialog._dialog.clear();
-    return DeleteBuddyDialog._dialog;
-  }
-
   public setBuddy(buddy: IBuddy): void {
     this.buddy = buddy;
-    DeleteBuddyDialog._dialog.setMessage(StringUtils.getMessage("delete_friends_text", [buddy.getNickname()]), DwtMessageDialog.WARNING_STYLE);
+    DeleteBuddyDialog._DIALOG.setMessage(
+      StringUtils.getMessage(
+        "delete_friends_text",
+        [buddy.getNickname()],
+      ),
+      DwtMessageDialog.WARNING_STYLE,
+    );
   }
 
   public clear(): void {
@@ -66,7 +72,7 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
   }
 
   private _yesBtnListener(): void {
-    if (typeof this.buddy !== null) {
+    if (typeof this.buddy !== "undefined" && this.buddy !== null) {
       this.client.deleteFriendship(this.buddy, this.onDeletedCallback);
     }
     this.popdown();

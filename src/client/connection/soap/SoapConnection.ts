@@ -58,7 +58,8 @@ export class SoapConnection implements IConnection {
 
     // TODO: Accumulate events with command "Command.NOTIFY_MSG_RECEIVED"
     if (
-      (typeof this.mSessionInfoProvider.getSessionId() === "undefined" || this.mSessionInfoProvider.getSessionId() === null)
+      (typeof this.mSessionInfoProvider.getSessionId() === "undefined"
+        || this.mSessionInfoProvider.getSessionId() === null)
       &&  command !== Command.REGISTER_SESSION
     ) {
       errorCallback.run(

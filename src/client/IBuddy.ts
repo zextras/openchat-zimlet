@@ -16,8 +16,8 @@
  */
 
 import {Callback} from "../lib/callbacks/Callback";
-import {IBuddyStatus} from "./IBuddyStatus";
 import {Group} from "./Group";
+import {IBuddyStatus} from "./IBuddyStatus";
 
 export interface IBuddy {
 

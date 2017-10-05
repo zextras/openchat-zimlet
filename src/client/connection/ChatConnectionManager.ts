@@ -148,7 +148,12 @@ export class ChatConnectionManager implements IConnectionManager {
     return this.mEventParser;
   }
 
-  private processResponse(originEvent: BasicEvent, callback: Callback, errorCallback: Callback, responses: BasicEvent | BasicEvent[] | any): void {
+  private processResponse(
+    originEvent: BasicEvent,
+    callback: Callback,
+    errorCallback: Callback,
+    responses: BasicEvent | BasicEvent[] | any,
+  ): void {
     if (!ArrayUtils.isArray(responses)) { // TODO: Investigate about it
       responses = [responses as BasicEvent];
     }

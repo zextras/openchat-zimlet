@@ -30,7 +30,9 @@ export class MessageAckReceivedEventHandler implements IChatEventHandler {
 
   public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
     const messageAckReceivedEvent: MessageAckReceivedEvent = chatEvent as MessageAckReceivedEvent;
-    const messageSent: MessageSent = client.getMessageAckWaiter().getMessageById(messageAckReceivedEvent.getMessageId());
+    const messageSent: MessageSent = client.getMessageAckWaiter().getMessageById(
+      messageAckReceivedEvent.getMessageId(),
+    );
     if (messageSent != null) {
       messageSent.setDelivered();
       client.getMessageAckWaiter().removeMessage(messageSent);

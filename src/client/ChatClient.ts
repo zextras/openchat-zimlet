@@ -445,7 +445,8 @@ export class ChatClient implements IChatClient {
 
   private _sendFriendshipCallback(response: {is_valid: boolean}): void {
     const compatVersion = new Version(0, 55, 0);
-    if (this.mSessionInfoProvider.getServerVersion().lessThan(compatVersion) || this.mSessionInfoProvider.getServerVersion().equals(compatVersion)) {
+    if (this.mSessionInfoProvider.getServerVersion().lessThan(compatVersion)
+      || this.mSessionInfoProvider.getServerVersion().equals(compatVersion)) {
       if (!response.is_valid) {
         return this._sendFriendshipErrorCallback(new ZxError());
       }

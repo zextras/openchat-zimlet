@@ -125,7 +125,9 @@ export class PingManager implements IPingManager {
     this.doPing();
   }
 
-  private checkPresenceRequiredRegistrationEvent(responses: Array<{type: number}>): boolean { // TODO: Investigate on response type
+  private checkPresenceRequiredRegistrationEvent(
+    responses: Array<{type: number}>,
+  ): boolean { // TODO: Investigate on response type
     for (const response of responses) {
       if (response.type === OpenChatEventCode.REQUIRED_REGISTRATION) {
         this.closeStream();
@@ -175,7 +177,9 @@ export class PingManager implements IPingManager {
       notify = false;
     }
 
-    if (error.getCode() === ZxErrorCode.ZM_CSFE_EXCEPTION && error.getDetail("code") === "service.UNKNOWN_DOCUMENT" && this.mRetryAttempted < 1) {
+    if (error.getCode() === ZxErrorCode.ZM_CSFE_EXCEPTION
+      && error.getDetail("code") === "service.UNKNOWN_DOCUMENT"
+      && this.mRetryAttempted < 1) {
       // ZXCHAT-493 Add a panic-button, if there are too many request to the server, shutting it down
       //   will trigger a 5 minutes timeout.
       notify = false;

@@ -16,11 +16,11 @@
  */
 
 import {DateProvider} from "../../../../../lib/DateProvider";
-import {IBuddyStatus} from "../../../../IBuddyStatus";
 import {BuddyStatusImp} from "../../../../BuddyStatus";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {UserStatusesEvent} from "../../../../events/chat/UserStatusesEvent";
 import {ChatEvent} from "../../../../events/ChatEvent";
+import {IBuddyStatus} from "../../../../IBuddyStatus";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class UserStatusesEventDecoder extends SoapEventDecoder {

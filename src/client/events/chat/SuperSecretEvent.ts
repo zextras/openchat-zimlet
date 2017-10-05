@@ -16,7 +16,6 @@
  */
 
 import {JSON3} from "../../../libext/json3";
-
 import {MessageEvent, MessageType} from "./MessageEvent";
 
 export class SuperSecretEvent extends MessageEvent {
@@ -31,7 +30,15 @@ export class SuperSecretEvent extends MessageEvent {
     creationDate: Date,
   ) {
     // noinspection TypeScriptValidateTypes
-    super("", sender, destination, "{}", MessageEvent.convertFromMessageType(MessageType.CHAT), creationDate, creationDate);
+    super(
+      "",
+      sender,
+      destination,
+      "{}",
+      MessageEvent.convertFromMessageType(MessageType.CHAT),
+      creationDate,
+      creationDate,
+    );
     this.mTypeSecret = type;
   }
 

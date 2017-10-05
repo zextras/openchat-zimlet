@@ -15,27 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
-import {IChatClient} from "../../client/IChatClient";
-import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {Group} from "../../client/Group";
+import {IChatClient} from "../../client/IChatClient";
 import {StringUtils} from "../../lib/StringUtils";
-import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
-import {IdGenerator} from "../IdGenerator";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
+import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
+import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {DwtMessageDialog} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
+import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
+import {IdGenerator} from "../IdGenerator";
 
 export class RenameGroupDialog extends ZmDialog {
 
   private appCtxt: ZmAppCtxt;
   private client: IChatClient;
   private group: Group;
-  private _groupNameEl: HTMLInputElement;
+  private groupNameEl: HTMLInputElement;
 
   constructor(params: ZmDialogParams, client: IChatClient, appCtxt: ZmAppCtxt, group: Group) {
     params.title = StringUtils.getMessage("rename_group_title");
@@ -50,40 +50,45 @@ export class RenameGroupDialog extends ZmDialog {
     this.addListener(DwtEvent.ENTER, new AjxListener(this, this._okBtnListener));
   }
 
-
   public popup(loc?: DwtPoint | any, focusButtonId?: number | any): void {
     super.popup(loc, focusButtonId);
-    this._groupNameEl.focus();
-  }
-
-  private _createDialogView() {
-    let data = {
-      id: this._htmlElId,
-      msg_group_name: StringUtils.getMessage("create_group_name")
-    };
-    let view = new DwtComposite(this);
-    if (view.getHtmlElement() != null) {
-      view.getHtmlElement().style.overflow = "auto";
-      view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#AddGroupDialog", data);
-    }
-    this._groupNameEl = <HTMLInputElement>document.getElementById(data.id + "_group_name");
-    this._groupNameEl.value = AjxStringUtil.htmlDecode(this.group.getName());
-    return view;
+    this.groupNameEl.focus();
   }
 
   public _okBtnListener() {
-    let newName = StringUtils.trim(this._groupNameEl.value);
-    let group = this.client.getBuddyList().getGroup(newName);
+    const newName = StringUtils.trim(this.groupNameEl.value);
+    const group = this.client.getBuddyList().getGroup(newName);
     if (group != null) {
-      let msgDialog = this.appCtxt.getMsgDialog();
-      msgDialog.setMessage(StringUtils.getMessage("cannote_create_group_already_exists", [newName]), DwtMessageDialog.WARNING_STYLE);
+      const msgDialog = this.appCtxt.getMsgDialog();
+      msgDialog.setMessage(
+        StringUtils.getMessage(
+          "cannote_create_group_already_exists",
+          [newName],
+        ),
+        DwtMessageDialog.WARNING_STYLE,
+      );
       return msgDialog.popup();
     } else {
-      let oldName = this.group.getName();
+      const oldName = this.group.getName();
       this.group.setName(newName);
       this.client.renameGroup(oldName, newName);
       return this.popdown();
     }
+  }
+
+  private _createDialogView() {
+    const data = {
+      id: this._htmlElId,
+      msg_group_name: StringUtils.getMessage("create_group_name"),
+    };
+    const view = new DwtComposite(this);
+    if (view.getHtmlElement() != null) {
+      view.getHtmlElement().style.overflow = "auto";
+      view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#AddGroupDialog", data);
+    }
+    this.groupNameEl = document.getElementById(data.id + "_group_name") as HTMLInputElement;
+    this.groupNameEl.value = AjxStringUtil.htmlDecode(this.group.getName());
+    return view;
   }
 
 }
