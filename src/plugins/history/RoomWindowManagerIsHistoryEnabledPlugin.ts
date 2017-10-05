@@ -17,10 +17,10 @@
 
 import {RoomWindow} from "../../dwt/windows/RoomWindow";
 import {RoomWindowManager} from "../../dwt/windows/RoomWindowManager";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {RoomWindowHistoryEnablePlugin} from "./RoomWindowHistoryEnablePlugin";
 
-export class RoomWindowManagerIsHistoryEnabledPlugin implements ChatPlugin {
+export class RoomWindowManagerIsHistoryEnabledPlugin implements IChatPlugin {
 
   public trigger(roomWindowManager: RoomWindowManager, roomWindow: RoomWindow): void {
     roomWindow.getPluginManager().triggerPlugins(

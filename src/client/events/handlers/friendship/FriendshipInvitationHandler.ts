@@ -16,11 +16,10 @@
  */
 
 import {ChatZimletBase} from "../../../../ChatZimletBase";
-import {IBuddy} from "../../../IBuddy";
 import {Buddy} from "../../../Buddy";
-import {BuddyList} from "../../../BuddyList";
 import {BuddyStatusImp} from "../../../BuddyStatus";
 import {BuddyStatusType} from "../../../BuddyStatusType";
+import {IBuddy} from "../../../IBuddy";
 import {IChatClient} from "../../../IChatClient";
 import {FriendshipInvitationEvent} from "../../chat/friendship/FriendshipInvitationEvent";
 import {ChatEvent} from "../../ChatEvent";

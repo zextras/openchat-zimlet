@@ -16,7 +16,7 @@
  */
 
 import {JSON3} from "../../libext/json3";
-import {printStackTrace, TraceLine} from "../../libext/stacktrace-js";
+import {ITraceLine, printStackTrace} from "../../libext/stacktrace-js";
 import {XRegExp} from "../../libext/xregexp";
 import {AjxException} from "../../zimbra/ajax/core/AjxException";
 import {ZxErrorCode} from "./ZxErrorCode";
@@ -129,9 +129,9 @@ export class ZxError extends Error {
   public static buildStackTrace(
     error: Error|ZxError|AjxException,
     mode?: "phantomjs"|"chrome"|"safari"|"ie"|"firefox"|"opera9"|"opera10a"|"opera10b"|"opera11"|"chrome"|"other",
-  ): TraceLine[] {
+  ): ITraceLine[] {
     let err: Error;
-    let trace: TraceLine[] = [];
+    let trace: ITraceLine[] = [];
     if (mode == null) {
       mode = null;
     }
@@ -143,7 +143,7 @@ export class ZxError extends Error {
         error = err;
       }
     }
-    const emptyTraceLine: TraceLine = {
+    const emptyTraceLine: ITraceLine = {
       className: "Unknown",
       fileName: "UnknownFile",
       lineNumber: 0,
@@ -151,7 +151,7 @@ export class ZxError extends Error {
       nativeMethod: false,
     };
 
-    const errorTraceLine: TraceLine = {
+    const errorTraceLine: ITraceLine = {
       className: "Unknown",
       fileName: "UnknownFile, cannot be parsed",
       lineNumber: 0,
@@ -172,7 +172,7 @@ export class ZxError extends Error {
         && (error as AjxException).toString !== null)
         && (error as AjxException).toString() === "AjxException")
     ) {
-      const stackStrings: TraceLine[] = printStackTrace({
+      const stackStrings: ITraceLine[] = printStackTrace({
         e: error as Error,
         mode: mode,
       });
@@ -221,9 +221,9 @@ export class ZxError extends Error {
       //      )
       const regex: RegExp = new XRegExp("(?: (?<ClassName>[^ ]+) \\. )? (?: \\{anonymous\\}\\(\\) | (?<Method>.+) ) @ (?: [^ ]+[^\\\\]/ (?<FileName>[^ ?:]+) (?: \\?[^ :]+ )? | <anonymous> ) : (?<Line>\\d+) :?(?<Character>\\d+)?", "x");
       for (let i: number = 0, len: number = stackStrings.length; i < len; i++) {
-        const oneMatch: TraceLine = stackStrings[i];
+        const oneMatch: ITraceLine = stackStrings[i];
         try {
-          const match: MatchedRegexp = XRegExp.exec(oneMatch, regex);
+          const match: IMatchedRegexp = XRegExp.exec(oneMatch, regex);
           if (typeof match !== "undefined" && match !== null) {
             let className: string = "Unknown";
             if (typeof match.ClassName !== "undefined" && match.ClassName !== null) {
@@ -274,7 +274,7 @@ export class ZxError extends Error {
   private mMessage: string;
   private mIsException: boolean;
   private mDetails: {[detail: string]: string};
-  private mTrace: TraceLine[];
+  private mTrace: ITraceLine[];
 
   constructor(code?: string, cause?: Error) {
     if (code == null) {
@@ -342,8 +342,8 @@ export class ZxError extends Error {
     let obj: {[property: string]: any};
     let ref;
     let trace;
-    let traceEl: TraceLine;
-    let traceJson: TraceLine;
+    let traceEl: ITraceLine;
+    let traceJson: ITraceLine;
     obj = {};
     obj[ZxError.KEY_CODE] = this.mCode;
     obj[ZxError.KEY_MESSAGE] = this.mMessage;
@@ -452,12 +452,12 @@ export class ZxError extends Error {
     return this;
   }
 
-  public setStackTrace(trace: TraceLine[]): ZxError {
+  public setStackTrace(trace: ITraceLine[]): ZxError {
     this.mTrace = trace;
     return this;
   }
 
-  public getStackTrace(): TraceLine[] {
+  public getStackTrace(): ITraceLine[] {
     return this.mTrace;
   }
 
@@ -511,7 +511,7 @@ export class ZxError extends Error {
   }
 }
 
-interface MatchedRegexp {
+interface IMatchedRegexp {
   ClassName: string;
   Method: string;
   FileName: string;

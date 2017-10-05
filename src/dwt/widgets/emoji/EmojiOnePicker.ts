@@ -25,7 +25,7 @@ import {DwtMenu} from "../../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {DwtTabView, DwtTabViewPage} from "../../../zimbra/ajax/dwt/widgets/DwtTabView";
 import {DwtToolBar, DwtToolBarButton} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
-import {IEmojiData, EmojiTemplate} from "./EmojiTemplate";
+import {EmojiTemplate, IEmojiData} from "./EmojiTemplate";
 
 export class EmojiOnePicker extends DwtMenu {
 

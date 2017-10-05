@@ -16,9 +16,9 @@
  */
 
 import {Message} from "../../client/Message";
-import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
+import {IChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 
-export class RoomHistoryFieldPlugin implements ChatFieldPlugin {
+export class RoomHistoryFieldPlugin implements IChatFieldPlugin {
 
   public static FieldName = "Room History";
 

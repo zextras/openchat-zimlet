@@ -15,33 +15,35 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JQueryPlugin} from "./JQueryPlugin";
+import {IJQueryPlugin} from "./JQueryPlugin";
 
 declare let $: any;
 
-export class LoadingDotsPlugin implements JQueryPlugin {
+export class LoadingDotsPlugin implements IJQueryPlugin {
 
   public install(): void {
     if (typeof $.fn.loadingdots !== "undefined") { return; }
 
     $.fn.loadingdots = function( options: {} )
     {
-      let i = 0,
-        settings = $.extend( {}, { duration : 250 }, options ),
-        bucle = function() {
-          let $el = $(this),
-            cycle: Function,
-            timing = i * settings.duration,
-            first = true;
+      let i = 0;
+      const settings = $.extend( {}, { duration : 250 }, options );
+      const bucle = function() {
+          const $el = $(this);
+          // tslint:disable-next-line
+          let cycle: Function;
+          let timing = i * settings.duration;
+          let first = true;
           i++;
-          cycle = function()
-          {
+          cycle = () => {
             // if it's not the first time the cycle is called for a dot then the timing fired is 0
-            if ( !first )
+            if ( !first ) {
               timing = 0;
-            else
+            } else {
               first = false;
-            // delay the animation the timing needed, and then make the animation to fadeIn and Out the dot to make the effect
+            }
+            // delay the animation the timing needed,
+            // and then make the animation to fadeIn and Out the dot to make the effect
             $el.delay( timing )
               .fadeTo( 1000, 0.4 )
               .fadeTo( 1000, 0, cycle );
@@ -53,10 +55,12 @@ export class LoadingDotsPlugin implements JQueryPlugin {
       return this.each(
         function() {
           $(this)
-            .html( `<span class="LoadingDots-dot"></span><span class="LoadingDots-dot"></span><span class="LoadingDots-dot"></span>` )
+            .html( `<span class="LoadingDots-dot"></span>
+                    <span class="LoadingDots-dot"></span>
+                    <span class="LoadingDots-dot"></span>` )
             .find( ".LoadingDots-dot" )
             .each( bucle );
-        }
+        },
       );
     };
   }

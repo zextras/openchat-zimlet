@@ -159,14 +159,14 @@ export class OpenChatZimlet extends ChatZimletBase {
 
 }
 
-interface OpenChatZimletWindow extends Window {
+interface IOpenChatZimletWindow extends Window {
   // tslint:disable-next-line:ban-types
   com_zextras_chat_open_hdlr: Function;
 }
 
 if (
   typeof window !== "undefined"
-  && typeof (window as OpenChatZimletWindow).com_zextras_chat_open_hdlr === "undefined"
+  && typeof (window as IOpenChatZimletWindow).com_zextras_chat_open_hdlr === "undefined"
 ) {
-  (window as OpenChatZimletWindow).com_zextras_chat_open_hdlr = OpenChatZimlet;
+  (window as IOpenChatZimletWindow).com_zextras_chat_open_hdlr = OpenChatZimlet;
 }

@@ -17,11 +17,11 @@
 
 import {RoomWindowManager} from "../../dwt/windows/RoomWindowManager";
 import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindowSendHistoryMenuItemPlugin} from "./RoomWindowSendHistoryMenuItemPlugin";
 
-export class RoomWindowManagerSendMailPlugin implements ChatPlugin {
+export class RoomWindowManagerSendMailPlugin implements IChatPlugin {
   public trigger(roomWindowManager: RoomWindowManager, roomWindowPluginManager: ChatPluginManager): void {
     roomWindowPluginManager.registerPlugin(
       RoomWindowMenuButton.AddMenuItemPlugin,

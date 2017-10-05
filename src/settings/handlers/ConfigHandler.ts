@@ -20,9 +20,9 @@ import {Callback} from "../../lib/callbacks/Callback";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
 import {Setting} from "../Setting";
 import {SettingsUtils} from "../SettingsUtils";
-import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
+import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
-export class ConfigHandler implements SettingsHandlerInterface {
+export class ConfigHandler implements ISettingsHandlerInterface {
 
   private mZimletContext: ChatZimletBase;
   private mTimedCallbackFactory: TimedCallbackFactory;

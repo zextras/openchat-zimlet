@@ -26,7 +26,7 @@ import {LogEngine} from "../../lib/log/LogEngine";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {StringUtils} from "../../lib/StringUtils";
 import {Setting} from "../../settings/Setting";
-import {GroupData} from "../../settings/SettingsManager";
+import {IGroupData} from "../../settings/SettingsManager";
 import {AjxCallback} from "../../zimbra/ajax/boot/AjxCallback";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
@@ -316,8 +316,8 @@ export class BuddyListTree extends DwtTree {
     this.mOnGroupExpandCollapseCbkMgr.run(item, expand, save);
   }
 
-  public getGroupsData(): GroupData[] {
-    const data: GroupData[] = [];
+  public getGroupsData(): IGroupData[] {
+    const data: IGroupData[] = [];
     for (const dwtGroup of this.mRootGroup.getChildren()) {
       if (dwtGroup.isGroupTreeItem()) {
         const group: Group = (dwtGroup as GroupTreeItem).getGroup();
@@ -330,7 +330,7 @@ export class BuddyListTree extends DwtTree {
     return data;
   }
 
-  public setGroupsData(data: GroupData[]): void {
+  public setGroupsData(data: IGroupData[]): void {
     for (const groupData of data) {
       this.recursiveSetGroupData(this.getChildren(), groupData);
     }
@@ -470,7 +470,7 @@ export class BuddyListTree extends DwtTree {
     this.mOnDeleteGroupCbkMgr.run(group);
   }
 
-  private recursiveSetGroupData(children: DwtComposite[] = [], groupData: GroupData): void {
+  private recursiveSetGroupData(children: DwtComposite[] = [], groupData: IGroupData): void {
     for (const groupItem of children) {
       if (typeof (groupItem as GroupTreeItem).isGroupTreeItem !== "undefined"
         && (groupItem as GroupTreeItem).isGroupTreeItem()

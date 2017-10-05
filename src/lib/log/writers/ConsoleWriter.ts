@@ -18,11 +18,11 @@
 import {AjxDebug, DBG} from "../../../zimbra/ajax/debug/AjxDebug";
 import {LogLevel} from "../LogLevel";
 import {LogLine} from "../LogLine";
-import {LoggerWriter} from "./LoggerWriter";
+import {ILoggerWriter} from "./LoggerWriter";
 
 // tslint:disable:no-console
 
-export class ConsoleWriter implements LoggerWriter {
+export class ConsoleWriter implements ILoggerWriter {
 
   private static writeOnConsole(line: LogLine) {
     const hasGroup: boolean = (typeof console.group === "function" && typeof console.groupEnd === "function");

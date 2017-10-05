@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface ChatPlugin {
+export interface IChatPlugin {
 
   trigger(context: any, ...args: any[]): void;
 

@@ -35,15 +35,15 @@ export class IdleTimer {
       } else if (
         (typeof document !== "undefined" && document !== null)
         && (document.body != null)
-        && ((document.body as EventAttachableElement).attachEvent != null)
+        && ((document.body as IEventAttachableElement).attachEvent != null)
       ) {
-        (document.body as EventAttachableElement).attachEvent("onkeydown", IdleTimer._onEvent);
-        (document.body as EventAttachableElement).attachEvent("onkeyup", IdleTimer._onEvent);
-        (document.body as EventAttachableElement).attachEvent("onmousedown", IdleTimer._onEvent);
-        (document.body as EventAttachableElement).attachEvent("onmousemove", IdleTimer._onEvent);
-        (document.body as EventAttachableElement).attachEvent("onmouseover", IdleTimer._onEvent);
-        (document.body as EventAttachableElement).attachEvent("onmouseout", IdleTimer._onEvent);
-        (window as EventAttachableWindow).attachEvent("onfocus", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onkeydown", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onkeyup", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmousedown", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmousemove", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmouseover", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmouseout", IdleTimer._onEvent);
+        (window as IEventAttachableWindow).attachEvent("onfocus", IdleTimer._onEvent);
         IdleTimer.sAttachedToWindow = true;
       } else {
         IdleTimer.sAttachedToWindow = false;
@@ -135,14 +135,14 @@ export class IdleTimer {
 
 }
 
-interface EventAttachableElement extends HTMLElement {
+interface IEventAttachableElement extends HTMLElement {
   attachEvent(
     ev: "onkeydown" | "onkeyup" | "onmousedown" | "onmousemove" | "onmouseover" | "onmouseout" | "onfocus",
     fn: () => void,
   ): void;
 }
 
-interface EventAttachableWindow extends Window {
+interface IEventAttachableWindow extends Window {
   attachEvent(
     ev: "onkeydown" | "onkeyup" | "onmousedown" | "onmousemove" | "onmouseover" | "onmouseout" | "onfocus",
     fn: () => void,

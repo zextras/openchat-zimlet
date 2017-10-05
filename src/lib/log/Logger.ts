@@ -21,7 +21,7 @@ import {DateProvider} from "../DateProvider";
 import {FeedbackReporter} from "./FeedbackReporter";
 import {LogLevel} from "./LogLevel";
 import {LogLine} from "./LogLine";
-import {LoggerWriter} from "./writers/LoggerWriter";
+import {ILoggerWriter} from "./writers/LoggerWriter";
 
 export class Logger {
 
@@ -35,10 +35,10 @@ export class Logger {
 
   private mLogLevel: LogLevel;
   private mReporters: {[name: string]: FeedbackReporter} = {};
-  private mLoggerWriter: LoggerWriter;
+  private mLoggerWriter: ILoggerWriter;
 
   constructor(
-    loggerWriter: LoggerWriter,
+    loggerWriter: ILoggerWriter,
     dateProvider: DateProvider,
     timedCallbackFactory: TimedCallbackFactory,
     name: string,

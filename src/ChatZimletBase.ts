@@ -65,7 +65,7 @@ import {ZimbraUtils} from "./lib/ZimbraUtils";
 import {emojione} from "./libext/emojione";
 import {ObjectHandler} from "./objectHandler/ObjectHandler";
 import {Setting} from "./settings/Setting";
-import {GroupData, SettingsManager} from "./settings/SettingsManager";
+import {IGroupData, SettingsManager} from "./settings/SettingsManager";
 import {AjxException} from "./zimbra/ajax/core/AjxException";
 import {DwtEvent} from "./zimbra/ajax/dwt/events/DwtEvent";
 import {DwtSelectionEvent} from "./zimbra/ajax/dwt/events/DwtSelectionEvent";
@@ -246,7 +246,7 @@ export class ChatZimletBase extends ZmZimletBase {
       Setting.IM_PREF_DESKTOP_ALERT,
       new Callback(this.mNotificationManager, this.mNotificationManager.setDesktopEnabled),
     );
-    const userGroupsData: GroupData[] = this.mSettingsManager.loadGroupsData();
+    const userGroupsData: IGroupData[] = this.mSettingsManager.loadGroupsData();
     for (const groupData of userGroupsData) {
       this.mChatClient.getBuddyList().addGroup(new Group(groupData.name));
     }

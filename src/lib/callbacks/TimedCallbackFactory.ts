@@ -92,6 +92,6 @@ export class FakeTimedCallback extends TimedCallback {
     }
   }
 
-  public stop(): void {}
+  public stop(): void { return; }
 
 }

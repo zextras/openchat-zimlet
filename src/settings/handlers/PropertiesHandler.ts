@@ -24,9 +24,9 @@ import {ZmZimbraMail} from "../../zimbra/zimbraMail/core/ZmZimbraMail";
 import {ZmZimletContext} from "../../zimbra/zimbraMail/share/model/ZmZimletContext";
 import {Setting} from "../Setting";
 import {SettingsUtils} from "../SettingsUtils";
-import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
+import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
-export class PropertiesHandler implements SettingsHandlerInterface {
+export class PropertiesHandler implements ISettingsHandlerInterface {
 
   private mZimletContext: ChatZimletBase;
 

@@ -18,7 +18,7 @@
 import {BuddyTreeItem} from "../../dwt/widgets/BuddyTreeItem";
 import {BuddyTreeItemActionMenuFactory} from "../../dwt/widgets/BuddyTreeItemActionMenuFactory";
 import {MainWindow} from "../../dwt/windows/MainWindow";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
 import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
@@ -26,7 +26,7 @@ import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {ZmOperation} from "../../zimbra/zimbraMail/core/ZmOperation";
 import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 
-export class MainWindowCreateNewMailMenuItemPlugin implements ChatPlugin {
+export class MainWindowCreateNewMailMenuItemPlugin implements IChatPlugin {
 
   public static Name = BuddyTreeItemActionMenuFactory.AddMenuItemPlugin;
 

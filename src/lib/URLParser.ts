@@ -21,7 +21,7 @@ export class URLParser {
     const location: Location = (typeof window !== "undefined" && typeof window.location !== "undefined") ?
       window.location :
       {
-        assign: (url: string) => {},
+        assign: (url: string) => { return; },
         hash: "",
         host: "",
         hostname: "",
@@ -30,8 +30,8 @@ export class URLParser {
         pathname: "",
         port: "",
         protocol: "",
-        reload: (forcedReload?: boolean) => {},
-        replace: (url: string) => {},
+        reload: (forcedReload?: boolean) => { return; },
+        replace: (url: string) => { return; },
         search: "",
         toString: () => "",
       } as Location;

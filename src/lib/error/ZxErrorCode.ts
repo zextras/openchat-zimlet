@@ -71,10 +71,10 @@ export class ZxErrorCode {
 
 if (typeof window !== "undefined") {
   // tslint:disable-next-line:no-string-literal
-  (window as ZxErrorCodeWindow)["ZxErrorCode"] = ZxErrorCode;
+  (window as IZxErrorCodeWindow)["ZxErrorCode"] = ZxErrorCode;
 }
 
-interface ZxErrorCodeWindow extends Window {
+interface IZxErrorCodeWindow extends Window {
   // tslint:disable-next-line:ban-types
   ZxErrorCode: Function;
 }

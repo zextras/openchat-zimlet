@@ -16,8 +16,8 @@
  */
 
 import {IChatClient} from "../../IChatClient";
-import {MessageWritingStatus} from "../../MessageWritingStatus";
 import {IRoom} from "../../IRoom";
+import {MessageWritingStatus} from "../../MessageWritingStatus";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 import {WritingStatusEvent} from "../chat/WritingStatusEvent";
 import {ChatEvent} from "../ChatEvent";

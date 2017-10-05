@@ -22,7 +22,7 @@ import {DateProvider} from "../../lib/DateProvider";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 import {Conversation} from "./Conversation";
-import {Message, IMessageCreateHtmlData} from "./Message";
+import {IMessageCreateHtmlData, Message} from "./Message";
 
 export class MessageStatus extends Message {
 

@@ -19,7 +19,7 @@ import {IdGenerator} from "../../dwt/IdGenerator";
 import {BuddyTreeItem} from "../../dwt/widgets/BuddyTreeItem";
 import {BuddyTreeItemActionMenuFactory} from "../../dwt/widgets/BuddyTreeItemActionMenuFactory";
 import {MainWindow} from "../../dwt/windows/MainWindow";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {StringUtils} from "../../lib/StringUtils";
 import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
@@ -27,7 +27,7 @@ import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {ZmSearchControllerSearchParams} from "../../zimbra/zimbraMail/share/controller/ZmSearchController";
 
-export class MainWindowShowHistoryMenuItemPlugin implements ChatPlugin {
+export class MainWindowShowHistoryMenuItemPlugin implements IChatPlugin {
 
   public static Name = BuddyTreeItemActionMenuFactory.AddMenuItemPlugin;
 

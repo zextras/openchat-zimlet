@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Group} from "../../../Group";
 import {IBuddy} from "../../../IBuddy";
 import {IChatClient} from "../../../IChatClient";
-import {Group} from "../../../Group";
 import {FriendshipRenameEvent} from "../../chat/friendship/FriendshipRenameEvent";
 import {ChatEvent} from "../../ChatEvent";
 import {IChatEventHandler} from "../IChatEventHandler";

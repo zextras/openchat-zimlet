@@ -109,7 +109,7 @@ export class RoomWindowManager {
               roomManager: RoomManager,
               chatPluginManager: ChatPluginManager,
   ) {
-    (window as ExtendedWindow).debugWM = this;
+    (window as IExtendedWindow).debugWM = this;
     this.mAppCtxt = appCtxt;
     this.mShell = shell;
     this.mNotificationManager = notificationManager;
@@ -503,7 +503,6 @@ export class RoomWindowManager {
 
 }
 
-// tslint:disable-next-line
-declare class ExtendedWindow extends Window {
-  public debugWM: RoomWindowManager;
+interface IExtendedWindow extends Window {
+  debugWM: RoomWindowManager;
 }

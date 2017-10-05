@@ -17,7 +17,7 @@
 
 import {RoomWindow} from "../../dwt/windows/RoomWindow";
 import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {StringUtils} from "../../lib/StringUtils";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
@@ -26,7 +26,7 @@ import {ZmSearchControllerSearchParams} from "../../zimbra/zimbraMail/share/cont
 import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 import {RoomWindowHistoryEnablePlugin} from "./RoomWindowHistoryEnablePlugin";
 
-export class RoomWindowShowHistoryMenuItemPlugin implements ChatPlugin {
+export class RoomWindowShowHistoryMenuItemPlugin implements IChatPlugin {
 
   public static Name = RoomWindowMenuButton.AddMenuItemPlugin;
 

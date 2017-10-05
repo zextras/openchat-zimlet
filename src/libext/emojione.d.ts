@@ -20,7 +20,7 @@ export declare class emojione {
   public static asciiRegexp: RegExp;
   public static unicodeRegexp: RegExp;
   public static shortnamesRegexp: RegExp;
-  public static emojioneList: EmojiOneList;
+  public static emojioneList: IEmojiOneList;
   public static asciiList: {[asciiCode: string]: string};
   public static jsEscapeMap: {[unicode: string]: string};
 
@@ -34,11 +34,11 @@ export declare class emojione {
 
 export declare function toImage(emoji: string): string;
 
-export declare const emojioneList: EmojiOneList;
-export interface EmojiOneList {
-  [shortName: string]: EmojiOneListData;
+export declare const emojioneList: IEmojiOneList;
+export interface IEmojiOneList {
+  [shortName: string]: IEmojiOneListData;
 }
-export interface EmojiOneListData {
+export interface IEmojiOneListData {
   fname: string;
   uc: string;
   isCanonical: boolean;

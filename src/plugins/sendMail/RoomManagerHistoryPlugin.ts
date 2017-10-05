@@ -17,12 +17,12 @@
 
 import {Room} from "../../client/Room";
 import {RoomManager} from "../../client/RoomManager";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 import {RoomStoreMessageInHistoryPlugin} from "./RoomStoreMessageInHistoryPlugin";
 
-export class RoomManagerHistoryPlugin implements ChatPlugin {
+export class RoomManagerHistoryPlugin implements IChatPlugin {
 
   public trigger(roomManager: RoomManager, roomPluginManager: ChatPluginManager): void {
     roomPluginManager.registerFieldPlugin(RoomHistoryFieldPlugin.FieldName, new RoomHistoryFieldPlugin());

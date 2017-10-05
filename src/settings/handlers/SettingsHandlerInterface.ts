@@ -20,7 +20,7 @@ import {Callback} from "../../lib/callbacks/Callback";
 /**
  * Interface for the various settings type handler.
  */
-export interface SettingsHandlerInterface {
+export interface ISettingsHandlerInterface {
 
   /**
    * Store a setting.

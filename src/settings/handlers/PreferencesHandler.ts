@@ -21,9 +21,9 @@ import {ZmSetting} from "../../zimbra/zimbraMail/share/model/ZmSetting";
 import {ZmSettings} from "../../zimbra/zimbraMail/share/model/ZmSettings";
 import {Setting} from "../Setting";
 import {SettingsUtils} from "../SettingsUtils";
-import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
+import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
-export class PreferencesHandler implements SettingsHandlerInterface {
+export class PreferencesHandler implements ISettingsHandlerInterface {
 
   /**
    * The setting we have added are not populated by default, retrieve te values from

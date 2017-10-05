@@ -23,11 +23,11 @@ import {Constants} from "../../Constants";
 import {Callback} from "../../lib/callbacks/Callback";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
-import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
+import {IChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {Setting} from "../../settings/Setting";
-import {GroupData, SettingsManager} from "../../settings/SettingsManager";
+import {IGroupData, SettingsManager} from "../../settings/SettingsManager";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {DwtControlEvent} from "../../zimbra/ajax/dwt/events/DwtControlEvent";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
@@ -280,11 +280,11 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.showHideOfflineBuddies(hide);
   }
 
-  public getGroupsData(): GroupData[] {
+  public getGroupsData(): IGroupData[] {
     return this.mBuddyListTree.getGroupsData();
   }
 
-  public setGroupsData(data: GroupData[]): void {
+  public setGroupsData(data: IGroupData[]): void {
     return this.mBuddyListTree.setGroupsData(data);
   }
 
@@ -691,7 +691,7 @@ export class MainWindow extends WindowBase {
 }
 
 // tslint:disable-next-line
-export class MainWindowSortFunction implements ChatFieldPlugin {
+export class MainWindowSortFunction implements IChatFieldPlugin {
 
   public static FieldName = "Main Window Sort Function";
 

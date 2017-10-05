@@ -17,10 +17,10 @@
 
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {ZmBrowserAlert} from "../../zimbra/zimbraMail/share/view/ZmBrowserAlert";
-import {NotificationTask} from "./NotificationTask";
+import {INotificationTask} from "./NotificationTask";
 import {NotificationTaskType} from "./NotificationTaskType";
 
-export class TitlebarNotification implements NotificationTask {
+export class TitlebarNotification implements INotificationTask {
   private static TASKID: number = 0;
   private id: string;
   private notified: boolean;
@@ -46,9 +46,11 @@ export class TitlebarNotification implements NotificationTask {
   }
 
   public stop(): void {
+    return;
   }
 
   public setAppContext(context: ZmAppCtxt) {
+    return;
   }
 
   public isNotified(): boolean {

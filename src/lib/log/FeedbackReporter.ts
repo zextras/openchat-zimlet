@@ -27,7 +27,7 @@ export class FeedbackReporter {
   private mOnInfoCbkMgr: CallbackManager;
   private mOnWarningCbkMgr: CallbackManager;
   private mOnErrorCbkMgr: CallbackManager;
-  private mContextData: ContextDataFeedbackReporter;
+  private mContextData: IContextDataFeedbackReporter;
 
   constructor(name: string) {
     this.mName = name;
@@ -62,7 +62,7 @@ export class FeedbackReporter {
     this.mContextData.tags[key] = value;
   }
 
-  public getContextData(): ContextDataFeedbackReporter {
+  public getContextData(): IContextDataFeedbackReporter {
     return this.mContextData;
   }
 
@@ -126,7 +126,7 @@ export class FeedbackReporter {
   }
 }
 
-export interface ContextDataFeedbackReporter {
+export interface IContextDataFeedbackReporter {
   tags: {[tag: string]: string};
   extra: {[value: string]: string};
   Message?: string;

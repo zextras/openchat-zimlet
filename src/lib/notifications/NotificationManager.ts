@@ -22,7 +22,7 @@ import {CallbackManager} from "../callbacks/CallbackManager";
 import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
 import {DesktopNotification} from "./DesktopNotification";
 import {DesktopNotificationFactory} from "./DesktopNotificationFactory";
-import {NotificationTask} from "./NotificationTask";
+import {INotificationTask} from "./NotificationTask";
 import {NotificationTaskType} from "./NotificationTaskType";
 import {SoundNotification} from "./SoundNotification";
 import {TitlebarNotification} from "./TitlebarNotification";
@@ -35,7 +35,7 @@ export class NotificationManager {
   private defaultIcon: string;
   private context: ZmAppCtxt;
   private onPermissionGrantedCbkMgr: CallbackManager = new CallbackManager();
-  private notifications: {[id: string]: NotificationTask} = {};
+  private notifications: {[id: string]: INotificationTask} = {};
   private enableDesktop: boolean = true;
   private enableSound: boolean = true;
   private enableTitlebar: boolean = true;
@@ -96,9 +96,9 @@ export class NotificationManager {
 
   /**
    * Handle a notification according to the user settings.
-   * @param {NotificationTask} task The task to handle.
+   * @param {INotificationTask} task The task to handle.
    */
-  public pushNotification(task: NotificationTask): void {
+  public pushNotification(task: INotificationTask): void {
     task.setAppContext(this.context);
     this.notifications[task.getId()] = task;
 
@@ -129,7 +129,7 @@ export class NotificationManager {
    * Request the permission to show notifications.
    * @private
    */
-  private requestNotificationPermission(task?: NotificationTask): void {
+  private requestNotificationPermission(task?: INotificationTask): void {
     DesktopNotificationFactory.requestPermission(new Callback(this, this.onPermissionRequested, task));
   }
 
@@ -137,7 +137,7 @@ export class NotificationManager {
    * Callback invoked when the permission is requested successfully.
    * @param permission
    */
-  private onPermissionRequested(task: NotificationTask, permission: string): void {
+  private onPermissionRequested(task: INotificationTask, permission: string): void {
     if (permission === DesktopNotificationFactory.GRANTED) {
       this.onPermissionGrantedCbkMgr.run();
     }

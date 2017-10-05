@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatFieldPlugin} from "./ChatFieldPlugin";
-import {ChatPlugin} from "./ChatPlugin";
+import {IChatFieldPlugin} from "./ChatFieldPlugin";
+import {IChatPlugin} from "./ChatPlugin";
 
 export class ChatPluginManager {
 
-  private mFieldPluginMap: {[title: string]: ChatFieldPlugin};
-  private mPluginMap: {[title: string]: ChatPlugin[]};
+  private mFieldPluginMap: {[title: string]: IChatFieldPlugin};
+  private mPluginMap: {[title: string]: IChatPlugin[]};
   private mEnabled: boolean = false;
   private mContext: any;
 
@@ -35,7 +35,7 @@ export class ChatPluginManager {
     this.mEnabled = true;
   }
 
-  public registerPlugin(title: string, plugin: ChatPlugin): void {
+  public registerPlugin(title: string, plugin: IChatPlugin): void {
     if (typeof this.mPluginMap[title] === "undefined" || this.mPluginMap === null) {
       this.mPluginMap[title] = [];
     }
@@ -53,7 +53,7 @@ export class ChatPluginManager {
     }
   }
 
-  public registerFieldPlugin(fieldName: string, plugin: ChatFieldPlugin): void {
+  public registerFieldPlugin(fieldName: string, plugin: IChatFieldPlugin): void {
     this.mFieldPluginMap[fieldName] = plugin;
   }
 
@@ -73,7 +73,7 @@ export class ChatPluginManager {
   //
   // }
 
-  // private static checkRequiredParams(plugin: ChatPlugin, params: any): boolean {
+  // private static checkRequiredParams(plugin: IChatPlugin, params: any): boolean {
   //   let checkPassed: boolean = true;
   //   for (let requiredParam of plugin.requiredParams()) {
   //     if (!params.hasOwnProperty(requiredParam)) {

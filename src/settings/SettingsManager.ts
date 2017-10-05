@@ -34,7 +34,7 @@ import {ZimletVersion} from "../ZimletVersion";
 import {ConfigHandler} from "./handlers/ConfigHandler";
 import {PreferencesHandler} from "./handlers/PreferencesHandler";
 import {PropertiesHandler} from "./handlers/PropertiesHandler";
-import {SettingsHandlerInterface} from "./handlers/SettingsHandlerInterface";
+import {ISettingsHandlerInterface} from "./handlers/SettingsHandlerInterface";
 import {Setting} from "./Setting";
 
 export class SettingsManager {
@@ -42,9 +42,9 @@ export class SettingsManager {
   public DELEGATED_ACCESS: boolean;
 
   private zimletContext: ChatZimletBase;
-  private settingsHandlers: SettingsHandlerInterface[];
+  private settingsHandlers: ISettingsHandlerInterface[];
   private onChangeCallbacks: {[name: string]: CallbackManager};
-  private defaultSettingsHandler: SettingsHandlerInterface;
+  private defaultSettingsHandler: ISettingsHandlerInterface;
   private Log: Logger;
   // TODO: Remove me...
 
@@ -167,7 +167,7 @@ export class SettingsManager {
           sliceName = Setting.IM_USR_PREF_GROUP_DATA + "_" + i;
         }
       }
-      this.set(sliceName, slice, new Callback(this, () => {}));
+      this.set(sliceName, slice, new Callback(this, () => { return; }));
     }
     this.Log.debug(data, "Groups data stored");
   }
@@ -204,7 +204,7 @@ export class SettingsManager {
 
   }
 
-  public loadGroupsData(): GroupData[] {
+  public loadGroupsData(): IGroupData[] {
     if ((ZmApp.ENABLED_APPS[ZmApp.PREFERENCES] == null) || !ZmApp.ENABLED_APPS[ZmApp.PREFERENCES]) {
       return;
     }
@@ -270,7 +270,7 @@ export class SettingsManager {
   /**
    * Get the correct handler (or the default handler) for a setting.
    */
-  private _getSettingHandler(key: string): SettingsHandlerInterface {
+  private _getSettingHandler(key: string): ISettingsHandlerInterface {
     for (const hdlr of this.settingsHandlers) {
       if (hdlr.isSettingHandled(key)) {
         return hdlr;
@@ -305,7 +305,7 @@ export class SettingsManager {
 
 }
 
-export interface GroupData {
+export interface IGroupData {
   name: string;
   expanded: boolean;
 }

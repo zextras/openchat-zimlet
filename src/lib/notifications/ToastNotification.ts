@@ -18,10 +18,10 @@
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {ZmToast} from "../../zimbra/zimbraMail/share/view/ZmStatusView";
 import {ZmToastFadeType} from "../../zimbra/zimbraMail/share/view/ZmStatusView";
-import {NotificationTask} from "./NotificationTask";
+import {INotificationTask} from "./NotificationTask";
 import {NotificationTaskType} from "./NotificationTaskType";
 
-export class ToastNotification implements NotificationTask {
+export class ToastNotification implements INotificationTask {
   private static TASKID: number = 0;
   private id: string;
   private notified: boolean;
@@ -60,6 +60,7 @@ export class ToastNotification implements NotificationTask {
   }
 
   public stop(): void {
+    return;
   }
 
   public setAppContext(context: ZmAppCtxt) {

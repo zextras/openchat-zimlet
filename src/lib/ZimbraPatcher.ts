@@ -73,7 +73,7 @@ export class ZimbraPatcher {
       // tslint:disable-next-line:only-arrow-functions
       Dwt.moveCursorToEnd = function(input: ExtendedHTMLInputElement) {
         if (Bowser.msie) {
-          const textRange: TextRange = input.createTextRange();
+          const textRange: ITextRange = input.createTextRange();
           textRange.moveStart("character", input.value.length);
           textRange.collapse();
           textRange.select();
@@ -101,10 +101,10 @@ export class ZimbraPatcher {
 
 }
 
-interface TextRange {
+interface ITextRange {
   moveStart: (char: string, length: number) => void;
   collapse: () => void;
   select: () => void;
 }
 
-type ExtendedHTMLInputElement = HTMLInputElement & { createTextRange: () => TextRange; };
+type ExtendedHTMLInputElement = HTMLInputElement & { createTextRange: () => ITextRange; };

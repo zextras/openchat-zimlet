@@ -22,7 +22,7 @@ import {URLParser} from "../URLParser";
 import {Logger} from "./Logger";
 import {LogLevel} from "./LogLevel";
 import {ConsoleWriter} from "./writers/ConsoleWriter";
-import {LoggerWriter} from "./writers/LoggerWriter";
+import {ILoggerWriter} from "./writers/LoggerWriter";
 
 export class LogEngineImp {
 
@@ -35,10 +35,10 @@ export class LogEngineImp {
   private mDateProvider: DateProvider;
   private mTimedCallbackFactory: TimedCallbackFactory;
   private mIsDev: boolean;
-  private mLoggerWriter: LoggerWriter;
+  private mLoggerWriter: ILoggerWriter;
 
   constructor(
-    loggerWriter: LoggerWriter,
+    loggerWriter: ILoggerWriter,
     dateProvider: DateProvider,
     timedCallbackFactory: TimedCallbackFactory,
     devMode: boolean,
@@ -134,7 +134,7 @@ export class LogEngineImp {
 const location: Location = (typeof window !== "undefined" && typeof window.location !== "undefined") ?
   window.location :
   {
-    assign: (url: string) =>  {},
+    assign: (url: string) =>  { return; },
     hash: "",
     host: "",
     hostname: "",
@@ -143,8 +143,8 @@ const location: Location = (typeof window !== "undefined" && typeof window.locat
     pathname: "",
     port: "",
     protocol: "",
-    reload: (forcedReload?: boolean) => {},
-    replace: (url: string) => {},
+    reload: (forcedReload?: boolean) => { return; },
+    replace: (url: string) => { return; },
     search: "",
     toString: () => "",
   };

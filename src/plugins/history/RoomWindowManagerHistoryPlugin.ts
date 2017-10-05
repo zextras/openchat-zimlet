@@ -16,11 +16,11 @@
  */
 
 import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindowShowHistoryMenuItemPlugin} from "./RoomWindowShowHistoryMenuItemPlugin";
 
-export class RoomWindowManagerHistoryPlugin implements ChatPlugin {
+export class RoomWindowManagerHistoryPlugin implements IChatPlugin {
 
   // This plugin integrate history menu items in the RoomWindow
   public trigger(roomWindowManager: RoomWindowManagerHistoryPlugin, roomWindowPluginManager: ChatPluginManager): void {

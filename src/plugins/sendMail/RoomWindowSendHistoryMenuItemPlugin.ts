@@ -15,16 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IRoom} from "../../client/IRoom";
 import {Message} from "../../client/Message";
 import {MessageReceived} from "../../client/MessageReceived";
 import {MessageSent} from "../../client/MessageSent";
-import {IRoom} from "../../client/IRoom";
 import {Room} from "../../client/Room";
 import {RoomWindow} from "../../dwt/windows/RoomWindow";
 import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
 import {DateProvider} from "../../lib/DateProvider";
 import {HTMLUtils} from "../../lib/HTMLUtils";
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {StringUtils} from "../../lib/StringUtils";
 import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
@@ -33,7 +33,7 @@ import {ZmOperation} from "../../zimbra/zimbraMail/core/ZmOperation";
 import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 
-export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
+export class RoomWindowSendHistoryMenuItemPlugin implements IChatPlugin {
 
   public static Name = RoomWindowMenuButton.AddMenuItemPlugin;
 

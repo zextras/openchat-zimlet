@@ -17,10 +17,10 @@
 
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {ZmSoundAlert} from "../../zimbra/zimbraMail/share/view/ZmSoundAlert";
-import {NotificationTask} from "./NotificationTask";
+import {INotificationTask} from "./NotificationTask";
 import {NotificationTaskType} from "./NotificationTaskType";
 
-export class SoundNotification implements NotificationTask {
+export class SoundNotification implements INotificationTask {
 
   private static TASKID: number = 0;
   private id: string;
@@ -45,9 +45,11 @@ export class SoundNotification implements NotificationTask {
   }
 
   public stop(): void {
+    return;
   }
 
   public setAppContext(context: ZmAppCtxt) {
+    return;
   }
 
   public isNotified(): boolean {

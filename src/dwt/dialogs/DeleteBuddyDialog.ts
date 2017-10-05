@@ -15,16 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtMessageDialog} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
-import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
+import {IBuddy} from "../../client/IBuddy";
 import {IChatClient} from "../../client/IChatClient";
 import {Callback} from "../../lib/callbacks/Callback";
-import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
-import {IdGenerator} from "../IdGenerator";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {StringUtils} from "../../lib/StringUtils";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {IBuddy} from "../../client/IBuddy";
+import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
+import {DwtMessageDialog} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
+import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {IdGenerator} from "../IdGenerator";
 
 export class DeleteBuddyDialog extends DwtMessageDialog {
 

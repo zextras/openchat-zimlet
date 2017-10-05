@@ -18,10 +18,10 @@
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {Callback} from "../callbacks/Callback";
 import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
-import {NotificationTask} from "./NotificationTask";
+import {INotificationTask} from "./NotificationTask";
 import {NotificationTaskType} from "./NotificationTaskType";
 
-export class DesktopNotification implements NotificationTask {
+export class DesktopNotification implements INotificationTask {
   private static TASKID: number = 0;
   private id: string;
   private notified: boolean;
@@ -82,7 +82,8 @@ export class DesktopNotification implements NotificationTask {
     }
   }
 
-  public setAppContext(context: ZmAppCtxt) {
+  public setAppContext(context: ZmAppCtxt): void {
+    return;
   }
 
   public isNotified(): boolean {

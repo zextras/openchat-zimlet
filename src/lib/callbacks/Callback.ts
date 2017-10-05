@@ -17,7 +17,7 @@
 
 export class Callback {
 
-  public static NOOP: Callback = new Callback(undefined, () => {});
+  public static NOOP: Callback = new Callback(undefined, () => { return; });
 
   public static fromFunction(fcn: (...args: any[]) => any): Callback {
     return new Callback(
@@ -32,7 +32,7 @@ export class Callback {
     } else if (typeof fcn === "function") {
       return Callback.fromFunction(fcn);
     } else if (typeof fcn === "undefined") {
-      return new Callback(void 0, () => {});
+      return new Callback(void 0, () => { return; });
     } else {
       throw new Error("Unable to create a Callback from '" + typeof fcn + "'");
     }
