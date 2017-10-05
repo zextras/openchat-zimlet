@@ -15,34 +15,34 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message} from "./Message";
+import {IBuddy} from "../../client/IBuddy";
+import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
+import {Callback} from "../../lib/callbacks/Callback";
 import {DateProvider} from "../../lib/DateProvider";
 import {Conversation} from "./Conversation";
-import {Callback} from "../../lib/callbacks/Callback";
-import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
-import {IBuddy} from "../../client/IBuddy";
+import {Message} from "./Message";
 
 export class MessageReceived extends Message {
 
   constructor(parent: Conversation, message: MessageReceivedObj, dateProvider: DateProvider) {
     super(parent, message, dateProvider);
-    (<HTMLElement>this.getHtmlElement().childNodes[0]).setAttribute("sender", "true");
-    let buddy: IBuddy = message.getSender();
+    (this.getHtmlElement().childNodes[0] as HTMLElement).setAttribute("sender", "true");
+    const buddy: IBuddy = message.getSender();
     buddy.onNicknameChange(new Callback(this, this._updateBuddyNickname));
   }
 
   public _createHtml(): void {
     super._createHtml({
-      sender: (<MessageReceivedObj>this.mMessage).getSender().getNickname()
+      sender: (this.mMessage as MessageReceivedObj).getSender().getNickname(),
     });
   }
 
   public _updateBuddyNickname(nickname: string): void {
-    if (this._senderEl) {
-      if (typeof this._senderEl.innerHTML !== "undefined") {
-        this._senderEl.innerHTML = nickname;
-      } else if (typeof this._senderEl.innerText !== "undefined") {
-        this._senderEl.innerText = nickname;
+    if (this.senderEl) {
+      if (typeof this.senderEl.innerHTML !== "undefined") {
+        this.senderEl.innerHTML = nickname;
+      } else if (typeof this.senderEl.innerText !== "undefined") {
+        this.senderEl.innerText = nickname;
       }
     }
   }

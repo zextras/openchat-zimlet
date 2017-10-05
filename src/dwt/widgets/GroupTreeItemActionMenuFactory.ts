@@ -15,15 +15,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
+import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {Version} from "../../lib/Version";
+import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
-import {IdGenerator} from "../IdGenerator";
-import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {ZmActionMenu} from "../../zimbra/zimbraMail/share/view/ZmActionMenu";
+import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
+import {IdGenerator} from "../IdGenerator";
 import {GroupTreeItem} from "./GroupTreeItem";
-import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 
 export class GroupTreeItemActionMenuFactory {
 
@@ -42,18 +42,18 @@ export class GroupTreeItemActionMenuFactory {
     if (menu === null) {
       return null;
     }
-    let optRename = new DwtMenuItem({
+    const optRename = new DwtMenuItem({
+      id: IdGenerator.generateId("ZxChat_GroupTreeItem_" + (treeItem.getGroup().getName()) + "_MenuItem_Rename"),
       parent: menu,
       style: DwtMenuItem.IMAGE_LEFT,
-      id: IdGenerator.generateId("ZxChat_GroupTreeItem_" + (treeItem.getGroup().getName()) + "_MenuItem_Rename")
     });
     optRename.setText(ZmMsg.rename);
     optRename.setImage("rename");
     optRename.addSelectionListener(new AjxListener(treeItem, treeItem.renameGroupSelected));
-    let optDelete = new DwtMenuItem({
+    const optDelete = new DwtMenuItem({
+      id: IdGenerator.generateId("ZxChat_GroupTreeItem_" + (treeItem.getGroup().getName()) + "_MenuItem_Delete"),
       parent: menu,
       style: DwtMenuItem.IMAGE_LEFT,
-      id: IdGenerator.generateId("ZxChat_GroupTreeItem_" + (treeItem.getGroup().getName()) + "_MenuItem_Delete")
     });
     optDelete.setText(ZmMsg.del);
     optDelete.setImage("delete");
@@ -64,33 +64,34 @@ export class GroupTreeItemActionMenuFactory {
 
 }
 
-interface GroupTreeItemActionMenu {
+interface IGroupTreeItemActionMenu {
   groupTreeItem: GroupTreeItem;
 }
 
-class GroupTreeItemActionMenu8 extends ZmActionMenu implements GroupTreeItemActionMenu {
+// tslint:disable-next-line
+class GroupTreeItemActionMenu8 extends ZmActionMenu implements IGroupTreeItemActionMenu {
 
   public groupTreeItem: GroupTreeItem;
 
   constructor(groupTreeItem: GroupTreeItem) {
     super({
-      parent: groupTreeItem,
       id: IdGenerator.generateId("ZxChat_GroupTreeItemMenu_" + (groupTreeItem.getGroup().getName())),
-      menuItems: []
+      menuItems: [],
+      parent: groupTreeItem,
     });
     this.groupTreeItem = groupTreeItem;
   }
-
 }
 
-class GroupTreeItemActionMenu7 extends DwtMenu implements GroupTreeItemActionMenu {
+// tslint:disable-next-line
+class GroupTreeItemActionMenu7 extends DwtMenu implements IGroupTreeItemActionMenu {
 
   public groupTreeItem: GroupTreeItem;
 
   constructor(groupTreeItem: GroupTreeItem) {
     super({
+      id: IdGenerator.generateId("ZxChat_GroupTreeItemMenu_" + (groupTreeItem.getGroup().getName())),
       parent: groupTreeItem,
-      id: IdGenerator.generateId("ZxChat_GroupTreeItemMenu_" + (groupTreeItem.getGroup().getName()))
     });
     this.groupTreeItem = groupTreeItem;
   }

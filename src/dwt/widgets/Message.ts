@@ -15,53 +15,76 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
+import {Message as MessageObj} from "../../client/Message";
 import {DateProvider} from "../../lib/DateProvider";
+import {StringUtils} from "../../lib/StringUtils";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxDateFormat} from "../../zimbra/ajax/util/AjxText";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {ZmObjectManager} from "../../zimbra/zimbraMail/share/model/ZmObjectManager";
-import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {StringUtils} from "../../lib/StringUtils";
-import {Message as MessageObj} from "../../client/Message";
 import {Conversation} from "./Conversation";
-import {ZimbraUtils} from "../../lib/ZimbraUtils";
 
 export class Message extends DwtComposite {
 
   public static TEMPLATE: string = "com_zextras_chat_open.Widgets#Message";
 
-  protected mMessage: MessageObj;
   public mDateProvider: DateProvider;
+  protected mMessage: MessageObj;
+  protected dateFormatter: AjxDateFormat;
+  protected senderEl: HTMLElement;
+  protected dateEl: HTMLElement;
+  protected contentEl: HTMLElement;
+  protected objectManager: ZmObjectManager;
   private mConversation: Conversation;
-  protected _dateFormatter: AjxDateFormat;
-  protected _senderEl: HTMLElement;
-  protected _dateEl: HTMLElement;
-  protected _contentEl: HTMLElement;
-  protected _objectManager: ZmObjectManager;
 
   constructor(
     parent: Conversation,
     message: MessageObj,
     dateProvider: DateProvider,
-    template: string = Message.TEMPLATE
+    template: string = Message.TEMPLATE,
   ) {
     super({
       parent: parent,
-      template: template
+      template: template,
     });
     this.mMessage = message;
     this.mDateProvider = dateProvider;
     this.mConversation = parent;
-    this._dateFormatter = AjxDateFormat.getDateTimeInstance(AjxDateFormat.FULL, AjxDateFormat.MEDIUM);
+    this.dateFormatter = AjxDateFormat.getDateTimeInstance(AjxDateFormat.FULL, AjxDateFormat.MEDIUM);
     if (template !== "com_zextras_chat_open.Widgets#MessageStatus") {
       this._createHtml();
     }
     // TODO: Move to TimedCallback Factory
     setTimeout( // Lazy creation of the object manager
       () => this._delayedCreationFunction(),
-      100
+      100,
     );
     this._setAllowSelection();
+  }
+
+  public formatDate(date: Date): string {
+    return this.dateFormatter.format(date);
+  }
+
+  public getObjectManager(): ZmObjectManager {
+    if (this.objectManager == null) {
+      this.objectManager = new ZmObjectManager(this);
+    }
+    return this.objectManager;
+  }
+
+  protected _createHtml(data: IMessageCreateHtmlData = {}): void {
+    data.id = this._htmlElId;
+    data.date = StringUtils.localizeHour(this.mMessage.getDate(), this.mDateProvider.getNow());
+    data.dateTooltip = this.formatDate(this.mMessage.getDate());
+    data.content = this.mMessage.getHtmlMessage();
+    data.legacy = ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui";
+    DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
+    this.senderEl = document.getElementById(data.id + "_sender");
+    this.dateEl = document.getElementById(data.id + "_date");
+    this.contentEl = document.getElementById(data.id + "_content");
   }
 
   private _delayedCreationFunction(): void {
@@ -70,22 +93,27 @@ export class Message extends DwtComposite {
       manager.__hasSmileysHandler = true;
       appCtxt.notifyZimlets("onFindMsgObjects", [this, manager]);
       // TODO: Review these conditions
-      manager.setHandlerAttr(ZmObjectManager.DATE, ZmObjectManager.ATTR_CURRENT_DATE, this.mMessage.getDate != null ? this.mMessage.getDate() : this.mDateProvider.getNow());
+      manager.setHandlerAttr(
+        ZmObjectManager.DATE,
+        ZmObjectManager.ATTR_CURRENT_DATE,
+        this.mMessage.getDate != null ? this.mMessage.getDate() : this.mDateProvider.getNow(),
+      );
       if (manager.processObjectsInNode != null) {
-        manager.processObjectsInNode(document, this._contentEl);
+        manager.processObjectsInNode(document, this.contentEl);
       } else {
-        manager.findObjectsInNode(this._contentEl);
+        manager.findObjectsInNode(this.contentEl);
       }
     } catch (ign) {}
     if (this.mConversation.scrollToTop != null) {
       this.mConversation.scrollToTop();
     }
-    let elements = this.getHtmlElement().getElementsByTagName("span");
+    const elements: NodeListOf<HTMLSpanElement> = this.getHtmlElement().getElementsByTagName("span");
+    // tslint:disable-next-line
     for (let i = 0; i < elements.length; i++) {
-      let element = elements[i];
+      const element = elements[i];
       if (element.id.indexOf(manager._objectIdPrefix) !== -1) {
-        let events = [];
-        for (let ev of DwtEvent.MOUSE_EVENTS) {
+        const events = [];
+        for (const ev of DwtEvent.MOUSE_EVENTS) {
           if (ev !== "onselectstart") {
             events.push(ev);
           }
@@ -95,32 +123,9 @@ export class Message extends DwtComposite {
     }
   }
 
-  public formatDate(date: Date): string {
-    return this._dateFormatter.format(date);
-  }
-
-  protected _createHtml(data: MessageCreateHtmlData = {}): void {
-    data.id = this._htmlElId;
-    data.date = StringUtils.localizeHour(this.mMessage.getDate(), this.mDateProvider.getNow());
-    data.dateTooltip = this.formatDate(this.mMessage.getDate());
-    data.content = this.mMessage.getHtmlMessage();
-    data.legacy = ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui";
-    DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
-    this._senderEl = document.getElementById(data.id + "_sender");
-    this._dateEl = document.getElementById(data.id + "_date");
-    this._contentEl = document.getElementById(data.id + "_content");
-  }
-
-  public getObjectManager(): ZmObjectManager {
-    if (this._objectManager == null) {
-      this._objectManager = new ZmObjectManager(this);
-    }
-    return this._objectManager;
-  }
-
 }
 
-export interface MessageCreateHtmlData {
+export interface IMessageCreateHtmlData {
   id?: string;
   date?: string;
   dateTooltip?: string;

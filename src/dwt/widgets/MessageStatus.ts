@@ -15,15 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message, MessageCreateHtmlData} from "./Message";
 import {IBuddy} from "../../client/IBuddy";
-import {BuddyStatusImp} from "../../client/BuddyStatus";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
+import {MessageReceived} from "../../client/MessageReceived";
 import {DateProvider} from "../../lib/DateProvider";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
-import {Conversation} from "./Conversation";
-import {MessageReceived} from "../../client/MessageReceived";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
-import {IBuddyStatus} from "../../client/IBuddyStatus";
+import {Conversation} from "./Conversation";
+import {Message, IMessageCreateHtmlData} from "./Message";
 
 export class MessageStatus extends Message {
 
@@ -36,7 +35,7 @@ export class MessageStatus extends Message {
       parent,
       new MessageReceived("", buddy, dateProvider.getNow(), status.getMessage()),
       dateProvider,
-      "com_zextras_chat_open.Widgets#MessageStatus"
+      "com_zextras_chat_open.Widgets#MessageStatus",
     );
     this.mDate = dateProvider.getNow();
     this.mBuddy = buddy;
@@ -45,15 +44,15 @@ export class MessageStatus extends Message {
     this.getHtmlElement().setAttribute("status", AjxStringUtil.htmlEncode(status.getMessageLabel()));
   }
 
-  protected _createHtml(data: MessageCreateHtmlData = {}): void {
+  protected _createHtml(data: IMessageCreateHtmlData = {}): void {
     data = {
       ...data,
+      content: this.mMessage.getMessage(),
       id: this._htmlElId,
       sender: this.mBuddy.getNickname(),
-      content: this.mMessage.getMessage()
     };
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
-    this._senderEl = document.getElementById(data.id + "_sender");
-    this._contentEl = document.getElementById(data.id + "_content");
+    this.senderEl = document.getElementById(data.id + "_sender");
+    this.contentEl = document.getElementById(data.id + "_content");
   }
 }

@@ -15,16 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
-import {ZimbraUtils} from "../../lib/ZimbraUtils";
-import {CallbackManager} from "../../lib/callbacks/CallbackManager";
-import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
-import {Callback} from "../../lib/callbacks/Callback";
-import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {BuddyStatusImp} from "../../client/BuddyStatus";
-import {ZxPopupMenu} from "../windows/WindowBase";
 import {IBuddyStatus} from "../../client/IBuddyStatus";
+import {Callback} from "../../lib/callbacks/Callback";
+import {CallbackManager} from "../../lib/callbacks/CallbackManager";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
+import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
+import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {ZxPopupMenu} from "../windows/WindowBase";
 
 export class StatusSelector extends DwtToolBarButton {
 
@@ -35,11 +35,13 @@ export class StatusSelector extends DwtToolBarButton {
 
    constructor(parent: DwtToolBar) {
     super({
+      className: "ZToolbarButton ZNewButton",
       parent: parent,
-      className: "ZToolbarButton ZNewButton"
     });
     // TODO: Dirty hack to modify the title label classname
-    document.getElementById(this.getHTMLElId() + "_title").className += ` ChatStatusSelectorTitle${!ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`;
+    document.getElementById(
+      this.getHTMLElId() + "_title",
+    ).className += ` ChatStatusSelectorTitle${!ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`;
     this.dontStealFocus();
     this.onStatusSelectedCbkMgr = new CallbackManager();
     this.setAlign(DwtLabel.ALIGN_LEFT);
@@ -57,12 +59,12 @@ export class StatusSelector extends DwtToolBarButton {
   }
 
   public setOptionStatuses(userStatuses: IBuddyStatus[]): void {
-    for (let userStatus of userStatuses) {
-      let item = this.menu.createMenuItem("DwtStatusMenuItem_" + (userStatus.getId()), {
-        text: userStatus.getMessage(true),
-        style: DwtMenuItem.RADIO_STYLE,
+    for (const userStatus of userStatuses) {
+      const item = this.menu.createMenuItem("DwtStatusMenuItem_" + (userStatus.getId()), {
+        enabled: true,
         image: userStatus.getCSS(),
-        enabled: true
+        style: DwtMenuItem.RADIO_STYLE,
+        text: userStatus.getMessage(true),
       });
       item.setData(StatusSelector._DATA_STATUS, userStatus);
       item.addSelectionListener(new AjxListener(this, this.statusSelected, [userStatus]));
@@ -71,10 +73,10 @@ export class StatusSelector extends DwtToolBarButton {
 
   public setCurrentStatus(userStatus: IBuddyStatus): void {
     this.setText(userStatus.getMessage(true));
-    let menuItems: DwtMenuItem[] = this.menu.getMenuItems();
-    let results = [];
-    for (let item of menuItems) {
-      let itemStatus = item.getData(StatusSelector._DATA_STATUS);
+    const menuItems: DwtMenuItem[] = this.menu.getMenuItems();
+    const results = [];
+    for (const item of menuItems) {
+      const itemStatus = item.getData(StatusSelector._DATA_STATUS);
       results.push(item._setChecked(userStatus.getId().toString() === itemStatus.getId(), null, true));
     }
   }

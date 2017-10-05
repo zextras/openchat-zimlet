@@ -52,7 +52,7 @@ import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToo
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {Conversation} from "../widgets/Conversation";
 import {EmojiOnePickerButton} from "../widgets/emoji/EmojiOnePickerButton";
-import {EmojiData} from "../widgets/emoji/EmojiTemplate";
+import {IEmojiData} from "../widgets/emoji/EmojiTemplate";
 import {LoadingDots} from "../widgets/LoadingDots";
 import {RoomWindowMenuButton} from "./RoomWindowMenuButton";
 import {WindowBase} from "./WindowBase";
@@ -563,7 +563,7 @@ export class RoomWindow extends WindowBase {
     this.setIcon(css);
   }
 
-  private onEmojiSelected(ev: Event, emoji: EmojiData): void {
+  private onEmojiSelected(ev: Event, emoji: IEmojiData): void {
     this.addTextToInput(emoji.name);
   }
 
