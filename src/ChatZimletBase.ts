@@ -500,9 +500,8 @@ export class ChatZimletBase extends ZmZimletBase {
     let msg: string;
     if (
       typeof error !== "undefined" && error !== null &&
-      typeof error.getCause !== "undefined" && typeof error.getCause() !== "undefined" &&
-      typeof error.getCause().getCode !== "undefined" && error.getCause().getCode !== null &&
-      error.getCause().getCode() === ZxErrorCode.DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT
+      typeof error.getCause !== "undefined" && typeof error.getCause() !== "undefined" && error.getCause() !== null &&
+      typeof error.getCause().getCode !== "undefined" && error.getCause().getCode !== null && error.getCause().getCode() === ZxErrorCode.DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT
     ) {
       this.mSettingsManager.DELEGATED_ACCESS = true;
       msg = StringUtils.getMessage("delegated_or_resources_not_allowed");

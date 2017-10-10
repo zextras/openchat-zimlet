@@ -16,6 +16,7 @@
 #
 
 COMMIT_ID = $(shell git rev-parse --short HEAD)
+COMMIT_ID_LONG = $(shell git rev-parse HEAD)
 VERSION = $(shell fgrep "\"version\":" package.json | sed -e 's/\s*"version":\s*"\(.*\)",/\1/')
 DESCRIPTION = $(shell fgrep "\"description\":" package.json | sed -e 's/\s*"description":\s*"\(.*\)",/\1/')
 NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')
@@ -43,7 +44,8 @@ src/emojione.sprites.css: node_modules
 	./node_modules/.bin/sharp resize 16 16 -i node_modules/emojione/assets/png/* -o build/images/emojione/png
 	./node_modules/.bin/spritesmith
 
-build/com_zextras_chat_open.css: node_modules src/emojione.sprites.css
+build/com_zextras_chat_open.css: node_modules \
+								src/emojione.sprites.css
 	# Build the CSS and copy the images
 	mkdir -p build/images/
 	cp src/images/*.png build/images/
@@ -58,7 +60,9 @@ build/com_zextras_chat_open.xml:
 		-e 's/#DESCRIPTION#/$(DESCRIPTION)/g' \
 		build/com_zextras_chat_open.xml
 
-build/com_zextras_chat_open_bundle.js: node_modules src/ZimletVersion.ts src/dwt/widgets/emoji/EmojiTemplate.ts
+build/com_zextras_chat_open_bundle.js: node_modules \
+									src/ZimletVersion.ts \
+									src/dwt/widgets/emoji/EmojiTemplate.ts
 	# Check T4Z project if there are modifications
 	cd src/zimbra && make check-exports
 	# Lint the files
@@ -77,7 +81,19 @@ build/templates:
 	mkdir -p build
 	cp -r src/templates build/
 
-dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_zextras_chat_open.css build/com_zextras_chat_open_bundle.js build/com_zextras_chat_open.properties build/templates build/com_zextras_chat_open.properties
+build/VERSION:
+	mkdir -p build
+	echo "$(VERSION)" >> build/VERSION
+	echo "$(COMMIT_ID_LONG)" >> build/VERSION
+
+dist/com_zextras_chat_open.zip: init \
+								build/com_zextras_chat_open.xml \
+								build/com_zextras_chat_open.css \
+								build/com_zextras_chat_open_bundle.js \
+								build/com_zextras_chat_open.properties \
+								build/templates \
+								build/com_zextras_chat_open.properties \
+								build/VERSION
 	# Create the zip file
 	rm -f dist/com_zextras_chat_open.zip
 	cd build && zip -q -r ../dist/com_zextras_chat_open.zip \
@@ -89,30 +105,28 @@ dist/com_zextras_chat_open.zip: init build/com_zextras_chat_open.xml build/com_z
 		com_zextras_chat_open.css \
 		emojione.sprites.css \
 		com_zextras_chat_open_bundle.js \
-		com_zextras_chat_open_bundle.js.map
+		com_zextras_chat_open_bundle.js.map \
+		VERSION
+	zip -u dist/com_zextras_chat_open.zip \
+		LICENSE
 
 clean:
-	# Version file
-	rm -f src/ZimletVersion.ts
-	# Emoji menu data
-	rm -f src/dwt/widgets/emoji/EmojiTemplate.ts
-	# Assets
-	rm -f src/images/emojione.sprites.png
-	rm -f src/emojione.sprites.css
-	rm -f build/emojione.sprites.css
-	rm -f src/images/com_zextras_chat_open_sprite.png
-	rm -f src/images/com_zextras_chat_open_sprite.sass
-	rm -rf build/images
-	rm -rf build/templates
-	# Language files
-	rm -f build/com_zextras_chat_open.properties
-	rm -f build/com_zextras_chat_open*.properties
-	# Zimlet files
-	rm -f build/com_zextras_chat_open.css
-	rm -f build/com_zextras_chat_open.xml
-	rm -f build/com_zextras_chat_open_bundle.js
-	# Final package
-	rm -f dist/com_zextras_chat_open.zip
+	rm -f src/ZimletVersion.ts \
+		src/dwt/widgets/emoji/EmojiTemplate.ts \
+		src/images/emojione.sprites.png \
+		src/emojione.sprites.css \
+		build/emojione.sprites.css \
+		src/images/com_zextras_chat_open_sprite.png \
+		src/images/com_zextras_chat_open_sprite.sass \
+		build/com_zextras_chat_open.properties \
+		build/com_zextras_chat_open*.properties \
+		build/com_zextras_chat_open.css \
+        build/com_zextras_chat_open.xml \
+        build/com_zextras_chat_open_bundle.js \
+        build/VERSION \
+        dist/com_zextras_chat_open.zip \
+	rm -rf build/images \
+		build/templates
 
 init:
 	mkdir -p build
@@ -124,12 +138,20 @@ build/yuicompressor.jar:
 	rm -f build/yuicompressor.jar
 	wget https://github.com/yui/yuicompressor/releases/download/v2.4.8/yuicompressor-2.4.8.jar -O build/yuicompressor.jar
 
-check-yui: build/yuicompressor.jar build/com_zextras_chat_open_bundle.js
+check-yui: build/yuicompressor.jar \
+		build/com_zextras_chat_open_bundle.js
 	# Test the bundle file against the YUI Compressor
-	java -jar build/yuicompressor.jar --type js --nomunge --preserve-semi --disable-optimizations build/com_zextras_chat_open_bundle.js -o build/com_zextras_chat_open_bundle.min.js
+	java -jar build/yuicompressor.jar \
+		--type js \
+		--nomunge \
+		--preserve-semi \
+		--disable-optimizations \
+		build/com_zextras_chat_open_bundle.js \
+		-o build/com_zextras_chat_open_bundle.min.js
 	rm -f build/com_zextras_chat_open_bundle.min.js
 
-install: guard-ZIMLET_DEV_SERVER check-yui dist/com_zextras_chat_open.zip
+install: guard-ZIMLET_DEV_SERVER \
+		check-yui dist/com_zextras_chat_open.zip
 	# Deploy the zimlet on a server
 	scp dist/com_zextras_chat_open.zip root@${ZIMLET_DEV_SERVER}:/tmp/
 	ssh root@${ZIMLET_DEV_SERVER} "chown zimbra:zimbra /tmp/com_zextras_chat_open.zip"
