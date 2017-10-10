@@ -68,7 +68,7 @@ export class FakeTimedCallback extends TimedCallback {
   }
 
   public start(): any {
-    // If dateProvider is defined the FakeTimedCallback is managed by dateProvider, else execute timed callback immediatly
+    // If mDateProvider is defined the FakeTimedCallback is managed by mDateProvider, else execute timed callback immediatly
     // Removed any ...args as parameters of start method, in case they should be inserted in this.mCallback constructor
     if (typeof this.mDateProvider !== "undefined") {
       this.mStartingTime = this.mDateProvider.getCurrentTimeMillis();

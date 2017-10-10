@@ -20,6 +20,8 @@ COMMIT_ID_LONG = $(shell git rev-parse HEAD)
 VERSION = $(shell fgrep "\"version\":" package.json | sed -e 's/\s*"version":\s*"\(.*\)",/\1/')
 DESCRIPTION = $(shell fgrep "\"description\":" package.json | sed -e 's/\s*"description":\s*"\(.*\)",/\1/')
 NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')
+SPRITE_NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')_sprite
+LABEL = OpenChat Zimlet
 
 all: dist/com_zextras_chat_open.zip
 
@@ -28,6 +30,7 @@ all: dist/com_zextras_chat_open.zip
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi
 	npm update
+	./utils/patchNodeModules
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
@@ -41,13 +44,17 @@ src/ZimletVersion.ts:
 			-e s/#IS_STAGING#/false/g \
 			-e s/#IS_TESTING#/false/g \
 			-e s/#ZIMLET_NAME#/OpenChat/g \
+			-e s/#PACKAGE_NAME#/com_zextras_chat_open/g \
 		src/ZimletVersion.ts
 
 src/emojione.sprites.css: node_modules
 	# Build sprites (emojione and icons)
+	mkdir -p build/images/emojione/png-fullsize
 	mkdir -p build/images/emojione/png
-	./node_modules/.bin/sharp resize 16 16 -i node_modules/emojione/assets/png/* -o build/images/emojione/png
+	cp `node utils/GenerateEmojiMenus.js -f` build/images/emojione/png-fullsize/
+	./node_modules/.bin/sharp resize 16 16 -i build/images/emojione/png-fullsize/* -o build/images/emojione/png
 	./node_modules/.bin/spritesmith
+	rm -rf build/images/emojione
 
 build/com_zextras_chat_open.css: node_modules \
 								src/emojione.sprites.css
@@ -62,6 +69,7 @@ build/com_zextras_chat_open.xml:
 	cp src/com_zextras_chat_open.template.xml build/com_zextras_chat_open.xml
 	sed -i -e 's/#VERSION#/$(VERSION)/g' \
 		-e 's/#NAME#/$(NAME)/g' \
+		-e 's/#LABEL#/$(LABEL)/g' \
 		-e 's/#DESCRIPTION#/$(DESCRIPTION)/g' \
 		build/com_zextras_chat_open.xml
 
@@ -72,7 +80,6 @@ build/com_zextras_chat_open_bundle.js: node_modules \
 	cd src/zimbra && make check-exports
 	# Lint the files
 	./node_modules/.bin/tslint -c tslint.json --project tsconfig.json
-	./node_modules/.bin/coffeelint src/
 	# Create the JS bundle
 	./node_modules/.bin/webpack --config webpack.config-open.js
 

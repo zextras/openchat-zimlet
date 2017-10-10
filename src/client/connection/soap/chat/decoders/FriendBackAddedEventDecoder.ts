@@ -20,7 +20,7 @@ import {ChatEvent} from "../../../../events/ChatEvent";
 import {FriendBackAddedEvent} from "../../../../events/chat/FriendBackAddedEvent";
 import {Buddy} from "../../../../Buddy";
 import {BuddyStatusType} from "../../../../BuddyStatusType";
-import {BuddyStatus} from "../../../../BuddyStatus";
+import {BuddyStatusImp} from "../../../../BuddyStatusImp";
 import {DateProvider} from "../../../../../lib/DateProvider";
 import {BuddyImp} from "../../../../BuddyImp";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
@@ -45,7 +45,7 @@ export class FriendBackAddedEventDecoder extends SoapEventDecoder {
       eventObj["buddyNickname"]
     );
     buddy.setStatus(
-      new BuddyStatus(BuddyStatusType.INVITED)
+      new BuddyStatusImp(BuddyStatusType.INVITED)
     );
     return new FriendBackAddedEvent(buddy, this.mDateProvider.getNow());
   }

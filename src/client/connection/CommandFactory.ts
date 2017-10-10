@@ -42,7 +42,7 @@ export class CommandFactory {
       }
     }
     let error = new ZxError(ZxErrorCode.UNABLE_TO_FIND_COMMAND_FOR_EVENT);
-    error.setDetail("eventId", event.getCode());
+    error.setDetail("eventId", event.getCode().toString());
     throw error;
   }
 

@@ -17,11 +17,13 @@
 
 import {Message, MessageCreateHtmlData} from "./Message";
 import {Buddy} from "../../client/Buddy";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {BuddyStatusImp} from "../../client/BuddyStatusImp";
 import {DateProvider} from "../../lib/DateProvider";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {Conversation} from "./Conversation";
 import {MessageReceived} from "../../client/MessageReceived";
+import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
+import {BuddyStatus} from "../../client/BuddyStatus";
 
 export class MessageStatus extends Message {
 
@@ -40,7 +42,7 @@ export class MessageStatus extends Message {
     this.mBuddy = buddy;
     this.mStatus = status;
     this._createHtml();
-    this.getHtmlElement().setAttribute("status", status.getMessageLabel());
+    this.getHtmlElement().setAttribute("status", AjxStringUtil.htmlEncode(status.getMessageLabel()));
   }
 
   protected _createHtml(data: MessageCreateHtmlData = {}): void {
@@ -48,7 +50,7 @@ export class MessageStatus extends Message {
       ...data,
       id: this._htmlElId,
       sender: this.mBuddy.getNickname(),
-      content: this.message.getMessage()
+      content: this.mMessage.getMessage()
     };
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
     this._senderEl = document.getElementById(data.id + "_sender");

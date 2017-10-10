@@ -20,7 +20,6 @@ import {SessionInfoProvider} from "./SessionInfoProvider";
 import {DateProvider} from "../lib/DateProvider";
 import {Callback} from "../lib/callbacks/Callback";
 import {BuddyList} from "./BuddyList";
-import {BuddyStatus} from "./BuddyStatus";
 import {MessageAckWaiter} from "./MessageAckWaiter";
 import {ChatEvent} from "./events/ChatEvent";
 import {MessageReceived} from "./MessageReceived";
@@ -30,6 +29,8 @@ import {EventSessionRegistered} from "./events/chat/EventSessionRegistered";
 import {RoomManager} from "./RoomManager";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {Logger} from "../lib/log/Logger";
+import {UserStatusManager} from "./UserStatusManager";
+import {BuddyStatus} from "./BuddyStatus";
 
 export interface ChatClient {
 
@@ -104,22 +105,15 @@ export interface ChatClient {
    */
   renameGroup(oldName: string, newName: string, callback?: Callback, errorCallback?: Callback): void;
   /**
-   * Set a status for the user.
+   * Notify that status changed for the user.
    */
-  setUserStatus(status: BuddyStatus, callback?: Callback, errorCallback?: Callback): void;
+  setUserStatus(userStatus: BuddyStatus, callback?: Callback, errorCallback?: Callback): void;
+
+  statusChanged(statusChanged: BuddyStatus): void;
   /**
-   * Set an auto-away status for the user.
+   * Get the current user status manager.
    */
-  setUserAutoAwayStatus(status: BuddyStatus, callback?: Callback, errorCallback?: Callback): void;
-  /**
-   * Get the current status.
-   */
-  getCurrentStatus(): BuddyStatus;
-  /**
-   * Set the  current status
-   * @param status
-   */
-  setCurrentStatus(status: BuddyStatus): void;
+  getUserStatusManager(): UserStatusManager;
   /**
    * Reset all informations about the user.
    * This command is useful for testing purpose or in case to clean

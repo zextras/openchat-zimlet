@@ -20,4 +20,8 @@ export declare class Bowser {
   static chrome: boolean;
   static opera: boolean;
   static msie: boolean;
+  static msedge: boolean;
+  static chromium: boolean;
+  static safari: boolean;
+  static version: string;
 }

@@ -19,7 +19,7 @@
 <config xmlns="http://zanata.org/namespace/config/">
     <url>https://i18n.zextras.com/zanata/</url>
     <project>OCZ</project>
-    <project-version>8.8.0</project-version>
+    <project-version>2.1</project-version>
     <project-type>properties</project-type>
     <src-dir>src/</src-dir>
     <trans-dir>i18n/</trans-dir>

@@ -61,9 +61,9 @@ import {Bowser} from "../../libext/bowser";
 export class SettingsDialog extends DwtDialog {
 
   private static width: number = 480;
-  private static height: number = 297;
+  private static height: number = 327;
   private static PREF_TAB: string = "pref_tab";
-  private static EMOJI_TAB: string = "emoji_tab";
+  private static CONTENTS_TAB: string = "contents_tab";
   private static INFO_TAB: string = "info_tab";
   private static DEBUG_TAB: string = "debug_tab";
 
@@ -78,7 +78,7 @@ export class SettingsDialog extends DwtDialog {
   private mDateProvider: DateProvider;
   private mSettingsObjs: { [key: string]: DwtControl };
   private mOriginals: { [key: string]: string | boolean };
-  private mTabIds: { [tab: string]: string };
+  private mTabIds: { [tab: string]: number };
   private mOnPopDownSwitchToFirstTabCallback: Callback;
   private mDebugTabButton: DwtTabButton;
   private mDebugInfoCheckbox: DwtCheckbox;
@@ -128,7 +128,7 @@ export class SettingsDialog extends DwtDialog {
     this.mOnPopDownSwitchToFirstTabCallback = new Callback(tabView, tabView.switchToTab, "1");
     if (typeof ZmApp.ENABLED_APPS[ZmApp.PREFERENCES] !== "undefined" && ZmApp.ENABLED_APPS[ZmApp.PREFERENCES]) {
       this.addPreferencesTab(tabView);
-      this.addEmojiSettingsTab(tabView);
+      this.addContentDisplaySettingsTab(tabView);
     }
     this.addInfoTab(tabView);
     this.addDebugTab(tabView);
@@ -142,6 +142,9 @@ export class SettingsDialog extends DwtDialog {
       Setting.IM_USR_PREF_EMOJI_IN_CONV,
       Setting.IM_USR_PREF_EMOJI_IN_HIST,
       Setting.IM_USR_PREF_EMOJI_IN_MAIL,
+      Setting.IM_USR_PREF_URL_IN_CONV,
+      Setting.IM_USR_PREF_URL_IN_HIST,
+      Setting.IM_USR_PREF_URL_IN_MAIL,
       Setting.IM_PREF_BUDDY_SORT,
       Setting.IM_PREF_NOTIFY_SOUNDS,
       Setting.IM_PREF_FLASH_BROWSER,
@@ -172,6 +175,9 @@ export class SettingsDialog extends DwtDialog {
       Setting.IM_USR_PREF_EMOJI_IN_CONV,
       Setting.IM_USR_PREF_EMOJI_IN_HIST,
       Setting.IM_USR_PREF_EMOJI_IN_MAIL,
+      Setting.IM_USR_PREF_URL_IN_CONV,
+      Setting.IM_USR_PREF_URL_IN_HIST,
+      Setting.IM_USR_PREF_URL_IN_MAIL,
       Setting.IM_PREF_NOTIFY_SOUNDS,
       Setting.IM_PREF_FLASH_BROWSER,
       Setting.IM_PREF_DESKTOP_ALERT,
@@ -290,40 +296,40 @@ export class SettingsDialog extends DwtDialog {
     );
   }
 
-  private addEmojiSettingsTab(group: DwtTabView): void {
-    let emojiTab: DwtTabViewPage = new DwtTabViewPage(group);
+  private addContentDisplaySettingsTab(group: DwtTabView): void {
+    let contentTab: DwtTabViewPage = new DwtTabViewPage(group);
 
-    let displayOptsGroup: DwtGrouper = new DwtGrouper(emojiTab);
-    displayOptsGroup.setLabel(StringUtils.getMessage("label_display_options"));
-    let displayOptsCtrl: DwtComposite = new DwtComposite({parent: displayOptsGroup});
-    let enableInChatCheckbox: DwtCheckbox = new DwtCheckbox({
-      parent: displayOptsCtrl,
-      name: Setting.IM_USR_PREF_EMOJI_IN_CONV,
-      checked: <boolean>this.mOriginals[Setting.IM_USR_PREF_EMOJI_IN_CONV]
-    });
-    enableInChatCheckbox.setText(StringUtils.getMessage("label_enable_emoji_in_chat"));
-    this.mSettingsObjs[Setting.IM_USR_PREF_EMOJI_IN_CONV] = enableInChatCheckbox;
-    let enableInHistoryCheckbox: DwtCheckbox = new DwtCheckbox({
-      parent: displayOptsCtrl,
-      name: Setting.IM_USR_PREF_EMOJI_IN_HIST,
-      checked: <boolean>this.mOriginals[Setting.IM_USR_PREF_EMOJI_IN_HIST]
-    });
-    enableInHistoryCheckbox.setText(StringUtils.getMessage("label_enable_emoji_in_chat_history"));
-    this.mSettingsObjs[Setting.IM_USR_PREF_EMOJI_IN_HIST] = enableInHistoryCheckbox;
-    let enableInMailCheckbox: DwtCheckbox = new DwtCheckbox({
-      parent: displayOptsCtrl,
-      name: Setting.IM_USR_PREF_EMOJI_IN_MAIL,
-      checked: <boolean>this.mOriginals[Setting.IM_USR_PREF_EMOJI_IN_MAIL]
-    });
-    enableInMailCheckbox.setText(StringUtils.getMessage("label_enable_emoji_in_mail"));
-    this.mSettingsObjs[Setting.IM_USR_PREF_EMOJI_IN_MAIL] = enableInMailCheckbox;
-    displayOptsGroup.setView(displayOptsCtrl);
+    let displayEmojiOptsGroup: DwtGrouper = new DwtGrouper(contentTab);
+    displayEmojiOptsGroup.setLabel(StringUtils.getMessage("label_emoji_display_options"));
+    let displayOptsCtrl: DwtComposite = new DwtComposite({parent: displayEmojiOptsGroup});
+    this.addCheckboxInContentTab(Setting.IM_USR_PREF_EMOJI_IN_CONV, displayOptsCtrl, StringUtils.getMessage("label_enable_emoji_in_chat"));
+    this.addCheckboxInContentTab(Setting.IM_USR_PREF_EMOJI_IN_HIST, displayOptsCtrl, StringUtils.getMessage("label_enable_emoji_in_chat_history"));
+    this.addCheckboxInContentTab(Setting.IM_USR_PREF_EMOJI_IN_MAIL, displayOptsCtrl, StringUtils.getMessage("label_enable_emoji_in_mail"));
+    displayEmojiOptsGroup.setView(displayOptsCtrl);
 
-    this.mTabIds[SettingsDialog.EMOJI_TAB] = group.addTab(
-      StringUtils.getMessage("title_emoji"),
-      emojiTab,
-      `${this.getHTMLElId()}_emoji_tab`
+    let displayUrlOptsGroup: DwtGrouper = new DwtGrouper(contentTab);
+    displayUrlOptsGroup.setLabel(StringUtils.getMessage("label_url_display_options"));
+    let displayUrlOptsCtrl: DwtComposite = new DwtComposite({parent: displayUrlOptsGroup});
+    this.addCheckboxInContentTab(Setting.IM_USR_PREF_URL_IN_CONV, displayUrlOptsCtrl, StringUtils.getMessage("label_enable_url_in_chat"));
+    this.addCheckboxInContentTab(Setting.IM_USR_PREF_URL_IN_HIST, displayUrlOptsCtrl, StringUtils.getMessage("label_enable_url_in_chat_history"));
+    // this.addCheckboxInContentTab(Setting.IM_USR_PREF_URL_IN_MAIL, displayUrlOptsCtrl, StringUtils.getMessage("label_enable_url_in_mail"));
+    displayUrlOptsGroup.setView(displayUrlOptsCtrl);
+
+    this.mTabIds[SettingsDialog.CONTENTS_TAB] = group.addTab(
+      StringUtils.getMessage("title_contents"),
+      contentTab,
+      `${this.getHTMLElId()}_contents_tab`
     );
+  }
+
+  private addCheckboxInContentTab(setting: string, parent: DwtComposite, message: string): void {
+    let checkbox: DwtCheckbox = new DwtCheckbox({
+      parent: parent,
+      name: setting,
+      checked: <boolean>this.mOriginals[setting]
+    });
+    checkbox.setText(message);
+    this.mSettingsObjs[setting] = checkbox;
   }
 
   private addInfoTab(group: DwtTabView): void {

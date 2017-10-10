@@ -25,6 +25,7 @@ import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {FocusKeeper} from "../../../lib/FocusKeeper";
 import {DwtKeyMap} from "../../../zimbra/ajax/dwt/keyboard/DwtKeyMap";
 import {ZimbraUtils} from "../../../lib/ZimbraUtils";
+import {EmojiData} from "./EmojiTemplate";
 
 export class EmojiOnePickerButton extends DwtToolBarButton {
 
@@ -43,14 +44,16 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     this.mPopAbove = popAbove;
     this.mOnEmojiSelectedCallback = new Callback(this, this.onEmojiSelected, onEmojiSelectedCallback);
 
-    this.setData(EmojiOnePicker.KEY_EMOJI_DATA, EmojiOnePicker.getDefaultEmoji().name);
-    this.setText(EmojiOnePicker.getDefaultEmoji().data);
+    this.setEmoji(EmojiOnePicker.getDefaultEmoji());
     this.setToolTipContent(ZmMsg.emoticons, false);
     this.dontStealFocus();
     this.setEmojiPickerMenu();
 
+    // Change following AjxListener in order to change button behaviour that add current emoji to inputfield
+    //   Also uncomment "this.setEmoji(tmpEmoji);" in pickerListener;
     this.addSelectionListener(
-      new AjxListener(this, this.handleKeyAction, [DwtKeyMap.SUBMENU, undefined])
+      new AjxListener(this, this.popup)
+      // new AjxListener(this, this.buttonListener, onEmojiSelectedCallback)
     );
   }
 
@@ -61,9 +64,14 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     super.popup();
   }
 
-  private onEmojiSelected(callback: Callback, ev: DwtSelectionEvent, emoji: string): void {
-    if (typeof emoji !== "undefined") {
-      this.btnLsnr(callback, ev, emoji);
+  private setEmoji(emoji: EmojiData): void {
+    this.setData(EmojiOnePicker.KEY_EMOJI_DATA, emoji.name);
+    this.setText(emoji.data);
+  }
+
+  private onEmojiSelected(callback: Callback, ev: DwtSelectionEvent, emojiData: EmojiData): void {
+    if (typeof emojiData !== "undefined") {
+      this.pickerListener(callback, ev, emojiData);
     }
   }
 
@@ -83,15 +91,28 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     );
   }
 
-  private btnLsnr(callback: Callback, ev: DwtSelectionEvent, emoji?: string): void {
-    let tmpEmoji: string = emoji;
+  private buttonListener(callback: Callback, ev: DwtSelectionEvent): void {
+    if (typeof callback !== "undefined") {
+      callback.run(
+        ev,
+        {name: this.getData(EmojiOnePicker.KEY_EMOJI_DATA), data: this.getText()}
+      );
+    }
+  }
+
+  private pickerListener(callback: Callback, ev: DwtSelectionEvent, emoji: EmojiData): void {
+    let tmpEmoji: EmojiData = emoji;
     if (typeof emoji === "undefined") {
-      tmpEmoji = this.getData(EmojiOnePicker.KEY_EMOJI_DATA);
+      tmpEmoji = {
+        name: this.getData(EmojiOnePicker.KEY_EMOJI_DATA),
+        data: this.getText()
+      };
     }
     if (typeof tmpEmoji !== "undefined") {
       if (typeof callback !== "undefined") {
         callback.run(ev, tmpEmoji);
       }
+      // this.setEmoji(tmpEmoji);
       this.getMenu().popdown();
       FocusKeeper.loadFocusElement();
     }

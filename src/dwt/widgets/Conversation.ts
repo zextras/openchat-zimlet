@@ -21,11 +21,12 @@ import {DateProvider} from "../../lib/DateProvider";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
 import {MessageSent as MessageSentObj} from "../../client/MessageSent";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {BuddyStatusImp} from "../../client/BuddyStatusImp";
 import {Buddy} from "../../client/Buddy";
 import {MessageReceived} from "./MessageReceived";
 import {MessageSent} from "./MessageSent";
 import {MessageStatus} from "./MessageStatus";
+import {BuddyStatus} from "../../client/BuddyStatus";
 
 export class Conversation extends DwtComposite {
 

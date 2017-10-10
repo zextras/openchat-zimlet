@@ -32,7 +32,7 @@ export class ContactInformationEventHandler implements ChatEventHandler {
     let contactEvent: ContactInformationEvent = <ContactInformationEvent> chatEvent;
     if (contactEvent.getContactType() === MessageType.CHAT) {
       if (contactEvent.getSenderWithResource() === client.getSessionInfoProvider().getUsernameWithResource()) {
-        client.setCurrentStatus(contactEvent.getStatus());
+        client.statusChanged(contactEvent.getStatus());
       } else {
         let buddy = client.getBuddyList().getBuddyById(contactEvent.getSender());
         if (buddy != null) {

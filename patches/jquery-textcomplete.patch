@@ -1,0 +1,11 @@
+--- node_modules/jquery-textcomplete/src/ckeditor.js	2017-03-07 10:36:43.366301447 +0100
++++ node_modules/jquery-textcomplete/src/ckeditor.js	2017-03-07 10:22:17.000000000 +0100
+@@ -25,7 +25,7 @@
+       }, null, null, 1); // 1 = Priority = Important!
+       // we actually also need the native event, as the CKEditor one is happening to late
+       this.$el.on('keyup.' + this.id, $.proxy(this._onKeyup, this));
+-    },
++    }
+ });
+ 
+   $.fn.textcomplete.CKEditor = CKEditor;

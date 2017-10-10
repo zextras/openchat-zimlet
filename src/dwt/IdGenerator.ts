@@ -49,7 +49,7 @@ export class IdGenerator {
    * @param {string} part
    * @return {string} the sanitized part.
    */
-  private static sanitizePart(part: string): string {
+  public static sanitizePart(part: string): string {
     return part.replace(/[^A-Za-z0-9\._-]/g, "_");
   }
 }

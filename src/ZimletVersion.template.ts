@@ -23,4 +23,5 @@ export class ZimletVersion {
   public static STABLE: boolean  = #IS_STABLE#;
   public static STAGING: boolean = #IS_STAGING#;
   public static TESTING: boolean = #IS_TESTING#;
+  public static PACKAGE_NAME: string = "#PACKAGE_NAME#";
 }

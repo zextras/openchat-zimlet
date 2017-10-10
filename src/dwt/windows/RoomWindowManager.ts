@@ -80,6 +80,7 @@ export class RoomWindowManager {
               roomManager: RoomManager,
               chatPluginManager: ChatPluginManager
   ) {
+    (<ExtendedWindow>window).debugWM = this;
     this.mAppCtxt = appCtxt;
     this.mShell = shell;
     this.mNotificationManager = notificationManager;
@@ -139,9 +140,7 @@ export class RoomWindowManager {
   private onRoomAdded(room: Room) {
     let roomWindowPluginManager = new ChatPluginManager();
     this.mRoomWindowManagerPluginManager.triggerPlugins(RoomWindowManager.CreateRoomWindowPluginManager, roomWindowPluginManager);
-    let position: number = this.mWindowsMap.size(),
-      size = 0,
-      roomWindow: RoomWindow = new RoomWindow(
+    let roomWindow: RoomWindow = new RoomWindow(
         this.mShell,
         this.mTimedCallbackFactory,
         room,
@@ -230,15 +229,16 @@ export class RoomWindowManager {
 
   /**
    * Callback function invoked when a message is received.
-   * @param window
+   * @param roomWindow
    * @param message
    */
-  private onMessageReceived(window: RoomWindow, message: MessageReceived): void {
-    // if (!window._isFocused() && window.getChildren().length > 0 && !this.mRoomManager.isStatusBusy()) {
-    if (!window.isFocused() && window.getChildren().length > 0 &&
-      !(this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY)
-    ) {
-      window.startBlinkTitle();
+  private onMessageReceived(roomWindow: RoomWindow, message: MessageReceived): void {
+    let onBusyStatus: boolean = this.mZimletContext.getClient().getUserStatusManager().getCurrentStatus().isBusy();
+    if (roomWindow.getChildren().length > 0) {
+      roomWindow.popup(undefined, !onBusyStatus);
+    }
+    if (!roomWindow.isFocused() && roomWindow.getChildren().length > 0 && !onBusyStatus) {
+      roomWindow.startBlinkTitle();
       let icon = (new ContactImg(message.getSender().getId())).getImgUrl();
       if (typeof icon === "undefined" || icon === null) {
         icon = this.mZimletContext.getNotificationImage();
@@ -296,10 +296,10 @@ export class RoomWindowManager {
         this.getYWindowLocation(window)
       );
     }
-    // if (this.mRoomManager.isStatusBusy()) {
-    if (this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY) {
-      window.setMinimized();
-    }
+    // // if (this.mRoomManager.isStatusBusy()) {
+    // if (this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY) {
+    //   window.setMinimized();
+    // }
   }
 
   /**
@@ -334,7 +334,7 @@ export class RoomWindowManager {
   private onStartDrag(roomWindow: RoomWindow, x: number, y: number): void {
     let dragTask: WindowDragTask = new WindowDragTask(roomWindow);
     this.mDragTasks.put(roomWindow.getId(), dragTask);
-    roomWindow.setZIndex(parseInt(`${roomWindow.getZIndex()}`, 10) + 1);
+    // roomWindow.setZIndex(parseInt(`${roomWindow.getZIndex()}`, 10) + 1);
   }
 
   private onDuringDrag(roomWindow: RoomWindow, x: number, y: number): void {
@@ -351,7 +351,7 @@ export class RoomWindowManager {
       openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values(),
       i: number,
       bufferPositions: WindowsPositionContainer = new WindowsPositionContainer();
-    roomWindow.setZIndex(dragTask.getOriginalZIndex());
+    // roomWindow.setZIndex(dragTask.getOriginalZIndex());
     if (typeof dragTask === "undefined") return;
     if (!dragTask.isReallyMoved(x, y)) {
       if (roomWindow.isMinimized()) roomWindow.setExpanded();
@@ -537,4 +537,8 @@ export class RoomWindowManager {
     return Math.round(window.getLocation().y + (window.getSize().y / 2));
   }
 
+}
+
+declare class ExtendedWindow extends Window {
+  debugWM: RoomWindowManager;
 }

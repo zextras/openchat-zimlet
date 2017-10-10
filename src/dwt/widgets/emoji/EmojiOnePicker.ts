@@ -27,6 +27,7 @@ import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {DwtPoint} from "../../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {AjxCallback} from "../../../zimbra/ajax/boot/AjxCallback";
 import {ZimbraUtils} from "../../../lib/ZimbraUtils";
+import {WindowBase} from "../../windows/WindowBase";
 
 export class EmojiOnePicker extends DwtMenu {
 
@@ -52,6 +53,8 @@ export class EmojiOnePicker extends DwtMenu {
     });
 
     let emojiTabView = new DwtTabView({parent: this});
+    // Fix for Zimbra 7
+    if (typeof (<ExtendedDwtTabView> emojiTabView).isStyle === "undefined") { (<ExtendedDwtTabView> emojiTabView).isStyle = () => {return undefined; }; }
     let pageIdx: number = -1;
     let selectionListener = new AjxListener(
       this,
@@ -82,16 +85,20 @@ export class EmojiOnePicker extends DwtMenu {
       );
     }
 
+    this.resetSize();
+
+    if (typeof EmojiOnePicker.sInstance === "undefined") {
+      EmojiOnePicker.sInstance = this;
+    }
+  }
+
+  private resetSize(): void {
     let wSize: number = (EmojiTemplate.NAMES.length * 48) + 25;
     let hSize: number = (EmojiOnePicker.hEmojiToolBarBtn * 5) + 25;
     this.setSize(
       `${wSize}px`,
       `${hSize + 5}px`
     );
-
-    if (typeof EmojiOnePicker.sInstance === "undefined") {
-      EmojiOnePicker.sInstance = this;
-    }
   }
 
   public getSize(getFromStyle?: boolean): DwtPoint {
@@ -112,9 +119,10 @@ export class EmojiOnePicker extends DwtMenu {
   }
 
   private onEmojiSelected(ev: DwtSelectionEvent): void {
-    let emoji: string = ev.dwtObj.getData(EmojiOnePicker.KEY_EMOJI_DATA);
+    let emoji: EmojiData = ev.dwtObj.getData(EmojiOnePicker.KEY_EMOJI_DATA);
     if (typeof emoji === "undefined") { return; }
     if (typeof this.mOnEmojiSelectedCbk !== "undefined") {
+      // emoji is a EmojiData not DwtControl
       this.mOnEmojiSelectedCbk.run(ev, emoji);
     }
   }
@@ -145,10 +153,21 @@ export class EmojiOnePicker extends DwtMenu {
         className: `EmojiOnePickerToolbarButton${ !ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`
       });
       button.setText(emojiData.data);
-      button.setData(EmojiOnePicker.KEY_EMOJI_DATA, emojiData.name);
+      button.setData(EmojiOnePicker.KEY_EMOJI_DATA, emojiData);
       button.setToolTipContent(emojiData.name, false);
       button.addSelectionListener(selectionListner);
     }
   }
 
+  public popup(delay: number, x: number, y: number, kbGenereated?: boolean): void {
+    super.popup(delay, x, y, kbGenereated);
+    this.setZIndex(501);
+    // Fix for Zimbra 7, not necessary in 8+
+    this.resetSize();
+  }
+
+}
+
+class ExtendedDwtTabView extends DwtTabView {
+  isStyle: () => void;
 }

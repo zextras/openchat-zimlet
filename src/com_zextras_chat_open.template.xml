@@ -17,7 +17,7 @@
 
 <zimlet name="#NAME#"
         version="#VERSION#"
-        label="#NAME#"
+        label="#LABEL#"
         description="#DESCRIPTION#">
 
     <include>#NAME#_bundle.js</include>
@@ -40,6 +40,12 @@
         <property type="string" name="zxchat_pref_emoji_in_hist" value="true"/>
         <!-- Enable Emoji in email -->
         <property type="string" name="zxchat_pref_emoji_in_mail" value="false"/>
+        <!-- Enable Url in chat conversation -->
+        <property type="string" name="zxchat_pref_url_in_conv" value="true"/>
+        <!-- Enable Url in history -->
+        <property type="string" name="zxchat_pref_url_in_hist" value="true"/>
+        <!-- Enable Url in email -->
+        <property type="string" name="zxchat_pref_url_in_mail" value="false"/>
         <!-- Show debug tab in preferences dialog -->
         <property type="string" name="zxchat_pref_show_debug_info" value="false"/>
         <property type="string" name="report_errors" value="false"/>

@@ -16,9 +16,10 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
-import {BuddyStatus} from "../../BuddyStatus";
+import {BuddyStatusImp} from "../../BuddyStatusImp";
 import {MessageType} from "./MessageEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
+import {BuddyStatus} from "../../BuddyStatus";
 
 export class ContactInformationEvent extends ChatEvent {
 

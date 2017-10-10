@@ -64,7 +64,7 @@ export class BuddyList {
   public addGroup(group: Group): void {
     if (typeof this.getGroup(group.getName()) === "undefined") {
       this.mGroups.push(group);
-      group.onNameChange(new Callback(this.mOnRenameGroupCbkMgr, this.mOnRenameGroupCbkMgr.run, group));
+      group.onNameChange(new Callback(this, this.groupRenamed, group));
       this.mOnAddGroupCbkMgr.run(group);
     } else {
       // If the group is already present, migrate his buddies to the old group.
@@ -163,6 +163,10 @@ export class BuddyList {
 
   public onRenameGroup(callback: Callback): void {
     this.mOnRenameGroupCbkMgr.addCallback(callback);
+  }
+
+  private groupRenamed(group: Group, newName: string): void {
+    this.mOnRenameGroupCbkMgr.run(group, newName);
   }
 
   public handleBuddyListEvent(event: BuddyListEvent): boolean {

@@ -26,6 +26,7 @@ define(
     exports,
     Bowser_1
   ) {
+    window.debugBowser = Bowser_1;
     exports.Bowser = Bowser_1;
   }
 );

@@ -46,7 +46,7 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: [".js", ".json", ".ts", ".coffee"]
+    extensions: [".js", ".json", ".ts"]
   },
   devtool: "source-map", // TODO: Remove source maps from production?
   module: {
@@ -62,11 +62,6 @@ module.exports = {
           path.resolve(__dirname, "src/zimbra")
         ],
         loader: "awesome-typescript-loader"
-      },
-      {
-        test: /\.coffee$/,
-        exclude: [],
-        loader: "coffee-loader"
       }
     ]
   },

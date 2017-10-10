@@ -28,6 +28,7 @@ import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {DwtMessageDialog} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
+import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 
 export class RenameGroupDialog extends ZmDialog {
 
@@ -66,7 +67,7 @@ export class RenameGroupDialog extends ZmDialog {
       view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#AddGroupDialog", data);
     }
     this._groupNameEl = <HTMLInputElement>document.getElementById(data.id + "_group_name");
-    this._groupNameEl.value = this.group.getName();
+    this._groupNameEl.value = AjxStringUtil.htmlDecode(this.group.getName());
     return view;
   }
 

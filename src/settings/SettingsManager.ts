@@ -164,6 +164,18 @@ export class SettingsManager {
     return this.get(Setting.IM_USR_PREF_EMOJI_IN_MAIL);
   }
 
+  public enabledUrlInChatConversation(): boolean {
+    return this.get(Setting.IM_USR_PREF_URL_IN_CONV);
+  }
+
+  public enabledUrlInChatHistory(): boolean {
+    return this.get(Setting.IM_USR_PREF_URL_IN_HIST);
+  }
+
+  public enabledUrlInMail(): boolean {
+    return this.get(Setting.IM_USR_PREF_URL_IN_MAIL);
+  }
+
   public isZimletTesting(): boolean {
     return ZimletVersion.TESTING;
   }

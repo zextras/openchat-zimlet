@@ -15,15 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {BuddyStatusType} from "./BuddyStatusType";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class BuddySessionKeeper {
 
   private mStatusMap: {[address: string]: BuddyStatus} = {};
 
   public getMostAvailableStatus(): BuddyStatus {
-    let bestStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
+    let bestStatus: BuddyStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
 
     for (let address in this.mStatusMap) {
       if (!this.mStatusMap.hasOwnProperty(address)) { continue; }
