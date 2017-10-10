@@ -37,6 +37,7 @@ import {SoapCommands} from "./client/connection/soap/SoapCommands";
 import {HistoryPlugin} from "./plugins/HistoryPlugin";
 import {SendMailPlugin} from "./plugins/SendMailPlugin";
 import {StringUtils} from "./lib/StringUtils";
+import {SidebarUtils} from "./lib/SidebarUtils";
 
 declare const com_zextras_chat_open: {[label: string]: string};
 
@@ -136,7 +137,8 @@ export class OpenChatZimlet extends ChatZimletBase {
         roomManagerPluginManager,
         chatClientPluginManager,
         mainWindowPluginManager,
-        roomWindowManagerPluginManager
+        roomWindowManagerPluginManager,
+        new SidebarUtils()
       );
     } catch (err) {
       ChatZimletBase.alreadyInit = false;

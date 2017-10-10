@@ -50,6 +50,7 @@ import {DwtInputField} from "../../zimbra/ajax/dwt/widgets/DwtInputField";
 import {DwtButton} from "../../zimbra/ajax/dwt/widgets/DwtButton";
 import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {SidebarUtils} from "../../lib/SidebarUtils";
 
 export class MainWindow extends WindowBase {
 
@@ -101,7 +102,13 @@ export class MainWindow extends WindowBase {
   private mSearchButton: DwtButton;
   private mSearchToolBar: DwtToolBar;
 
-  constructor(appCtxt: ZmAppCtxt, settingsManager: SettingsManager, buddyList: BuddyList, mainWindowPluginManager: ChatPluginManager) {
+  constructor(
+    appCtxt: ZmAppCtxt,
+    settingsManager: SettingsManager,
+    buddyList: BuddyList,
+    mainWindowPluginManager: ChatPluginManager,
+    sidebarUtils: SidebarUtils
+  ) {
 
     super(
       appCtxt.getShell(),
@@ -158,7 +165,7 @@ export class MainWindow extends WindowBase {
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
     this.mTitleBar.addFiller();
-    let primaryMenuButton = this.createMainMenuButton(this.mTitleBar, true);
+    let primaryMenuButton = this.createMainMenuButton(this.mTitleBar, true, sidebarUtils);
     this.mStatusSelectorToolbar = new DwtToolBar({
       parent: this.mContainerView,
       className: "MainWindowStatusToolbar"
@@ -230,14 +237,14 @@ export class MainWindow extends WindowBase {
     super._createHtmlFromTemplate(templateId, data);
   }
 
-  protected createMainMenuButton(toolbar: DwtToolBar, isPrimary: boolean): MainMenuButton {
+  protected createMainMenuButton(toolbar: DwtToolBar, isPrimary: boolean, sidebarUtils: SidebarUtils): MainMenuButton {
     let image: string;
     if (ZimbraUtils.isUniversalUI()) {
       image = `MoreVertical,color=${isPrimary ? "#b4d7eb" : "#989898"}`;
     } else {
       image = `${isPrimary ? "ZxChat_preferences" : "ZxChat_preferences-gray"}`;
     }
-    let mainMenuButton = new MainMenuButton(toolbar, this.mMainWindowPluginManager, image);
+    let mainMenuButton = new MainMenuButton(toolbar, this.mMainWindowPluginManager, image, sidebarUtils);
     mainMenuButton.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
     mainMenuButton.onAddGroupSelection(new Callback(this, this.addGroupOptionSelected));
     mainMenuButton.onSettingsSelection(new Callback(this, this.settingsOptionSelected));
