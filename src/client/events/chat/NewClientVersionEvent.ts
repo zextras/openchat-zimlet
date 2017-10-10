@@ -16,16 +16,15 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 import {Version} from "../../../lib/Version";
 
 export class NewClientVersionEvent extends ChatEvent {
 
-  public static ID: number = 12;
-
   private mCurrentZimletVersion: Version;
 
   constructor(currentZimletVersion: Version, creationDate: Date) {
-    super(NewClientVersionEvent.ID, creationDate, false);
+    super(OpenChatEventCode.NEW_CLIENT_VERSION, creationDate, false);
 
     this.mCurrentZimletVersion = currentZimletVersion;
   }

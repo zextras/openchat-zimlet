@@ -20,13 +20,14 @@ import {ChatEvent} from "../../../../events/ChatEvent";
 import {ContactInformationEvent} from "../../../../events/chat/ContactInformationEvent";
 import {BuddyStatus} from "../../../../BuddyStatus";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class ContactInformationEventDecoder extends SoapEventDecoder {
 
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(ContactInformationEvent.ID);
+    super(OpenChatEventCode.CONTACT_INFORMATION);
     this.mDateProvider = dateProvider;
   }
 

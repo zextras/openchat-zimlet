@@ -17,10 +17,9 @@
 
 import {ChatEvent} from "../ChatEvent";
 import {Command} from "../../connection/soap/Command";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class SetStatusEvent extends ChatEvent {
-
-  public static ID: number = 26;
 
   private mStatusId: string;
   // private mRooms: string[];
@@ -28,7 +27,7 @@ export class SetStatusEvent extends ChatEvent {
 
   // constructor(statusId: string, rooms: string[], creationDate: Date, auto: boolean = false) {
   constructor(statusId: string, creationDate: Date, auto: boolean = false) {
-    super(SetStatusEvent.ID, creationDate, false);
+    super(OpenChatEventCode.SET_STATUS, creationDate, false);
     this.mStatusId = statusId;
     // this.mRooms = rooms;
     this.mAuto = auto;

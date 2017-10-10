@@ -243,7 +243,7 @@ export class SettingsManager {
 
   }
 
-  public loadGroupsData(): GroupsData {
+  public loadGroupsData(): GroupData[] {
     if ((ZmApp.ENABLED_APPS[ZmApp.PREFERENCES] == null) || !ZmApp.ENABLED_APPS[ZmApp.PREFERENCES]) {
       return;
     }
@@ -294,5 +294,7 @@ export class SettingsManager {
 
 }
 
-export interface GroupsData {
+export interface GroupData {
+  name: string;
+  expanded: boolean;
 }

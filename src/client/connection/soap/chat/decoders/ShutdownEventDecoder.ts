@@ -19,12 +19,13 @@ import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {ShutdownEvent} from "../../../../events/chat/ShutdownEvent";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class ShutdownEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(ShutdownEvent.ID);
+    super(OpenChatEventCode.SHUTDOWN);
     this.mDateProvider = dateProvider;
   }
 

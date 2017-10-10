@@ -28,13 +28,14 @@ import {IdGenerator} from "../../../dwt/IdGenerator";
 import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {appCtxt} from "../../../zimbra/zimbraMail/appCtxt";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class NewClientVersionEventHandler implements ChatEventHandler {
 
   private mUpdateNotified: boolean;
 
   public getEventCode(): number {
-    return NewClientVersionEvent.ID;
+    return OpenChatEventCode.NEW_CLIENT_VERSION;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

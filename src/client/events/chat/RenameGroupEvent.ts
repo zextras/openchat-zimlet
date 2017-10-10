@@ -16,16 +16,15 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class RenameGroupEvent extends ChatEvent {
-
-  public static ID: number = 24;
 
   private mGroupName: string;
   private mNewGroupName: string;
 
   constructor(groupName: string, newGroupName: string, destination: string, creationDate: Date) {
-    super(RenameGroupEvent.ID, creationDate, false);
+    super(OpenChatEventCode.RENAME_GROUP, creationDate, false);
 
     if (typeof destination !== "undefined" && destination !== null) {
       this.setDestination(destination);

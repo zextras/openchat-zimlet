@@ -16,14 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class FriendshipEvent extends ChatEvent {
 
-  public static ID: number = 2;
   private mFriendshipStatus: number;
 
   constructor(type: number, creationDate: Date, hasResponse: boolean = true) {
-    super(FriendshipEvent.ID, creationDate, hasResponse);
+    super(OpenChatEventCode.FRIENDSHIP, creationDate, hasResponse);
     this.mFriendshipStatus = type;
   }
 

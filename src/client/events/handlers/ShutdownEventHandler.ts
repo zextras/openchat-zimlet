@@ -18,12 +18,12 @@
 import {ChatEventHandler} from "./ChatEventHandler";
 import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
-import {ShutdownEvent} from "../chat/ShutdownEvent";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class ShutdownEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return ShutdownEvent.ID;
+    return OpenChatEventCode.SHUTDOWN;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

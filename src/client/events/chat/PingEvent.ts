@@ -16,13 +16,12 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class PingEvent extends ChatEvent {
 
-  public static ID: number = 15;
-
   constructor(creationDate: Date) {
-    super(PingEvent.ID, creationDate, false);
+    super(OpenChatEventCode.PING, creationDate, false);
   }
 
 }

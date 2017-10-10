@@ -27,6 +27,7 @@ import {ZxErrorCode} from "../../../lib/error/ZxErrorCode";
 import {ZmCsfeException} from "../../../zimbra/zimbra/csfe/ZmCsfeException";
 import {RequiredRegistrationEvent} from "../../events/chat/RequiredRegistrationEvent";
 import {SessionInfoProvider} from "../../SessionInfoProvider";
+import {OpenChatEventCode} from "../../events/chat/OpenChatEventCode";
 
 export class PingManagerImp implements PingManager {
 
@@ -123,7 +124,7 @@ export class PingManagerImp implements PingManager {
 
   private checkPresenceRequiredRegistrationEvent(responses: {type: number}[]): boolean { // TODO: Investigate on response type
     for (let i: number = 0; i < responses.length; i += 1) {
-      if (responses[i].type === RequiredRegistrationEvent.ID) {
+      if (responses[i].type === OpenChatEventCode.REQUIRED_REGISTRATION) {
         this.closeStream();
         this.mTimedCallbackFactory.createTimedCallback(
           new Callback(this, this.processResponses, [responses[i]]),

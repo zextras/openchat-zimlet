@@ -21,12 +21,12 @@ import {ZmFolder} from "../../zimbra/zimbraMail/share/model/ZmFolder";
 import {ZmApp} from "../../zimbra/zimbraMail/core/ZmApp";
 import {ChatFolderHandler} from "../../dwt/ChatFolderHandler";
 import {ChatEventHandler} from "../../client/events/handlers/ChatEventHandler";
-import {EventSessionRegistered} from "../../client/events/chat/EventSessionRegistered";
+import {OpenChatEventCode} from "../../client/events/chat/OpenChatEventCode";
 
 export class EventSessionRegisteredHistoryEnabledHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return EventSessionRegistered.ID;
+    return OpenChatEventCode.REGISTER_SESSION;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

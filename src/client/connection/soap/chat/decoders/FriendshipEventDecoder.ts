@@ -23,15 +23,15 @@ import {FriendshipDeniedEvent} from "../../../../events/chat/friendship/Friendsh
 import {FriendshipInvitationEvent} from "../../../../events/chat/friendship/FriendshipInvitationEvent";
 import {FriendshipRemovedEvent} from "../../../../events/chat/friendship/FriendshipRemovedEvent";
 import {FriendshipRenameEvent} from "../../../../events/chat/friendship/FriendshipRenameEvent";
-import {FriendshipEvent} from "../../../../events/chat/FriendshipEvent";
 import {ObjectUtils} from "../../../../../lib/ObjectUtils";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class FriendshipEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
-    super(FriendshipEvent.ID);
+    super(OpenChatEventCode.FRIENDSHIP);
     this.mDateProvider = dateProvider;
   }
 

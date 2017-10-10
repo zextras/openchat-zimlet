@@ -36,12 +36,11 @@ import {DwtDragEvent} from "../../zimbra/ajax/dwt/dnd/DwtDragEvent";
 import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
 import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
+import {DwtChatTreeItem} from "./DwtChatTreeItem";
 
-export class BuddyTreeItem extends DwtTreeItem {
+export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
 
   public static MAX_LENGTH: number = 200;
-
-  public isBuddyTreeItem: boolean = true;
 
   private appCtxt: ZmAppCtxt;
   private refBuddy: Buddy;
@@ -85,6 +84,14 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onSendInvitationCallbacks = new CallbackManager();
     this.onAcceptInvitationCallbacks = new CallbackManager();
     this.setToolTipContent(new AjxCallback(this, this._createTooltip));
+  }
+
+  public isGroupTreeItem(): boolean {
+    return false;
+  }
+
+  public isBuddyTreeItem(): boolean {
+    return true;
   }
 
   public getBuddy(): Buddy {
@@ -132,7 +139,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this._updateVisibility();
   }
 
-  private _onDeleteBuddy(ev: DwtSelectionEvent): void {
+  public _onDeleteBuddy(ev: DwtSelectionEvent): void {
     this.onDeleteBuddyCallbacks.run(this.refBuddy);
   }
 
@@ -140,7 +147,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onRenameBuddyCallbacks.addCallback(callback);
   }
 
-  private _onRenameBuddy(ev: DwtSelectionEvent): void {
+  public _onRenameBuddy(ev: DwtSelectionEvent): void {
     this.onRenameBuddyCallbacks.run(this.refBuddy);
   }
 
@@ -148,7 +155,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onSendInvitationCallbacks.addCallback(callback);
   }
 
-  private _onSendInvitation(ev: DwtSelectionEvent): void {
+  public _onSendInvitation(ev: DwtSelectionEvent): void {
     this.onSendInvitationCallbacks.run(this.refBuddy);
   }
 
@@ -156,7 +163,7 @@ export class BuddyTreeItem extends DwtTreeItem {
     this.onAcceptInvitationCallbacks.addCallback(callback);
   }
 
-  private _onAcceptInvitation(ev: DwtSelectionEvent): void {
+  public _onAcceptInvitation(ev: DwtSelectionEvent): void {
     this.onAcceptInvitationCallbacks.run(this.refBuddy);
   }
 

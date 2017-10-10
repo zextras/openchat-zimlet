@@ -20,6 +20,7 @@ import {ChatEvent} from "../../../../events/ChatEvent";
 import {MessageEvent} from "../../../../events/chat/MessageEvent";
 import {MessageSentEvent} from "../../../../events/chat/MessageSentEvent";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class MessageEventDecoder extends SoapEventDecoder {
 
@@ -27,7 +28,7 @@ export class MessageEventDecoder extends SoapEventDecoder {
   private mSuperSecretMessageDecoder: SoapEventDecoder;
 
   constructor(dateProvider: DateProvider, superSecretMessageDecoder: SoapEventDecoder) {
-    super(MessageEvent.ID);
+    super(OpenChatEventCode.MESSAGE);
     this.mDateProvider = dateProvider;
     this.mSuperSecretMessageDecoder = superSecretMessageDecoder;
   }

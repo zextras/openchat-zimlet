@@ -16,15 +16,14 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class BroadcastMessageEvent extends ChatEvent {
-
-  public static ID: number = 6;
 
   private mMessage: string;
 
   constructor(from: string, message: string, creationDate: Date) {
-    super(BroadcastMessageEvent.ID, creationDate, false);
+    super(OpenChatEventCode.BROADCAST_MESSAGE, creationDate, false);
     this.setSender(from);
     this.mMessage = message;
   }

@@ -16,14 +16,14 @@
  */
 
 import {ChatEventHandler} from "./ChatEventHandler";
-import {UnregisterSessionEvent} from "../chat/UnregisterSessionEvent";
 import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class UnregisterSessionEventHandler implements ChatEventHandler {
 
   public getEventCode(): number {
-    return UnregisterSessionEvent.ID;
+    return OpenChatEventCode.UNREGISTER_SESSION;
   }
 
   public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {

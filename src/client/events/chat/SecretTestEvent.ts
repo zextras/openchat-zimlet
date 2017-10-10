@@ -16,15 +16,14 @@
  */
 
 import {SuperSecretEvent} from "./SuperSecretEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class SecretTestEvent extends SuperSecretEvent {
-
-  public static ID: number = 30;
 
   constructor(sender: string,
               destination: string,
               creationDate: Date) {
-    super(SecretTestEvent.ID, sender, destination, creationDate);
+    super(OpenChatEventCode.SECRET_TEST, sender, destination, creationDate);
 
     this.setMessageData({hello: `world`});
   }

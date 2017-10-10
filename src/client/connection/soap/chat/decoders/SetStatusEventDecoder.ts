@@ -18,11 +18,12 @@
 import {SoapEventDecoder} from "./SoapEventDecoder";
 import {ChatEvent} from "../../../../events/ChatEvent";
 import {SetStatusEvent} from "../../../../events/chat/SetStatusEvent";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 
 export class SetStatusEventDecoder extends SoapEventDecoder {
 
   constructor() {
-    super(SetStatusEvent.ID);
+    super(OpenChatEventCode.SET_STATUS);
   }
 
   public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {

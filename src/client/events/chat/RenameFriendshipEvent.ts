@@ -16,16 +16,15 @@
  */
 
 import {ChatEvent} from "../ChatEvent";
+import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class RenameFriendshipEvent extends ChatEvent {
-
-  public static ID: number = 23;
 
   private mNickname: string;
   private mGroup: string;
 
   constructor(buddyId: string, nickname: string, group: string, creationDate: Date) {
-    super(RenameFriendshipEvent.ID, creationDate, false);
+    super(OpenChatEventCode.RENAME_FRIENDSHIP, creationDate, false);
     if (typeof buddyId !== "undefined" && buddyId !== null)
       this.setDestination(buddyId);
     this.mNickname = nickname;
