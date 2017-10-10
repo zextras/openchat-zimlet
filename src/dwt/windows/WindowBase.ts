@@ -64,7 +64,7 @@ export class WindowBase extends DwtBaseDialog {
   private mMiniContentEl: HTMLElement;
   private mBlinkTitlebarColor: ColorFaderColor;
   private mBlinkTitlebarFontColor: ColorFaderColor;
-  private mLastLoc: DwtPoint = null;
+  protected mLastLoc: DwtPoint = null;
 
   constructor(parent: DwtComposite,
               elementId: string,

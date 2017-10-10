@@ -295,7 +295,7 @@ export class ChatClient {
   /**
    * Accept a friendship.
    */
-  public acceptFriendship(buddy: Buddy, callback: Callback, errorCallback: Callback): void {
+  public acceptFriendship(buddy: Buddy, callback?: Callback, errorCallback?: Callback): void {
     this.sendEvent(
       new AcceptFriendshipEvent(
         buddy.getId(),
@@ -324,7 +324,7 @@ export class ChatClient {
   /**
    * Change the nickname of a buddy.
    */
-  public changeBuddyNickname(buddy: Buddy, newNick: string, callback: Callback, errorCallback: Callback): void {
+  public changeBuddyNickname(buddy: Buddy, newNick: string, callback?: Callback, errorCallback?: Callback): void {
     this.sendEvent(
       new RenameFriendshipEvent(
         buddy.getId(),
@@ -350,7 +350,7 @@ export class ChatClient {
   /**
    * Rename a group
    */
-  public renameGroup(oldName: string, newName: string, callback: Callback, errorCallback: Callback): void {
+  public renameGroup(oldName: string, newName: string, callback?: Callback, errorCallback?: Callback): void {
     let event = new RenameGroupEvent(
       oldName,
       newName,

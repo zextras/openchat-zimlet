@@ -36,6 +36,9 @@ import {CommandFactory} from "./client/connection/CommandFactory";
 import {SoapCommands} from "./client/connection/soap/SoapCommands";
 import {HistoryPlugin} from "./plugins/HistoryPlugin";
 import {SendMailPlugin} from "./plugins/SendMailPlugin";
+import {StringUtils} from "./lib/StringUtils";
+
+declare const com_zextras_chat_open: {[label: string]: string};
 
 export class OpenChatZimlet extends ChatZimletBase {
 
@@ -121,6 +124,7 @@ export class OpenChatZimlet extends ChatZimletBase {
         roomWindowManagerPluginManager
       );
 
+      StringUtils.setTranslationMap(com_zextras_chat_open);
 
       super.initChatZimlet(
         timedCallbackFactory,

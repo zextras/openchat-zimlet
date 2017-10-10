@@ -67,7 +67,7 @@
 </template>
 
 <template id="com_zextras_chat_open.Widgets#BuddyTreeItemTooltip">
-    <table role="presentation"><tr><td>
+    <table role="presentation"><tr><td
 
         <!-- display contact toolipt first if available -->
         <$ if (data.contact) { $>

@@ -181,7 +181,7 @@ export class PingManagerImp implements PingManager {
 
     if (notify) {
       if (typeof this.mOnStreamErrorCbk !== "undefined") {
-        this.mOnStreamErrorCbk.run(error);
+        // this.mOnStreamErrorCbk.run(error);
       }
     }
 

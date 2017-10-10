@@ -15,10 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* tslint:disable */
 export class ZimletVersion {
   public static COMMIT: string  = "#COMMIT_DATA#";
   public static VERSION: string = "#VERSION#";
-  public static STABLE: boolean  = true;
-  public static STAGING: boolean = false;
-  public static TESTING: boolean = false;
+  public static ZIMLET_NAME: string = "#ZIMLET_NAME#";
+  public static STABLE: boolean  = #IS_STABLE#;
+  public static STAGING: boolean = #IS_STAGING#;
+  public static TESTING: boolean = #IS_TESTING#;
 }

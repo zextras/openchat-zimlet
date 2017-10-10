@@ -23,74 +23,18 @@ export class EventSessionRegistered extends ChatEvent {
 
   public static ID: number = RegisterSessionEvent.ID;
 
-  private mSessionId: string;
-  private mServerVersion: Version;
-  private mReqZimletVersion: Version;
-  private mHistoryEnabled: boolean;
-  private mNoBrand: boolean;
-  private mVideoChatEnabled: boolean;
-  private mSilentErrorReporting: boolean;
-  private mRoomServiceAddress: string;
+  private mEventSessionInfo: any;
 
   constructor(
-    sessionId: string,
-    serverVersion: Version,
-    reqZimletVersion: Version,
-    historyEnabled: boolean,
-    noBrand: boolean,
-    videoChatEnabled: boolean,
-    silentErrorReportingEnabled: boolean,
-    roomServiceAddress: string,
+    eventSessionInfo: any,
     creationDate: Date
   ) {
     super(EventSessionRegistered.ID, creationDate, true);
-    this.mSessionId = sessionId;
-    this.mServerVersion = serverVersion;
-    this.mReqZimletVersion = reqZimletVersion;
-    this.mHistoryEnabled = historyEnabled;
-    this.mNoBrand = noBrand;
-    this.mVideoChatEnabled = videoChatEnabled;
-    this.mSilentErrorReporting = silentErrorReportingEnabled;
-    this.mRoomServiceAddress = roomServiceAddress;
+    this.mEventSessionInfo = eventSessionInfo;
   }
 
-  public getSessionId(): string {
-    return this.mSessionId;
+  public getInfo(info: string): any {
+    return this.mEventSessionInfo[info];
   }
 
-  public getServerVersion(): Version {
-    return this.mServerVersion;
-  }
-
-  public getRequiredZimletVersion(): Version {
-    return this.mReqZimletVersion;
-  }
-
-  public getHistoryEnabled(): boolean {
-    return this.mHistoryEnabled;
-  }
-
-  public getNoBrand(): boolean {
-    return this.mNoBrand;
-  }
-
-  public isVideoChatEnabled(): boolean {
-    return this.mVideoChatEnabled;
-  }
-
-  public isSilentErrorReportingEnabled(): boolean {
-    return this.mSilentErrorReporting;
-  }
-
-  public getRoomServiceAddress(): string {
-    return this.mRoomServiceAddress;
-  }
-  // Response of the request
-  // {
-  //   session_id: "2c20d3dc-d984-494c-a0cd-660d8219eb32"
-  //   server_version: 1.1
-  //   required_zimlet_version: 1.15
-  //   history_enabled: true
-  //   remove_brand: true
-  // }
 }

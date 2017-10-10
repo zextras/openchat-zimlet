@@ -19,6 +19,7 @@ import {ChatEventHandler} from "./ChatEventHandler";
 import {ChatEvent} from "../ChatEvent";
 import {ChatClient} from "../../ChatClient";
 import {EventSessionRegistered} from "../chat/EventSessionRegistered";
+import {Version} from "../../../lib/Version";
 
 export class EventSessionRegisteredHandler implements ChatEventHandler {
   public getEventCode(): number {
@@ -29,9 +30,9 @@ export class EventSessionRegisteredHandler implements ChatEventHandler {
     if ((chatEvent != null) && typeof chatEvent !== "undefined") {
       let eventSessionRegistered: EventSessionRegistered = <EventSessionRegistered> chatEvent;
       client.getSessionInfoProvider().resetSessionResponsesReceived();
-      client.getSessionInfoProvider().setServerVersion(eventSessionRegistered.getServerVersion());
-      client.getSessionInfoProvider().setSessionId(eventSessionRegistered.getSessionId());
-      client.getSessionInfoProvider().setRoomServiceAddress(eventSessionRegistered.getRoomServiceAddress());
+      client.getSessionInfoProvider().setSessionId(eventSessionRegistered.getInfo("session_id"));
+      client.getSessionInfoProvider().setServerVersion(new Version(eventSessionRegistered.getInfo("server_version")));
+      client.getSessionInfoProvider().setRoomServiceAddress(eventSessionRegistered.getInfo("room_service_address"));
 
       client.serverOnline(eventSessionRegistered);
       client.startPing();
