@@ -259,7 +259,7 @@ export class ChatZimletBase extends ZmZimletBase {
       this.mSettingsManager,
       this.mChatClient.getBuddyList(),
       mainWindowPluginManager,
-      sidebarUtils
+      // sidebarUtils
     );
 
     this.mMainWindow.onStatusSelected((status) => this.statusSelected(status));
