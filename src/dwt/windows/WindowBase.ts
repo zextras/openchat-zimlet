@@ -41,7 +41,7 @@ export class WindowBase extends DwtBaseDialog {
   public static _EXPAND_ICON = "ImgZxChat_expand";
   public static _CLOSE_ICON = "ImgZxChat_close-legacy";
 
-  public static MAX_TITLE_LENGTH: number = 148;
+  public static MAX_TITLE_LENGTH: number = 190;
 
   public static Z_INDEX: number = 499;
 
@@ -64,7 +64,7 @@ export class WindowBase extends DwtBaseDialog {
   private mMiniContentEl: HTMLElement;
   private mBlinkTitlebarColor: ColorFaderColor;
   private mBlinkTitlebarFontColor: ColorFaderColor;
-  private mLastLoc: DwtPoint = null;
+  protected mLastLoc: DwtPoint = null;
 
   constructor(parent: DwtComposite,
               elementId: string,
@@ -334,7 +334,7 @@ export class WindowBase extends DwtBaseDialog {
     this.setExpanded();
   }
 
-  private closeCallback(ev: any): void {
+  protected closeCallback(ev: any): void {
     if (typeof ev !== "undefined") {
       if (typeof ev.stopPropagation !== "undefined") {
         ev.stopPropagation();

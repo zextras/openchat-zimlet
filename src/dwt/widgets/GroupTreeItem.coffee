@@ -82,7 +82,7 @@ define(
 
     class GroupTreeItem extends DwtTreeItem
 
-      @MAX_LENGTH = 150
+      @MAX_LENGTH = 217
 
       isGroupTreeItem: true
 

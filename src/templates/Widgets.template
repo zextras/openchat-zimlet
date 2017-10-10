@@ -48,26 +48,12 @@
     </div>
 </template>
 
-<template id="com_zextras_chat_open.Widgets#MessageNotification">
-    <div class="DwtDialog ZxChat_MessageNotificationOuterContainer">
-        <div id="${id}_title" class="ZxChat_MessageNotificationSender">
-            ${title}
-        </div>
-        <div id="${id}_date" class="ZxChat_MessageNotificationDate" title="${dateTooltip}">
-            ${date}
-        </div>
-        <div id="${id}_content" class="ZxChat_MessageNotificationContent">
-            ${content}
-        </div>
-    </div>
-</template>
-
 <template id="com_zextras_chat_open.Widgets#LoadingDots">
     <div id="${id}_dots"></div>
 </template>
 
 <template id="com_zextras_chat_open.Widgets#BuddyTreeItemTooltip">
-    <table role="presentation"><tr><td>
+    <table role="presentation"><tr><td
 
         <!-- display contact toolipt first if available -->
         <$ if (data.contact) { $>
@@ -114,14 +100,4 @@
             </div></td>
         </tr>
     <$ } $>
-</template>
-
-<template id='com_zextras_chat_open.Widgets#Image' class='ZWidget'>
-	<table role="presentation" class='ZWidgetTable ZLabelBorder'>
-        <tr>
-            <td>
-                <div id='${id}_image' class='${imageClass}'></div>
-            </td>
-        </tr>
-    </table>
 </template>

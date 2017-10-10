@@ -143,11 +143,8 @@ export class RoomWindowManager {
       size = 0,
       roomWindow: RoomWindow = new RoomWindow(
         this.mShell,
-        this.mAppCtxt,
-        this.mZimletContext,
         this.mTimedCallbackFactory,
         room,
-        this,
         this.mNotificationManager,
         this.mDateProvider,
         this.mSessionInfoProvider,
@@ -238,7 +235,7 @@ export class RoomWindowManager {
    */
   private onMessageReceived(window: RoomWindow, message: MessageReceived): void {
     // if (!window._isFocused() && window.getChildren().length > 0 && !this.mRoomManager.isStatusBusy()) {
-    if (!window._isFocused() && window.getChildren().length > 0 &&
+    if (!window.isFocused() && window.getChildren().length > 0 &&
       !(this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY)
     ) {
       window.startBlinkTitle();
@@ -334,25 +331,19 @@ export class RoomWindowManager {
     }
   }
 
-  private onStartDrag(roomWindow: RoomWindow, position: number[]): void {
-    let x: number = position[0],
-      y: number = position[1],
-      dragTask: WindowDragTask = new WindowDragTask(roomWindow);
+  private onStartDrag(roomWindow: RoomWindow, x: number, y: number): void {
+    let dragTask: WindowDragTask = new WindowDragTask(roomWindow);
     this.mDragTasks.put(roomWindow.getId(), dragTask);
     roomWindow.setZIndex(parseInt(`${roomWindow.getZIndex()}`, 10) + 1);
   }
 
-  private onDuringDrag(roomWindow: RoomWindow, position: number[]): void {
-    // let x: number = position[0],
-    //   y: number = position[1],
-    //   dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId());
+  private onDuringDrag(roomWindow: RoomWindow, x: number, y: number): void {
+    // let dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId());
     // if (typeof dragTask === "undefined") return;
   }
 
-  private onDragEnd(roomWindow: RoomWindow, position: number[]): void {
-    let x: number = position[0],
-      y: number = position[1],
-      dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId()),
+  private onDragEnd(roomWindow: RoomWindow, x: number, y: number): void {
+    let dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId()),
       xCenter: number = RoomWindowManager.calculateWindowXCenter(roomWindow),
       currentPosition: number = this.mPositions.window2position(roomWindow.getId()),
       firstXLocation: number = this.mMainWindow.getBuddyListTree().getLocation().x,

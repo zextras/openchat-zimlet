@@ -343,7 +343,7 @@ export class ChatZimletBase extends ZmZimletBase {
       Setting.IM_USR_PREF_EMOJI_IN_MAIL,
       new Callback(this.mObjectHandler, this.mObjectHandler.setEmojiEnabledInMail)
     );
-    ZmObjectManager.registerHandler(ObjectHandler, null, this._zimletContext.priority);
+    ZmObjectManager.registerHandler(this.mObjectHandler, null, this._zimletContext.priority);
     this.mTimedCallbackFactory.createTimedCallback(
       new Callback(this.mChatClient, this.mChatClient.registerSession),
       100
@@ -416,8 +416,8 @@ export class ChatZimletBase extends ZmZimletBase {
   private handleServerOnline(eventServerInfo: EventSessionRegistered): void {
     this.mOnline = true;
     this.mCoreNotFoundNotified = false;
-    let requiredVersion: Version = eventServerInfo.getRequiredZimletVersion();
-    this.mCoreVersion = eventServerInfo.getServerVersion();
+    let requiredVersion: Version = new Version(eventServerInfo.getInfo("required_zimlet_version"));
+    this.mCoreVersion = new Version(eventServerInfo.getInfo("server_version"));
 
     if (this.needUpdate(requiredVersion, this.mCoreVersion)) {
       return;
@@ -574,8 +574,8 @@ export class ChatZimletBase extends ZmZimletBase {
 
   private setStatusAsCurrent(status: BuddyStatus) {
     this.mMainWindow.setCurrentStatus(status);
-    if (typeof this.mIdleTimer !== "undefined" && this.mIdleTimer !== null && this.mIdleTimer.mIdle) {
-      this.handleIdle(this.mIdleTimer.mIdle);
+    if (typeof this.mIdleTimer !== "undefined" && this.mIdleTimer !== null && this.mIdleTimer.isIdle()) {
+      this.handleIdle(this.mIdleTimer.isIdle());
     }
   }
 
@@ -610,9 +610,7 @@ export class ChatZimletBase extends ZmZimletBase {
     if (
       idleStatus === false &&
       (
-        currentStatusType === BuddyStatusType.AWAY ||
-        currentStatusType === BuddyStatusType.BUSY ||
-        currentStatusType === BuddyStatusType.INVISIBLE
+        currentStatusType === BuddyStatusType.AWAY
       )
     ) {
       this.mChatClient.setUserStatus(this.mLastStatus);
