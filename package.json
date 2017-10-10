@@ -1,6 +1,6 @@
 {
   "name": "com_zextras_chat_open",
-  "version": "2.0",
+  "version": "8.8.5",
   "description": "OpenChat Zimlet for Zimbra",
   "private": true,
   "license": "SEE LICENSE IN LICENSE",
@@ -12,7 +12,7 @@
     "url": "https://github.com/ZeXtras/openchat-zimlet.git"
   },
   "scripts": {
-    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
+    "lint": "tslint -c tslint.json -e 'src/zimbra/**/*.ts' 'src/**/*.{ts,tsx}'",
     "pretest": "npm run lint",
     "postinstall": "./utils/patchNodeModules"
   },
