@@ -22,6 +22,7 @@ import {ZmMailMsg} from "../zimbra/zimbraMail/mail/model/ZmMailMsg";
 import {Dwt} from "../zimbra/ajax/dwt/core/Dwt";
 import {ZmOrganizer} from "../zimbra/zimbraMail/share/model/ZmOrganizer";
 import {Message} from "../dwt/widgets/Message";
+import {UrlHandler} from "./handlers/UrlHandler";
 
 export class ObjectHandler extends ZmObjectHandler {
 
@@ -29,7 +30,11 @@ export class ObjectHandler extends ZmObjectHandler {
   private enabledEmojiInConv: boolean;
   private enabledEmojiInHist: boolean;
   private enabledEmojiInMail: boolean;
+  private enabledUrlInConv: boolean;
+  private enabledUrlInHist: boolean;
+  private enabledUrlInMail: boolean;
   private emojiOneHdlr: EmojiOneHandler;
+  private urlHdlr: UrlHandler;
 
   constructor() {
     super("none");
@@ -51,6 +56,18 @@ export class ObjectHandler extends ZmObjectHandler {
     this._getInstance().enabledEmojiInMail = enabled;
   }
 
+  public setUrlEnabledInConv(enabled: boolean): void {
+    this._getInstance().enabledUrlInConv = enabled;
+  }
+
+  public setUrlEnabledInHist(enabled: boolean): void {
+    this._getInstance().enabledUrlInHist = enabled;
+  }
+
+  public setUrlEnabledInMail(enabled: boolean): void {
+    this._getInstance().enabledUrlInMail = enabled;
+  }
+
   public onFindMsgObjects(msg: ZmMailMsg, manager: ZmObjectManager): void;
   public onFindMsgObjects(msg: Message, manager: ZmObjectManager): void;
   public onFindMsgObjects(msg: ZmMailMsg|Message, manager: ZmObjectManager): void {
@@ -65,26 +82,40 @@ export class ObjectHandler extends ZmObjectHandler {
     //     Dwt.setSize(mailTitleElement, Dwt.getSize(headerElement).x - 24);
     //   }
     // }
-    let add = false;
+    let addEmojiHandler = false,
+      addUrlHandler = false;
     if (msg instanceof Message) {
       // Is chat message
-      add = this.enabledEmojiInConv;
+      this.removeAllHandlersWithType(manager, "url");
+      addEmojiHandler = this.enabledEmojiInConv;
+      addUrlHandler = this.enabledUrlInConv;
     } else {
       // Is Zimbra Message
       let isChatFolder = ((<ZmMailMsg>msg).folderId === `${ZmOrganizer.ID_CHATS}` || (<ZmMailMsg>msg).folderId === ZmOrganizer.ID_CHATS);
       if (!!msg && isChatFolder && this.enabledEmojiInHist) {
-        add = true;
+        addEmojiHandler = true;
       } else {
-        add = !!msg && !isChatFolder && this.enabledEmojiInMail;
+        addEmojiHandler = !!msg && !isChatFolder && this.enabledEmojiInMail;
+      }
+      if (!!msg && isChatFolder && this.enabledUrlInHist) {
+        addUrlHandler = true;
+      } else {
+        addUrlHandler = !!msg && !isChatFolder && this.enabledUrlInMail;
       }
     }
 
-    if (add && !ObjectHandler.hasEmojiHandler(manager)) {
+    // add handlers and sort
+    if (addEmojiHandler && !ObjectHandler.hasEmojiHandler(manager)) {
       this._addEmojiHandlerToManager(manager);
     }
-    if (!add && ObjectHandler.hasEmojiHandler(manager)) {
+    if (!addEmojiHandler && ObjectHandler.hasEmojiHandler(manager)) {
       this._removeEmojiHandlerToManager(manager);
     }
+    if (addUrlHandler) {
+      this.removeAllHandlersWithType(manager, "url");
+      manager.addHandler(this.urlHdlr );
+    }
+    manager.sortHandlers();
   }
 
   private static hasEmojiHandler(manager: ZmObjectManager): boolean {
@@ -93,13 +124,11 @@ export class ObjectHandler extends ZmObjectHandler {
 
   private _addEmojiHandlerToManager(manager: ZmObjectManager): void {
     manager.addHandler(this.emojiOneHdlr);
-    manager.sortHandlers();
     manager.__hasEmojiHandler = true;
   }
 
   private _removeEmojiHandlerToManager(manager: ZmObjectManager): void {
     manager.removeHandler(this.emojiOneHdlr);
-    manager.sortHandlers();
     manager.__hasEmojiHandler = false;
   }
 
@@ -117,6 +146,11 @@ export class ObjectHandler extends ZmObjectHandler {
     instance.enabledEmojiInMail = true;
 
     instance.emojiOneHdlr = new EmojiOneHandler();
+    instance.urlHdlr = new UrlHandler();
+  }
+
+  private removeAllHandlersWithType(manager: ZmObjectManager, type: string): void {
+    manager.getHandlers()[type] = [];
   }
 
 }

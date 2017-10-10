@@ -18,7 +18,7 @@
 import {Room} from "./Room";
 import {BuddyStatusType} from "./BuddyStatusType";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {DateProvider} from "../lib/DateProvider";
 import {Buddy} from "./Buddy";
 import {Callback} from "../lib/callbacks/Callback";
@@ -32,6 +32,7 @@ import {Logger} from "../lib/log/Logger";
 import {MessageWritingStatus} from "./MessageWritingStatus";
 import {MessageType} from "./events/chat/MessageEvent";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class RoomImp implements Room {
 
@@ -49,8 +50,7 @@ export class RoomImp implements Room {
   private mDateProvider: DateProvider;
   private mLastActivity: number = 0;
   private members: Buddy[];
-  private roomStatus: BuddyStatus;
-  private mOfflineMessage: string;
+  private mRoomStatus: BuddyStatus;
   private onTitleChangeCallbacks: CallbackManager;
   private onAddMemberCallbacks: CallbackManager;
   private onRemovedMemberCallbacks: CallbackManager;
@@ -62,7 +62,8 @@ export class RoomImp implements Room {
   private onBuddyStatusChangeCallbacks: CallbackManager;
   private onRoomStatusChangeCallbacks: CallbackManager;
   private onBuddyWritingStatusCallbacks: CallbackManager;
-  private onTriggeredPopupCallbacks: CallbackManager;
+  private mTriggerPopupCallbacks: (() => void)[] = [];
+  private mTriggerInputFocusCallbacks: (() => void)[] = [];
   private mRoomPluginManager: ChatPluginManager;
   protected Log: Logger;
 
@@ -76,7 +77,7 @@ export class RoomImp implements Room {
     this.title = title;
     this.mDateProvider = dateProvider;
     this.members = [];
-    this.roomStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
+    this.mRoomStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
     this.onTitleChangeCallbacks = new CallbackManager();
     this.onAddMemberCallbacks = new CallbackManager();
     this.onAddMember(new Callback(this, this.updateRoomStatus));
@@ -92,8 +93,6 @@ export class RoomImp implements Room {
     this.onBuddyStatusChange(new Callback(this, this.updateRoomStatus));
     this.onRoomStatusChangeCallbacks = new CallbackManager();
     this.onBuddyWritingStatusCallbacks = new CallbackManager();
-    this.onTriggeredPopupCallbacks = new CallbackManager();
-    this.setOfflineMessage(StringUtils.getMessage("user_offline_messages_will_be_delivered"));
     this.mRoomPluginManager = roomPluginManager;
     this.mRoomPluginManager.switchOn(this);
   }
@@ -194,7 +193,7 @@ export class RoomImp implements Room {
       let spliced = this.members.splice(tmpIndex, 1);
       this.onRemovedMemberCallbacks.run(spliced);
     }
-  };
+  }
 
   public containsBuddy(buddy: Buddy): boolean {
     for (let intBuddy of this.members) {
@@ -268,7 +267,7 @@ export class RoomImp implements Room {
    */
   public onSendMessage(callback: Callback) {
     this.onSendMessageCallbacks.addCallback(callback);
-  };
+  }
 
   /**
    * Send a message to the room
@@ -346,7 +345,7 @@ export class RoomImp implements Room {
    * Get the current room status
    */
   public getRoomStatus(): BuddyStatus {
-    return this.roomStatus;
+    return this.mRoomStatus;
   }
 
   /**
@@ -354,7 +353,7 @@ export class RoomImp implements Room {
    * the room members.
    */
   private _calculateRoomStatus(): BuddyStatus {
-    let bestStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
+    let bestStatus: BuddyStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
     for (let buddy of this.members) {
       if (buddy.getStatus().isMoreAvailableThan(bestStatus)) {
         bestStatus = buddy.getStatus();
@@ -367,11 +366,11 @@ export class RoomImp implements Room {
    * Try to update the room status, if is changed, run the callback.
    */
   public updateRoomStatus(): void {
-    let oldStatusType = this.roomStatus.getType();
+    let oldStatusType = this.mRoomStatus.getType();
     let newStatus = this._calculateRoomStatus();
     if (oldStatusType !== newStatus.getType()) {
-      this.roomStatus = newStatus;
-      this._onRoomStatusChange(this.roomStatus);
+      this.mRoomStatus = newStatus;
+      this._onRoomStatusChange(this.mRoomStatus);
     }
   }
 
@@ -396,21 +395,24 @@ export class RoomImp implements Room {
     return this.mLastActivity;
   }
 
-  public onTriggeredPopup(callback: Callback): void {
-    this.onTriggeredPopupCallbacks.addCallback(callback);
+  public onTriggeredPopup(callback: () => void): void {
+      this.mTriggerPopupCallbacks.push(callback);
   }
 
   public triggerPopup(): void {
-    this.onTriggeredPopupCallbacks.run();
-  }
-  public getOfflineMessage(): string {
-    return this.mOfflineMessage;
-    // return StringUtils.getMessage("user_offline_messages_will_be_delivered");
+    for (let callback of this.mTriggerPopupCallbacks) {
+      callback();
+    }
   }
 
-  public setOfflineMessage(message: string): void {
-    this.mOfflineMessage = message;
+  public onTriggeredInputFocus(callback: () => void): void {
+      this.mTriggerInputFocusCallbacks.push(callback);
   }
 
+  public triggerInputFocus(): void {
+    for (let callback of this.mTriggerInputFocusCallbacks) {
+      callback();
+    }
+  }
 
 }

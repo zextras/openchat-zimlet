@@ -31,6 +31,8 @@ import {DwtBaseDialog} from "../../zimbra/ajax/dwt/widgets/DwtBaseDialog";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {DwtKeyboardMgr} from "../../zimbra/ajax/dwt/keyboard/DwtKeyboardMgr";
 import {FocusKeeper} from "../../lib/FocusKeeper";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 
 export class WindowBase extends DwtBaseDialog {
   public static BTN_CLOSE: string = "close";
@@ -40,10 +42,11 @@ export class WindowBase extends DwtBaseDialog {
   public static _MINIMIZE_ICON = "ImgZxChat_minimize";
   public static _EXPAND_ICON = "ImgZxChat_expand";
   public static _CLOSE_ICON = "ImgZxChat_close-legacy";
-
-  public static MAX_TITLE_LENGTH: number = 190;
-
+  public static MAX_TITLE_LENGTH: number = ZimbraUtils.isUniversalUI() ? 190 : 148;
   public static Z_INDEX: number = 499;
+
+  private static sWindows: WindowBase[] = [];
+  public static sMaxZIndex: number = 498;
 
   private mControlButtons: {[id: string]: boolean} = {};
   private mMinimized: boolean = false;
@@ -96,6 +99,11 @@ export class WindowBase extends DwtBaseDialog {
     if (typeof this.mWindowDiv !== "undefined" && this.mWindowDiv !== null) {
       this.mWindowDiv.onmouseover = <(ev: MouseEvent) => any> (new Callback(this, this.stopBlink)).toClosure();
     }
+    this.addFocusCallback(
+      (zIndex: number) => {
+        this.setZIndex(zIndex);
+      }
+    );
   }
 
   public startBlinkTitle(): void {
@@ -161,22 +169,22 @@ export class WindowBase extends DwtBaseDialog {
   }
 
   public setMinimized(save: boolean = true): void {
-    if (!this.mEnabled) return;
+    if (!this.mEnabled || this.mMinimized) return;
     this.mMinimized = true;
-    Dwt.setDisplay(this.mMinimizeIconEl, Dwt.DISPLAY_NONE);
-    Dwt.setDisplay(this.mExpandIconEl, Dwt.DISPLAY_BLOCK);
-    Dwt.setDisplay(this._contentEl, Dwt.DISPLAY_NONE);
-    Dwt.setDisplay(this.mMiniContentEl, Dwt.DISPLAY_BLOCK);
+    if (this.mMinimizeIconEl !== null) Dwt.setDisplay(this.mMinimizeIconEl, Dwt.DISPLAY_NONE);
+    if (this.mExpandIconEl !== null) Dwt.setDisplay(this.mExpandIconEl, Dwt.DISPLAY_BLOCK);
+    if (this._contentEl !== null) Dwt.setDisplay(this._contentEl, Dwt.DISPLAY_NONE);
+    if (this.mMiniContentEl !== null) Dwt.setDisplay(this.mMiniContentEl, Dwt.DISPLAY_BLOCK);
     this.mOnMinimizeCbkMgr.run(this, save);
   }
 
   public setExpanded(save: boolean = true): void {
-    if (!this.mEnabled) return;
+    if (!this.mEnabled || !this.mMinimized) return;
     this.mMinimized = false;
-    Dwt.setDisplay(this.mMinimizeIconEl, Dwt.DISPLAY_BLOCK);
-    Dwt.setDisplay(this.mExpandIconEl, Dwt.DISPLAY_NONE);
-    Dwt.setDisplay(this._contentEl, Dwt.DISPLAY_BLOCK);
-    Dwt.setDisplay(this.mMiniContentEl, Dwt.DISPLAY_NONE);
+    if (this.mMinimizeIconEl !== null) Dwt.setDisplay(this.mMinimizeIconEl, Dwt.DISPLAY_BLOCK);
+    if (this.mExpandIconEl !== null) Dwt.setDisplay(this.mExpandIconEl, Dwt.DISPLAY_NONE);
+    if (this._contentEl !== null) Dwt.setDisplay(this._contentEl, Dwt.DISPLAY_BLOCK);
+    if (this.mMiniContentEl !== null) Dwt.setDisplay(this.mMiniContentEl, Dwt.DISPLAY_NONE);
     this.mOnExpandCbkMgr.run(this, save);
   }
 
@@ -250,14 +258,14 @@ export class WindowBase extends DwtBaseDialog {
   }
 
   private addMinimizeExpandListener(): void {
-    if (typeof this.mMinimizeIconEl !== "undefined") {
+    if (typeof this.mMinimizeIconEl !== "undefined" && this.mMinimizeIconEl !== null) {
       Dwt.setHandler(
         this.mMinimizeIconEl,
         DwtEvent.ONCLICK,
         (new Callback(this, this.minimizeCallback)).toClosure()
       );
     }
-    if (typeof this.mExpandIconEl !== "undefined") {
+    if (typeof this.mExpandIconEl !== "undefined" && this.mExpandIconEl !== null) {
       Dwt.setHandler(
         this.mExpandIconEl,
         DwtEvent.ONCLICK,
@@ -267,7 +275,7 @@ export class WindowBase extends DwtBaseDialog {
   }
 
   private addCloseListener(): void {
-    if (typeof this.mCloseIconEl !== "undefined") {
+    if (typeof this.mCloseIconEl !== "undefined" && this.mCloseIconEl !== null) {
       Dwt.setHandler(
         this.mCloseIconEl,
         DwtEvent.ONCLICK,
@@ -285,6 +293,7 @@ export class WindowBase extends DwtBaseDialog {
     data["closeIcon"] = WindowBase._CLOSE_ICON;
     data["controlsTemplateId"] = this.CONTROLS_TEMPLATE;
     data["cssClassesForWindowDiv"] = "DwtDialog WindowOuterContainer";
+    data["legacy"] = ZimbraUtils.isUniversalUI() ? "" : "_legacy";
     if (Version.isZ8Up()) {
       data["cssClassesForWindowDiv"] += " FixBordersForZ7";
     }
@@ -419,4 +428,35 @@ export class WindowBase extends DwtBaseDialog {
       this.fadeTitleToBlinkColor();
     }
   }
+
+  public addFocusCallback(callback: Function): void {
+    WindowBase.sWindows.push(this);
+    WindowBase.addRecursiveFocusCallback(this, callback);
+  }
+
+  public static addRecursiveFocusCallback(obj: DwtComposite, callback: Function): void {
+    obj.focus = ((obj: DwtComposite, callback: Function) =>
+      () => {
+        for (let window of WindowBase.sWindows) {
+          window.setZIndex(WindowBase.Z_INDEX);
+        }
+        callback(WindowBase.Z_INDEX + 1);
+        WindowBase.prototype.focus.call(obj);
+      }
+    )(obj, callback);
+    if (typeof obj.getChildren !== "undefined" && obj.getChildren !== null) {
+      for (let child of obj.getChildren()) {
+        WindowBase.addRecursiveFocusCallback(child, callback);
+      }
+    }
+  }
+}
+
+export class ZxPopupMenu extends ZmPopupMenu {
+
+  public popup(delay: number, x: number, y: number, kbGenereated?: boolean) {
+    super.popup(delay, x, y, kbGenereated);
+    // this.setZIndex(Math.max(this.getZIndex(), WindowBase.sMaxZIndex + 1));
+  }
+
 }

@@ -38,10 +38,11 @@ import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {DwtChatTreeItem} from "./DwtChatTreeItem";
+import {ZimbraUtils} from "../../lib/ZimbraUtils";
 
 export class BuddyTreeItem extends DwtTreeItem implements DwtChatTreeItem {
 
-  public static MAX_LENGTH: number = 200;
+  public static MAX_LENGTH: number = ZimbraUtils.isUniversalUI() ? 200 : 133;
 
   private appCtxt: ZmAppCtxt;
   private refBuddy: Buddy;

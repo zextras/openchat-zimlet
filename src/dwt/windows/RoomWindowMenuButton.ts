@@ -20,13 +20,15 @@ import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomWindow} from "./RoomWindow";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
-import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
+import {ZxPopupMenu} from "./WindowBase";
+import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 
 export class RoomWindowMenuButton extends DwtToolBarButton {
 
   public static AddMenuItemPlugin = "Room Window Menu Button Add Menu Entry";
   public static _KEY_HIDE_OFFILINE = "hideOfflineBuddies";
   private mRoomWindow: RoomWindow;
+  private mMenu: ZxPopupMenu;
 
   constructor(
     roomWindow: RoomWindow,
@@ -35,7 +37,7 @@ export class RoomWindowMenuButton extends DwtToolBarButton {
   ) {
     super({
       parent: parent,
-      className: "ZxChat_Button ZxChat_TitleBar_Button ZToolbarButton"
+      className: `ZxChat_Button ZxChat_TitleBar_Button${ZimbraUtils.isUniversalUI() ? "" : "_legacy"} ZToolbarButton`
     });
     this.mRoomWindow = roomWindow;
     if (ZimbraUtils.isUniversalUI()) {
@@ -47,10 +49,11 @@ export class RoomWindowMenuButton extends DwtToolBarButton {
     this.setDropDownImages("", "", "", "");
     this.dontStealFocus();
 
-    let menu: ZmPopupMenu = new ZmPopupMenu(this, "ActionMenu ZmPopupMenu_ZxChat_MainMenu");
-    roomWindowPluginManager.triggerPlugins(RoomWindowMenuButton.AddMenuItemPlugin, menu);
-    this.setMenu(menu, false, false, true);
-    if (menu.getItemCount() === 0) {
+    this.mMenu = new ZxPopupMenu(this, "ActionMenu ZmPopupMenu_ZxChat_MainMenu");
+    roomWindowPluginManager.triggerPlugins(RoomWindowMenuButton.AddMenuItemPlugin, this.mMenu);
+    this.setMenu(this.mMenu, false, false, true);
+    Dwt.delClass(this.getHtmlElement(), "ZHasDropDown");
+    if (this.mMenu.getItemCount() === 0) {
       this.setVisible(false);
     }
   }

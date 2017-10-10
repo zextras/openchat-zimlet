@@ -1,7 +1,7 @@
 {
   "name": "com_zextras_chat_open",
-  "version": "8.8.0",
-  "description": "OpenChat Zimlet",
+  "version": "2.0",
+  "description": "OpenChat Zimlet for Zimbra",
   "private": true,
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
@@ -12,10 +12,12 @@
     "url": "https://github.com/ZeXtras/openchat-zimlet.git"
   },
   "scripts": {
-    "postinstall": "patch -p0 < patches/emojione-2.2.7.patch"
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
+    "pretest": "npm run lint",
+    "postinstall": "./utils/patchNodeModules"
   },
   "dependencies": {
-    "bowser": "^1.6.0",
+    "bowser": "^1.7.1",
     "emojione": "2.2.7",
     "html-entities": "^1.2.0",
     "jquery-textcomplete": "^1.8.2",
@@ -26,16 +28,13 @@
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.2.1",
-    "coffee-loader": "^0.7.3",
-    "coffee-script": "^1.12.4",
-    "coffeelint": "^1.16.0",
     "json-loader": "^0.5.4",
     "npm-sass": "^2.0.0",
     "sharp-cli": "^1.1.0",
     "spritesmith": "^3.1.0",
     "spritesmith-cli": "^1.1.2",
-    "tslint": "^4.5.1",
-    "typescript": "2.3.1",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2",
     "webpack": "^2.7.0"
   }
 }

@@ -15,8 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export declare class XRegExp {
-  constructor(regex: string);
+import {TraceLine} from "./stacktrace-js";
+
+export declare class XRegExp extends RegExp {
+  constructor(regex: string|RegExp, flags?: string);
 
   public test(str: string): boolean;
+  public static exec(str: TraceLine, regex: RegExp): any;
 }

@@ -20,7 +20,7 @@ import {ChatEvent} from "../../../../events/ChatEvent";
 import {BuddyListEvent} from "../../../../events/chat/BuddyListEvent";
 import {Group} from "../../../../Group";
 import {Buddy} from "../../../../Buddy";
-import {BuddyStatus} from "../../../../BuddyStatus";
+import {BuddyStatusImp} from "../../../../BuddyStatusImp";
 import {DateProvider} from "../../../../../lib/DateProvider";
 import {BuddyImp} from "../../../../BuddyImp";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
@@ -54,7 +54,7 @@ export class BuddyListEventDecoder extends SoapEventDecoder {
         buddyData["nickname"]
       );
       buddy.setStatus(
-        new BuddyStatus(BuddyStatus.GetTypeFromNumber(buddyData["statusType"]))
+        new BuddyStatusImp(BuddyStatusImp.GetTypeFromNumber(buddyData["statusType"]))
       );
       buddy.addGroup(group);
       group.addBuddy(buddy, false);

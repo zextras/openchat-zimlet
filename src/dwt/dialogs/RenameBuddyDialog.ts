@@ -27,6 +27,7 @@ import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
+import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 
 export class RenameBuddyDialog extends ZmDialog {
   private _buddyNicknameEl: HTMLInputElement;
@@ -63,7 +64,7 @@ export class RenameBuddyDialog extends ZmDialog {
       view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#RenameBuddyDialog", data);
     }
     this._buddyNicknameEl = <HTMLInputElement>document.getElementById(data.id + "_nickname");
-    this._buddyNicknameEl.value = this.buddy.getNickname();
+    this._buddyNicknameEl.value = AjxStringUtil.htmlDecode(this.buddy.getNickname());
     return view;
   }
 

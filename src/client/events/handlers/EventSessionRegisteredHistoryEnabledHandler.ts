@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../../client/events/ChatEvent";
-import {ChatClient} from "../../client/ChatClient";
-import {ZmFolder} from "../../zimbra/zimbraMail/share/model/ZmFolder";
-import {ZmApp} from "../../zimbra/zimbraMail/core/ZmApp";
-import {ChatFolderHandler} from "../../dwt/ChatFolderHandler";
-import {ChatEventHandler} from "../../client/events/handlers/ChatEventHandler";
-import {OpenChatEventCode} from "../../client/events/chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {ChatClient} from "../../ChatClient";
+import {ZmFolder} from "../../../zimbra/zimbraMail/share/model/ZmFolder";
+import {ZmApp} from "../../../zimbra/zimbraMail/core/ZmApp";
+import {ChatFolderHandler} from "../../../dwt/ChatFolderHandler";
+import {ChatEventHandler} from "./ChatEventHandler";
+import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 
 export class EventSessionRegisteredHistoryEnabledHandler implements ChatEventHandler {
 

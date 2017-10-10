@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {Buddy} from "./Buddy";
 import {Callback} from "../lib/callbacks/Callback";
 import {MessageSent} from "./MessageSent";
@@ -25,6 +25,7 @@ import {ChatEvent} from "./events/ChatEvent";
 import {MessageWritingStatus} from "./MessageWritingStatus";
 import {MessageType} from "./events/chat/MessageEvent";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
+import {BuddyStatus} from "./BuddyStatus";
 
 export interface Room {
 
@@ -169,12 +170,12 @@ export interface Room {
 
   getLastActivity(): number;
 
-  onTriggeredPopup(callback: Callback): void;
+  onTriggeredPopup(callback: () => void): void;
 
   triggerPopup(): void;
 
-  getOfflineMessage(): string;
+  onTriggeredInputFocus(callback: () => void): void;
 
-  setOfflineMessage(message: string): void;
+  triggerInputFocus(): void;
 
 }

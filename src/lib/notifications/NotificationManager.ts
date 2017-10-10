@@ -103,15 +103,14 @@ export class NotificationManager {
         break;
       case NotificationTaskType.DESKTOP:
         if (this.enableDesktop) {
-          if (DesktopNotificationFactory.getPermission() === DesktopNotificationFactory.GRANTED ||
-            DesktopNotificationFactory.getPermission() === DesktopNotificationFactory.DEFAULT) {
+          if (DesktopNotificationFactory.getPermission() === DesktopNotificationFactory.GRANTED) {
             task.start();
           }
           else if (DesktopNotificationFactory.getPermission() === DesktopNotificationFactory.DENIED) {
             // Do nothing :(
           }
           else {
-            this.requestNotificationPermission();
+            this.requestNotificationPermission(task);
           }
         }
         break;
@@ -128,14 +127,14 @@ export class NotificationManager {
    * @private
    */
   private requestNotificationPermission(task?: NotificationTask): void {
-    DesktopNotificationFactory.requestPermission(new Callback(this, this.onPermissionRequested, [task]));
+    DesktopNotificationFactory.requestPermission(new Callback(this, this.onPermissionRequested, task));
   }
 
   /**
    * Callback invoked when the permission is requested successfully.
    * @param permission
    */
-  private onPermissionRequested(permission: string, task?: NotificationTask): void {
+  private onPermissionRequested(task: NotificationTask, permission: string, ): void {
     if (permission === DesktopNotificationFactory.GRANTED) {
       this.onPermissionGrantedCbkMgr.run();
     }

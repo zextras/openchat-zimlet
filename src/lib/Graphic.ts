@@ -27,6 +27,6 @@ export class Graphic {
     return `${appendix}
     <div style=\"float:left; padding-left:5px;\">${title}</div>
     `;
-  };
+  }
 
 }

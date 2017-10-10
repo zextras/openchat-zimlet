@@ -20,8 +20,10 @@ import {BuddySessionKeeper} from "./BuddySessionKeeper";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
 import {Group} from "./Group";
 import {ArrayUtils} from "../lib/ArrayUtils";
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {Callback} from "../lib/callbacks/Callback";
+import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class BuddyImp implements Buddy {
 
@@ -51,12 +53,12 @@ export class BuddyImp implements Buddy {
     let isChanged: boolean = (this.mNickname !== newNick);
     this.mNickname = newNick;
     if (isChanged) {
-     this.mOnNicknameChangeCbkMgr.run(this.mNickname);
+     this.mOnNicknameChangeCbkMgr.run(this.getNickname());
     }
   }
 
   public getNickname(): string {
-    return this.mNickname;
+    return AjxStringUtil.htmlEncode(this.mNickname);
   }
 
   public addGroup(group: Group): void {

@@ -15,24 +15,24 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JQueryPlugin} from "./JQueryPlugin";
+import {ZmObjectHandler} from "../../zimbra/zimbraMail/share/model/ZmObjectHandler";
 
-declare let $: any;
+export class UrlHandler extends ZmObjectHandler {
 
-export class JQueryPlugins {
+  private mUrlRegExp: RegExp = /(https?|ftp):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?/ig;
 
-  private mPlugins: JQueryPlugin[];
-
-  constructor(...plugins: JQueryPlugin[]) {
-    this.mPlugins = plugins;
+  constructor() {
+    super("url");
   }
 
-  public installPlugins() {
-    if (typeof $ !== "undefined") {
-      for (let plugin of this.mPlugins) {
-        plugin.install();
-      }
-    }
+  public match(content: string, startIndex: number): RegExpExecArray {
+    this.mUrlRegExp.lastIndex = startIndex;
+    return this.mUrlRegExp.exec(content);
+  }
+
+  public _getHtmlContent(html: string[], idx: number, obj: string, context?: string, spanId?: string, options?: {}): number {
+    html[idx++] = `<a target="_blank" href="${obj}">${obj}</a>`;
+    return idx;
   }
 
 }

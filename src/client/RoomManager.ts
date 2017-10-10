@@ -22,9 +22,10 @@ import {Callback} from "../lib/callbacks/Callback";
 import {Buddy} from "./Buddy";
 import {MessageSent} from "./MessageSent";
 import {ChatEvent} from "./events/ChatEvent";
-import {BuddyStatus} from "./BuddyStatus";
+import {BuddyStatusImp} from "./BuddyStatusImp";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {RoomImp} from "./RoomImp";
+import {BuddyStatus} from "./BuddyStatus";
 
 export class RoomManager {
 

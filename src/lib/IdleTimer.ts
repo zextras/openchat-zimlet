@@ -55,7 +55,10 @@ export class IdleTimer {
 
   public setTime(newTime: number): void {
     this._timeout = newTime;
-    this.start();
+    // reset Timer if is started
+    if (!this._stopped) {
+      this.start();
+    }
   }
 
   public stop(): void {

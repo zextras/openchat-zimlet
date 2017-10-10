@@ -15,21 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports"
-  ],
-  function (
-    require,
-    exports
-  ) {
-    if (typeof $ !== "undefined") {
-      var jquery_textcomplete_1 = require("jquery-textcomplete");
-      exports.JQueryTextComplete = jquery_textcomplete_1.fn.textcomplete;
-    }
-    else {
-      exports.JQueryTextComplete = void 0;
-    }
-  }
-);
+import {BuddyStatus} from "./BuddyStatus";
+
+export interface UserStatusManager {
+
+  setSelectedStatus(status: BuddyStatus): void;
+
+  getCurrentStatus(): BuddyStatus;
+
+  /**
+   * @param {boolean} enabled
+   * @return {boolean} statusHasChanged
+   */
+  setAutoAway(enabled: boolean): boolean;
+
+  /**
+   * @param {boolean} enabled
+   * @return {boolean} statusHasChanged
+   */
+  setAutoBusy(enabled: boolean): boolean;
+
+  setUserStatuses(userStatuses: BuddyStatus[]): void;
+
+  getUserStatuses(): BuddyStatus[];
+}

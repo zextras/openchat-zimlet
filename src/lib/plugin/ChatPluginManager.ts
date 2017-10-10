@@ -40,7 +40,7 @@ export class ChatPluginManager {
       this.mPluginMap[title] = [];
     }
     this.mPluginMap[title].push(plugin);
-  };
+  }
 
   public triggerPlugins(title: string, ...args: any[]): void {
     if (typeof this.mPluginMap[title] !== "undefined" && this.mPluginMap !== null) {
@@ -51,11 +51,11 @@ export class ChatPluginManager {
         );
       }
     }
-  };
+  }
 
   public registerFieldPlugin(fieldName: string, plugin: ChatFieldPlugin): void {
     this.mFieldPluginMap[fieldName] = plugin;
-  };
+  }
 
   public setFieldPlugin(fieldName: string, value: any): void {
     this.mFieldPluginMap[fieldName].setField(value);

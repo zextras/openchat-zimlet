@@ -47,6 +47,10 @@
   background-color: #007dc3
   height: 42px
 
+.ZxChat_TitleBar_legacy
+  background-color: #007dc3
+  height: 26px
+
 .WindowBaseTitleBar
   color: #ffffff
   padding: 7px 0 11px 14px
@@ -59,11 +63,18 @@
   width: 14px
   height: 14px
 
+.WindowBaseTitleBar > table
+  color: #ffffff
+
 .WindowBaseTitleBar-legacy-ui
   color: #ffffff
   padding: 12px 0 11px 14px
 
-.ZxChat_TitleBar_Button
+.WindowBaseTitleBar-legacy-ui > table > tbody > tr > .ZLeftIcon DIV
+  margin: 0
+
+.ZxChat_TitleBar_Button,
+.ZxChat_TitleBar_Button_legacy
   background: none
   border: none
 
@@ -75,3 +86,15 @@
   box-shadow: none
   padding-left: 5px
   padding-right: 5px
+
+.ZxChat_TitleBar_Button_legacy > .ZToolbarButtonBorder
+  border-radius: 0
+  border-collapse: separate
+  border: none
+  background: none
+  box-shadow: none
+  padding-left: 0
+  padding-right: 0
+
+.WindowOuterContainer *:focus
+  outline: none

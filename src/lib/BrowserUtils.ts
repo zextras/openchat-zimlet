@@ -15,19 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {AjxException} from "../../zimbra/ajax/core/AjxException";
+import {Bowser} from "../libext/bowser";
 
-export declare class ZxError extends Error {
+export class BrowserUtils {
 
-  constructor(code?: string, parentError?: Error|ZxError);
+  public static isFirefox(): boolean {
+    return Bowser.firefox;
+  }
 
-  public initCause(cause: ZxError|Error|AjxException): ZxError;
-  public getCause(): ZxError;
-  public setDetail(key: string, value: string|number): ZxError;
-  public getCode(): string;
-  public getDetail(key: string): string|number;
+  public static isChrome(): boolean {
+    return Bowser.chrome;
+  }
 
-  public static fromResponse(params: {error: any}): ZxError;
-  public static convertError(error: Error|AjxException): ZxError;
+  public static isChromium(): boolean {
+    return Bowser.chromium;
+  }
 
+  public static isSafari(): boolean {
+    return Bowser.safari;
+  }
+
+  public static getMajorVersion(): number {
+    return parseInt(Bowser.version.substring(0, Bowser.version.indexOf(".")), 10);
+  }
 }

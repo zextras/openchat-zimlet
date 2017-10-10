@@ -59,7 +59,9 @@ define([
       asciiRegexp: new RegExp(emojione_1.asciiRegexp, "g"),
       unicodeRegexp: new RegExp(emojione_1.unicodeRegexp, "g"),
       shortnamesRegexp: new RegExp(emojione_1.shortnames, "g"),
-      emojioneList: emojione_1.emojioneList
+      emojioneList: emojione_1.emojioneList,
+      asciiList: emojione_1.asciiList,
+      jsEscapeMap: emojione_1.jsEscapeMap
     };
     exports.toImage = toImage;
     exports.emojioneList = emojione_1.emojioneList;

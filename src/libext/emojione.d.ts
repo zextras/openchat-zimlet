@@ -27,6 +27,8 @@ export declare class emojione {
 
   static toImage(emoji: string): string;
   static emojioneList: EmojiOneList;
+  static asciiList: {[asciiCode: string]: string};
+  static jsEscapeMap: {[unicode: string]: string};
 }
 
 export declare function toImage(emoji: string): string;

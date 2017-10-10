@@ -187,11 +187,11 @@ export class BuddyListTree extends DwtTree {
       }
     }
     this.updateFixedTreeItemsVisibility();
-  };
+  }
 
   // Awful workaround about _dndScrollCallback definition:
   //   in DwtControl refers to static function and method
-  public _dndScrollCallback(): void {};
+  public _dndScrollCallback(): void {}
 
   public getRootGroup(): GroupTreeItem {
     return this.mRootGroup;
@@ -250,7 +250,7 @@ export class BuddyListTree extends DwtTree {
         ) {
           (<ExtendedDwtControl>ev.dwtObj).onSelection(ev, this);
         }
-        if (typeof (<BuddyTreeItem>ev.dwtObj).isGroupTreeItem !== "undefined" && (<BuddyTreeItem>ev.dwtObj).isBuddyTreeItem()) {
+        if (typeof (<BuddyTreeItem>ev.dwtObj).isBuddyTreeItem !== "undefined" && (<BuddyTreeItem>ev.dwtObj).isBuddyTreeItem()) {
           this.mOnBuddySelectedCbkMgr.run(ev, this);
         }
         else if (typeof (<GroupTreeItem>ev.dwtObj).isGroupTreeItem !== "undefined" && (<GroupTreeItem>ev.dwtObj).isGroupTreeItem()) {
