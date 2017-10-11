@@ -160,8 +160,7 @@ export class OpenChatZimlet extends ChatZimletBase {
 }
 
 interface IOpenChatZimletWindow extends Window {
-  // tslint:disable-next-line:ban-types
-  com_zextras_chat_open_hdlr: Function;
+  com_zextras_chat_open_hdlr: typeof OpenChatZimlet;
 }
 
 if (

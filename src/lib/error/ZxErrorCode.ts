@@ -75,6 +75,5 @@ if (typeof window !== "undefined") {
 }
 
 interface IZxErrorCodeWindow extends Window {
-  // tslint:disable-next-line:ban-types
-  ZxErrorCode: Function;
+  ZxErrorCode: typeof ZxErrorCode;
 }

@@ -34,7 +34,6 @@ import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 import {IdGenerator} from "../IdGenerator";
 
-// tslint:disable:ban-types
 export class WindowBase extends DwtBaseDialog {
   public static BTN_CLOSE: string = "close";
   public static BTN_MINIMIZE: string = "minimize";
@@ -429,14 +428,14 @@ export class WindowBase extends DwtBaseDialog {
     }
   }
 
-  private addFocusCallback(callback: Function): void {
+  private addFocusCallback(callback: (...args: any[]) => void): void {
     WindowBase.sWindows.push(this);
     WindowBase.addRecursiveFocusCallback(this, callback);
   }
 
   // tslint:disable-next-line
-  private static addRecursiveFocusCallback(obj: DwtComposite, cbk: Function): void {
-    obj.focus = ((object: DwtComposite, callback: Function) =>
+  private static addRecursiveFocusCallback(obj: DwtComposite, cbk: (...args: any[]) => void): void {
+    obj.focus = ((object: DwtComposite, callback: (...args: any[]) => void) =>
       () => {
         for (const window of WindowBase.sWindows) {
           window.setZIndex(WindowBase.Z_INDEX);

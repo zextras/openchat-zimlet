@@ -24,10 +24,10 @@ export class TransferType {
 
   private mClassName: string;
   // tslint:disable-next-line
-  private mConstructorFcn: Function;
+  private mConstructorFcn:  new (...args: any[]) => any;
 
   // tslint:disable-next-line
-  constructor(className: string, constructorFcn: Function) {
+  constructor(className: string, constructorFcn: new (...args: any[]) => any) {
     this.mClassName = className;
     this.mConstructorFcn = constructorFcn;
 
@@ -38,7 +38,7 @@ export class TransferType {
   }
 
 // tslint:disable-next-line
-  public getConstructor(): Function {
+  public getConstructor():  new (...args: any[]) => any {
     return this.mConstructorFcn;
   }
 

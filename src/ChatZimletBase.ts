@@ -132,7 +132,7 @@ export class ChatZimletBase extends ZmZimletBase {
     if (typeof ChatZimletBase.INSTANCE === "undefined" || ChatZimletBase.INSTANCE === null) {
       ChatZimletBase.INSTANCE = this;
     }
-    const originalConfirmExitMethod: () => void = ZmNewWindow._confirmExitMethod;
+    const originalConfirmExitMethod: (ev: BeforeUnloadEvent) => void = ZmNewWindow._confirmExitMethod;
     ZmNewWindow._confirmExitMethod =
       (new Callback(this, this.clientShutdownBeforeExit, originalConfirmExitMethod)).toClosure() as () => void;
     window.onbeforeunload = ZmNewWindow._confirmExitMethod;
