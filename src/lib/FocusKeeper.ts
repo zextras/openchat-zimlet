@@ -17,8 +17,8 @@
 
 export class FocusKeeper {
 
-  public static storeFocusElement() {
-    FocusKeeper.focusElement = document.activeElement as HTMLElement;
+  public static storeFocusElement(): void {
+    FocusKeeper.focusElement = FocusKeeper.getActiveElement();
   }
 
   public static loadFocusElement() {
@@ -29,5 +29,15 @@ export class FocusKeeper {
   }
 
   private static focusElement: HTMLElement;
+
+  private static getActiveElement(doc?: Document): HTMLElement {
+    doc = doc || window.document;
+
+    const activeElement: HTMLElement = doc.activeElement as HTMLElement;
+    if (activeElement.tagName === "IFRAME") {
+      return FocusKeeper.getActiveElement((doc.activeElement as HTMLIFrameElement).contentWindow.document);
+    }
+    return activeElement;
+  }
 
 }
