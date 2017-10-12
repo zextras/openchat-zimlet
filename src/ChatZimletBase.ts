@@ -561,12 +561,17 @@ export class ChatZimletBase extends ZmZimletBase {
     const oldValue: boolean = this.mOnline;
     this.mOnline = false;
     if (oldValue) {
-      this.displayStatusMessage(
-        {
-          level: ZmStatusView.LEVEL_CRITICAL,
-          msg: StringUtils.getMessage("error_contact_server"),
-        },
-      );
+      (new TimedCallback(
+        new Callback(
+          this,
+          this.displayStatusMessage,
+          {
+            level: ZmStatusView.LEVEL_CRITICAL,
+            msg: StringUtils.getMessage("error_contact_server"),
+          },
+        ),
+        1000,
+      )).start();
     }
   }
 
