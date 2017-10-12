@@ -85,8 +85,8 @@ export class ObjectHandler extends ZmObjectHandler {
     //     Dwt.setSize(mailTitleElement, Dwt.getSize(headerElement).x - 24);
     //   }
     // }
-    let addEmojiHandler = false,
-      addUrlHandler = false;
+    let addEmojiHandler = false;
+    let addUrlHandler = false;
     if (msg instanceof Message) {
       // Is chat message
       this.removeAllHandlersWithType(manager, "url");
