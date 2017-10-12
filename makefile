@@ -27,7 +27,7 @@ all: dist/com_zextras_chat_open.zip
 
 .PHONY: check-yui lint node_modules clean init install guard-%
 
-lint:
+lint: src/ZimletVersion.ts src/dwt/widgets/emoji/EmojiTemplate.ts
 	npm run lint
 
 node_modules:

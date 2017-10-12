@@ -145,7 +145,7 @@ for (pageName in EMOJI_PAGES) {
   toRet.push('    ],');
 }
 toRet.pop();
-toRet.push('    ]');
+toRet.push('    ],');
 toRet.push('  ];');
 toRet.push('');
 toRet.push('  public static NAMES: string[] = [' + pageNames.join(', ') + '];');
