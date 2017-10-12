@@ -85,11 +85,11 @@ export class ObjectHandler extends ZmObjectHandler {
     //     Dwt.setSize(mailTitleElement, Dwt.getSize(headerElement).x - 24);
     //   }
     // }
-    this.removeAllHandlersWithType(manager, "url");
-    let addEmojiHandler = false;
-    let addUrlHandler = false;
+    let addEmojiHandler = false,
+      addUrlHandler = false;
     if (msg instanceof Message) {
       // Is chat message
+      this.removeAllHandlersWithType(manager, "url");
       addEmojiHandler = this.enabledEmojiInConv;
       addUrlHandler = this.enabledUrlInConv;
     } else {
@@ -118,6 +118,7 @@ export class ObjectHandler extends ZmObjectHandler {
       this._removeEmojiHandlerToManager(manager);
     }
     if (addUrlHandler) {
+      this.removeAllHandlersWithType(manager, "url");
       manager.addHandler(this.urlHdlr );
     }
     manager.sortHandlers();
