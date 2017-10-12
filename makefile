@@ -80,7 +80,7 @@ build/com_zextras_chat_open_bundle.js: node_modules \
 	# Check T4Z project if there are modifications
 	cd src/zimbra && make check-exports
 	# Lint the files
-	./node_modules/.bin/tslint -c tslint.old.json --project tsconfig.json
+	make lint
 	# Create the JS bundle
 	./node_modules/.bin/webpack --config webpack.config-open.js
 

@@ -7,8 +7,7 @@
   "rules": {
     "no-empty-interface": false,
     "object-literal-shorthand": false,
-    "no-empty": [false, "allow-empty-catch"],
-    "interface-name": [false]
+    "no-empty": [false, "allow-empty-catch"]
   },
   "rulesDirectory": []
 }

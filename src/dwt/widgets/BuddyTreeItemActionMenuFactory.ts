@@ -94,7 +94,7 @@ interface IBuddyTreeItemActionMenu {
   buddyTreeItem: BuddyTreeItem;
 }
 
-// tslint:disable-next-line
+// tslint:disable-next-line:max-classes-per-file
 class BuddyTreeItemActionMenu8 extends ZmActionMenu implements IBuddyTreeItemActionMenu {
   public buddyTreeItem: BuddyTreeItem;
   constructor(buddyTreeItem: BuddyTreeItem) {
@@ -107,7 +107,7 @@ class BuddyTreeItemActionMenu8 extends ZmActionMenu implements IBuddyTreeItemAct
   }
 }
 
-// tslint:disable-next-line
+// tslint:disable-next-line:max-classes-per-file
 class BuddyTreeItemActionMenu7 extends DwtMenu implements IBuddyTreeItemActionMenu {
   public buddyTreeItem: BuddyTreeItem;
   constructor(buddyTreeItem: BuddyTreeItem) {

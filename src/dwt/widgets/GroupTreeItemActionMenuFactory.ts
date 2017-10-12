@@ -68,7 +68,7 @@ interface IGroupTreeItemActionMenu {
   groupTreeItem: GroupTreeItem;
 }
 
-// tslint:disable-next-line
+// tslint:disable-next-line:max-classes-per-file
 class GroupTreeItemActionMenu8 extends ZmActionMenu implements IGroupTreeItemActionMenu {
 
   public groupTreeItem: GroupTreeItem;
@@ -83,7 +83,7 @@ class GroupTreeItemActionMenu8 extends ZmActionMenu implements IGroupTreeItemAct
   }
 }
 
-// tslint:disable-next-line
+// tslint:disable-next-line:max-classes-per-file
 class GroupTreeItemActionMenu7 extends DwtMenu implements IGroupTreeItemActionMenu {
 
   public groupTreeItem: GroupTreeItem;

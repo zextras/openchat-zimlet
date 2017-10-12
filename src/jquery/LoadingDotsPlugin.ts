@@ -30,17 +30,15 @@ export class LoadingDotsPlugin implements IJQueryPlugin {
       const settings = $.extend( {}, { duration : 250 }, options );
       const bucle = function() {
           const $el = $(this);
-          // tslint:disable-next-line
-          let cycle: Function;
+          let cycle: (isFirst?: boolean) => void;
           let timing = i * settings.duration;
-          let first = true;
           i++;
-          cycle = () => {
+          cycle = (isFirst?: boolean) => {
             // if it's not the first time the cycle is called for a dot then the timing fired is 0
-            if ( !first ) {
+            if ( !isFirst ) {
               timing = 0;
             } else {
-              first = false;
+              isFirst = false;
             }
             // delay the animation the timing needed,
             // and then make the animation to fadeIn and Out the dot to make the effect
@@ -48,8 +46,7 @@ export class LoadingDotsPlugin implements IJQueryPlugin {
               .fadeTo( 1000, 0.4 )
               .fadeTo( 1000, 0, cycle );
           };
-
-          cycle( first );
+          cycle(true);
         };
       // for every element where the plugin was called we create the loading dots html and start the animations
       return this.each(

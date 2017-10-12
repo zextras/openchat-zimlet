@@ -22,15 +22,13 @@ import {ChatEvent} from "../events/ChatEvent";
 export class CommandFactory {
 
   public mCommandsMap: {[eventId: number]: string} = {};
-  // tslint:disable-next-line
-  public mSpecialCommandsMap: {[eventId: number]: Function} = {};
+  public mSpecialCommandsMap: {[eventId: number]: (event: ChatEvent) => string} = {};
 
   public addCommand(eventId: number, command: string): void {
     this.mCommandsMap[eventId] = command;
   }
 
-  // tslint:disable-next-line
-  public addSpecialCommand(eventId: number, controlFunction: Function): void {
+  public addSpecialCommand(eventId: number, controlFunction: (event: ChatEvent) => string): void {
     this.mSpecialCommandsMap[eventId] = controlFunction;
   }
 
