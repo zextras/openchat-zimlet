@@ -15,6 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @deprecated, use arrow functions instead
+ */
 export class Callback {
 
   public static NOOP: Callback = new Callback(undefined, () => { return; });

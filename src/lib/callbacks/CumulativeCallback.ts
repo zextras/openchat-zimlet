@@ -17,6 +17,9 @@
 
 import {Callback} from "./Callback";
 
+/**
+ * @deprecated, use arrow functions instead
+ */
 export class CumulativeCallback extends Callback {
   private howMany: number;
 

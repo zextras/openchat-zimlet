@@ -17,6 +17,9 @@
 
 import {Callback} from "./Callback";
 
+/**
+ * @deprecated, use an array of arrow functions instead
+ */
 export class CallbackManager {
   private callbacks: Callback[] = [];
 
