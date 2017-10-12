@@ -32,8 +32,6 @@ lint:
 
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi
-	npm update
-	./utils/patchNodeModules
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
