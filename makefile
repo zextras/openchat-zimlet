@@ -25,7 +25,10 @@ LABEL = OpenChat Zimlet
 
 all: dist/com_zextras_chat_open.zip
 
-.PHONY: check-yui node_modules clean init install guard-%
+.PHONY: check-yui lint node_modules clean init install guard-%
+
+lint:
+	npm run lint
 
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi

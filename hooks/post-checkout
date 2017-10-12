@@ -1,0 +1,4 @@
+#!/usr/bin/env bash -e
+
+rm -rf node_modules
+make node_modules
