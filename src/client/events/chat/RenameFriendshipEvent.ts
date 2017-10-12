@@ -25,8 +25,9 @@ export class RenameFriendshipEvent extends ChatEvent {
 
   constructor(buddyId: string, nickname: string, group: string, creationDate: Date) {
     super(OpenChatEventCode.RENAME_FRIENDSHIP, creationDate, false);
-    if (typeof buddyId !== "undefined" && buddyId !== null)
+    if (typeof buddyId !== "undefined" && buddyId !== null) {
       this.setDestination(buddyId);
+    }
     this.mNickname = nickname;
     this.mGroup = group;
   }

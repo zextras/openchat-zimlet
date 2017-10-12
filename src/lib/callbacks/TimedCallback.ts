@@ -34,12 +34,10 @@ export class TimedCallback {
     return this.mIntervalId;
   }
 
-
   public start(): void {
     if (this.mRepeat) {
       this.mIntervalId = setInterval(this.mCallback.toClosure(), this.mTimeout);
-    }
-    else {
+    } else {
       this.mIntervalId = setTimeout(this.mCallback.toClosure(), this.mTimeout);
     }
   }
@@ -50,8 +48,7 @@ export class TimedCallback {
     }
     if (this.mRepeat) {
       clearInterval(this.mIntervalId);
-    }
-    else {
+    } else {
       clearTimeout(this.mIntervalId);
     }
   }

@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IBuddyStatus} from "../../IBuddyStatus";
 import {ChatEvent} from "../ChatEvent";
-import {BuddyStatus} from "../../BuddyStatus";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class UserStatusesEvent extends ChatEvent {
 
-  private mStatuses: BuddyStatus[] = [];
+  private mStatuses: IBuddyStatus[] = [];
 
   constructor(creationDate: Date) {
     super(OpenChatEventCode.USER_STATUSES, creationDate, false);
@@ -29,17 +29,17 @@ export class UserStatusesEvent extends ChatEvent {
 
   /**
    * Get the user statuses
-   * @return {BuddyStatus[]}
+   * @return {IBuddyStatus[]}
    */
-  public getStatuses(): BuddyStatus[] {
+  public getStatuses(): IBuddyStatus[] {
     return this.mStatuses;
   }
 
   /**
    * Add status to the event
-   * @param {BuddyStatus} status
+   * @param {IBuddyStatus} status
    */
-  public addStatus(status: BuddyStatus): void {
+  public addStatus(status: IBuddyStatus): void {
     this.mStatuses.push(status);
   }
 

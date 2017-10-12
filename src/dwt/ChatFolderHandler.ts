@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {appCtxt} from "../zimbra/zimbraMail/appCtxt";
 import {DwtTreeItem} from "../zimbra/ajax/dwt/widgets/DwtTreeItem";
+import {appCtxt} from "../zimbra/zimbraMail/appCtxt";
 import {ZmApp} from "../zimbra/zimbraMail/core/ZmApp";
 import {ZmOverview} from "../zimbra/zimbraMail/share/view/ZmOverview";
 
@@ -30,7 +30,7 @@ export class ChatFolderHandler {
     }
     let app: ZmApp;
     let overView: ZmOverview;
-    for (let appName of apps) {
+    for (const appName of apps) {
       app = appCtxt.getApp(appName);
       if (typeof app !== "undefined" && app !== null) {
         overView = app.getOverview();
@@ -45,7 +45,7 @@ export class ChatFolderHandler {
   }
 
   public setVisible(visible: boolean = true): void {
-    for (let folder of this.folders) {
+    for (const folder of this.folders) {
       folder.setVisible(visible);
     }
   }

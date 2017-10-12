@@ -15,27 +15,38 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
-import {RoomWindowManager} from "../dwt/windows/RoomWindowManager";
 import {EventManager} from "../client/events/EventManager";
-import {EventSessionRegisteredHistoryEnabledHandler} from "../client/events/handlers/EventSessionRegisteredHistoryEnabledHandler";
-import {RoomWindowManagerIsHistoryEnabledPlugin} from "./history/RoomWindowManagerIsHistoryEnabledPlugin";
+import {
+  EventSessionRegisteredHistoryEnabledHandler,
+} from "../client/events/handlers/EventSessionRegisteredHistoryEnabledHandler";
 import {BuddyTreeItemActionMenuFactory} from "../dwt/widgets/BuddyTreeItemActionMenuFactory";
+import {RoomWindowManager} from "../dwt/windows/RoomWindowManager";
+import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {MainWindowShowHistoryMenuItemPlugin} from "./history/MainWindowShowHistoryMenuItemPlugin";
 import {RoomWindowManagerHistoryPlugin} from "./history/RoomWindowManagerHistoryPlugin";
+import {RoomWindowManagerIsHistoryEnabledPlugin} from "./history/RoomWindowManagerIsHistoryEnabledPlugin";
 
 export class HistoryPlugin {
 
   public static plugin(
     eventManager: EventManager,
     mainWindowPluginManager: ChatPluginManager,
-    roomWindowManagerPluginManager: ChatPluginManager
+    roomWindowManagerPluginManager: ChatPluginManager,
   ) {
     eventManager.addEventHandler(new EventSessionRegisteredHistoryEnabledHandler());
 
-    mainWindowPluginManager.registerPlugin(BuddyTreeItemActionMenuFactory.AddMenuItemPlugin, new MainWindowShowHistoryMenuItemPlugin());
-    roomWindowManagerPluginManager.registerPlugin(RoomWindowManager.AddRoomWindowPlugin, new RoomWindowManagerIsHistoryEnabledPlugin());
-    roomWindowManagerPluginManager.registerPlugin(RoomWindowManager.CreateRoomWindowPluginManager, new RoomWindowManagerHistoryPlugin());
+    mainWindowPluginManager.registerPlugin(
+      BuddyTreeItemActionMenuFactory.AddMenuItemPlugin,
+      new MainWindowShowHistoryMenuItemPlugin(),
+    );
+    roomWindowManagerPluginManager.registerPlugin(
+      RoomWindowManager.AddRoomWindowPlugin,
+      new RoomWindowManagerIsHistoryEnabledPlugin(),
+    );
+    roomWindowManagerPluginManager.registerPlugin(
+      RoomWindowManager.CreateRoomWindowPluginManager,
+      new RoomWindowManagerHistoryPlugin(),
+    );
   }
 
 }

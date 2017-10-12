@@ -15,45 +15,41 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {WindowBase} from "./WindowBase";
-import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
-import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
-import {SettingsManager, GroupData} from "../../settings/SettingsManager";
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {BuddyList} from "../../client/BuddyList";
-import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
-import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
-import {StatusSelector} from "../widgets/StatusSelector";
-import {MainMenuButton} from "../widgets/MainMenuButton";
-import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
-import {BuddyListTree} from "../widgets/BuddyListTree";
+import {Group} from "../../client/Group";
+import {IBuddy} from "../../client/IBuddy";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
+import {Constants} from "../../Constants";
 import {Callback} from "../../lib/callbacks/Callback";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
-import {DwtControlEvent} from "../../zimbra/ajax/dwt/events/DwtControlEvent";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
-import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {Buddy} from "../../client/Buddy";
-import {GroupTreeItem} from "../widgets/GroupTreeItem";
-import {Group} from "../../client/Group";
-import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
-import {Constants} from "../../Constants";
-import {Setting} from "../../settings/Setting";
-import {SmoothRoomWindowMover} from "./SmoothRoomWindowMover";
-import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {IChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
-import {SortFcns} from "../SortFcns";
-import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
-import {DwtInputField} from "../../zimbra/ajax/dwt/widgets/DwtInputField";
-import {DwtButton} from "../../zimbra/ajax/dwt/widgets/DwtButton";
-import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {Setting} from "../../settings/Setting";
+import {IGroupData, SettingsManager} from "../../settings/SettingsManager";
+import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
+import {DwtControlEvent} from "../../zimbra/ajax/dwt/events/DwtControlEvent";
+import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
-import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
-import {BuddyStatus} from "../../client/BuddyStatus";
-import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
-import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
+import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
+import {DwtButton} from "../../zimbra/ajax/dwt/widgets/DwtButton";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
+import {DwtInputField} from "../../zimbra/ajax/dwt/widgets/DwtInputField";
+import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
+import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
+import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
+import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
+import {SortFcns} from "../SortFcns";
+import {BuddyListTree} from "../widgets/BuddyListTree";
+import {GroupTreeItem} from "../widgets/GroupTreeItem";
+import {MainMenuButton} from "../widgets/MainMenuButton";
+import {StatusSelector} from "../widgets/StatusSelector";
+import {SmoothRoomWindowMover} from "./SmoothRoomWindowMover";
+import {WindowBase} from "./WindowBase";
 
 export class MainWindow extends WindowBase {
 
@@ -80,23 +76,23 @@ export class MainWindow extends WindowBase {
   private mBuddyListTree: BuddyListTree;
 
   private mMainWindowPluginManager: ChatPluginManager;
-  private mOnStatusSelectedCallbacks: ((status: BuddyStatus) => void)[];
-  private mOnAddFriendSelectionCallbacks: (() => void)[];
-  private mOnAddGroupSelectionCallbacks: (() => void)[];
-  private mOnSettingsSelectionCallbacks: (() => void)[];
-  private mOnBuddySelectedCallbacks: ((ev: DwtSelectionEvent) => void)[];
-  private mOnDeleteBuddyCallbacks: ((buddy: Buddy) => void)[];
-  private mOnRenameBuddyCallbacks: ((buddy: Buddy) => void)[];
-  private mOnSendInvitationCallbacks: ((buddy: Buddy) => void)[];
-  private mOnAcceptInvitationCallbacks: ((buddy: Buddy) => void)[];
-  private mOnRenameGroupCallbacks: ((group: Group) => void)[];
-  private mOnDeleteGroupCallbacks: ((group: Group) => void)[];
-  private mOnGroupExpandedOrCollapsedCallbacks: ((item: GroupTreeItem, expand: boolean, save: boolean) => void)[];
-  private mOnBuddyDroppedInGroupCallbacks: ((buddy: Buddy, group: Group) => void)[];
-  private mOnContactDroppedInGroupCallbacks: ((contact: ZmContact, group: Group) => void)[];
-  private mOnChangeSidebarOrDockCallbacks: ((docked: boolean) => void)[];
-  private mOnShowHideOfflineCbkMgr: ((hide: boolean) => void)[];
-  private mOnSetSortMethodCbkMgr: ((sortMethod: string) => void)[];
+  private mOnStatusSelectedCallbacks: Array<(status: IBuddyStatus) => void>;
+  private mOnAddFriendSelectionCallbacks: Array<() => void>;
+  private mOnAddGroupSelectionCallbacks: Array<() => void>;
+  private mOnSettingsSelectionCallbacks: Array<() => void>;
+  private mOnBuddySelectedCallbacks: Array<(ev: DwtSelectionEvent) => void>;
+  private mOnDeleteBuddyCallbacks: Array<(buddy: IBuddy) => void>;
+  private mOnRenameBuddyCallbacks: Array<(buddy: IBuddy) => void>;
+  private mOnSendInvitationCallbacks: Array<(buddy: IBuddy) => void>;
+  private mOnAcceptInvitationCallbacks: Array<(buddy: IBuddy) => void>;
+  private mOnRenameGroupCallbacks: Array<(group: Group) => void>;
+  private mOnDeleteGroupCallbacks: Array<(group: Group) => void>;
+  private mOnGroupExpandedOrCollapsedCallbacks: Array<(item: GroupTreeItem, expand: boolean, save: boolean) => void>;
+  private mOnBuddyDroppedInGroupCallbacks: Array<(buddy: IBuddy, group: Group) => void>;
+  private mOnContactDroppedInGroupCallbacks: Array<(contact: ZmContact, group: Group) => void>;
+  private mOnChangeSidebarOrDockCallbacks: Array<(docked: boolean) => void>;
+  private mOnShowHideOfflineCbkMgr: Array<(hide: boolean) => void>;
+  private mOnSetSortMethodCbkMgr: Array<(sortMethod: string) => void>;
   private Log: Logger;
   private mTitleBar: DwtToolBar;
   private mStatusSelectorToolbar: DwtToolBar;
@@ -106,7 +102,12 @@ export class MainWindow extends WindowBase {
   private mSearchToolBar: DwtToolBar;
   private mTitleExpandBar: DwtToolBar;
 
-  constructor(appCtxt: ZmAppCtxt, settingsManager: SettingsManager, buddyList: BuddyList, mainWindowPluginManager: ChatPluginManager) {
+  constructor(
+    appCtxt: ZmAppCtxt,
+    settingsManager: SettingsManager,
+    buddyList: BuddyList,
+    mainWindowPluginManager: ChatPluginManager,
+  ) {
 
     super(
       appCtxt.getShell(),
@@ -115,7 +116,7 @@ export class MainWindow extends WindowBase {
       "Chat",
       [],
       undefined,
-      false
+      false,
     );
     this.mAppCtxt = appCtxt;
     this.mSettingsManager = settingsManager;
@@ -149,25 +150,25 @@ export class MainWindow extends WindowBase {
       (ev: DwtEvent) => {
         this.mContainerView.parent.focus();
         return true;
-      }
+      },
     );
     // Start
     this.mTitleBar = new DwtToolBar({
+      className: "ZxChat_TitleBar_Toolbar",
       parent: this.mContainerView,
       parentElement: this._titleBarEl,
-      className: "ZxChat_TitleBar_Toolbar"
     });
     this.mTitleBar.setSize(
       `${MainWindow.WIDTH}px`,
-      Dwt.DEFAULT
+      Dwt.DEFAULT,
     );
     this.mTitleExpandBar = new DwtToolBar({
+      className: "ZxChat_TitleBar_Toolbar",
       parent: this.mTitleBar,
-      className: "ZxChat_TitleBar_Toolbar"
     });
     this.mTitleLbl = new DwtLabel({
+      className: `WindowBaseTitleBar${ ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`,
       parent: this.mTitleExpandBar,
-      className: `WindowBaseTitleBar${ ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`
     });
     this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
@@ -176,8 +177,8 @@ export class MainWindow extends WindowBase {
     this.mMainMenuButton.setEnabled(false);
     this.mTitleExpandBar.setSize(this.mTitleBar.getSize().x - this.mMainMenuButton.getSize().x - 5, Dwt.DEFAULT);
     this.mStatusSelectorToolbar = new DwtToolBar({
+      className: "MainWindowStatusToolbar",
       parent: this.mContainerView,
-      className: "MainWindowStatusToolbar"
     });
     // if (!ZimbraUtils.isUniversalUI()) {
     //   this.mStatusSelectorToolbar.setSize(
@@ -189,32 +190,32 @@ export class MainWindow extends WindowBase {
     this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
     this.mStatusSelector.setSize(
       `${MainWindow.WIDTH}px`,
-      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px"
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px",
     );
     this.mSearchToolBar = new DwtToolBar({
+      className: `ZToolbar ZWidget ZxChat_MainWindowSearchToolBar${(ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui"}`,
       parent: this.mContainerView,
-      className: `ZToolbar ZWidget ZxChat_MainWindowSearchToolBar${(ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui"}`
     });
     this.mSearchInput = new DwtInputField({
-      parent: this.mSearchToolBar,
       className: `DwtInputField ZxChat_MainWindowSearchInput${ (ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui" }`,
-      hint: ZmMsg.search
+      hint: ZmMsg.search,
+      parent: this.mSearchToolBar,
     });
     this.mSearchInput.setHandler(DwtEvent.ONKEYUP, (ev) => this.handleSearchKeyUp(ev));
     this.mSearchButton = new DwtToolBarButton({
+      className: `ZToolbarButton ZxChat_MainWindowSearchButton${ (ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui" }`,
       parent: this.mSearchToolBar,
-      className: `ZToolbarButton ZxChat_MainWindowSearchButton${ (ZimbraUtils.isUniversalUI()) ? "" : "-legacy-ui" }`
     });
     this.mSearchButton.setImage("Search2");
     this.mSearchButton.addSelectionListener(new AjxListener(this, this.resetSearchField));
     this.mSearchInput.setSize(
       `${MainWindow.WIDTH - (ZimbraUtils.isUniversalUI() ? this.mSearchButton.getSize().x : 29)}px`,
-      Dwt.DEFAULT
+      Dwt.DEFAULT,
     );
     this.createBuddyListTree(buddyList);
     this.mContainerView.setSize(
       Dwt.DEFAULT,
-      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - (ZimbraUtils.isUniversalUI() ? 0 : 2)}px` // Fix bottom border
+      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - (ZimbraUtils.isUniversalUI() ? 0 : 2)}px`,
     );
     this.setView(this.mContainerView);
     this.onMinimize(new Callback(this, this.handleMinimized, true));
@@ -226,11 +227,14 @@ export class MainWindow extends WindowBase {
     if (this.mTitleExpandBar.getHtmlElement().addEventListener) {
       this.mTitleExpandBar.getHtmlElement().addEventListener(
         "click",
-        <(ev: MouseEvent) => any>(new Callback(this, this.titleClickCallback)).toClosure(),
-        false
+        (new Callback(this, this.titleClickCallback)).toClosure() as (ev: MouseEvent) => any,
+        false,
       );
-    } else if ((<IE8HtmlElement>this.mTitleExpandBar.getHtmlElement()).attachEvent)  {
-      (<IE8HtmlElement>this.mTitleExpandBar.getHtmlElement()).attachEvent("onclick", (new Callback(this, this.titleClickCallback)).toClosure());
+    } else if ((this.mTitleExpandBar.getHtmlElement() as IE8HtmlElement).attachEvent)  {
+      (this.mTitleExpandBar.getHtmlElement() as IE8HtmlElement).attachEvent(
+        "onclick",
+        (new Callback(this, this.titleClickCallback)).toClosure(),
+      );
     }
     this.mAppCtxt.getShell().addListener(DwtEvent.CONTROL, new AjxListener(this, this.onShellResize));
     this.updateMainIcon();
@@ -249,77 +253,26 @@ export class MainWindow extends WindowBase {
     super._createHtmlFromTemplate(templateId, data);
   }
 
-  protected createMainMenuButton(toolbar: DwtToolBar, isPrimary: boolean): MainMenuButton {
-    let mainMenuButton = new MainMenuButton(toolbar, this.mMainWindowPluginManager, this.getMainMenuButtonImageStyle(isPrimary));
-    mainMenuButton.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
-    mainMenuButton.onAddGroupSelection(new Callback(this, this.addGroupOptionSelected));
-    mainMenuButton.onSettingsSelection(new Callback(this, this.settingsOptionSelected));
-//    Shouldn't be necessary ?!?
-    mainMenuButton.onShowHideOffline(new Callback(this, this.showHideOffline));
-    mainMenuButton.onChangeSidebarOrDock((docked) => this.changeSidebarOrDockSelected(docked));
-    return mainMenuButton;
-  }
-
-  private getMainMenuButtonImageStyle(primary: boolean) {
-    if (ZimbraUtils.isUniversalUI()) {
-      return `MoreVertical,color=${primary ? "#b4d7eb" : "#989898"}`;
-    } else {
-      return `${primary ? "ZxChat_preferences" : "ZxChat_preferences-gray"}`;
-    }
-  }
-
   public enableDisableMainMenuButton(enable: boolean): void {
     this.mMainMenuButton.setEnabled(enable);
   }
 
-  protected createBuddyListTree(buddyList: BuddyList): void {
-    this.mBuddyListTree = new BuddyListTree(
-      this.mContainerView,
-      buddyList,
-      this.mAppCtxt,
-      this.mMainWindowPluginManager.getFieldPlugin(MainWindowSortFunction.FieldName),
-      this.mMainWindowPluginManager
-    );
-    this.mBuddyListTree.onAddBuddy(new Callback(this, this.updateMainIcon));
-    this.mBuddyListTree.onBuddyStatusChange(new Callback(this, this.updateMainIcon));
-    this.mBuddyListTree.onRenameGroupSelected(new Callback(this, this.renameGroup));
-    this.mBuddyListTree.onDeleteGroupSelected(new Callback(this, this.deleteGroup));
-    this.mBuddyListTree.onBuddySelected(new Callback(this, this.buddySelected));
-    this.mBuddyListTree.onDeleteBuddy(new Callback(this, this.deleteBuddy));
-    this.mBuddyListTree.onRemoveBuddy(new Callback(this, this.updateMainIcon));
-    this.mBuddyListTree.onRenameBuddy(new Callback(this, this.renameBuddy));
-    this.mBuddyListTree.onSendInvitation(new Callback(this, this.inviteBuddy));
-    this.mBuddyListTree.onAcceptInvitation(new Callback(this, this.acceptInvitation));
-    this.mBuddyListTree.onBuddyDroppedInGroup(new Callback(this, this.buddyDroppedInGroup));
-    this.mBuddyListTree.onContactDroppedInGroup(new Callback(this, this.contactDroppedInGroup));
-    this.mBuddyListTree.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
-    this.mBuddyListTree.onGroupExpandCollapse(new Callback(this, this.expandOrCollapseGroup));
-    let buddyListHeight = MainWindow.HEIGHT - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y;
-    // - (ZimbraUtils.isUniversalUI() ? 15 : 7)
-    if (ZimbraUtils.isUniversalUI()) {
-      buddyListHeight -= 15;
-    } else {
-      buddyListHeight -= 7;
-    }
-    this.mBuddyListTree.setSize(
-      `${MainWindow.WIDTH + 2}px`,
-      `${buddyListHeight}px`
-    );
-  }
-
-  public setUserStatuses(userStatuses: BuddyStatus[]): void {
+  public setUserStatuses(userStatuses: IBuddyStatus[]): void {
     this.mStatusSelector.clear();
     this.mStatusSelector.setOptionStatuses(userStatuses);
   }
 
-  public setCurrentStatus(userStatus: BuddyStatus): void {
+  public setCurrentStatus(userStatus: IBuddyStatus): void {
     this.mMainWindowPluginManager.triggerPlugins(MainWindow.StatusChangedPlugin, userStatus);
     this.mStatusSelector.setCurrentStatus(userStatus);
   }
 
   public setSortMethod(sortMethod: string): void {
     this.mMainWindowPluginManager.triggerPlugins(MainWindow.SetSortMethodPlugin, sortMethod);
-    this.mBuddyListTree.setSortMethod(sortMethod, this.mMainWindowPluginManager.getFieldPlugin(MainWindowSortFunction.FieldName));
+    this.mBuddyListTree.setSortMethod(
+      sortMethod,
+      this.mMainWindowPluginManager.getFieldPlugin(MainWindowSortFunction.FieldName),
+    );
   }
 
   public setShowHideOffline(hide: boolean): void {
@@ -327,11 +280,11 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.showHideOfflineBuddies(hide);
   }
 
-  public getGroupsData(): GroupData[] {
+  public getGroupsData(): IGroupData[] {
     return this.mBuddyListTree.getGroupsData();
   }
 
-  public setGroupsData(data: GroupData[]): void {
+  public setGroupsData(data: IGroupData[]): void {
     return this.mBuddyListTree.setGroupsData(data);
   }
 
@@ -349,8 +302,7 @@ export class MainWindow extends WindowBase {
   public changeSidebarOrDock(docked: boolean): void {
     if (docked) {
       this.moveToDock();
-    }
-    else {
+    } else {
       this.moveToSidebar();
     }
   }
@@ -365,17 +317,15 @@ export class MainWindow extends WindowBase {
     ) {
       if (controlEvent.newHeight === controlEvent.oldHeight && controlEvent.newWidth === controlEvent.oldWidth) {
         return;
-      }
-      else {
+      } else {
         if (this.mOnDock) {
-          let posPoint = this.getDefaultPosition();
+          const posPoint = this.getDefaultPosition();
           this.setLocation(posPoint.x, posPoint.y);
-        }
-        else {
+        } else {
           this.Log.debug(controlEvent, "MainWindow.onShellResize");
           this.resizeSidebar(
             this.getBounds().width,
-            controlEvent.newHeight
+            controlEvent.newHeight,
           );
         }
       }
@@ -388,36 +338,20 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.setExpanded(true, false);
   }
 
-  public onStatusSelected(cbk: (status: BuddyStatus) => void): void {
+  public onStatusSelected(cbk: (status: IBuddyStatus) => void): void {
     this.mOnStatusSelectedCallbacks.push(cbk);
-  }
-
-  private statusSelected(status: BuddyStatus): void {
-    for (let cbk of this.mOnStatusSelectedCallbacks) cbk(status);
   }
 
   public onAddFriendOptionSelected(cbk: () => void): void {
     this.mOnAddFriendSelectionCallbacks.push(cbk);
   }
 
-  private addFriendOptionSelected(): void {
-    for (let cbk of this.mOnAddFriendSelectionCallbacks) cbk();
-  }
-
   public onAddGroupOptionSelected(cbk: () => void): void {
     this.mOnAddGroupSelectionCallbacks.push(cbk);
   }
 
-  private addGroupOptionSelected(): void {
-    for (let cbk of this.mOnAddGroupSelectionCallbacks) cbk();
-  }
-
   public onSettingsOptionSelected(cbk: () => void): void {
     this.mOnSettingsSelectionCallbacks.push(cbk);
-  }
-
-  private settingsOptionSelected(): void {
-    for (let cbk of this.mOnSettingsSelectionCallbacks) cbk();
   }
 
   public onShowHideOffline(cbk: (hide: boolean) => void): void {
@@ -425,7 +359,7 @@ export class MainWindow extends WindowBase {
   }
 
   public showHideOffline(hide: boolean): void {
-    for (let cbk of this.mOnShowHideOfflineCbkMgr) cbk(hide);
+    for (const cbk of this.mOnShowHideOfflineCbkMgr) { cbk(hide); }
   }
 
   public onSetSortMethod(cbk: (sortMethod: string) => void): void {
@@ -433,119 +367,207 @@ export class MainWindow extends WindowBase {
   }
 
   public sortMethodSet(sortMethod: string): void {
-    for (let cbk of this.mOnSetSortMethodCbkMgr) cbk(sortMethod);
+    for (const cbk of this.mOnSetSortMethodCbkMgr) { cbk(sortMethod); }
   }
 
   public onBuddySelected(cbk: (ev: DwtSelectionEvent) => void): void {
     this.mOnBuddySelectedCallbacks.push(cbk);
   }
 
-  private buddySelected(ev: DwtSelectionEvent): void {
-    for (let cbk of this.mOnBuddySelectedCallbacks) cbk(ev);
-  }
-
   public onChangeSidebarOrDock(cbk: (docked: boolean) => void): void {
     this.mOnChangeSidebarOrDockCallbacks.push(cbk);
   }
 
-  private changeSidebarOrDockSelected(docked: boolean): void {
-    for (let cbk of this.mOnChangeSidebarOrDockCallbacks) cbk(docked);
-  }
-
-  public onDeleteBuddy(cbk: (buddy: Buddy) => void): void {
+  public onDeleteBuddy(cbk: (buddy: IBuddy) => void): void {
     this.mOnDeleteBuddyCallbacks.push(cbk);
   }
 
-  private deleteBuddy(buddy: Buddy): void {
-    for (let cbk of this.mOnDeleteBuddyCallbacks) cbk(buddy);
-  }
-
-  public onRenameBuddy(cbk: (buddy: Buddy) => void): void {
+  public onRenameBuddy(cbk: (buddy: IBuddy) => void): void {
     this.mOnRenameBuddyCallbacks.push(cbk);
   }
 
-  private renameBuddy(buddy: Buddy): void {
-    for (let cbk of this.mOnRenameBuddyCallbacks) cbk(buddy);
-  }
-
-  public onSendInvitation(cbk: (buddy: Buddy) => void): void {
+  public onSendInvitation(cbk: (buddy: IBuddy) => void): void {
     this.mOnSendInvitationCallbacks.push(cbk);
   }
 
-  private inviteBuddy(buddy: Buddy): void {
-    for (let cbk of this.mOnSendInvitationCallbacks) cbk(buddy);
-  }
-
-  public onAcceptInvitation(cbk: (buddy: Buddy) => void): void {
+  public onAcceptInvitation(cbk: (buddy: IBuddy) => void): void {
     this.mOnAcceptInvitationCallbacks.push(cbk);
-  }
-
-  private acceptInvitation(buddy: Buddy): void {
-    for (let cbk of this.mOnAcceptInvitationCallbacks) cbk(buddy);
   }
 
   public onDeleteGroup(cbk: (group: Group) => void): void {
     this.mOnDeleteGroupCallbacks.push(cbk);
   }
 
-  private deleteGroup(group: Group): void {
-    for (let cbk of this.mOnDeleteGroupCallbacks) cbk(group);
-  }
-
   public onRenameGroup(cbk: (group: Group) => void): void {
     this.mOnRenameGroupCallbacks.push(cbk);
-  }
-
-  private renameGroup(group: Group): void {
-    for (let cbk of this.mOnRenameGroupCallbacks) cbk(group);
   }
 
   public onGroupExpandedOrCollapsed(cbk: (item: GroupTreeItem, expand: boolean, save: boolean) => void): void {
     this.mOnGroupExpandedOrCollapsedCallbacks.push(cbk);
   }
 
-  private expandOrCollapseGroup(item: GroupTreeItem, expand: boolean, save: boolean): void {
-    for (let cbk of this.mOnGroupExpandedOrCollapsedCallbacks) cbk(item, expand, save);
-  }
-
-  public onBuddyDroppedInGroup(cbk: (buddy: Buddy, group: Group) => void): void {
+  public onBuddyDroppedInGroup(cbk: (buddy: IBuddy, group: Group) => void): void {
     this.mOnBuddyDroppedInGroupCallbacks.push(cbk);
-  }
-
-  private buddyDroppedInGroup(buddy: Buddy, group: Group): void {
-    for (let cbk of this.mOnBuddyDroppedInGroupCallbacks) cbk(buddy, group);
   }
 
   public onContactDroppedInGroup(cbk: (contact: ZmContact, group: Group) => void): void {
     this.mOnContactDroppedInGroupCallbacks.push(cbk);
   }
 
+  public triggerSortGroups(): void {
+    this.mBuddyListTree.triggerSortGroups();
+  }
+
+  // Don't drag me! >:(
+  public _initializeDragging(): void { return; }
+
+  private createBuddyListTree(buddyList: BuddyList): void {
+    this.mBuddyListTree = new BuddyListTree(
+      this.mContainerView,
+      buddyList,
+      this.mAppCtxt,
+      this.mMainWindowPluginManager.getFieldPlugin(MainWindowSortFunction.FieldName),
+      this.mMainWindowPluginManager,
+    );
+    this.mBuddyListTree.onAddBuddy(new Callback(this, this.updateMainIcon));
+    this.mBuddyListTree.onBuddyStatusChange(new Callback(this, this.updateMainIcon));
+    this.mBuddyListTree.onRenameGroupSelected(new Callback(this, this.renameGroup));
+    this.mBuddyListTree.onDeleteGroupSelected(new Callback(this, this.deleteGroup));
+    this.mBuddyListTree.onBuddySelected(new Callback(this, this.buddySelected));
+    this.mBuddyListTree.onDeleteBuddy(new Callback(this, this.deleteBuddy));
+    this.mBuddyListTree.onRemoveBuddy(new Callback(this, this.updateMainIcon));
+    this.mBuddyListTree.onRenameBuddy(new Callback(this, this.renameBuddy));
+    this.mBuddyListTree.onSendInvitation(new Callback(this, this.inviteBuddy));
+    this.mBuddyListTree.onAcceptInvitation(new Callback(this, this.acceptInvitation));
+    this.mBuddyListTree.onBuddyDroppedInGroup(new Callback(this, this.buddyDroppedInGroup));
+    this.mBuddyListTree.onContactDroppedInGroup(new Callback(this, this.contactDroppedInGroup));
+    this.mBuddyListTree.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
+    this.mBuddyListTree.onGroupExpandCollapse(new Callback(this, this.expandOrCollapseGroup));
+    let buddyListHeight = MainWindow.HEIGHT
+      - this.mTitleBar.getSize().y
+      - this.mStatusSelectorToolbar.getSize().y
+      - this.mSearchToolBar.getSize().y;
+    // - (ZimbraUtils.isUniversalUI() ? 15 : 7)
+    if (ZimbraUtils.isUniversalUI()) {
+      buddyListHeight -= 15;
+    } else {
+      buddyListHeight -= 7;
+    }
+    this.mBuddyListTree.setSize(
+      `${MainWindow.WIDTH + 2}px`,
+      `${buddyListHeight}px`,
+    );
+  }
+
+  private createMainMenuButton(toolbar: DwtToolBar, isPrimary: boolean): MainMenuButton {
+    const mainMenuButton = new MainMenuButton(
+      toolbar,
+      this.mMainWindowPluginManager,
+      this.getMainMenuButtonImageStyle(isPrimary),
+    );
+    mainMenuButton.onAddFriendSelection(new Callback(this, this.addFriendOptionSelected));
+    mainMenuButton.onAddGroupSelection(new Callback(this, this.addGroupOptionSelected));
+    mainMenuButton.onSettingsSelection(new Callback(this, this.settingsOptionSelected));
+//    Shouldn't be necessary ?!?
+    mainMenuButton.onShowHideOffline(new Callback(this, this.showHideOffline));
+    mainMenuButton.onChangeSidebarOrDock((docked) => this.changeSidebarOrDockSelected(docked));
+    return mainMenuButton;
+  }
+
+  private getMainMenuButtonImageStyle(primary: boolean) {
+    if (ZimbraUtils.isUniversalUI()) {
+      return `MoreVertical,color=${primary ? "#b4d7eb" : "#989898"}`;
+    } else {
+      return `${primary ? "ZxChat_preferences" : "ZxChat_preferences-gray"}`;
+    }
+  }
+
+  private statusSelected(status: IBuddyStatus): void {
+    for (const cbk of this.mOnStatusSelectedCallbacks) { cbk(status); }
+  }
+
+  private addFriendOptionSelected(): void {
+    for (const cbk of this.mOnAddFriendSelectionCallbacks) { cbk(); }
+  }
+
+  private addGroupOptionSelected(): void {
+    for (const cbk of this.mOnAddGroupSelectionCallbacks) { cbk(); }
+  }
+
+  private settingsOptionSelected(): void {
+    for (const cbk of this.mOnSettingsSelectionCallbacks) { cbk(); }
+  }
+
+  private buddySelected(ev: DwtSelectionEvent): void {
+    for (const cbk of this.mOnBuddySelectedCallbacks) { cbk(ev); }
+  }
+
+  private changeSidebarOrDockSelected(docked: boolean): void {
+    for (const cbk of this.mOnChangeSidebarOrDockCallbacks) { cbk(docked); }
+  }
+
+  private deleteBuddy(buddy: IBuddy): void {
+    for (const cbk of this.mOnDeleteBuddyCallbacks) { cbk(buddy); }
+  }
+
+  private renameBuddy(buddy: IBuddy): void {
+    for (const cbk of this.mOnRenameBuddyCallbacks) { cbk(buddy); }
+  }
+
+  private inviteBuddy(buddy: IBuddy): void {
+    for (const cbk of this.mOnSendInvitationCallbacks) { cbk(buddy); }
+  }
+
+  private acceptInvitation(buddy: IBuddy): void {
+    for (const cbk of this.mOnAcceptInvitationCallbacks) { cbk(buddy); }
+  }
+
+  private deleteGroup(group: Group): void {
+    for (const cbk of this.mOnDeleteGroupCallbacks) { cbk(group); }
+  }
+
+  private renameGroup(group: Group): void {
+    for (const cbk of this.mOnRenameGroupCallbacks) { cbk(group); }
+  }
+
+  private expandOrCollapseGroup(item: GroupTreeItem, expand: boolean, save: boolean): void {
+    for (const cbk of this.mOnGroupExpandedOrCollapsedCallbacks) { cbk(item, expand, save); }
+  }
+
+  private buddyDroppedInGroup(buddy: IBuddy, group: Group): void {
+    for (const cbk of this.mOnBuddyDroppedInGroupCallbacks) { cbk(buddy, group); }
+  }
+
   private contactDroppedInGroup(contact: ZmContact, group: Group): void {
-    for (let cbk of this.mOnContactDroppedInGroupCallbacks) cbk(contact, group);
+    for (const cbk of this.mOnContactDroppedInGroupCallbacks) { cbk(contact, group); }
   }
 
   private moveToDock(): void {
-    if (this.mOnDock) return;
+    if (this.mOnDock) { return; }
     this.mOnDock = true;
     this.handleSidebarResize();
     this.mTitleBar.setSize(
       `${MainWindow.WIDTH}px`,
-      Dwt.DEFAULT
+      Dwt.DEFAULT,
     );
     this.mMainMenuButton.reparent(this.mTitleBar);
     this.mMainMenuButton.setSwitchOnSidebarStatus(false);
     this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(true));
     this.mStatusSelector.setSize(
       `${MainWindow.WIDTH}px`,
-      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px"
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px",
     );
     this.mBuddyListTree.setSize(
       (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "212px", // problem with DwtTree border
-      `${MainWindow.HEIGHT - (ZimbraUtils.isUniversalUI() ? 15 : 7) - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
+      `${MainWindow.HEIGHT
+        - (ZimbraUtils.isUniversalUI() ? 15 : 7)
+        - this.mTitleBar.getSize().y
+        - this.mStatusSelectorToolbar.getSize().y
+        - this.mSearchToolBar.getSize().y}px`,
     );
     this.mContainerView.setSize(
       Dwt.DEFAULT,
-      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - (ZimbraUtils.isUniversalUI() ? 0 : 2)}px` // Fix bottom border
+      `${MainWindow.HEIGHT - this.mTitleBar.getSize().y - (ZimbraUtils.isUniversalUI() ? 0 : 2)}px`,
     );
     this.mContainerView.reparent(this);
     this.setView(this.mContainerView);
@@ -553,25 +575,30 @@ export class MainWindow extends WindowBase {
   }
 
   private moveToSidebar(): void {
-    if (!this.mOnDock) return;
+    if (!this.mOnDock) { return; }
     this.mOnDock = false;
     this.handleSidebarResize();
     this.mStatusSelector.setSize(
-      `${MainWindow.WIDTH - this.mMainMenuButton.getSize().x - (ZimbraUtils.isUniversalUI() ? 0 : 4)}px`, // 4 is the margins
-      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px"
+      `${MainWindow.WIDTH - this.mMainMenuButton.getSize().x - (ZimbraUtils.isUniversalUI() ? 0 : 4)}px`,
+      (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px",
     );
     this.mMainMenuButton.reparent(this.mStatusSelectorToolbar);
     this.mMainMenuButton.setSwitchOnSidebarStatus(true);
     this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(false));
-    let container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
+    const container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
     this.mContainerView.reparentHtmlElement(container, 0);
     this.mBuddyListTree.setSize(
       (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "213px", // problem with DwtTree border
-      `${appCtxt.getShell().getSize().y - 107 - 15 - this.mTitleBar.getSize().y - this.mStatusSelectorToolbar.getSize().y - this.mSearchToolBar.getSize().y}px`
+      `${this.mAppCtxt.getShell().getSize().y
+        - 107
+        - 15
+        - this.mTitleBar.getSize().y
+        - this.mStatusSelectorToolbar.getSize().y
+        - this.mSearchToolBar.getSize().y}px`,
     );
     this.mContainerView.setSize(
       Dwt.DEFAULT,
-      `${appCtxt.getShell().getSize().y - 107}px` // 107 is the Zimbra header (more or less...)
+      `${this.mAppCtxt.getShell().getSize().y - 107}px`, // 107 is the Zimbra header (more or less...)
     );
     this.popdown();
     this.setVisible(true);
@@ -580,12 +607,12 @@ export class MainWindow extends WindowBase {
   private handleSidebarResize(): void {
     this.resizeSidebar(
       this.getBounds().width,
-      this.mAppCtxt.getShell().getBounds().height
+      this.mAppCtxt.getShell().getBounds().height,
     );
     this.mAppCtxt.getShell()._currWinSize.x = 0;
     this.mAppCtxt.getShell()._currWinSize.y = 0;
     if (this.mAppCtxt.getShell().isListenerRegistered(DwtEvent.CONTROL)) {
-      let controlEvent: DwtControlEvent = DwtShell.controlEvent;
+      const controlEvent: DwtControlEvent = DwtShell.controlEvent;
       controlEvent.reset();
       controlEvent.oldWidth = this.mAppCtxt.getShell()._currWinSize.x;
       controlEvent.oldHeight = this.mAppCtxt.getShell()._currWinSize.y;
@@ -593,23 +620,21 @@ export class MainWindow extends WindowBase {
       controlEvent.newWidth = this.mAppCtxt.getShell()._currWinSize.x;
       controlEvent.newHeight = this.mAppCtxt.getShell()._currWinSize.y;
       this.mAppCtxt.getShell().notifyListeners(DwtEvent.CONTROL, controlEvent);
-    }
-    else {
+    } else {
       this.mAppCtxt.getShell()._currWinSize = Dwt.getWindowSize();
     }
     try {
       this.mAppCtxt.getCalManager().getCalViewController().getViewMgr().getCurrentView().updateTimeIndicator();
-    }
-    catch (ignore) {}
+    } catch (ignore) {}
   }
 
   private resizeSidebar(width: number, height: number) {
-    let tdElement: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV),
-      container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
+    const tdElement: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV);
+    const container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
     tdElement.className = "";
     if (this.mOnDock) {
-      if (typeof tdElement !== "undefined" && tdElement !== null) tdElement.style.width = "1px";
-      if (typeof container !== "undefined" && container !== null) container.style.width = "1px";
+      if (typeof tdElement !== "undefined" && tdElement !== null) { tdElement.style.width = "1px"; }
+      if (typeof container !== "undefined" && container !== null) { container.style.width = "1px"; }
     } else {
       if (typeof container !== "undefined" && container !== null) {
         container.style.paddingLeft = "6px";
@@ -626,11 +651,10 @@ export class MainWindow extends WindowBase {
     }
   }
 
-  private titleClickCallback(ev: MouseEventWithPath): void {
+  private titleClickCallback(ev: IMouseEventWithPath): void {
     if (this.isMinimized()) {
       this.setExpanded();
-    }
-    else {
+    } else {
       this.setMinimized();
     }
   }
@@ -643,20 +667,13 @@ export class MainWindow extends WindowBase {
   }
 
   private getDefaultPosition(): DwtPoint {
-    let shellSize: DwtPoint = this.mAppCtxt.getShell().getSize(),
-      roomSize = this.getSize();
+    const shellSize: DwtPoint = this.mAppCtxt.getShell().getSize();
+    const roomSize = this.getSize();
     return new DwtPoint(
       shellSize.x - roomSize.x - MainWindow.RIGHT_PADDING,
-    shellSize.y - roomSize.y
+    shellSize.y - roomSize.y,
     );
   }
-
-  public triggerSortGroups(): void {
-    this.mBuddyListTree.triggerSortGroups();
-  }
-
-  // Don't drag me! >:(
-  public _initializeDragging(): void {}
 
   private resetSearchField(): void {
     this.mSearchInput.setValue("");
@@ -673,7 +690,8 @@ export class MainWindow extends WindowBase {
 
 }
 
-export class MainWindowSortFunction implements ChatFieldPlugin {
+// tslint:disable-next-line
+export class MainWindowSortFunction implements IChatFieldPlugin {
 
   public static FieldName = "Main Window Sort Function";
 
@@ -691,6 +709,6 @@ export class MainWindowSortFunction implements ChatFieldPlugin {
 interface IE8HtmlElement extends HTMLElement {
   attachEvent(ev: string, hdlr: () => any): void;
 }
-interface MouseEventWithPath extends MouseEvent {
+interface IMouseEventWithPath extends MouseEvent {
   path?: HTMLElement[];
 }

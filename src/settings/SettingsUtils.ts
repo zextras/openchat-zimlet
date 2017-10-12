@@ -18,8 +18,8 @@
 export class SettingsUtils {
 
   public static isSettingHandled(key: string, settingsHandled: string[]): boolean {
-    for (let setName of settingsHandled) {
-      if (setName === key) return true;
+    for (const setName of settingsHandled) {
+      if (setName === key) { return true; }
     }
     return false;
   }

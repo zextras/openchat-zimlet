@@ -15,35 +15,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
-import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
+import {ChatZimletBase} from "../../ChatZimletBase";
+import {IRoom} from "../../client/IRoom";
+import {MessageReceived} from "../../client/MessageReceived";
+import {RoomManager} from "../../client/RoomManager";
+import {SessionInfoProvider} from "../../client/SessionInfoProvider";
+import {Callback} from "../../lib/callbacks/Callback";
+import {CallbackManager} from "../../lib/callbacks/CallbackManager";
+import {CumulativeCallback} from "../../lib/callbacks/CumulativeCallback";
+import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
+import {ContactImg} from "../../lib/ContactImg";
+import {DateProvider} from "../../lib/DateProvider";
+import {Map} from "../../lib/Map";
+import {NotificationManager} from "../../lib/notifications/NotificationManager";
+import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
-
-import {NotificationManager} from "../../lib/notifications/NotificationManager";
-import {CallbackManager} from "../../lib/callbacks/CallbackManager";
-import {Callback} from "../../lib/callbacks/Callback";
-import {Map} from "../../lib/Map";
-import {ContactImg} from "../../lib/ContactImg";
-import {SmoothRoomWindowMover} from "./SmoothRoomWindowMover";
-
-import {RoomWindow} from "./RoomWindow";
+import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {MainWindow} from "./MainWindow";
+import {WindowDragTask} from "./manager/WindowDragTask";
 import {WindowsMap} from "./manager/WindowsMap";
 import {WindowsPositionContainer} from "./manager/WindowsPositionContainer";
-import {CumulativeCallback} from "../../lib/callbacks/CumulativeCallback";
-import {WindowDragTask} from "./manager/WindowDragTask";
-import {RoomManager} from "../../client/RoomManager";
-import {MainWindow} from "./MainWindow";
-
-import {Room} from "../../client/Room";
-import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
-import {SessionInfoProvider} from "../../client/SessionInfoProvider";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {DateProvider} from "../../lib/DateProvider";
-import {ChatZimletBase} from "../../ChatZimletBase";
-import {MessageReceived} from "../../client/MessageReceived";
-import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
-import {BuddyStatusType} from "../../client/BuddyStatusType";
+import {RoomWindow} from "./RoomWindow";
+import {SmoothRoomWindowMover} from "./SmoothRoomWindowMover";
 
 export class RoomWindowManager {
 
@@ -52,6 +48,39 @@ export class RoomWindowManager {
 
   private static RIGHT_PADDING: number = 20;
   private static ANIMATION_TIME: number = 50;
+
+  private static setWindowLocation(
+    window: RoomWindow,
+    x: number,
+    y: number,
+    timing: number = RoomWindowManager.ANIMATION_TIME,
+    cbkMgr?: CallbackManager,
+  ): void {
+    new SmoothRoomWindowMover(
+      window,
+      new DwtPoint(x, y),
+      timing,
+      cbkMgr,
+    ).start();
+  }
+
+  private static sortByLastActivity(a: RoomWindow, b: RoomWindow) {
+    if (a.getLastRoomActivity() < b.getLastRoomActivity()) {
+      return -1;
+    }
+    if (a.getLastRoomActivity() > b.getLastRoomActivity()) {
+      return 1;
+    }
+    return 0;
+  }
+
+  private static calculateWindowXCenter(window: RoomWindow): number {
+    return Math.round(window.getLocation().x + (window.getSize().x / 2));
+  }
+
+  private static calculateWindowYCenter(window: RoomWindow): number {
+    return Math.round(window.getLocation().y + (window.getSize().y / 2));
+  }
 
   private mAppCtxt: ZmAppCtxt;
   private mShell: DwtShell;
@@ -78,9 +107,9 @@ export class RoomWindowManager {
               sessionInfoProvider: SessionInfoProvider,
               dateProvider: DateProvider,
               roomManager: RoomManager,
-              chatPluginManager: ChatPluginManager
+              chatPluginManager: ChatPluginManager,
   ) {
-    (<ExtendedWindow>window).debugWM = this;
+    (window as IExtendedWindow).debugWM = this;
     this.mAppCtxt = appCtxt;
     this.mShell = shell;
     this.mNotificationManager = notificationManager;
@@ -105,24 +134,6 @@ export class RoomWindowManager {
   }
 
   /**
-   * Check if there are enough space in the screen.
-   * @param {RoomWindow} window The size to check.
-   * @return {boolean}
-   * @private
-   */
-  private hasEnoughSpace(window: RoomWindow): boolean {
-    let windows: RoomWindow[] = this.mOpenedWindowsMap.values(),
-      i: number,
-      occupiedSize: number = this.mMainWindow.getSize().x + RoomWindowManager.RIGHT_PADDING;
-
-    for (i = 0; i < windows.length; i++) {
-      if (windows[i].getId() === window.getId()) continue;
-      occupiedSize += windows[i].getSize().x + RoomWindowManager.RIGHT_PADDING;
-    }
-    return (this.mShell.getSize().x - occupiedSize) >= (window.getSize().x + RoomWindowManager.RIGHT_PADDING);
-  }
-
-  /**
    * Return a room window by id.
    * For a user-to-user chat, the window id is equal to the buddy id
    * @param {string} windowId
@@ -133,26 +144,45 @@ export class RoomWindowManager {
   }
 
   /**
-   * Manage the adding of a new room
-   * @param {Room} room
+   * Check if there are enough space in the screen.
+   * @param {RoomWindow} window The size to check.
+   * @return {boolean}
    * @private
    */
-  private onRoomAdded(room: Room) {
-    let roomWindowPluginManager = new ChatPluginManager();
-    this.mRoomWindowManagerPluginManager.triggerPlugins(RoomWindowManager.CreateRoomWindowPluginManager, roomWindowPluginManager);
-    let roomWindow: RoomWindow = new RoomWindow(
+  private hasEnoughSpace(window: RoomWindow): boolean {
+    let occupiedSize: number = this.mMainWindow.getSize().x + RoomWindowManager.RIGHT_PADDING;
+
+    for (const roomWindow of this.mOpenedWindowsMap.values()) {
+      if (roomWindow.getId() === window.getId()) { continue; }
+      occupiedSize += roomWindow.getSize().x + RoomWindowManager.RIGHT_PADDING;
+    }
+    return (this.mShell.getSize().x - occupiedSize) >= (window.getSize().x + RoomWindowManager.RIGHT_PADDING);
+  }
+
+  /**
+   * Manage the adding of a new room
+   * @param {IRoom} room
+   * @private
+   */
+  private onRoomAdded(room: IRoom) {
+    const roomWindowPluginManager = new ChatPluginManager();
+    this.mRoomWindowManagerPluginManager.triggerPlugins(
+      RoomWindowManager.CreateRoomWindowPluginManager,
+      roomWindowPluginManager,
+    );
+    const roomWindow: RoomWindow = new RoomWindow(
         this.mShell,
         this.mTimedCallbackFactory,
         room,
         this.mNotificationManager,
         this.mDateProvider,
         this.mSessionInfoProvider,
-        roomWindowPluginManager
+        roomWindowPluginManager,
       );
     this.mWindowsMap.put(roomWindow);
     roomWindow.setLastLocation(new DwtPoint(
       this.getXWindowLocation(roomWindow),
-      this.getYWindowLocation(roomWindow)
+      this.getYWindowLocation(roomWindow),
     ));
     this.mPositions.setWindowPosition(roomWindow.getId(), -1);
     roomWindow.onStartDrag(new Callback(this, this.onStartDrag));
@@ -182,15 +212,17 @@ export class RoomWindowManager {
    * @private
    */
   private getXWindowLocation(window: RoomWindow): number {
-    let currentPosition = this.mPositions.window2position(window.getId()),
-      i: number,
-      xLocation: number = this.mShell.getSize().x - (window.getSize().x + RoomWindowManager.RIGHT_PADDING) - (this.mMainWindow.getSize().x + RoomWindowManager.RIGHT_PADDING),
-      tmpWindow: RoomWindow,
-      tmpPosition: number,
-      openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values();
+    const currentPosition = this.mPositions.window2position(window.getId());
+    let i: number;
+    let xLocation: number = this.mShell.getSize().x
+        - (window.getSize().x + RoomWindowManager.RIGHT_PADDING)
+        - (this.mMainWindow.getSize().x + RoomWindowManager.RIGHT_PADDING);
+    let tmpWindow: RoomWindow;
+    let tmpPosition: number;
+    const openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values();
     for (i = 0; i < openedWindows.length; i++) {
       tmpPosition = this.mPositions.window2position(openedWindows[i].getId());
-      if (tmpPosition >= currentPosition) continue;
+      if (tmpPosition >= currentPosition) { continue; }
       tmpWindow = openedWindows[i];
       xLocation -= (tmpWindow.getSize().x + RoomWindowManager.RIGHT_PADDING);
     }
@@ -212,9 +244,9 @@ export class RoomWindowManager {
    * @private
    */
   private updateWindowsPositions(): void {
-    let openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values(),
-      i: number,
-      cbkMgr: CallbackManager = new CallbackManager();
+    const openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values();
+    let i: number;
+    const cbkMgr: CallbackManager = new CallbackManager();
     cbkMgr.addCallback(new CumulativeCallback(openedWindows.length, this, this.onAllWindowRelocated));
     for (i = 0; i < openedWindows.length; i++) {
       RoomWindowManager.setWindowLocation(
@@ -222,7 +254,7 @@ export class RoomWindowManager {
         this.getXWindowLocation(openedWindows[i]),
         this.getYWindowLocation(openedWindows[i]),
         void 0,
-        cbkMgr
+        cbkMgr,
       );
     }
   }
@@ -233,7 +265,7 @@ export class RoomWindowManager {
    * @param message
    */
   private onMessageReceived(roomWindow: RoomWindow, message: MessageReceived): void {
-    let onBusyStatus: boolean = this.mZimletContext.getClient().getUserStatusManager().getCurrentStatus().isBusy();
+    const onBusyStatus: boolean = this.mZimletContext.getClient().getUserStatusManager().getCurrentStatus().isBusy();
     if (roomWindow.getChildren().length > 0) {
       roomWindow.popup(undefined, !onBusyStatus);
     }
@@ -246,7 +278,7 @@ export class RoomWindowManager {
       this.mNotificationManager.notify(
         message.getMessage(),
         message.getSender().getNickname(),
-        icon
+        icon,
       );
     }
   }
@@ -257,8 +289,8 @@ export class RoomWindowManager {
    * @param point
    */
   private onWindowOpened(window: RoomWindow, point: DwtPoint): void {
-    let position: number = this.mOpenedWindowsMap.size(),
-      xLocation: number = 0;
+    const position: number = this.mOpenedWindowsMap.size();
+    let xLocation: number = 0;
     this.mOpenedWindowsMap.put(window);
     this.mPositions.setWindowPosition(window.getId(), position);
 
@@ -283,17 +315,16 @@ export class RoomWindowManager {
     if (typeof point !== "undefined") {
       window.setLocation(
         point.x,
-        point.y
+        point.y,
       );
-    }
-    else {
+    } else {
       if (!this.hasEnoughSpace(window)) {
         this.tryToMakeRoomForWindow(window);
       }
       xLocation = this.getXWindowLocation(window);
       window.setLocation(
         xLocation,
-        this.getYWindowLocation(window)
+        this.getYWindowLocation(window),
       );
     }
     // // if (this.mRoomManager.isStatusBusy()) {
@@ -309,30 +340,28 @@ export class RoomWindowManager {
    */
   private onWindowClosed(window: RoomWindow): void {
     this.mOpenedWindowsMap.remove(window.getId());
-    let currentPosition: number = this.mPositions.window2position(window.getId()),
-      openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values(),
-      i: number,
-      tmpPosition: number;
+    const currentPosition: number = this.mPositions.window2position(window.getId());
+    let tmpPosition: number;
     this.mPositions.setWindowPosition(window.getId(), -1);
     // before getWindowLocation is necessary to update all mPositions
-    for (i = 0; i < openedWindows.length; i++) {
-      tmpPosition = this.mPositions.window2position(openedWindows[i].getId());
-      if (tmpPosition < currentPosition) continue;
-      this.mPositions.setWindowPosition(openedWindows[i].getId(), tmpPosition - 1);
+    for (const openedWindow of this.mOpenedWindowsMap.values()) {
+      tmpPosition = this.mPositions.window2position(openedWindow.getId());
+      if (tmpPosition < currentPosition) { continue; }
+      this.mPositions.setWindowPosition(openedWindow.getId(), tmpPosition - 1);
     }
-    for (i = 0; i < openedWindows.length; i++) {
-      tmpPosition = this.mPositions.window2position(openedWindows[i].getId());
-      if (tmpPosition < currentPosition) continue;
+    for (const openedWindow of this.mOpenedWindowsMap.values()) {
+      tmpPosition = this.mPositions.window2position(openedWindow.getId());
+      if (tmpPosition < currentPosition) { continue; }
       RoomWindowManager.setWindowLocation(
-        openedWindows[i],
-        this.getXWindowLocation(openedWindows[i]),
-        this.getYWindowLocation(openedWindows[i])
+        openedWindow,
+        this.getXWindowLocation(openedWindow),
+        this.getYWindowLocation(openedWindow),
       );
     }
   }
 
   private onStartDrag(roomWindow: RoomWindow, x: number, y: number): void {
-    let dragTask: WindowDragTask = new WindowDragTask(roomWindow);
+    const dragTask: WindowDragTask = new WindowDragTask(roomWindow);
     this.mDragTasks.put(roomWindow.getId(), dragTask);
     // roomWindow.setZIndex(parseInt(`${roomWindow.getZIndex()}`, 10) + 1);
   }
@@ -343,61 +372,62 @@ export class RoomWindowManager {
   }
 
   private onDragEnd(roomWindow: RoomWindow, x: number, y: number): void {
-    let dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId()),
-      xCenter: number = RoomWindowManager.calculateWindowXCenter(roomWindow),
-      currentPosition: number = this.mPositions.window2position(roomWindow.getId()),
-      firstXLocation: number = this.mMainWindow.getBuddyListTree().getLocation().x,
-      tmpPosition: number = -1,
-      openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values(),
-      i: number,
-      bufferPositions: WindowsPositionContainer = new WindowsPositionContainer();
+    const dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId());
+    const xCenter: number = RoomWindowManager.calculateWindowXCenter(roomWindow);
+    const currentPosition: number = this.mPositions.window2position(roomWindow.getId());
+    let firstXLocation: number = this.mMainWindow.getBuddyListTree().getLocation().x;
+    let tmpPosition: number = -1;
+    const bufferPositions: WindowsPositionContainer = new WindowsPositionContainer();
     // roomWindow.setZIndex(dragTask.getOriginalZIndex());
-    if (typeof dragTask === "undefined") return;
+    if (typeof dragTask === "undefined") { return; }
     if (!dragTask.isReallyMoved(x, y)) {
-      if (roomWindow.isMinimized()) roomWindow.setExpanded();
-      else roomWindow.setMinimized();
-    }
-    else {
+      if (roomWindow.isMinimized())  {
+        roomWindow.setExpanded();
+      } else { roomWindow.setMinimized(); }
+    } else {
       // Check if the window is dropped over another window, swap them.
-      for (i = 0; i < openedWindows.length; i++) {
-        if (openedWindows[i].getId() === roomWindow.getId()) continue;
-        if (openedWindows[i].getLocation().x < firstXLocation) {
-          firstXLocation = openedWindows[i].getLocation().x;
+      for (const openedWindow of this.mOpenedWindowsMap.values()) {
+        if (openedWindow.getId() === roomWindow.getId()) { continue; }
+        if (openedWindow.getLocation().x < firstXLocation) {
+          firstXLocation = openedWindow.getLocation().x;
         }
-        if (xCenter > (openedWindows[i].getLocation().x - (RoomWindowManager.RIGHT_PADDING / 2))
-          && xCenter < (openedWindows[i].getLocation().x + openedWindows[i].getSize().x + (RoomWindowManager.RIGHT_PADDING / 2))) {
+        if (xCenter > (openedWindow.getLocation().x - (RoomWindowManager.RIGHT_PADDING / 2))
+          && xCenter < (openedWindow.getLocation().x
+            + openedWindow.getSize().x
+            + (RoomWindowManager.RIGHT_PADDING / 2))
+        ) {
           // The window is dropped inside another window
-          tmpPosition = this.mPositions.window2position(openedWindows[i].getId());
-          this.mPositions.setWindowPosition(openedWindows[i].getId(), currentPosition);
+          tmpPosition = this.mPositions.window2position(openedWindow.getId());
+          this.mPositions.setWindowPosition(openedWindow.getId(), currentPosition);
           this.mPositions.setWindowPosition(roomWindow.getId(), tmpPosition);
           RoomWindowManager.setWindowLocation(
             roomWindow,
             this.getXWindowLocation(roomWindow),
-            this.getYWindowLocation(roomWindow)
+            this.getYWindowLocation(roomWindow),
           );
           RoomWindowManager.setWindowLocation(
-            openedWindows[i],
-            this.getXWindowLocation(openedWindows[i]),
-            this.getYWindowLocation(openedWindows[i])
+            openedWindow,
+            this.getXWindowLocation(openedWindow),
+            this.getYWindowLocation(openedWindow),
           );
           return;
         }
       }
       // The window is dropped in the empty area, move the remainig window as the first from left.
       if (roomWindow.getLocation().x < firstXLocation) {
-        for (i = 0; i < openedWindows.length; i++) {
-          if (openedWindows[i].getId() === roomWindow.getId()) continue;
-          tmpPosition = this.mPositions.window2position(openedWindows[i].getId());
+        for (const openedWindow of this.mOpenedWindowsMap.values()) {
+          if (openedWindow.getId() === roomWindow.getId()) { continue; }
+          tmpPosition = this.mPositions.window2position(openedWindow.getId());
           if (tmpPosition > currentPosition) {
-            bufferPositions.setWindowPosition(openedWindows[i].getId(), tmpPosition - 1);
+            bufferPositions.setWindowPosition(openedWindow.getId(), tmpPosition - 1);
           }
         }
-        this.mPositions.setWindowPosition(roomWindow.getId(), openedWindows.length - 1);
-        for (i = 0; i < openedWindows.length; i++) {
-          if (typeof bufferPositions.window2position(openedWindows[i].getId()) === "number") {
+        this.mPositions.setWindowPosition(roomWindow.getId(), this.mOpenedWindowsMap.values().length - 1);
+        for (const openedWindow of this.mOpenedWindowsMap.values()) {
+          if (typeof bufferPositions.window2position(openedWindow.getId()) === "number") {
             this.mPositions.setWindowPosition(
-              openedWindows[i].getId(),
-              bufferPositions.window2position(openedWindows[i].getId())
+              openedWindow.getId(),
+              bufferPositions.window2position(openedWindow.getId()),
             );
           }
         }
@@ -418,9 +448,9 @@ export class RoomWindowManager {
       roomWindow,
       new DwtPoint(
         roomWindow.getLocation().x,
-        this.getYWindowLocation(roomWindow)
+        this.getYWindowLocation(roomWindow),
       ),
-      0
+      0,
     ).start();
   }
 
@@ -435,31 +465,9 @@ export class RoomWindowManager {
       roomWindow,
       new DwtPoint(
         roomWindow.getLocation().x,
-        this.getYWindowLocation(roomWindow)
+        this.getYWindowLocation(roomWindow),
       ),
-      0
-    ).start();
-  }
-
-  /**
-   * Trigger the movement of a window..
-   * @param {RoomWindow} window The window to move.
-   * @param {number} x The X coordinate.
-   * @param {number} y The Y coordinate.
-   * @param {number=0} timing The movement timing, if 0 no movement is done.
-   * @param {CallbackManager=} cbkMgr The callback manager fired when the location is set.
-   * @private
-   */
-  private static setWindowLocation(window: RoomWindow,
-                                   x: number,
-                                   y: number,
-                                   timing: number = RoomWindowManager.ANIMATION_TIME,
-                                   cbkMgr?: CallbackManager): void {
-    new SmoothRoomWindowMover(
-      window,
-      new DwtPoint(x, y),
-      timing,
-      cbkMgr
+      0,
     ).start();
   }
 
@@ -469,16 +477,14 @@ export class RoomWindowManager {
    * @private
    */
   private onAllWindowRelocated(): void {
-    let openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values(),
-      i: number,
-      toClose: RoomWindow[] = [];
-    for (i = 0; i < openedWindows.length; i++) {
-      if (openedWindows[i].getLocation().x >= 0) continue;
-      toClose.push(openedWindows[i]);
+    const toClose: RoomWindow[] = [];
+    for (const openedWindow of this.mOpenedWindowsMap.values()) {
+      if (openedWindow.getLocation().x >= 0) { continue; }
+      toClose.push(openedWindow);
     }
 
-    for (i = 0; i < toClose.length; i++) {
-      toClose[i].popdown();
+    for (const windowToBeClosed of toClose) {
+      windowToBeClosed.popdown();
     }
   }
 
@@ -488,57 +494,15 @@ export class RoomWindowManager {
    * @private
    */
   private tryToMakeRoomForWindow(window: RoomWindow): void {
-    let openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values(),
-      i: number;
-    openedWindows.sort(RoomWindowManager.sortByLastActivity);
-    for (i = 0; i < openedWindows.length; i++) {
-      openedWindows[i].popdown();
-      if (this.hasEnoughSpace(window)) break;
+    this.mOpenedWindowsMap.values().sort(RoomWindowManager.sortByLastActivity);
+    for (const openedWindow of this.mOpenedWindowsMap.values()) {
+      openedWindow.popdown();
+      if (this.hasEnoughSpace(window)) { break; }
     }
-  }
-
-  /**
-   * Sort function to order an array of windows by the last activity of the room.
-   * @param {RoomWindow} a
-   * @param {RoomWindow} b
-   * @return {number}
-   * @private
-   * @static
-   */
-  private static sortByLastActivity(a: RoomWindow, b: RoomWindow) {
-    if (a.getLastRoomActivity() < b.getLastRoomActivity()) {
-      return -1;
-    }
-    if (a.getLastRoomActivity() > b.getLastRoomActivity()) {
-      return 1;
-    }
-    return 0;
-  }
-
-  /**
-   * Get the location centered on the window location (referred to X axe)
-   * @param window The window.
-   * @return {number} The location.
-   * @private
-   * @static
-   */
-  private static calculateWindowXCenter(window: RoomWindow): number {
-    return Math.round(window.getLocation().x + (window.getSize().x / 2));
-  }
-
-  /**
-   * Get the location centered on the window location (referred to Y axe)
-   * @param window The window.
-   * @return {number} The location.
-   * @private
-   * @static
-   */
-  private static calculateWindowYCenter(window: RoomWindow): number {
-    return Math.round(window.getLocation().y + (window.getSize().y / 2));
   }
 
 }
 
-declare class ExtendedWindow extends Window {
+interface IExtendedWindow extends Window {
   debugWM: RoomWindowManager;
 }

@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {SetStatusEvent} from "../../../../events/chat/SetStatusEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {SetStatusEvent} from "../../../../events/chat/SetStatusEvent";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class SetStatusEventDecoder extends SoapEventDecoder {
 
@@ -27,7 +27,7 @@ export class SetStatusEventDecoder extends SoapEventDecoder {
   }
 
   public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {
-    return <SetStatusEvent>originEvent;
+    return originEvent as SetStatusEvent;
   }
 
 }

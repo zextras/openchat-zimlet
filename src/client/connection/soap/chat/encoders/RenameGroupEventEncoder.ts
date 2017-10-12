@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventEncoder} from "./SoapEventEncoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {RenameGroupEvent} from "../../../../events/chat/RenameGroupEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {RenameGroupEvent} from "../../../../events/chat/RenameGroupEvent";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventEncoder} from "./SoapEventEncoder";
 
 export class RenameGroupEventEncoder extends SoapEventEncoder {
 
@@ -27,11 +27,11 @@ export class RenameGroupEventEncoder extends SoapEventEncoder {
   }
 
   protected getEventDetails(event: ChatEvent): {} {
-    let ev: RenameGroupEvent = <RenameGroupEvent> event;
+    const ev: RenameGroupEvent = event as RenameGroupEvent;
     return {
+      new_group: ev.getNewGroupName(),
       target_address: event.getDestination(),
       target_group: ev.getGroupName(),
-      new_group: ev.getNewGroupName()
     };
   }
 

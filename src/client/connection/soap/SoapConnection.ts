@@ -15,32 +15,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Connection} from "../Connection";
 import {Callback} from "../../../lib/callbacks/Callback";
-import {RequestFactory} from "../RequestFactory";
-import {DosFilter} from "./dos/DosFilter";
 import {SessionInfoProvider} from "../../SessionInfoProvider";
+import {IConnection} from "../IConnection";
+import {IRequestFactory} from "../IRequestFactory";
 import {Command} from "./Command";
+import {IDosFilter} from "./dos/IDosFilter";
 
 import {ZxError} from "../../../lib/error/ZxError";
 import {ZxErrorCode} from "../../../lib/error/ZxErrorCode";
-import {PingManager} from "./PingManager";
-import {Request} from "../Request";
+import {IRequest} from "../IRequest";
+import {IPingManager} from "./IPingManager";
 
-export class SoapConnection implements Connection {
+export class SoapConnection implements IConnection {
 
   private mRequestCount: number = 0;
-  private mRequestFactory: RequestFactory;
+  private mRequestFactory: IRequestFactory;
   private mSessionInfoProvider: SessionInfoProvider;
-  private mDosFilter: DosFilter;
-  private mPingManager: PingManager;
-  private mOnEventCbk: Callback;
+  private mDosFilter: IDosFilter;
+  private mPingManager: IPingManager;
 
   constructor(
-    requestFactory: RequestFactory,
+    requestFactory: IRequestFactory,
     sessionInfoProvider: SessionInfoProvider,
-    dosFilter: DosFilter,
-    pingManager: PingManager
+    dosFilter: IDosFilter,
+    pingManager: IPingManager,
   ) {
     this.mRequestFactory = requestFactory;
     this.mSessionInfoProvider = sessionInfoProvider;
@@ -54,24 +53,25 @@ export class SoapConnection implements Connection {
     command: string,
     object: {},
     callback: Callback,
-    errorCallback: Callback
-  ): Request {
+    errorCallback: Callback,
+  ): IRequest {
 
     // TODO: Accumulate events with command "Command.NOTIFY_MSG_RECEIVED"
     if (
-      (typeof this.mSessionInfoProvider.getSessionId() === "undefined" || this.mSessionInfoProvider.getSessionId() === null)
+      (typeof this.mSessionInfoProvider.getSessionId() === "undefined"
+        || this.mSessionInfoProvider.getSessionId() === null)
       &&  command !== Command.REGISTER_SESSION
     ) {
       errorCallback.run(
-        new ZxError(ZxErrorCode.NO_SUCH_CHAT_SESSION, new Error("Error on SoapConnection.sendObject"))
+        new ZxError(ZxErrorCode.NO_SUCH_CHAT_SESSION, new Error("Error on SoapConnection.sendObject")),
       );
     } else {
-      let request: Request = this.mRequestFactory.createRequest(
+      const request: IRequest = this.mRequestFactory.createRequest(
         (++this.mRequestCount),
         command,
         object,
         callback,
-        errorCallback
+        errorCallback,
       );
       this.mDosFilter.sendRequest(request);
       return request;

@@ -15,21 +15,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {EventSessionRegistered} from "../chat/EventSessionRegistered";
 import {Version} from "../../../lib/Version";
+import {IChatClient} from "../../IChatClient";
+import {EventSessionRegistered} from "../chat/EventSessionRegistered";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class EventSessionRegisteredHandler implements ChatEventHandler {
+export class EventSessionRegisteredHandler implements IChatEventHandler {
   public getEventCode(): number {
     return OpenChatEventCode.REGISTER_SESSION;
   }
 
-  handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
     if ((chatEvent != null) && typeof chatEvent !== "undefined") {
-      let eventSessionRegistered: EventSessionRegistered = <EventSessionRegistered> chatEvent;
+      const eventSessionRegistered: EventSessionRegistered = chatEvent as EventSessionRegistered;
       client.getSessionInfoProvider().resetSessionResponsesReceived();
       client.getSessionInfoProvider().setSessionId(eventSessionRegistered.getInfo("session_id"));
       client.getSessionInfoProvider().setServerVersion(new Version(eventSessionRegistered.getInfo("server_version")));

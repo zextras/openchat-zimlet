@@ -15,27 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
-import {ChatClient} from "../../client/ChatClient";
-import {Buddy} from "../../client/Buddy";
+import {IBuddy} from "../../client/IBuddy";
+import {IChatClient} from "../../client/IChatClient";
 import {StringUtils} from "../../lib/StringUtils";
-import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
-import {IdGenerator} from "../IdGenerator";
-import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
+import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
+import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
+import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
+import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
+import {IdGenerator} from "../IdGenerator";
 
 export class RenameBuddyDialog extends ZmDialog {
-  private _buddyNicknameEl: HTMLInputElement;
+  private buddyNicknameEl: HTMLInputElement;
   private shell: DwtControl;
-  private client: ChatClient;
-  private buddy: Buddy;
+  private client: IChatClient;
+  private buddy: IBuddy;
 
-  constructor(params: ZmDialogParams, client: ChatClient, buddy: Buddy) {
+  constructor(params: ZmDialogParams, client: IChatClient, buddy: IBuddy) {
     params.title = StringUtils.getMessage("friend_rename");
     params.standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];
     params.id = IdGenerator.generateId("ZxChat_RenameBuddyDialog");
@@ -50,26 +50,26 @@ export class RenameBuddyDialog extends ZmDialog {
 
   public popup(loc?: DwtPoint | any, focusButtonId?: number | any): void {
     super.popup(loc, focusButtonId);
-    this._buddyNicknameEl.focus();
+    this.buddyNicknameEl.focus();
   }
 
   private _createDialogView() {
-    let data = {
+    const data = {
       id: this._htmlElId,
-      msg_nickname: StringUtils.getMessage("add_friends_username")
+      msg_nickname: StringUtils.getMessage("add_friends_username"),
     };
-    let view = new DwtComposite(this);
+    const view = new DwtComposite(this);
     if (view.getHtmlElement() != null) {
       view.getHtmlElement().style.overflow = "auto";
       view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#RenameBuddyDialog", data);
     }
-    this._buddyNicknameEl = <HTMLInputElement>document.getElementById(data.id + "_nickname");
-    this._buddyNicknameEl.value = AjxStringUtil.htmlDecode(this.buddy.getNickname());
+    this.buddyNicknameEl = document.getElementById(data.id + "_nickname") as HTMLInputElement;
+    this.buddyNicknameEl.value = AjxStringUtil.htmlDecode(this.buddy.getNickname());
     return view;
   }
 
   private _okBtnListener(): void {
-    let newName = StringUtils.trim(this._buddyNicknameEl.value);
+    const newName = StringUtils.trim(this.buddyNicknameEl.value);
     if (newName !== "") {
       this.client.changeBuddyNickname(this.buddy, newName);
     }

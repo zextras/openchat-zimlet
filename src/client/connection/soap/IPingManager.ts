@@ -15,24 +15,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Request} from "./Request";
-import {Callback} from "../../lib/callbacks/Callback";
-import {DummyRequestBehavior} from "./dummy/DummyRequest";
+import {Callback} from "../../../lib/callbacks/Callback";
+import {IConnection} from "../IConnection";
 
-export interface RequestFactory {
+export interface IPingManager {
 
-  createRequest(
-    reqId: number,
-    command: string,
-    params: {[key: string]: any},
-    callback?: Callback,
-    errorCallback?: Callback
-  ): Request;
+  openStream(): void ;
 
-  setRequestBehavior (
-    behavior: DummyRequestBehavior
-  ): void;
+  closeStream(): void ;
+
+  isStreamOpened(): boolean;
+
+  onStreamEvent(callback: Callback): void;
+
+  onStreamError(callback: Callback): void;
+
+  onEndProcessResponses(callback: Callback): void;
+
+  setConnection(connection: IConnection): void;
 
 }
-
-let voidFcn: Function = function(): void {};

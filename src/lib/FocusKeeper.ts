@@ -17,10 +17,8 @@
 
 export class FocusKeeper {
 
-  private static focusElement: HTMLElement;
-
   public static storeFocusElement() {
-    FocusKeeper.focusElement = <HTMLElement> document.activeElement;
+    FocusKeeper.focusElement = document.activeElement as HTMLElement;
   }
 
   public static loadFocusElement() {
@@ -29,5 +27,7 @@ export class FocusKeeper {
       FocusKeeper.focusElement = null;
     }
   }
+
+  private static focusElement: HTMLElement;
 
 }

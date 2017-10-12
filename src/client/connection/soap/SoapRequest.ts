@@ -18,18 +18,18 @@
 import {JSON3} from "../../../libext/json3";
 
 import {Callback} from "../../../lib/callbacks/Callback";
-import {AjxSoapDocParams, AjxSoapDoc} from "../../../zimbra/ajax/soap/AjxSoapDoc";
 import {AjxCallback} from "../../../zimbra/ajax/boot/AjxCallback";
+import {AjxSoapDoc, AjxSoapDocParams} from "../../../zimbra/ajax/soap/AjxSoapDoc";
 import {ZmCsfeResult} from "../../../zimbra/zimbra/csfe/ZmCsfeResult";
 
 import {ZxError} from "../../../lib/error/ZxError";
 import {ZxErrorCode} from "../../../lib/error/ZxErrorCode";
 import {LogEngine} from "../../../lib/log/LogEngine";
 import {ZmZimbraMail} from "../../../zimbra/zimbraMail/core/ZmZimbraMail";
-import {Request} from "../Request";
 import {ZmController} from "../../../zimbra/zimbraMail/share/controller/ZmController";
+import {IRequest} from "../IRequest";
 
-export class SoapRequest implements Request {
+export class SoapRequest implements IRequest {
 
   private static KEY_ACTION: string = "action";
   private static KEY_SESSION_ID: string = "session_id";
@@ -57,7 +57,7 @@ export class SoapRequest implements Request {
     command: string,
     object: {[key: string]: any} = {},
     callback?: Callback,
-    errorCallback?: Callback
+    errorCallback?: Callback,
   ) {
     this.mAppController = appController;
     this.mSessionId = sessionId;
@@ -71,17 +71,17 @@ export class SoapRequest implements Request {
     this.mUrn = "urn:zimbraAccount";
 
     this.mSoapDocParams = {
-      soapDoc: AjxSoapDoc.create(this.mReqType, this.mUrn),
       asyncMode: true,
       busyMsg: "ZeXtras Chat Requesting...",
       callback: new AjxCallback(this, this.processResponse),
       errorCallback: new AjxCallback(this, this.processErrorResponse),
+      noAuthToken: true,
       noBusyOverlay: true,
-      noAuthToken: true
+      soapDoc: AjxSoapDoc.create(this.mReqType, this.mUrn),
     };
 
-    for (let key in this.mObject) {
-      if (!this.mObject.hasOwnProperty(key)) continue;
+    for (const key in this.mObject) {
+      if (!this.mObject.hasOwnProperty(key)) { continue; }
       this.set(key, this.mObject[key]);
     }
 
@@ -96,11 +96,11 @@ export class SoapRequest implements Request {
       this.mObject[key] = value;
       this.mSoapDocParams.soapDoc.set(key, value);
     } else if (value instanceof Object) {
-      let val: string = JSON3.stringify(value);
+      const val: string = JSON3.stringify(value);
       this.mObject[key] = val;
       this.mSoapDocParams.soapDoc.set(key, val);
     } else if (typeof value === "boolean") {
-      let val: string = (value) ? "true" : "false";
+      const val: string = (value) ? "true" : "false";
       this.mObject[key] = val;
       this.mSoapDocParams.soapDoc.set(key, val);
     } else if (typeof value === "number") {
@@ -118,33 +118,33 @@ export class SoapRequest implements Request {
 
   public send(): string {
     this.initError = new ZxError(ZxErrorCode.UNKNOWN_ERROR);
-    this.mCtrlReqId = <string>(<ZmZimbraMail>this.mAppController).sendRequest(this.mSoapDocParams);
+    this.mCtrlReqId = (this.mAppController as ZmZimbraMail).sendRequest(this.mSoapDocParams) as string;
     return this.mCtrlReqId;
   }
 
   public cancelRequest(errorCbk?: Callback): void {
-    (<ZmZimbraMail>this.mAppController).cancelRequest(
+    (this.mAppController as ZmZimbraMail).cancelRequest(
       this.mCtrlReqId,
       new AjxCallback(this, this.cancelRequestCbk, [errorCbk]),
-      true
+      true,
     );
   }
 
   private processResponse(response: ZmCsfeResult): void {
-    let resp: {error?: Error, responses?: string} = <{}> response.getResponse().response;
+    const resp: {error?: Error, responses?: string} = response.getResponse().response as {};
 
     if (typeof resp !== "undefined" && typeof resp.error !== "undefined") {
-      this.processErrorResponse(ZxError.fromResponse(<{error: Error}>resp));
+      this.processErrorResponse(ZxError.fromResponse(resp as {error: Error}));
 
     } else if (typeof resp !== "undefined" && typeof resp.responses !== "undefined") {
       try {
-        let responses = JSON3.parse(resp.responses);
+        const responses = JSON3.parse(resp.responses);
         if (typeof this.mCallback !== "undefined") {
           this.mCallback.run(responses);
         }
       } catch (err) {
         this.Log.err(err, "Error in SoapRequest.processResponse");
-        let error = new ZxError(ZxErrorCode.UNABLE_TO_PARSE_JSON_STRING, err);
+        const error = new ZxError(ZxErrorCode.UNABLE_TO_PARSE_JSON_STRING, err);
         error.setDetail("json", resp.responses);
         if (typeof this.mErrorCbk !== "undefined") {
           this.mErrorCbk.run(error);

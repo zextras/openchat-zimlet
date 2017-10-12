@@ -17,7 +17,7 @@
 
 import {LogLine} from "../LogLine";
 
-export interface LoggerWriter {
+export interface ILoggerWriter {
 
   write(line: LogLine): void;
 

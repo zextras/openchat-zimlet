@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {RoomManager} from "../client/RoomManager";
-import {RoomManagerHistoryPlugin} from "./sendMail/RoomManagerHistoryPlugin";
 import {BuddyTreeItemActionMenuFactory} from "../dwt/widgets/BuddyTreeItemActionMenuFactory";
-import {MainWindowCreateNewMailMenuItemPlugin} from "./sendMail/MainWindowCreateNewMailMenuItemPlugin";
 import {RoomWindowManager} from "../dwt/windows/RoomWindowManager";
+import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
+import {MainWindowCreateNewMailMenuItemPlugin} from "./sendMail/MainWindowCreateNewMailMenuItemPlugin";
+import {RoomManagerHistoryPlugin} from "./sendMail/RoomManagerHistoryPlugin";
 import {RoomWindowManagerSendMailPlugin} from "./sendMail/RoomWindowManagerSendMailPlugin";
 
 export class SendMailPlugin {
@@ -28,11 +28,20 @@ export class SendMailPlugin {
   public static plugin(
     roomManagerPluginManager: ChatPluginManager,
     mainWindowPluginManager: ChatPluginManager,
-    roomWindowManagerPluginManager: ChatPluginManager
+    roomWindowManagerPluginManager: ChatPluginManager,
   ): void {
-    roomManagerPluginManager.registerPlugin(RoomManager.CreateRoomPluginManager, new RoomManagerHistoryPlugin());
-    mainWindowPluginManager.registerPlugin(BuddyTreeItemActionMenuFactory.AddMenuItemPlugin, new MainWindowCreateNewMailMenuItemPlugin());
-    roomWindowManagerPluginManager.registerPlugin(RoomWindowManager.CreateRoomWindowPluginManager, new RoomWindowManagerSendMailPlugin());
+    roomManagerPluginManager.registerPlugin(
+      RoomManager.CreateRoomPluginManager,
+      new RoomManagerHistoryPlugin(),
+    );
+    mainWindowPluginManager.registerPlugin(
+      BuddyTreeItemActionMenuFactory.AddMenuItemPlugin,
+      new MainWindowCreateNewMailMenuItemPlugin(),
+    );
+    roomWindowManagerPluginManager.registerPlugin(
+      RoomWindowManager.CreateRoomWindowPluginManager,
+      new RoomWindowManagerSendMailPlugin(),
+    );
   }
 
 }

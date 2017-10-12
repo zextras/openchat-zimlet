@@ -15,15 +15,137 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Setting} from "../Setting";
-import {SettingsHandlerInterface} from "./SettingsHandlerInterface";
 import {Callback} from "../../lib/callbacks/Callback";
-import {ZmSettings} from "../../zimbra/zimbraMail/share/model/ZmSettings";
-import {SettingsUtils} from "../SettingsUtils";
-import {ZmSetting} from "../../zimbra/zimbraMail/share/model/ZmSetting";
 import {AjxCallback} from "../../zimbra/ajax/boot/AjxCallback";
+import {ZmSetting} from "../../zimbra/zimbraMail/share/model/ZmSetting";
+import {ZmSettings} from "../../zimbra/zimbraMail/share/model/ZmSettings";
+import {Setting} from "../Setting";
+import {SettingsUtils} from "../SettingsUtils";
+import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
-export class PreferencesHandler implements SettingsHandlerInterface {
+export class PreferencesHandler implements ISettingsHandlerInterface {
+
+  /**
+   * The setting we have added are not populated by default, retrieve te values from
+   * the last GetInfo Request.
+   */
+  private static _populateSettings(settings: ZmSettings): void {
+    let lastResponse;
+    lastResponse = settings.getInfoResponse.prefs._attrs;
+    settings.getSetting(Setting.IM_PREF_NOTIFY_SOUNDS).setValue(lastResponse.zimbraPrefIMSoundsEnabled);
+    settings.getSetting(Setting.IM_PREF_FLASH_BROWSER).setValue(lastResponse.zimbraPrefIMFlashTitle);
+    settings.getSetting(Setting.IM_PREF_DESKTOP_ALERT).setValue(lastResponse.zimbraPrefIMToasterEnabled);
+    settings.getSetting(Setting.IM_PREF_INSTANT_NOTIFY).setValue(lastResponse.zimbraPrefIMInstantNotify);
+    settings.getSetting(Setting.IM_PREF_AUTO_LOGIN).setValue(lastResponse.zimbraPrefIMAutoLogin);
+    settings.getSetting(Setting.IM_PREF_NOTIFY_PRESENCE).setValue(lastResponse.zimbraPrefIMNotifyPresence);
+    settings.getSetting(Setting.IM_PREF_NOTIFY_STATUS).setValue(lastResponse.zimbraPrefIMNotifyStatus);
+    settings.getSetting(Setting.IM_PREF_LOGCHATS_ENABLED).setValue(lastResponse.zimbraPrefIMLogChats);
+    // settings.getSetting().setValue(req.GetInfoResponse.prefs._attrs.zimbraPrefIMLogChatsEnabled)
+    settings.getSetting(Setting.IM_PREF_REPORT_IDLE).setValue(lastResponse.zimbraPrefIMReportIdle);
+    settings.getSetting(Setting.IM_PREF_IDLE_TIMEOUT).setValue(lastResponse.zimbraPrefIMIdleTimeout);
+    settings.getSetting(Setting.IM_PREF_IDLE_STATUS).setValue(lastResponse.zimbraPrefIMIdleStatus);
+    // zimbraPrefIMCustomStatusMessage
+    settings.getSetting(Setting.IM_PREF_BUDDY_SORT).setValue(lastResponse.zimbraPrefIMBuddyListSort);
+    settings.getSetting(Setting.IM_PREF_HIDE_OFFLINE).setValue(lastResponse.zimbraPrefIMHideOfflineBuddies);
+    settings.getSetting(Setting.IM_PREF_HIDE_BLOCKED).setValue(lastResponse.zimbraPrefIMHideBlockedBuddies);
+  }
+
+  /**
+   * Register the settings used by the preference manager.
+   * Register also a callback which will be called if some settings will change.
+   * These settings may not be defined on wev interface, but they are defined in the LDAP schema.
+   */
+  private static _registerSettings(settings: ZmSettings): void {
+    settings.registerSetting(Setting.IM_PREF_NOTIFY_SOUNDS, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMSoundsEnabled",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_FLASH_BROWSER, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMFlashTitle",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_DESKTOP_ALERT, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMToasterEnabled",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_INSTANT_NOTIFY, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMInstantNotify",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_AUTO_LOGIN, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: false,
+      name: "zimbraPrefIMAutoLogin",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_NOTIFY_PRESENCE, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMNotifyPresence",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_NOTIFY_STATUS, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMNotifyStatus",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_LOGCHATS_ENABLED, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMLogChats",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_REPORT_IDLE, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMReportIdle",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_IDLE_TIMEOUT, {
+      dataType: Setting.D_INT,
+      defaultValue: 10,
+      name: "zimbraPrefIMIdleTimeout",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_IDLE_STATUS, {
+      dataType: Setting.D_STRING,
+      defaultValue: "xa",
+      name: "zimbraPrefIMIdleStatus",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_CUSTOM_STATUS_MRU, {
+      dataType: Setting.D_LIST,
+      name: "zimbraPrefIMCustomStatusMessage",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_BUDDY_SORT, {
+      dataType: Setting.D_STRING,
+      defaultValue: Setting.BUDDY_SORT_NAME,
+      name: "zimbraPrefIMBuddyListSort",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_HIDE_OFFLINE, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: true,
+      name: "zimbraPrefIMHideOfflineBuddies",
+      type: Setting.T_PREF,
+    });
+    settings.registerSetting(Setting.IM_PREF_HIDE_BLOCKED, {
+      dataType: Setting.D_BOOLEAN,
+      defaultValue: false,
+      name: "zimbraPrefIMHideBlockedBuddies",
+      type: Setting.T_PREF,
+    });
+  }
 
   private mSettings: ZmSettings;
 
@@ -34,7 +156,7 @@ export class PreferencesHandler implements SettingsHandlerInterface {
   }
 
   public set(key: string, value: string|number, callback: Callback): void {
-    let setting: ZmSetting = this.mSettings.getSetting(key);
+    const setting: ZmSetting = this.mSettings.getSetting(key);
     if (typeof setting !== "undefined" && setting !== null) {
       setting.setValue(value);
       this.mSettings.save([setting], new AjxCallback(callback, callback.run));
@@ -43,7 +165,7 @@ export class PreferencesHandler implements SettingsHandlerInterface {
 
   public get(key: string): any {
     try {
-      let setting = this.mSettings.getSetting(key);
+      const setting = this.mSettings.getSetting(key);
       if (typeof setting !== "undefined" && setting !== null) {
         return setting.getValue();
       }
@@ -70,135 +192,12 @@ export class PreferencesHandler implements SettingsHandlerInterface {
       Setting.IM_PREF_HIDE_BLOCKED,
       Setting.MAIL_ALIASES,
       Setting.CONTACTS_ENABLED,
-      Setting.GAL_ENABLED
+      Setting.GAL_ENABLED,
     ];
   }
 
   public isSettingHandled(key: string): boolean {
     return SettingsUtils.isSettingHandled(key, this.settingsHandled());
-  }
-
-  /**
-   * Register the settings used by the preference manager.
-   * Register also a callback which will be called if some settings will change.
-   * These settings may not be defined on wev interface, but they are defined in the LDAP schema.
-   */
-  private static _registerSettings(settings: ZmSettings): void {
-    settings.registerSetting(Setting.IM_PREF_NOTIFY_SOUNDS, {
-      name: "zimbraPrefIMSoundsEnabled",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_FLASH_BROWSER, {
-      name: "zimbraPrefIMFlashTitle",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_DESKTOP_ALERT, {
-      name: "zimbraPrefIMToasterEnabled",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_INSTANT_NOTIFY, {
-      name: "zimbraPrefIMInstantNotify",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_AUTO_LOGIN, {
-      name: "zimbraPrefIMAutoLogin",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: false
-    });
-    settings.registerSetting(Setting.IM_PREF_NOTIFY_PRESENCE, {
-      name: "zimbraPrefIMNotifyPresence",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_NOTIFY_STATUS, {
-      name: "zimbraPrefIMNotifyStatus",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_LOGCHATS_ENABLED, {
-      name: "zimbraPrefIMLogChats",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_REPORT_IDLE, {
-      name: "zimbraPrefIMReportIdle",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_IDLE_TIMEOUT, {
-      name: "zimbraPrefIMIdleTimeout",
-      type: Setting.T_PREF,
-      dataType: Setting.D_INT,
-      defaultValue: 10
-    });
-    settings.registerSetting(Setting.IM_PREF_IDLE_STATUS, {
-      name: "zimbraPrefIMIdleStatus",
-      type: Setting.T_PREF,
-      dataType: Setting.D_STRING,
-      defaultValue: "xa"
-    });
-    settings.registerSetting(Setting.IM_CUSTOM_STATUS_MRU, {
-      name: "zimbraPrefIMCustomStatusMessage",
-      type: Setting.T_PREF,
-      dataType: Setting.D_LIST
-    });
-    settings.registerSetting(Setting.IM_PREF_BUDDY_SORT, {
-      name: "zimbraPrefIMBuddyListSort",
-      type: Setting.T_PREF,
-      dataType: Setting.D_STRING,
-      defaultValue: Setting.BUDDY_SORT_NAME
-    });
-    settings.registerSetting(Setting.IM_PREF_HIDE_OFFLINE, {
-      name: "zimbraPrefIMHideOfflineBuddies",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: true
-    });
-    settings.registerSetting(Setting.IM_PREF_HIDE_BLOCKED, {
-      name: "zimbraPrefIMHideBlockedBuddies",
-      type: Setting.T_PREF,
-      dataType: Setting.D_BOOLEAN,
-      defaultValue: false
-    });
-  }
-
-
-  /**
-   * The setting we have added are not populated by default, retrieve te values from
-   * the last GetInfo Request.
-   */
-  private static _populateSettings(settings: ZmSettings): void {
-    let lastResponse;
-    lastResponse = settings.getInfoResponse.prefs._attrs;
-    settings.getSetting(Setting.IM_PREF_NOTIFY_SOUNDS).setValue(lastResponse.zimbraPrefIMSoundsEnabled);
-    settings.getSetting(Setting.IM_PREF_FLASH_BROWSER).setValue(lastResponse.zimbraPrefIMFlashTitle);
-    settings.getSetting(Setting.IM_PREF_DESKTOP_ALERT).setValue(lastResponse.zimbraPrefIMToasterEnabled);
-    settings.getSetting(Setting.IM_PREF_INSTANT_NOTIFY).setValue(lastResponse.zimbraPrefIMInstantNotify);
-    settings.getSetting(Setting.IM_PREF_AUTO_LOGIN).setValue(lastResponse.zimbraPrefIMAutoLogin);
-    settings.getSetting(Setting.IM_PREF_NOTIFY_PRESENCE).setValue(lastResponse.zimbraPrefIMNotifyPresence);
-    settings.getSetting(Setting.IM_PREF_NOTIFY_STATUS).setValue(lastResponse.zimbraPrefIMNotifyStatus);
-    settings.getSetting(Setting.IM_PREF_LOGCHATS_ENABLED).setValue(lastResponse.zimbraPrefIMLogChats);
-    // settings.getSetting().setValue(req.GetInfoResponse.prefs._attrs.zimbraPrefIMLogChatsEnabled)
-    settings.getSetting(Setting.IM_PREF_REPORT_IDLE).setValue(lastResponse.zimbraPrefIMReportIdle);
-    settings.getSetting(Setting.IM_PREF_IDLE_TIMEOUT).setValue(lastResponse.zimbraPrefIMIdleTimeout);
-    settings.getSetting(Setting.IM_PREF_IDLE_STATUS).setValue(lastResponse.zimbraPrefIMIdleStatus);
-    // zimbraPrefIMCustomStatusMessage
-    settings.getSetting(Setting.IM_PREF_BUDDY_SORT).setValue(lastResponse.zimbraPrefIMBuddyListSort);
-    settings.getSetting(Setting.IM_PREF_HIDE_OFFLINE).setValue(lastResponse.zimbraPrefIMHideOfflineBuddies);
-    settings.getSetting(Setting.IM_PREF_HIDE_BLOCKED).setValue(lastResponse.zimbraPrefIMHideBlockedBuddies);
   }
 
 }

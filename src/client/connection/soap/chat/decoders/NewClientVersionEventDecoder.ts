@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {NewClientVersionEvent} from "../../../../events/chat/NewClientVersionEvent";
-import {Version} from "../../../../../lib/Version";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {Version} from "../../../../../lib/Version";
+import {NewClientVersionEvent} from "../../../../events/chat/NewClientVersionEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class NewClientVersionEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -32,8 +32,8 @@ export class NewClientVersionEventDecoder extends SoapEventDecoder {
 
   public decodeEvent(eventObj: {currentZimletVersion: string}, originEvent?: ChatEvent): ChatEvent {
     return new NewClientVersionEvent(
-      new Version(eventObj["currentZimletVersion"]),
-      this.mDateProvider.getNow()
+      new Version(eventObj.currentZimletVersion),
+      this.mDateProvider.getNow(),
     );
   }
 

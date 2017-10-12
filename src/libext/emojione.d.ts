@@ -15,29 +15,30 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+// tslint:disable-next-line:class-name
 export declare class emojione {
-  static setAscii(enable: boolean): void;
-  static setSprites(enable: boolean): void;
-  static setUnicodeAlt(enable: boolean): void;
-  static setCacheBustParams(params: {}|string): void;
-  static setImagePath(path: string): void;
-  static asciiRegexp: RegExp;
-  static unicodeRegexp: RegExp;
-  static shortnamesRegexp: RegExp;
+  public static asciiRegexp: RegExp;
+  public static unicodeRegexp: RegExp;
+  public static shortnamesRegexp: RegExp;
+  public static emojioneList: IEmojiOneList;
+  public static asciiList: {[asciiCode: string]: string};
+  public static jsEscapeMap: {[unicode: string]: string};
 
-  static toImage(emoji: string): string;
-  static emojioneList: EmojiOneList;
-  static asciiList: {[asciiCode: string]: string};
-  static jsEscapeMap: {[unicode: string]: string};
+  public static setAscii(enable: boolean): void;
+  public static setSprites(enable: boolean): void;
+  public static setUnicodeAlt(enable: boolean): void;
+  public static setCacheBustParams(params: {}|string): void;
+  public static setImagePath(path: string): void;
+  public static toImage(emoji: string): string;
 }
 
 export declare function toImage(emoji: string): string;
 
-export declare const emojioneList: EmojiOneList;
-export interface EmojiOneList {
-  [shortName: string]: EmojiOneListData;
+export declare const emojioneList: IEmojiOneList;
+export interface IEmojiOneList {
+  [shortName: string]: IEmojiOneListData;
 }
-export interface EmojiOneListData {
+export interface IEmojiOneListData {
   fname: string;
   uc: string;
   isCanonical: boolean;

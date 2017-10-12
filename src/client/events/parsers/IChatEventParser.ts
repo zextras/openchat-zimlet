@@ -15,17 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Callback} from "../../lib/callbacks/Callback";
-import {Request} from "./Request";
+import {ChatEvent} from "../ChatEvent";
+import {IConnectionEventParser} from "./IConnectionEventParser";
 
-export interface Connection {
+export interface IChatEventParser extends IConnectionEventParser {
 
-  sendObject(command: string, object: {[key: string]: any}, callback: Callback, errorCallback: Callback): Request;
-  openStream(): void;
-  closeStream(): void;
-  isStreamOpened(): boolean;
-  onStreamEvent(callback: Callback): void;
-  onStreamError(callback: Callback): void;
-  onEndProcessResponses(callback: Callback): void;
+  encodeEvent(chatEvent: ChatEvent): {};
+  decodeEvent(originEvent: ChatEvent, object: {}): ChatEvent;
 
 }

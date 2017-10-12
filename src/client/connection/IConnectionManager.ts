@@ -17,9 +17,9 @@
 
 import {Callback} from "../../lib/callbacks/Callback";
 import {BasicEvent} from "../events/BasicEvent";
-import {ConnectionEventParser} from "../events/parsers/ConnectionEventParser";
+import {IConnectionEventParser} from "../events/parsers/IConnectionEventParser";
 
-export interface ConnectionManager {
+export interface IConnectionManager {
 
   sendEvent(event: BasicEvent, callback: Callback, errorCallback: Callback): void;
   onEvent(callback: Callback): void;
@@ -31,6 +31,6 @@ export interface ConnectionManager {
   onNetworkError(callback: Callback): void;
   openStream(): void;
   closeStream(): void;
-  getEventParser(): ConnectionEventParser;
+  getEventParser(): IConnectionEventParser;
 
 }

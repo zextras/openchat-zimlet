@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {DateProvider} from "../../../../../lib/DateProvider";
 import {MessageEvent} from "../../../../events/chat/MessageEvent";
 import {MessageSentEvent} from "../../../../events/chat/MessageSentEvent";
-import {DateProvider} from "../../../../../lib/DateProvider";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class MessageEventDecoder extends SoapEventDecoder {
 
@@ -41,26 +41,26 @@ export class MessageEventDecoder extends SoapEventDecoder {
       to?: string,
       message?: string,
       timestampSent?: number,
-      message_id?: string
+      message_id?: string,
     },
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
     if (typeof originEvent !== "undefined") {
-      return this.decodeMessageSent(<{message_id: string}>eventObj);
+      return this.decodeMessageSent(eventObj as {message_id: string});
     } else {
-      return this.decodeMessage(<{
+      return this.decodeMessage(eventObj as {
         message_type: string,
         ID: string,
         from: string,
         to: string,
         message: string,
-        timestampSent: number
-      }>eventObj, originEvent);
+        timestampSent: number,
+      }, originEvent);
     }
   }
 
   private decodeMessageSent(eventObj: {message_id: string}): ChatEvent {
-    return new MessageSentEvent(eventObj["message_id"], this.mDateProvider.getNow());
+    return new MessageSentEvent(eventObj.message_id, this.mDateProvider.getNow());
   }
 
   private decodeMessage(
@@ -70,25 +70,25 @@ export class MessageEventDecoder extends SoapEventDecoder {
       from: string,
       to: string,
       message: string,
-      timestampSent: number
+      timestampSent: number,
     },
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
     try {
       return this.mSuperSecretMessageDecoder.decodeEvent(eventObj, originEvent);
     } catch (error) {
-      let messageType: string = eventObj["message_type"];
-      if (eventObj["message_type"] !== undefined) {
-        messageType = eventObj["message_type"].toLowerCase();
+      let messageType: string = eventObj.message_type;
+      if (eventObj.message_type !== undefined) {
+        messageType = eventObj.message_type.toLowerCase();
       }
       return new MessageEvent(
-        eventObj["ID"],
-        eventObj["from"],
-        eventObj["to"],
-        eventObj["message"],
+        eventObj.ID,
+        eventObj.from,
+        eventObj.to,
+        eventObj.message,
         messageType,
-        this.mDateProvider.getDate(eventObj["timestampSent"]),
-        this.mDateProvider.getNow()
+        this.mDateProvider.getDate(eventObj.timestampSent),
+        this.mDateProvider.getNow(),
       );
     }
   }

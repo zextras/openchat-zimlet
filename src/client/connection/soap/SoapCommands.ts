@@ -15,17 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {FriendshipInvitationEvent} from "../../events/chat/friendship/FriendshipInvitationEvent";
+import {OpenChatEventCode} from "../../events/chat/OpenChatEventCode";
+import {SetStatusEvent} from "../../events/chat/SetStatusEvent";
 import {CommandFactory} from "../CommandFactory";
 import {Command} from "./Command";
-import {FriendshipInvitationEvent} from "../../events/chat/friendship/FriendshipInvitationEvent";
-import {SetStatusEvent} from "../../events/chat/SetStatusEvent";
-import {OpenChatEventCode} from "../../events/chat/OpenChatEventCode";
 
 export class SoapCommands {
 
   public static registerCommands(commandFactory: CommandFactory): void {
     commandFactory.addCommand(OpenChatEventCode.MESSAGE, Command.SEND_MESSAGE);
-    commandFactory.addSpecialCommand(OpenChatEventCode.FRIENDSHIP, FriendshipInvitationEvent.getCommandFromFriendshipEvent);
+    commandFactory.addSpecialCommand(
+      OpenChatEventCode.FRIENDSHIP,
+      FriendshipInvitationEvent.getCommandFromFriendshipEvent,
+    );
     commandFactory.addCommand(OpenChatEventCode.WRITING_STATUS, Command.NOTIFY_WRITING);
     commandFactory.addCommand(OpenChatEventCode.MESSAGE_ACK, Command.NOTIFY_MSG_RECEIVED);
     commandFactory.addCommand(OpenChatEventCode.PING, Command.PING);

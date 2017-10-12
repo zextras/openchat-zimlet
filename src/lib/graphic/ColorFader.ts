@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {CallbackManager} from "../callbacks/CallbackManager";
-import {ColorFaderColor} from "./ColorFaderColor";
 import {Callback} from "../callbacks/Callback";
+import {CallbackManager} from "../callbacks/CallbackManager";
 import {TimedCallback} from "../callbacks/TimedCallback";
+import {ColorFaderColor} from "./ColorFaderColor";
 
 export class ColorFader {
 
@@ -98,26 +98,24 @@ export class ColorFader {
       this.mCallbackMgr.run(new ColorFaderColor(
         this.mStartColor.r + (this.mStepR * (this.mSteps - remaining)),
         this.mStartColor.g + (this.mStepG * (this.mSteps - remaining)),
-        this.mStartColor.b + (this.mStepB * (this.mSteps - remaining))
+        this.mStartColor.b + (this.mStepB * (this.mSteps - remaining)),
       ),
       new ColorFaderColor(
         this.mStartFontColor.r + (this.mStepFontR * (this.mSteps - remaining)),
         this.mStartFontColor.g + (this.mStepFontG * (this.mSteps - remaining)),
-        this.mStartFontColor.b + (this.mStepFontB * (this.mSteps - remaining))
+        this.mStartFontColor.b + (this.mStepFontB * (this.mSteps - remaining)),
       ));
       if (typeof setTimeout !== "undefined") {
-        let timedCallback = new TimedCallback(new Callback(
+        const timedCallback = new TimedCallback(new Callback(
           this,
           this.doStep,
-          [remaining]
+          [remaining],
         ), this.mStepsDuration, false);
         timedCallback.start();
-      }
-      else {
+      } else {
         this.doStep(remaining);
       }
-    }
-    else {
+    } else {
       this.mCallbackMgr.run(this.mEndColor, this.mEndFontColor);
       this.mEndCallbackMgr.run();
     }

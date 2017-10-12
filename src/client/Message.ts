@@ -49,13 +49,12 @@ export class Message {
   }
 
   public getHtmlMessage(): string {
-    let entities = new AllHtmlEntities();
-    let message = entities.encode(this.mMessage)
+    const entities = new AllHtmlEntities();
+    //      .replace(/\s/g, "&nbsp;")
+    return entities.encode(this.mMessage)
     //      .replace(/([^\s-]{26})([^\s-]{26})/g, '$1&shy;$2')
       .replace(/&NewLine;/g, "<br>")
       .replace(/\n/g, "<br>");
-    //      .replace(/\s/g, "&nbsp;")
-    return message;
   }
 
   public getDate(): Date {

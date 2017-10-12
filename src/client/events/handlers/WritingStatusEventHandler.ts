@@ -15,31 +15,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../ChatEvent";
-import {WritingStatusEvent} from "../chat/WritingStatusEvent";
-import {Room} from "../../Room";
+import {IChatClient} from "../../IChatClient";
+import {IRoom} from "../../IRoom";
 import {MessageWritingStatus} from "../../MessageWritingStatus";
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatClient} from "../../ChatClient";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {WritingStatusEvent} from "../chat/WritingStatusEvent";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class WritingStatusEventHandler implements ChatEventHandler {
+export class WritingStatusEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.WRITING_STATUS;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let writingStatusEvent: WritingStatusEvent = <WritingStatusEvent> chatEvent;
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const writingStatusEvent: WritingStatusEvent = chatEvent as WritingStatusEvent;
     if (writingStatusEvent.getSender() !== client.getSessionInfoProvider().getUsername()) {
-      let originRoom: Room = client.getRoomManager().getRoomById(writingStatusEvent.getSender());
+      const originRoom: IRoom = client.getRoomManager().getRoomById(writingStatusEvent.getSender());
       if (originRoom != null) {
         originRoom.addWritingStatusEvent(
           new MessageWritingStatus(
             client.getBuddyList().getBuddyById(writingStatusEvent.getSender()),
             client.getDateProvider().getNow(),
-            writingStatusEvent.getValue()
-          )
+            writingStatusEvent.getValue(),
+          ),
         );
       }
     }

@@ -15,14 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {IRoom} from "../../client/IRoom";
 import {Message} from "../../client/Message";
-import {Room} from "../../client/Room";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 
-export class RoomStoreMessageInHistoryPlugin implements ChatPlugin {
+export class RoomStoreMessageInHistoryPlugin implements IChatPlugin {
 
-  public trigger(room: Room, message: Message): void {
+  public trigger(room: IRoom, message: Message): void {
     room.getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName).push(message);
   }
 

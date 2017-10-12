@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {UnregisterSessionEvent} from "../../../../events/chat/UnregisterSessionEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {UnregisterSessionEvent} from "../../../../events/chat/UnregisterSessionEvent";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class SessionUnregisteredEventDecoder extends SoapEventDecoder {
 
@@ -27,7 +27,7 @@ export class SessionUnregisteredEventDecoder extends SoapEventDecoder {
   }
 
   public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {
-    return <UnregisterSessionEvent>originEvent;
+    return originEvent as UnregisterSessionEvent;
   }
 
 }

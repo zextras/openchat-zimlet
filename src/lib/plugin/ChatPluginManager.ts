@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "./ChatPlugin";
-import {ChatFieldPlugin} from "./ChatFieldPlugin";
+import {IChatFieldPlugin} from "./ChatFieldPlugin";
+import {IChatPlugin} from "./ChatPlugin";
 
 export class ChatPluginManager {
 
-  private mFieldPluginMap: {[title: string]: ChatFieldPlugin};
-  private mPluginMap: {[title: string]: ChatPlugin[]};
+  private mFieldPluginMap: {[title: string]: IChatFieldPlugin};
+  private mPluginMap: {[title: string]: IChatPlugin[]};
   private mEnabled: boolean = false;
   private mContext: any;
 
@@ -35,7 +35,7 @@ export class ChatPluginManager {
     this.mEnabled = true;
   }
 
-  public registerPlugin(title: string, plugin: ChatPlugin): void {
+  public registerPlugin(title: string, plugin: IChatPlugin): void {
     if (typeof this.mPluginMap[title] === "undefined" || this.mPluginMap === null) {
       this.mPluginMap[title] = [];
     }
@@ -44,16 +44,16 @@ export class ChatPluginManager {
 
   public triggerPlugins(title: string, ...args: any[]): void {
     if (typeof this.mPluginMap[title] !== "undefined" && this.mPluginMap !== null) {
-      for (let plugin of this.mPluginMap[title]) {
+      for (const plugin of this.mPluginMap[title]) {
         plugin.trigger.apply(
           plugin,
-          [].concat(this.mContext).concat(args)
+          [].concat(this.mContext).concat(args),
         );
       }
     }
   }
 
-  public registerFieldPlugin(fieldName: string, plugin: ChatFieldPlugin): void {
+  public registerFieldPlugin(fieldName: string, plugin: IChatFieldPlugin): void {
     this.mFieldPluginMap[fieldName] = plugin;
   }
 
@@ -62,9 +62,9 @@ export class ChatPluginManager {
   }
 
   public getFieldPlugin(fieldName: string): any {
-    if (typeof this.mFieldPluginMap[fieldName] !== "undefined" && this.mFieldPluginMap[fieldName] !== null)
+    if (typeof this.mFieldPluginMap[fieldName] !== "undefined" && this.mFieldPluginMap[fieldName] !== null) {
       return this.mFieldPluginMap[fieldName].getField();
-    else {
+    } else {
       return undefined;
     }
   }
@@ -73,7 +73,7 @@ export class ChatPluginManager {
   //
   // }
 
-  // private static checkRequiredParams(plugin: ChatPlugin, params: any): boolean {
+  // private static checkRequiredParams(plugin: IChatPlugin, params: any): boolean {
   //   let checkPassed: boolean = true;
   //   for (let requiredParam of plugin.requiredParams()) {
   //     if (!params.hasOwnProperty(requiredParam)) {

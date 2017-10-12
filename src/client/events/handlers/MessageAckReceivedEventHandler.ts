@@ -15,22 +15,24 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {MessageAckReceivedEvent} from "../chat/MessageAckReceivedEvent";
+import {IChatClient} from "../../IChatClient";
 import {MessageSent} from "../../MessageSent";
+import {MessageAckReceivedEvent} from "../chat/MessageAckReceivedEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class MessageAckReceivedEventHandler implements ChatEventHandler {
+export class MessageAckReceivedEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.MESSAGE_ACK;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let messageAckReceivedEvent: MessageAckReceivedEvent = <MessageAckReceivedEvent> chatEvent,
-      messageSent: MessageSent = client.getMessageAckWaiter().getMessageById(messageAckReceivedEvent.getMessageId());
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const messageAckReceivedEvent: MessageAckReceivedEvent = chatEvent as MessageAckReceivedEvent;
+    const messageSent: MessageSent = client.getMessageAckWaiter().getMessageById(
+      messageAckReceivedEvent.getMessageId(),
+    );
     if (messageSent != null) {
       messageSent.setDelivered();
       client.getMessageAckWaiter().removeMessage(messageSent);

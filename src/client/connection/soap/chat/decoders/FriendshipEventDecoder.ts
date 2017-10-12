@@ -15,17 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {DateProvider} from "../../../../../lib/DateProvider";
+import {ObjectUtils} from "../../../../../lib/ObjectUtils";
 import {FriendshipAcceptedEvent} from "../../../../events/chat/friendship/FriendshipAcceptedEvent";
 import {FriendshipBlockedEvent} from "../../../../events/chat/friendship/FriendshipBlockedEvent";
 import {FriendshipDeniedEvent} from "../../../../events/chat/friendship/FriendshipDeniedEvent";
 import {FriendshipInvitationEvent} from "../../../../events/chat/friendship/FriendshipInvitationEvent";
 import {FriendshipRemovedEvent} from "../../../../events/chat/friendship/FriendshipRemovedEvent";
 import {FriendshipRenameEvent} from "../../../../events/chat/friendship/FriendshipRenameEvent";
-import {ObjectUtils} from "../../../../../lib/ObjectUtils";
-import {DateProvider} from "../../../../../lib/DateProvider";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class FriendshipEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -41,38 +41,38 @@ export class FriendshipEventDecoder extends SoapEventDecoder {
       buddyAddress: string,
       buddyNickname: string,
       buddyGroup: string,
-      from: string
+      from: string,
     },
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
     if (ObjectUtils.isEmpty(eventObj) && typeof originEvent !== "undefined") {
       return originEvent;
     }
 
-    let statusType: number = eventObj["statusType"];
+    const statusType: number = eventObj.statusType;
 
     switch (statusType) {
       case FriendshipInvitationEvent.TYPE:
         return new FriendshipInvitationEvent(
-          eventObj["buddyAddress"],
-          eventObj["buddyNickname"],
-          (typeof eventObj["buddyGroup"] !== "undefined") ? eventObj["buddyGroup"] : "",
-          this.mDateProvider.getNow()
+          eventObj.buddyAddress,
+          eventObj.buddyNickname,
+          (typeof eventObj.buddyGroup !== "undefined") ? eventObj.buddyGroup : "",
+          this.mDateProvider.getNow(),
         );
       case FriendshipAcceptedEvent.TYPE:
-        return new FriendshipAcceptedEvent(eventObj["from"], this.mDateProvider.getNow());
+        return new FriendshipAcceptedEvent(eventObj.from, this.mDateProvider.getNow());
       case FriendshipDeniedEvent.TYPE:
-        return new FriendshipDeniedEvent(eventObj["from"], this.mDateProvider.getNow());
+        return new FriendshipDeniedEvent(eventObj.from, this.mDateProvider.getNow());
       case FriendshipBlockedEvent.TYPE:
-        return new FriendshipBlockedEvent(eventObj["from"], this.mDateProvider.getNow());
+        return new FriendshipBlockedEvent(eventObj.from, this.mDateProvider.getNow());
       case FriendshipRemovedEvent.TYPE:
-        return new FriendshipRemovedEvent(eventObj["buddyAddress"], this.mDateProvider.getNow());
+        return new FriendshipRemovedEvent(eventObj.buddyAddress, this.mDateProvider.getNow());
       case FriendshipRenameEvent.TYPE:
         return new FriendshipRenameEvent(
-          eventObj["buddyAddress"],
-          eventObj["buddyNickname"],
-          (typeof eventObj["buddyGroup"] !== "undefined") ? eventObj["buddyGroup"] : "",
-          this.mDateProvider.getNow()
+          eventObj.buddyAddress,
+          eventObj.buddyNickname,
+          (typeof eventObj.buddyGroup !== "undefined") ? eventObj.buddyGroup : "",
+          this.mDateProvider.getNow(),
         );
       default:
         throw new Error("Unable to decode Friendship type '" + statusType + "'.");

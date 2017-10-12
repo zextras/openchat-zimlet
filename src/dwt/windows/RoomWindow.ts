@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Buddy} from "../../client/Buddy";
-import {BuddyStatus} from "../../client/BuddyStatus";
 import {WritingStatusEvent} from "../../client/events/chat/WritingStatusEvent";
+import {IBuddy} from "../../client/IBuddy";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
+import {IRoom} from "../../client/IRoom";
 import {MessageReceived} from "../../client/MessageReceived";
 import {MessageSent} from "../../client/MessageSent";
 import {MessageWritingStatus} from "../../client/MessageWritingStatus";
-import {Room} from "../../client/Room";
 import {SessionInfoProvider} from "../../client/SessionInfoProvider";
 import {TextCompletePlugin} from "../../jquery/TextCompletePlugin";
 import {Callback} from "../../lib/callbacks/Callback";
@@ -52,7 +52,7 @@ import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToo
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {Conversation} from "../widgets/Conversation";
 import {EmojiOnePickerButton} from "../widgets/emoji/EmojiOnePickerButton";
-import {EmojiData} from "../widgets/emoji/EmojiTemplate";
+import {IEmojiData} from "../widgets/emoji/EmojiTemplate";
 import {LoadingDots} from "../widgets/LoadingDots";
 import {RoomWindowMenuButton} from "./RoomWindowMenuButton";
 import {WindowBase} from "./WindowBase";
@@ -86,7 +86,7 @@ export class RoomWindow extends WindowBase {
   private Log: Logger;
   private mTimedCallbackFactory: TimedCallbackFactory;
   private mSessionInfoProvider: SessionInfoProvider;
-  private mRoom: Room;
+  private mRoom: IRoom;
   private mNotificationManager: NotificationManager;
   private mDateProvider: DateProvider;
   private mRoomWindowPluginManager: ChatPluginManager;
@@ -117,7 +117,7 @@ export class RoomWindow extends WindowBase {
   constructor(
     shell: DwtShell,
     timedCallbackFactory: TimedCallbackFactory,
-    room: Room,
+    room: IRoom,
     notificationManager: NotificationManager,
     dateProvider: DateProvider,
     sessionInfoProvider: SessionInfoProvider,
@@ -182,7 +182,8 @@ export class RoomWindow extends WindowBase {
       parent: this.mTitleDragBar,
     });
     // TODO: Dirty hack to modify the title label classname
-    document.getElementById(this.mTitleLbl.getHTMLElId() + "_title").className += ` RoomWindowTitleBar-TitleLabel${ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`;
+    document.getElementById(this.mTitleLbl.getHTMLElId() + "_title").className +=
+      ` RoomWindowTitleBar-TitleLabel${ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`;
     this._initializeDragging(this.mTitleDragBar.getHTMLElId());
     this.setTitle(room.getTitle());
     this.setIcon(room.getRoomStatus().getCSS());
@@ -239,6 +240,7 @@ export class RoomWindow extends WindowBase {
       new AjxListener(this, this.stopBlink),
     );
     if (typeof this.mDefaultConversationHeight === "undefined" && this.mDefaultConversationHeight !== null) {
+      // tslint:disable-next-line:max-line-length
       this.mDefaultConversationHeight = `${RoomWindow.HEIGHT - inputToolbar.getSize().y - this.mTitleDragBar.getSize().y - this.mWritingStatusDots.getSize().y - 10}px`;
     }
     this.mConversation.setSize(
@@ -260,7 +262,7 @@ export class RoomWindow extends WindowBase {
 
   }
 
-  public getRoom(): Room {
+  public getRoom(): IRoom {
     return this.mRoom;
   }
 
@@ -306,7 +308,9 @@ export class RoomWindow extends WindowBase {
   }
 
   public addTextToInput(newText: string): void {
-    const position: number = this.getCurrentInputPosition(this.mInputField.getInputElement() as IExtendedHTMLInputElement);
+    const position: number = this.getCurrentInputPosition(
+      this.mInputField.getInputElement() as IExtendedHTMLInputElement,
+    );
     const currentValue: string = this.mInputField.getValue();
     let pre: string = currentValue.slice(0, position);
     pre = (pre !== "") ? `${pre} ` : "";
@@ -424,16 +428,20 @@ export class RoomWindow extends WindowBase {
     let writingValue: number = WritingStatusEvent.RESET;
 
     if (DwtKeyEvent.getCharCode(event) === DwtKeyEvent.KEY_ENTER && !event.shiftKey) {
-      const currentInputPosition: number = this.getCurrentInputPosition(this.mInputField.getInputElement() as IExtendedHTMLInputElement);
+      const currentInputPosition: number = this.getCurrentInputPosition(
+        this.mInputField.getInputElement() as IExtendedHTMLInputElement,
+      );
       const realMessage: string = this.mInputField.getInputElement().value; // this.mInputField.getValue execute trim
       let message: string = realMessage;
       if (Bowser.msie) {
         if (realMessage.substring(currentInputPosition, currentInputPosition + 2) === "\r\n") {
-          message = `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
+          message =
+            `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
         } else { return; } // It isn't a send DwtKeyEvent.KEY_ENTER
       } else {
         if (realMessage.substring(currentInputPosition - 1, currentInputPosition) === "\n") {
-          message = `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
+          message =
+            `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
         } else { return; } // It isn't a send DwtKeyEvent.KEY_ENTER
       }
       message = StringUtils.trim(message);
@@ -538,29 +546,31 @@ export class RoomWindow extends WindowBase {
     return caretOffset;
   }
 
-  private onMemberRemoved(buddy: Buddy): void {
+  private onMemberRemoved(buddy: IBuddy): void {
     // Commented: while doing a register session the reset of the buddy list results in closing all the room windows
     // if (this.mRoom.getMembers().length < 1) {
     //   this.popdown();
     // }
   }
 
-  private onBuddyStatusChange(buddy: Buddy, status: BuddyStatus): void {
+  private onBuddyStatusChange(buddy: IBuddy, status: IBuddyStatus): void {
     this.mConversation.addMessageStatus(buddy, status);
     this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.BuddyStatusChangedPlugin, status);
   }
 
-  private onRoomStatusChange(status: BuddyStatus): void {
+  private onRoomStatusChange(status: IBuddyStatus): void {
     const css: string = status.getCSS();
     this.setIcon(css);
   }
 
-  private onEmojiSelected(ev: Event, emoji: EmojiData): void {
+  private onEmojiSelected(ev: Event, emoji: IEmojiData): void {
     this.addTextToInput(emoji.name);
   }
 
   private updateWritingDots(writingStatusValue: number): void {
-    writingStatusValue === WritingStatusEvent.WRITING ? this.mWritingStatusDots.start() : this.mWritingStatusDots.stop();
+    writingStatusValue === WritingStatusEvent.WRITING ?
+      this.mWritingStatusDots.start()
+      : this.mWritingStatusDots.stop();
   }
 
 }

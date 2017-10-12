@@ -17,10 +17,13 @@
 
 import {Callback} from "./Callback";
 
+/**
+ * @deprecated, use arrow functions instead
+ */
 export class CumulativeCallback extends Callback {
   private howMany: number;
 
-  constructor(howMany: number, obj: Object, func: Function, ...args: any[]) {
+  constructor(howMany: number, obj: object, func: (...args: any[]) => any, ...args: any[]) {
     super(obj, func);
     this.mArguments = args;
     this.howMany = howMany;
@@ -28,8 +31,8 @@ export class CumulativeCallback extends Callback {
 
   public run(...args: any[]): any {
     this.howMany--;
-    if (this.howMany > 0) return;
-    if (this.howMany < 0) throw new Error("CumulativeCallback already fired.");
+    if (this.howMany > 0) { return; }
+    if (this.howMany < 0) { throw new Error("CumulativeCallback already fired."); }
     return super.run(args);
   }
 }

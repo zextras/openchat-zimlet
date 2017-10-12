@@ -15,34 +15,34 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 
 declare let $: any;
 
 export class LoadingDots extends DwtComposite {
 
-  private mConfig: LoadingDotsConfig;
+  private mConfig: ILoadingDotsConfig;
 
-  constructor(parent: DwtComposite, config: LoadingDotsConfig) {
+  constructor(parent: DwtComposite, config: ILoadingDotsConfig) {
     super({
-      parent: parent,
       className: "DwtComposite LoadingDots",
-      template: "com_zextras_chat_open.Widgets#LoadingDots"
+      parent: parent,
+      template: "com_zextras_chat_open.Widgets#LoadingDots",
     });
     this.mConfig = config;
     this._createHtmlFromTemplate(this.TEMPLATE, {
-      id: this._htmlElId
+      id: this._htmlElId,
     });
     this.setSize(
       Dwt.DEFAULT,
-      "5px"
+      "5px",
     );
   }
 
   public _createHtml(): void {
-    let data = {
-      id: this._htmlElId
+    const data = {
+      id: this._htmlElId,
     };
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
   }
@@ -52,12 +52,12 @@ export class LoadingDots extends DwtComposite {
   }
 
   public stop(): void {
-    let el = document.getElementById(`${this._htmlElId}_dots`);
+    const el = document.getElementById(`${this._htmlElId}_dots`);
     el.innerHTML = "";
   }
 
 }
 
-export interface LoadingDotsConfig {
+export interface ILoadingDotsConfig {
   dots: number;
 }

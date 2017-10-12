@@ -15,21 +15,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {Room} from "../../client/Room";
 import {RoomManager} from "../../client/RoomManager";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 import {RoomStoreMessageInHistoryPlugin} from "./RoomStoreMessageInHistoryPlugin";
-import {RoomImp} from "../../client/RoomImp";
 
-export class RoomManagerHistoryPlugin implements ChatPlugin {
+export class RoomManagerHistoryPlugin implements IChatPlugin {
 
   public trigger(roomManager: RoomManager, roomPluginManager: ChatPluginManager): void {
     roomPluginManager.registerFieldPlugin(RoomHistoryFieldPlugin.FieldName, new RoomHistoryFieldPlugin());
-    let messageStore: RoomStoreMessageInHistoryPlugin = new RoomStoreMessageInHistoryPlugin();
-    roomPluginManager.registerPlugin(RoomImp.MessageSentPlugin, messageStore);
-    roomPluginManager.registerPlugin(RoomImp.MessageSentFromAnotherSessionPlugin, messageStore);
-    roomPluginManager.registerPlugin(RoomImp.MessageReceivedPlugin, messageStore);
+    const messageStore: RoomStoreMessageInHistoryPlugin = new RoomStoreMessageInHistoryPlugin();
+    roomPluginManager.registerPlugin(Room.MessageSentPlugin, messageStore);
+    roomPluginManager.registerPlugin(Room.MessageSentFromAnotherSessionPlugin, messageStore);
+    roomPluginManager.registerPlugin(Room.MessageReceivedPlugin, messageStore);
   }
 
 }

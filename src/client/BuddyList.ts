@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Group} from "./Group";
-import {Buddy} from "./Buddy";
-import {GroupStats} from "./GroupStats";
-import {BuddyListEvent} from "./events/chat/BuddyListEvent";
 import {Callback} from "../lib/callbacks/Callback";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
+import {BuddyListEvent} from "./events/chat/BuddyListEvent";
+import {Group} from "./Group";
+import {GroupStats} from "./GroupStats";
+import {IBuddy} from "./IBuddy";
 
 export class BuddyList {
 
@@ -45,18 +45,18 @@ export class BuddyList {
     return this.mDefaultGroup;
   }
 
-  public getBuddyById(buddyId: string): Buddy {
-    for (let i: number = 0; i < this.mGroups.length; i++) {
-      let buddy: Buddy = this.mGroups[i].getBuddyById(buddyId);
+  public getBuddyById(buddyId: string): IBuddy {
+    for (const group of this.mGroups) {
+      const buddy: IBuddy = group.getBuddyById(buddyId);
       if (typeof buddy !== "undefined") {
         return buddy;
       }
     }
   }
 
-  public removeBuddy(buddy: Buddy): void {
-    for (let i: number = 0; i < this.mGroups.length; i++) {
-      this.mGroups[i].removeBuddy(buddy);
+  public removeBuddy(buddy: IBuddy): void {
+    for (const group of this.mGroups) {
+      group.removeBuddy(buddy);
     }
     this.mOnBuddyRemovedCbkMgr.run(buddy);
   }
@@ -68,13 +68,12 @@ export class BuddyList {
       this.mOnAddGroupCbkMgr.run(group);
     } else {
       // If the group is already present, migrate his buddies to the old group.
-      let oldGroup: Group = this.getGroup(group.getName()),
-        newBuddies: Buddy[] = group.getBuddies();
-      for (let i: number = 0; i < newBuddies.length; i++) {
-        let buddy: Buddy = newBuddies[i];
-        buddy.removeGroup(group.getName());
-        oldGroup.addBuddy(buddy, false);
-        buddy.addGroup(oldGroup);
+      const oldGroup: Group = this.getGroup(group.getName());
+      const newBuddies: IBuddy[] = group.getBuddies();
+      for (const newBuddy of newBuddies) {
+        newBuddy.removeGroup(group.getName());
+        oldGroup.addBuddy(newBuddy, false);
+        newBuddy.addGroup(oldGroup);
       }
     }
   }
@@ -93,9 +92,9 @@ export class BuddyList {
   }
 
   public getGroup(groupName: string = ""): Group {
-    for (let i: number = 0; i < this.mGroups.length; i++) {
-      if (this.mGroups[i].getName() === groupName) {
-        return this.mGroups[i];
+    for (const group of this.mGroups) {
+      if (group.getName() === groupName) {
+        return group;
       }
     }
   }
@@ -105,12 +104,12 @@ export class BuddyList {
   }
 
   public getStatistics(): GroupStats {
-    let online: number = 0,
-      offline: number = 0,
-      invited: number = 0,
-      waiting: number = 0;
-    for (let i: number = 0; i < this.mGroups.length; i++) {
-      let grStats: GroupStats = this.mGroups[i].getStatistics();
+    let online: number = 0;
+    let offline: number = 0;
+    let invited: number = 0;
+    let waiting: number = 0;
+    for (const group of this.mGroups) {
+      const grStats: GroupStats = group.getStatistics();
       online += grStats.getOnlineBuddiesCount();
       offline += grStats.getOfflineBuddiesCount();
       invited += grStats.getInvitedBuddiesCount();
@@ -121,25 +120,25 @@ export class BuddyList {
 
   public reset(): void {
     // Map all buddies to be removed
-    let buddiesToBeRemoved: {[name: string]: Buddy} = {};
-    for (let i: number = 0; i < this.mGroups.length; i++) {
-      let buddies: Buddy[] = this.mGroups[i].getBuddies();
-      for (let j: number = 0; j < buddies.length; j++) {
-        if (buddiesToBeRemoved.hasOwnProperty(buddies[j].getId())) { continue; }
-        buddiesToBeRemoved[buddies[j].getId()] = buddies[j];
+    const buddiesToBeRemoved: {[name: string]: IBuddy} = {};
+    for (const group of this.mGroups) {
+      const buddies: IBuddy[] = group.getBuddies();
+      for (const buddy of buddies) {
+        if (buddiesToBeRemoved.hasOwnProperty(buddy.getId())) { continue; }
+        buddiesToBeRemoved[buddy.getId()] = buddy;
       }
     }
     this.deleteBuddies(buddiesToBeRemoved);
   }
 
-  public getAllBuddies(): {[name: string]: Buddy} {
+  public getAllBuddies(): {[name: string]: IBuddy} {
     // Map all buddies to be removed
-    let retBuddies: {[name: string]: Buddy} = {};
-    for (let i: number = 0; i < this.mGroups.length; i++) {
-      let buddies: Buddy[] = this.mGroups[i].getBuddies();
-      for (let j: number = 0; j < buddies.length; j++) {
-        if (buddies.hasOwnProperty(buddies[j].getId())) { continue; }
-        retBuddies[buddies[j].getId()] = buddies[j];
+    const retBuddies: {[name: string]: IBuddy} = {};
+    for (const group of this.mGroups) {
+      const buddies: IBuddy[] = group.getBuddies();
+      for (const buddy of buddies) {
+        if (buddies.hasOwnProperty(buddy.getId())) { continue; }
+        retBuddies[buddy.getId()] = buddy;
       }
     }
     return retBuddies;
@@ -165,46 +164,42 @@ export class BuddyList {
     this.mOnRenameGroupCbkMgr.addCallback(callback);
   }
 
-  private groupRenamed(group: Group, newName: string): void {
-    this.mOnRenameGroupCbkMgr.run(group, newName);
-  }
-
   public handleBuddyListEvent(event: BuddyListEvent): boolean {
-    let evBuddies: Buddy[] = event.getBuddies(),
-      groupsToBeRemoved: {[name: string]: Group} = {},
-      buddiesToBeRemoved: {[name: string]: Buddy} = {};
+    const evBuddies: IBuddy[] = event.getBuddies();
+    const groupsToBeRemoved: {[name: string]: Group} = {};
+    const buddiesToBeRemoved: {[name: string]: IBuddy} = {};
 
     // Map all groups and buddies for deletion
-    for (let i: number = 0; i < this.mGroups.length; i++) {
-      if (this.mGroups[i].getName() !== BuddyList.DEFAULT_GROUP_NAME) {
-        groupsToBeRemoved[this.mGroups[i].getName()] = this.mGroups[i];
+    for (const group of this.mGroups) {
+      if (group.getName() !== BuddyList.DEFAULT_GROUP_NAME) {
+        groupsToBeRemoved[group.getName()] = group;
       }
-      let buddies: Buddy[] = this.mGroups[i].getBuddies();
-      for (let j: number = 0; j < buddies.length; j++) {
-        if (buddiesToBeRemoved.hasOwnProperty(buddies[j].getId())) { continue; }
-        buddiesToBeRemoved[buddies[j].getId()] = buddies[j];
+      const buddies: IBuddy[] = group.getBuddies();
+      for (const buddy of buddies) {
+        if (buddiesToBeRemoved.hasOwnProperty(buddy.getId())) { continue; }
+        buddiesToBeRemoved[buddy.getId()] = buddy;
       }
     }
 
     // Create new groups, if exists remove from the deletion map
-    for (let i: number = 0; i < evBuddies.length; i++) {
-      let buddyGroups: Group[] = evBuddies[i].getGroups();
-      for (let j: number = 0; j < buddyGroups.length; j++) {
-        if (groupsToBeRemoved.hasOwnProperty(buddyGroups[j].getName())) {
-          delete groupsToBeRemoved[buddyGroups[j].getName()];
+    for (const evBuddy of evBuddies) {
+      const buddyGroups: Group[] = evBuddy.getGroups();
+      for (const buddyGroup of buddyGroups) {
+        if (groupsToBeRemoved.hasOwnProperty(buddyGroup.getName())) {
+          delete groupsToBeRemoved[buddyGroup.getName()];
         }
-        if (typeof this.getGroup(buddyGroups[j].getName()) === "undefined") {
-          this.addGroup(new Group(buddyGroups[j].getName()));
+        if (typeof this.getGroup(buddyGroup.getName()) === "undefined") {
+          this.addGroup(new Group(buddyGroup.getName()));
         }
       }
     }
 
     // Update old buddies or add the new ones
-    for (let i: number = 0; i < evBuddies.length; i++) {
-      if (buddiesToBeRemoved.hasOwnProperty(evBuddies[i].getId())) {
-        delete buddiesToBeRemoved[evBuddies[i].getId()];
+    for (const evBuddy of evBuddies) {
+      if (buddiesToBeRemoved.hasOwnProperty(evBuddy.getId())) {
+        delete buddiesToBeRemoved[evBuddy.getId()];
       }
-      this.updateOrAddBuddy(evBuddies[i]);
+      this.updateOrAddBuddy(evBuddy);
     }
 
     // Delete unnecessary groups and buddies
@@ -215,7 +210,7 @@ export class BuddyList {
   }
 
   // TODO: You can remove me, maybe one day...
-  public changeBuddyGroup(buddy: Buddy, groups: string[], callback?: Callback): boolean {
+  public changeBuddyGroup(buddy: IBuddy, groups: string[], callback?: Callback): boolean {
     this.addBuddyToGroups(buddy, groups, true);
     this.triggerSortGroups();
     if (typeof callback !== "undefined") {
@@ -225,28 +220,28 @@ export class BuddyList {
   }
 
   public addBuddyToGroups(
-      buddy: Buddy,
+      buddy: IBuddy,
       groups: string[],
-      removeEmptyGroups: boolean
+      removeEmptyGroups: boolean,
   ): void {
     // Remove old groups
-    let buddyGroups: Group[] = buddy.getGroups(),
-      buddyGroupNames: string[] = [];
+    const buddyGroups: Group[] = buddy.getGroups();
+    const buddyGroupNames: string[] = [];
 
-    for (let j: number = 0; j < buddyGroups.length; j++) {
-      buddyGroupNames.push(buddyGroups[j].getName());
-      buddyGroups[j].removeBuddy(buddy);
-      if (removeEmptyGroups && buddyGroups[j].isEmpty()) {
-        this.removeGroup(buddyGroups[j]);
+    for (const buddyGroup of buddyGroups) {
+      buddyGroupNames.push(buddyGroup.getName());
+      buddyGroup.removeBuddy(buddy);
+      if (removeEmptyGroups && buddyGroup.isEmpty()) {
+        this.removeGroup(buddyGroup);
       }
     }
-    for (let j: number = 0; j < buddyGroupNames.length; j++) {
-      buddy.removeGroup(buddyGroupNames[j]);
+    for (const buddyGroupName of buddyGroupNames) {
+      buddy.removeGroup(buddyGroupName);
     }
 
     // Add new groups
-    for (let j: number = 0; j < groups.length; j++) {
-      let group: Group = this.getGroup(groups[j]);
+    for (const groupName of groups) {
+      const group: Group = this.getGroup(groupName);
 
       buddy.addGroup(group);
       group.addBuddy(buddy, false);
@@ -254,13 +249,13 @@ export class BuddyList {
     }
   }
 
-  public updateOrAddBuddy(buddy: Buddy): void {
-    let oldBuddy: Buddy = this.getBuddyById(buddy.getId()),
-      buddyGroups: Group[] = buddy.getGroups(),
-      buddyGroupsNames: string[] = [];
+  public updateOrAddBuddy(buddy: IBuddy): void {
+    const oldBuddy: IBuddy = this.getBuddyById(buddy.getId());
+    const buddyGroups: Group[] = buddy.getGroups();
+    const buddyGroupsNames: string[] = [];
 
-    for (let j: number = 0; j < buddyGroups.length; j++) {
-      buddyGroupsNames.push(buddyGroups[j].getName());
+    for (const group of buddyGroups) {
+      buddyGroupsNames.push(group.getName());
     }
 
     if (typeof oldBuddy === "undefined") {
@@ -276,24 +271,28 @@ export class BuddyList {
     }
   }
 
+  public triggerSortGroups(): void {
+      for (const group of this.mGroups) {
+        group.triggerSort();
+      }
+    }
+
   private deleteGroups(groups: {[name: string]: Group}): void {
-    for (let groupName in groups) {
+    for (const groupName in groups) {
       if (!groups.hasOwnProperty(groupName)) { continue; }
       this.removeGroup(groups[groupName]);
     }
   }
 
-  private deleteBuddies(buddiesToBeRemoved: {[name: string]: Buddy}) {
-    for (let buddyName in buddiesToBeRemoved) {
+  private deleteBuddies(buddiesToBeRemoved: {[name: string]: IBuddy}) {
+    for (const buddyName in buddiesToBeRemoved) {
       if (!buddiesToBeRemoved.hasOwnProperty(buddyName)) { continue; }
       this.removeBuddy(buddiesToBeRemoved[buddyName]);
     }
   }
 
-  public triggerSortGroups(): void {
-      for (let group of this.mGroups) {
-        group.triggerSort();
-      }
-    }
+  private groupRenamed(group: Group, newName: string): void {
+    this.mOnRenameGroupCbkMgr.run(group, newName);
+  }
 
 }

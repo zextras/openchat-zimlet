@@ -15,15 +15,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {UserStatusesEvent} from "../../../../events/chat/UserStatusesEvent";
 import {ChatEvent} from "../../../../events/ChatEvent";
-import {BuddyStatus} from "../../../../BuddyStatus";
-import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {BuddyStatusImp} from "../../../../BuddyStatusImp";
+import {IBuddyStatus} from "../../../../IBuddyStatus";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class UserStatusesEventDecoder extends SoapEventDecoder {
+  private static decodeBuddyStatus(status: IUserStatusObj): IBuddyStatus {
+    return new BuddyStatusImp(
+      BuddyStatusImp.GetTypeFromNumber(status.type),
+      status.message,
+      status.id,
+    );
+  }
+
   private mDateProvider: DateProvider;
 
   constructor(dateProvider: DateProvider) {
@@ -31,25 +39,17 @@ export class UserStatusesEventDecoder extends SoapEventDecoder {
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {user_statuses: UserStatusObj[]}, originEvent?: ChatEvent): ChatEvent {
-    let event: UserStatusesEvent = new UserStatusesEvent(this.mDateProvider.getNow()),
-      statuses: UserStatusObj[] = eventObj["user_statuses"];
-    for (let i: number = 0; i < statuses.length; i++) {
-      event.addStatus(UserStatusesEventDecoder.decodeBuddyStatus(statuses[i]));
+  public decodeEvent(eventObj: {user_statuses: IUserStatusObj[]}, originEvent?: ChatEvent): ChatEvent {
+    const event: UserStatusesEvent = new UserStatusesEvent(this.mDateProvider.getNow());
+    const statuses: IUserStatusObj[] = eventObj.user_statuses;
+    for (const status of statuses) {
+      event.addStatus(UserStatusesEventDecoder.decodeBuddyStatus(status));
     }
     return event;
   }
-
-  private static decodeBuddyStatus(status: UserStatusObj): BuddyStatus {
-    return new BuddyStatusImp(
-      BuddyStatusImp.GetTypeFromNumber(status["type"]),
-      status["message"],
-      status["id"]
-    );
-  }
 }
 
-interface UserStatusObj {
+interface IUserStatusObj {
   type: number;
   message: string;
   id: number;

@@ -15,14 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {LogEngine} from "../../../../../lib/log/LogEngine";
 import {Logger} from "../../../../../lib/log/Logger";
+import {ChatEvent} from "../../../../events/ChatEvent";
 
 export abstract class SoapEventDecoder {
 
-  private mEventCode: number;
   public Log: Logger;
+  private mEventCode: number;
 
   constructor(eventCode: number) {
     this.mEventCode = eventCode;

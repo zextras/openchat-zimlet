@@ -19,53 +19,93 @@ import {Callback} from "./callbacks/Callback";
 
 export class IdleTimer {
 
-  private static _attachedToWindow: boolean = false;
-  private static _idleTimers: {[id: number]: IdleTimer} = {};
-  private static _prevTimerId: number = -1;
-  private static _idCounter: number = 0;
+  private static sAttachedToWindow: boolean = false;
+  private static sIdleTimers: {[id: number]: IdleTimer} = {};
+  private static sPrevTimerId: number = -1;
+  private static sIdCounter: number = 0;
 
-  private _timerId: number;
-  private _callback: Callback;
-  private _windowTimerId: number;
-  private _timeout: number;
+  private static _attachToWindow(): void {
+    if (!IdleTimer.sAttachedToWindow) {
+      if ((typeof window !== "undefined" && window !== null) && window.addEventListener) {
+        window.addEventListener("keydown", IdleTimer._onEvent, true);
+        window.addEventListener("mousemove", IdleTimer._onEvent, true);
+        window.addEventListener("mousedown", IdleTimer._onEvent, true);
+        window.addEventListener("focus", IdleTimer._onEvent, true);
+        IdleTimer.sAttachedToWindow = true;
+      } else if (
+        (typeof document !== "undefined" && document !== null)
+        && (document.body != null)
+        && ((document.body as IEventAttachableElement).attachEvent != null)
+      ) {
+        (document.body as IEventAttachableElement).attachEvent("onkeydown", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onkeyup", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmousedown", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmousemove", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmouseover", IdleTimer._onEvent);
+        (document.body as IEventAttachableElement).attachEvent("onmouseout", IdleTimer._onEvent);
+        (window as IEventAttachableWindow).attachEvent("onfocus", IdleTimer._onEvent);
+        IdleTimer.sAttachedToWindow = true;
+      } else {
+        IdleTimer.sAttachedToWindow = false;
+        throw new Error("Unable to attach avent listeners to the window");
+      }
+    }
+  }
+
+  private static _onEvent(): void {
+    let idleTimer: IdleTimer;
+    for (const id in IdleTimer.sIdleTimers) {
+      if (!IdleTimer.sIdleTimers.hasOwnProperty(id)) { continue; }
+      idleTimer = IdleTimer.sIdleTimers[id];
+      if (!idleTimer.mStopped || idleTimer.mIdle) {
+        idleTimer.setIdle(false);
+        idleTimer.start();
+      }
+    }
+  }
+
+  private mTimerId: number;
+  private mCallback: Callback;
+  private mWindowTimerId: number;
+  private mTimeout: number;
   private mIdle: boolean;
-  private _stopped: boolean;
+  private mStopped: boolean;
 
   constructor(timeout: number = 60000, callback: Callback) {
     IdleTimer._attachToWindow();
-    IdleTimer._prevTimerId += 1;
-    this._timerId = IdleTimer._prevTimerId;
-    IdleTimer._idleTimers[this._timerId] = this;
-    this._timeout = timeout;
-    this._callback = callback;
+    IdleTimer.sPrevTimerId += 1;
+    this.mTimerId = IdleTimer.sPrevTimerId;
+    IdleTimer.sIdleTimers[this.mTimerId] = this;
+    this.mTimeout = timeout;
+    this.mCallback = callback;
     this.mIdle = false;
-    this._windowTimerId = null;
-    this._stopped = true;
+    this.mWindowTimerId = null;
+    this.mStopped = true;
     this.start();
   }
 
   public start(): void {
     this.stop();
-    this._windowTimerId = setTimeout(
+    this.mWindowTimerId = setTimeout(
       (new Callback(this, this.setIdle, true)).toClosure(),
-      this._timeout
+      this.mTimeout,
     );
-    this._stopped = false;
+    this.mStopped = false;
   }
 
   public setTime(newTime: number): void {
-    this._timeout = newTime;
+    this.mTimeout = newTime;
     // reset Timer if is started
-    if (!this._stopped) {
+    if (!this.mStopped) {
       this.start();
     }
   }
 
   public stop(): void {
-    if (typeof this._windowTimerId !== "undefined" && this._windowTimerId !== null) {
-      clearTimeout(this._windowTimerId);
-      this._windowTimerId = null;
-      this._stopped = true;
+    if (typeof this.mWindowTimerId !== "undefined" && this.mWindowTimerId !== null) {
+      clearTimeout(this.mWindowTimerId);
+      this.mWindowTimerId = null;
+      this.mStopped = true;
     }
   }
 
@@ -86,55 +126,25 @@ export class IdleTimer {
         } else {
           this.start();
         }
-        if (this._callback != null) {
-          this._callback.run(idleStatus);
+        if (this.mCallback != null) {
+          this.mCallback.run(idleStatus);
         }
       } catch (ignored) {}
     }
   }
 
-  private static _attachToWindow(): void {
-    if (!IdleTimer._attachedToWindow) {
-      if ((typeof window !== "undefined" && window !== null) && window.addEventListener) {
-        window.addEventListener("keydown", IdleTimer._onEvent, true);
-        window.addEventListener("mousemove", IdleTimer._onEvent, true);
-        window.addEventListener("mousedown", IdleTimer._onEvent, true);
-        window.addEventListener("focus", IdleTimer._onEvent, true);
-        IdleTimer._attachedToWindow = true;
-      } else if ((typeof document !== "undefined" && document !== null) && (document.body != null) && ((<EventAttachableElement>document.body).attachEvent != null)) {
-        (<EventAttachableElement>document.body).attachEvent("onkeydown", IdleTimer._onEvent);
-        (<EventAttachableElement>document.body).attachEvent("onkeyup", IdleTimer._onEvent);
-        (<EventAttachableElement>document.body).attachEvent("onmousedown", IdleTimer._onEvent);
-        (<EventAttachableElement>document.body).attachEvent("onmousemove", IdleTimer._onEvent);
-        (<EventAttachableElement>document.body).attachEvent("onmouseover", IdleTimer._onEvent);
-        (<EventAttachableElement>document.body).attachEvent("onmouseout", IdleTimer._onEvent);
-        (<EventAttachableWindow>window).attachEvent("onfocus", IdleTimer._onEvent);
-        IdleTimer._attachedToWindow = true;
-      } else {
-        IdleTimer._attachedToWindow = false;
-        throw new Error("Unable to attach avent listeners to the window");
-      }
-    }
-  }
-
-  private static _onEvent(): void {
-    let idleTimer: IdleTimer;
-    for (let id in IdleTimer._idleTimers) {
-      if (!IdleTimer._idleTimers.hasOwnProperty(id)) continue;
-      idleTimer = IdleTimer._idleTimers[id];
-      if (!idleTimer._stopped || idleTimer.mIdle) {
-        idleTimer.setIdle(false);
-        idleTimer.start();
-      }
-    }
-  }
-
 }
 
-interface EventAttachableElement extends HTMLElement {
-  attachEvent(ev: "onkeydown" | "onkeyup" | "onmousedown" | "onmousemove" | "onmouseover" | "onmouseout" | "onfocus", fn: Function): void;
+interface IEventAttachableElement extends HTMLElement {
+  attachEvent(
+    ev: "onkeydown" | "onkeyup" | "onmousedown" | "onmousemove" | "onmouseover" | "onmouseout" | "onfocus",
+    fn: () => void,
+  ): void;
 }
 
-interface EventAttachableWindow extends Window {
-  attachEvent(ev: "onkeydown" | "onkeyup" | "onmousedown" | "onmousemove" | "onmouseover" | "onmouseout" | "onfocus", fn: Function): void;
+interface IEventAttachableWindow extends Window {
+  attachEvent(
+    ev: "onkeydown" | "onkeyup" | "onmousedown" | "onmousemove" | "onmouseover" | "onmouseout" | "onfocus",
+    fn: () => void,
+  ): void;
 }

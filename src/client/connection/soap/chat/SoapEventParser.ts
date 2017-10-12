@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ChatEvent} from "../../../events/ChatEvent";
+import {IChatEventParser} from "../../../events/parsers/IChatEventParser";
 import {SoapEventDecoder} from "./decoders/SoapEventDecoder";
 import {SoapEventEncoder} from "./encoders/SoapEventEncoder";
-import {ChatEvent} from "../../../events/ChatEvent";
-import {ChatEventParser} from "../../../events/parsers/ChatEventParser";
 
-export class SoapEventParser implements ChatEventParser {
+export class SoapEventParser implements IChatEventParser {
 
   private mEncoders: {[id: string]: SoapEventEncoder} = {};
   private mDecoders: {[id: string]: SoapEventDecoder} = {};
@@ -48,7 +48,7 @@ export class SoapEventParser implements ChatEventParser {
 
   public decodeEvent(originEvent: ChatEvent, object: {type: number|string}): ChatEvent {
     let eventCode: number;
-    if (typeof object !== "undefined" && typeof object["type"] !== "undefined") {
+    if (typeof object !== "undefined" && typeof object.type !== "undefined") {
       if (typeof object.type === "number") {
         eventCode = object.type;
       } else {

@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {SecretTestEvent} from "../../../../events/chat/SecretTestEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {SecretTestEvent} from "../../../../events/chat/SecretTestEvent";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class SecretTestEventDecoder extends SoapEventDecoder {
 
@@ -32,12 +32,12 @@ export class SecretTestEventDecoder extends SoapEventDecoder {
       to: string,
       timestampSent: number,
     },
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
     return new SecretTestEvent(
-      eventObj["from"],
-      eventObj["to"],
-      new Date(eventObj["timestampSent"])
+      eventObj.from,
+      eventObj.to,
+      new Date(eventObj.timestampSent),
     );
   }
 }

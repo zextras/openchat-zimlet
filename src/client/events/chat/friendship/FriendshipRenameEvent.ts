@@ -25,8 +25,9 @@ export class FriendshipRenameEvent extends FriendshipEvent {
 
   constructor(buddyId: string, nickname: string, buddyGroup: string = "", creationDate: Date) {
     super(FriendshipRenameEvent.TYPE, creationDate);
-    if (typeof buddyId !== "undefined" && buddyId !== null)
+    if (typeof buddyId !== "undefined" && buddyId !== null) {
       this.setSender(buddyId);
+    }
     this.mNickname = nickname;
     this.mBuddyGroup = buddyGroup;
   }
