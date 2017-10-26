@@ -81,6 +81,7 @@ import {ZmObjectManager} from "./zimbra/zimbraMail/share/model/ZmObjectManager";
 import {ZmZimletBase} from "./zimbra/zimbraMail/share/model/ZmZimletBase";
 import {ZmStatusView} from "./zimbra/zimbraMail/share/view/ZmStatusView";
 import {ZimletVersion} from "./ZimletVersion";
+import {ObjectHandlerProxy} from "./objectHandler/ObjectHandlerProxy";
 
 export class ChatZimletBase extends ZmZimletBase {
 
@@ -324,10 +325,10 @@ export class ChatZimletBase extends ZmZimletBase {
     );
 
     this.mChatClient.onFriendshipInvitation(new Callback(this, this.handleNewFriendshipInvitation));
-    this.mObjectHandler = new ObjectHandler();
+    this.mObjectHandler = ObjectHandler.getInstance();
     this.registerSettings();
     ZmObjectManager.registerHandler(
-      ZimbraUtils.isZimbraVersionLessThan85() ? ObjectHandler : this.mObjectHandler,
+      ZimbraUtils.isZimbraVersionLessThan85() ? ObjectHandlerProxy : this.mObjectHandler,
       null,
       this._zimletContext.priority,
     );
