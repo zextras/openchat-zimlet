@@ -64,6 +64,7 @@ import {ZimbraPatcher} from "./lib/ZimbraPatcher";
 import {ZimbraUtils} from "./lib/ZimbraUtils";
 import {emojione} from "./libext/emojione";
 import {ObjectHandler} from "./objectHandler/ObjectHandler";
+import {ObjectHandlerProxy} from "./objectHandler/ObjectHandlerProxy";
 import {Setting} from "./settings/Setting";
 import {IGroupData, SettingsManager} from "./settings/SettingsManager";
 import {AjxException} from "./zimbra/ajax/core/AjxException";
@@ -324,10 +325,10 @@ export class ChatZimletBase extends ZmZimletBase {
     );
 
     this.mChatClient.onFriendshipInvitation(new Callback(this, this.handleNewFriendshipInvitation));
-    this.mObjectHandler = new ObjectHandler();
+    this.mObjectHandler = ObjectHandler.getInstance();
     this.registerSettings();
     ZmObjectManager.registerHandler(
-      ZimbraUtils.isZimbraVersionLessThan85() ? ObjectHandler : this.mObjectHandler,
+      ZimbraUtils.isZimbraVersionLessThan85() ? ObjectHandlerProxy : this.mObjectHandler,
       null,
       this._zimletContext.priority,
     );
