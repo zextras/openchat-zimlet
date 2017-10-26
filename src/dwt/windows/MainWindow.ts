@@ -238,6 +238,7 @@ export class MainWindow extends WindowBase {
     }
     this.mAppCtxt.getShell().addListener(DwtEvent.CONTROL, new AjxListener(this, this.onShellResize));
     this.updateMainIcon();
+    this.handleSidebarResize();
   }
 
   public getPluginManager(): ChatPluginManager {
