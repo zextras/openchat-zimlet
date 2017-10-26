@@ -49,6 +49,7 @@ export class Setting {
   public static IM_USR_PREF_EMOJI_IN_CONV: string = "zxchat_pref_emoji_in_conv";
   public static IM_USR_PREF_EMOJI_IN_HIST: string = "zxchat_pref_emoji_in_hist";
   public static IM_USR_PREF_EMOJI_IN_MAIL: string = "zxchat_pref_emoji_in_mail";
+  public static IM_USR_PREF_LAST_STATUS: string = "zxchat_pref_last_status";
   public static IM_USR_PREF_URL_IN_CONV: string = "zxchat_pref_url_in_conv";
   public static IM_USR_PREF_URL_IN_HIST: string = "zxchat_pref_url_in_hist";
   public static IM_USR_PREF_URL_IN_MAIL: string = "zxchat_pref_url_in_mail";

@@ -529,8 +529,14 @@ export class ChatZimletBase extends ZmZimletBase {
     this.mChatClient.getUserStatusManager().setUserStatuses(userStatuses);
     this.mMainWindow.setUserStatuses(userStatuses);
     this.mChatClient.getPluginManager().triggerPlugins(ChatClient.SetStatusesPlugin, userStatuses);
+    const lastStatus: BuddyStatusImp = new BuddyStatusImp(
+      this.mSettingsManager.get(Setting.IM_USR_PREF_LAST_STATUS),
+      "",
+      this.mSettingsManager.get(Setting.IM_USR_PREF_LAST_STATUS),
+    );
     this.refreshStatusInMainWindow(new BuddyStatusImp(0, "Offline", 0));
-    this.mChatClient.getUserStatusManager().setSelectedStatus(new BuddyStatusImp(1, "Available", 1));
+    this.mChatClient.getUserStatusManager().setSelectedStatus(lastStatus);
+    this.mChatClient.setUserStatus(this.mChatClient.getUserStatusManager().getCurrentStatus());
 
     this.mChatClient.startPing();
 
@@ -736,6 +742,7 @@ export class ChatZimletBase extends ZmZimletBase {
   }
 
   private statusSelectedCallback(userStatus: IBuddyStatus): void {
+    this.mSettingsManager.set(Setting.IM_USR_PREF_LAST_STATUS, userStatus.getType());
     this.mChatClient.getUserStatusManager().setSelectedStatus(userStatus);
     this.mChatClient.setUserStatus(this.mChatClient.getUserStatusManager().getCurrentStatus());
   }
