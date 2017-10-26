@@ -86,6 +86,7 @@ export class PropertiesHandler implements ISettingsHandlerInterface {
       Setting.IM_USR_PREF_EMOJI_IN_CONV,
       Setting.IM_USR_PREF_EMOJI_IN_HIST,
       Setting.IM_USR_PREF_EMOJI_IN_MAIL,
+      Setting.IM_USR_PREF_LAST_STATUS,
       Setting.IM_USR_PREF_URL_IN_CONV,
       Setting.IM_USR_PREF_URL_IN_HIST,
       Setting.IM_USR_PREF_URL_IN_MAIL,
