@@ -64,6 +64,7 @@ import {ZimbraPatcher} from "./lib/ZimbraPatcher";
 import {ZimbraUtils} from "./lib/ZimbraUtils";
 import {emojione} from "./libext/emojione";
 import {ObjectHandler} from "./objectHandler/ObjectHandler";
+import {ObjectHandlerProxy} from "./objectHandler/ObjectHandlerProxy";
 import {Setting} from "./settings/Setting";
 import {IGroupData, SettingsManager} from "./settings/SettingsManager";
 import {AjxException} from "./zimbra/ajax/core/AjxException";
@@ -81,7 +82,6 @@ import {ZmObjectManager} from "./zimbra/zimbraMail/share/model/ZmObjectManager";
 import {ZmZimletBase} from "./zimbra/zimbraMail/share/model/ZmZimletBase";
 import {ZmStatusView} from "./zimbra/zimbraMail/share/view/ZmStatusView";
 import {ZimletVersion} from "./ZimletVersion";
-import {ObjectHandlerProxy} from "./objectHandler/ObjectHandlerProxy";
 
 export class ChatZimletBase extends ZmZimletBase {
 
