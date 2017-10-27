@@ -30,7 +30,14 @@ export class UrlHandler extends ZmObjectHandler {
     return this.mUrlRegExp.exec(content);
   }
 
-  public _getHtmlContent(html: string[], idx: number, obj: string, context?: string, spanId?: string, options?: {}): number {
+  public _getHtmlContent(
+    html: string[],
+    idx: number,
+    obj: string,
+    context?: string,
+    spanId?: string,
+    options?: {},
+    ): number {
     html[idx++] = `<a target="_blank" href="${obj}">${obj}</a>`;
     return idx;
   }

@@ -34,7 +34,7 @@ export class WindowsPositionContainer {
   }
 
   public remove(windowId: string) {
-    let position: number = this.positions[windowId];
+    const position: number = this.positions[windowId];
     delete this.positions[windowId];
     delete this.windows[position];
   }

@@ -29,17 +29,17 @@ export abstract class SoapEventEncoder {
     return this.mEventCode;
   }
 
-  protected abstract getEventDetails(event: ChatEvent): {[key: string]: any};
-
   public encodeEvent(event: ChatEvent): {[key: string]: any} {
-    let details: {[key: string]: any} = this.getEventDetails(event),
-      obj: {[key: string]: any} = {
-        type: event.getCode()
+    const details: {[key: string]: any} = this.getEventDetails(event);
+    const obj: {[key: string]: any} = {
+        type: event.getCode(),
       };
-    for (let key in details) {
-      if (!details.hasOwnProperty(key)) continue;
+    for (const key in details) {
+      if (!details.hasOwnProperty(key)) { continue; }
       obj[key] = details[key];
     }
     return obj;
   }
+
+  protected abstract getEventDetails(event: ChatEvent): {[key: string]: any};
 }

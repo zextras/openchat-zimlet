@@ -49,6 +49,7 @@
         <!-- Show debug tab in preferences dialog -->
         <property type="string" name="zxchat_pref_show_debug_info" value="false"/>
         <property type="string" name="report_errors" value="false"/>
+        <property type="string" name="zxchat_pref_last_status" value="1"/>
     </userProperties>
 
     <resource>emojione.sprites.png</resource>

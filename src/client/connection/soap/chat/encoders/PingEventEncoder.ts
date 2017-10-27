@@ -15,10 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventEncoder} from "./SoapEventEncoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {PingEvent} from "../../../../events/chat/PingEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventEncoder} from "./SoapEventEncoder";
 
 export class PingEventEncoder extends SoapEventEncoder {
 

@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventParser} from "./SoapEventParser";
 import {DateProvider} from "../../../../lib/DateProvider";
+import {SoapEventParser} from "./SoapEventParser";
 
 import {AcceptFriendshipEventDecoder} from "./decoders/AcceptFriendshipEventDecoder";
 import {BuddyListEventDecoder} from "./decoders/BuddyListEventDecoder";
@@ -31,13 +31,14 @@ import {RemoveFriendshipEventDecoder} from "./decoders/RemoveFriendshipEventDeco
 import {RenameFriendshipEventDecoder} from "./decoders/RenameFriendshipEventDecoder";
 import {RenameGroupEventDecoder} from "./decoders/RenameGroupEventDecoder";
 import {RequiredRegistrationEventDecoder} from "./decoders/RequiredRegistrationEventDecoder";
+import {SecretTestEventDecoder} from "./decoders/SecretTestEventDecoder";
 import {SessionRegisteredEventDecoder} from "./decoders/SessionRegisteredEventDecoder";
 import {SessionUnregisteredEventDecoder} from "./decoders/SessionUnregisteredEventDecoder";
 import {SetStatusEventDecoder} from "./decoders/SetStatusEventDecoder";
 import {ShutdownEventDecoder} from "./decoders/ShutdownEventDecoder";
+import {SuperSecretEventDecoder} from "./decoders/SuperSecretEventDecoder";
 import {UserStatusesEventDecoder} from "./decoders/UserStatusesEventDecoder";
 import {WritingStatusEventDecoder} from "./decoders/WritingStatusEventDecoder";
-import {SecretTestEventDecoder} from "./decoders/SecretTestEventDecoder";
 import {AcceptFriendshipEventEncoder} from "./encoders/AcceptFriendshipEventEncoder";
 import {FriendshipEventEncoder} from "./encoders/FriendshipEventEncoder";
 import {MessageAckEventEncoder} from "./encoders/MessageAckEventEncoder";
@@ -48,15 +49,14 @@ import {RenameFriendshipEventEncoder} from "./encoders/RenameFriendshipEventEnco
 import {RenameGroupEventEncoder} from "./encoders/RenameGroupEventEncoder";
 import {SendMessageEventEncoder} from "./encoders/SendMessageEventEncoder";
 import {SetStatusEventEncoder} from "./encoders/SetStatusEventEncoder";
-import {WritingStatusEventEncoder} from "./encoders/WritingStatusEventEncoder";
 import {UnregisterSessionEventEncoder} from "./encoders/UnregisterSessionEventEncoder";
-import {SuperSecretEventDecoder} from "./decoders/SuperSecretEventDecoder";
+import {WritingStatusEventEncoder} from "./encoders/WritingStatusEventEncoder";
 
 export class SoapEventParserUtils {
 
   public static PopulateChatSoapEventParser(
     newParser: SoapEventParser,
-    dateProvider: DateProvider
+    dateProvider: DateProvider,
   ): void {
     const secretDecoder = new SuperSecretEventDecoder(dateProvider);
     // Add Decoders

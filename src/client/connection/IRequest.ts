@@ -17,7 +17,7 @@
 
 import {Callback} from "../../lib/callbacks/Callback";
 
-export interface Request {
+export interface IRequest {
   send(): string;
   cancelRequest(errorCallback: Callback): void;
 }

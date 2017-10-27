@@ -15,19 +15,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IBuddy} from "./IBuddy";
 import {Message} from "./Message";
-import {Buddy} from "./Buddy";
 
 export class MessageReceived extends Message {
 
-  private mSender: Buddy;
+  private mSender: IBuddy;
 
-  constructor(id: string = "", sender: Buddy, date: Date, message: string = "") {
+  constructor(id: string = "", sender: IBuddy, date: Date, message: string = "") {
     super(id, date, message);
     this.mSender = sender;
   }
 
-  public getSender(): Buddy {
+  public getSender(): IBuddy {
     return this.mSender;
   }
 

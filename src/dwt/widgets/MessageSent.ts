@@ -15,30 +15,30 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message} from "./Message";
-import {DateProvider} from "../../lib/DateProvider";
-import {Conversation} from "./Conversation";
-import {Callback} from "../../lib/callbacks/Callback";
 import {MessageSent as MessageSentObj} from "../../client/MessageSent";
+import {Callback} from "../../lib/callbacks/Callback";
+import {DateProvider} from "../../lib/DateProvider";
 import {StringUtils} from "../../lib/StringUtils";
+import {Conversation} from "./Conversation";
+import {Message} from "./Message";
 
 export class MessageSent extends Message {
 
   constructor(parent: Conversation, message: MessageSentObj, dateProvider: DateProvider) {
     super(parent, message, dateProvider);
-    (<HTMLElement>this.getHtmlElement().childNodes[0]).setAttribute("sender", "false");
-    (<MessageSentObj>this.mMessage).onSetDelivered(new Callback(this, this.setDelivered));
+    (this.getHtmlElement().childNodes[0] as HTMLElement).setAttribute("sender", "false");
+    (this.mMessage as MessageSentObj).onSetDelivered(new Callback(this, this.setDelivered));
     this.setDelivered(message.isDelivered());
   }
 
   public _createHtml(): void {
     super._createHtml({
-      sender: StringUtils.getMessage("Me")
+      sender: StringUtils.getMessage("Me"),
     });
   }
 
   public setDelivered(delivered = true): void {
-    let opacity: number = delivered ? 1 : 0.6;
+    const opacity: number = delivered ? 1 : 0.6;
     if (typeof this.getHtmlElement() !== "undefined") {
       this.getHtmlElement().style.opacity = `${opacity}`;
     }

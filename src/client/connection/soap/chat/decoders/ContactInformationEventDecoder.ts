@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {ContactInformationEvent} from "../../../../events/chat/ContactInformationEvent";
-import {BuddyStatusImp} from "../../../../BuddyStatusImp";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {ContactInformationEvent} from "../../../../events/chat/ContactInformationEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class ContactInformationEventDecoder extends SoapEventDecoder {
 
@@ -38,20 +38,20 @@ export class ContactInformationEventDecoder extends SoapEventDecoder {
       statusType: number,
       message: string,
       id: number,
-      isGroupChat: boolean
+      isGroupChat: boolean,
     },
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
     return new ContactInformationEvent(
-      eventObj["from"],
-      this.mDateProvider.getDate(eventObj["timestampSent"]),
+      eventObj.from,
+      this.mDateProvider.getDate(eventObj.timestampSent),
       this.mDateProvider.getNow(),
       new BuddyStatusImp(
-        BuddyStatusImp.GetTypeFromNumber(eventObj["statusType"]),
-        eventObj["message"],
-        eventObj["id"]
+        BuddyStatusImp.GetTypeFromNumber(eventObj.statusType),
+        eventObj.message,
+        eventObj.id,
       ),
-      eventObj["isGroupChat"]
+      eventObj.isGroupChat,
     );
   }
 

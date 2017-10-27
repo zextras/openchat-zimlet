@@ -17,7 +17,7 @@
 
 import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 
-export interface DwtChatTreeItem {
+export interface IDwtChatTreeItem {
 
   isGroupTreeItem(): boolean;
   isBuddyTreeItem(): boolean;

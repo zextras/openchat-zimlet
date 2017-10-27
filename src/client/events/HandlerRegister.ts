@@ -15,30 +15,30 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ChatZimletBase} from "../../ChatZimletBase";
 import {EventManager} from "./EventManager";
-import {MessageEventHandler} from "./handlers/MessageEventHandler";
-import {FriendshipEventHandler} from "./handlers/FriendshipEventHandler";
+import {BroadcastMessageEventHandler} from "./handlers/BroadcastMessageEventHandler";
+import {BuddyListEventHandler} from "./handlers/BuddyListEventHandler";
+import {ContactInformationEventHandler} from "./handlers/ContactInformationEventHandler";
+import {ErrorEventHandler} from "./handlers/ErrorEventHandler";
+import {EventSessionRegisteredHandler} from "./handlers/EventSessionRegisteredHandler";
+import {FriendBackAddedEventHandler} from "./handlers/FriendBackAddedEventHandler";
 import {FriendshipAcceptedHandler} from "./handlers/friendship/FriendshipAcceptedHandler";
 import {FriendshipBlockedHandler} from "./handlers/friendship/FriendshipBlockedHandler";
 import {FriendshipDeniedHandler} from "./handlers/friendship/FriendshipDeniedHandler";
 import {FriendshipInvitationHandler} from "./handlers/friendship/FriendshipInvitationHandler";
 import {FriendshipRemovedHandler} from "./handlers/friendship/FriendshipRemovedHandler";
 import {FriendshipRenameHandler} from "./handlers/friendship/FriendshipRenameHandler";
-import {ContactInformationEventHandler} from "./handlers/ContactInformationEventHandler";
-import {RequiredRegistrationEventHandler} from "./handlers/RequiredRegistrationEventHandler";
-import {BroadcastMessageEventHandler} from "./handlers/BroadcastMessageEventHandler";
-import {BuddyListEventHandler} from "./handlers/BuddyListEventHandler";
-import {TimeoutEventHandler} from "./handlers/TimeoutEventHandler";
-import {WritingStatusEventHandler} from "./handlers/WritingStatusEventHandler";
-import {FriendBackAddedEventHandler} from "./handlers/FriendBackAddedEventHandler";
+import {FriendshipEventHandler} from "./handlers/FriendshipEventHandler";
 import {MessageAckReceivedEventHandler} from "./handlers/MessageAckReceivedEventHandler";
+import {MessageEventHandler} from "./handlers/MessageEventHandler";
 import {NewClientVersionEventHandler} from "./handlers/NewClientVersionEventHandler";
+import {RequiredRegistrationEventHandler} from "./handlers/RequiredRegistrationEventHandler";
 import {ShutdownEventHandler} from "./handlers/ShutdownEventHandler";
-import {ErrorEventHandler} from "./handlers/ErrorEventHandler";
-import {ChatZimletBase} from "../../ChatZimletBase";
-import {EventSessionRegisteredHandler} from "./handlers/EventSessionRegisteredHandler";
-import {UnregisterSessionEventHandler} from "./handlers/UnregisterSessionEventHandler";
 import {SuperSecretEventHandler} from "./handlers/SuperSecretEventHandler";
+import {TimeoutEventHandler} from "./handlers/TimeoutEventHandler";
+import {UnregisterSessionEventHandler} from "./handlers/UnregisterSessionEventHandler";
+import {WritingStatusEventHandler} from "./handlers/WritingStatusEventHandler";
 
 export class HandlerRegister {
   public static registerHandlers(eventManager: EventManager, zimletContext: ChatZimletBase): void {
@@ -49,8 +49,8 @@ export class HandlerRegister {
         new FriendshipDeniedHandler(),
         new FriendshipInvitationHandler(zimletContext),
         new FriendshipRemovedHandler(),
-        new FriendshipRenameHandler()
-      )
+        new FriendshipRenameHandler(),
+      ),
     );
     eventManager.addEventHandler(new ContactInformationEventHandler());
     eventManager.addEventHandler(new RequiredRegistrationEventHandler());

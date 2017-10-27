@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {EventSessionRegistered} from "../../../../events/chat/EventSessionRegistered";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {EventSessionRegistered} from "../../../../events/chat/EventSessionRegistered";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class SessionRegisteredEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -31,11 +31,11 @@ export class SessionRegisteredEventDecoder extends SoapEventDecoder {
 
   public decodeEvent(
     eventObj: any,
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
     return new EventSessionRegistered(
       eventObj,
-      this.mDateProvider.getNow()
+      this.mDateProvider.getNow(),
     );
   }
 

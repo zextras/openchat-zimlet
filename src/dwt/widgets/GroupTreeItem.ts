@@ -15,39 +15,39 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtTreeItem, DwtTreeItemParams} from "../../zimbra/ajax/dwt/widgets/DwtTreeItem";
-import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
-import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
-import {Group} from "../../client/Group";
 import {BuddyList} from "../../client/BuddyList";
-import {IdGenerator} from "../IdGenerator";
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
-import {LearningClipUtils} from "../../lib/LearningClipUtils";
-import {StringUtils} from "../../lib/StringUtils";
-import {Setting} from "../../settings/Setting";
-import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
-import {DropTarget} from "../dnd/DropTarget";
-import {TransferType} from "../dnd/TransferType";
-import {BuddyTreeItem} from "./BuddyTreeItem";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {Group} from "../../client/Group";
+import {GroupStats} from "../../client/GroupStats";
+import {IBuddy} from "../../client/IBuddy";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
+import {ArrayUtils} from "../../lib/ArrayUtils";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
-import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
-import {Buddy} from "../../client/Buddy";
-import {Logger} from "../../lib/log/Logger";
+import {LearningClipUtils} from "../../lib/LearningClipUtils";
 import {LogEngine} from "../../lib/log/LogEngine";
-import {GroupStats} from "../../client/GroupStats";
-import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
-import {GroupTreeItemActionMenuFactory} from "./GroupTreeItemActionMenuFactory";
-import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
-import {DwtDropEvent} from "../../zimbra/ajax/dwt/dnd/DwtDropEvent";
-import {ArrayUtils} from "../../lib/ArrayUtils";
-import {BuddyStatus} from "../../client/BuddyStatus";
-import {DwtChatTreeItem} from "./DwtChatTreeItem";
-import {SortFcns} from "../SortFcns";
+import {Logger} from "../../lib/log/Logger";
+import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
+import {StringUtils} from "../../lib/StringUtils";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {Setting} from "../../settings/Setting";
+import {DwtDropEvent} from "../../zimbra/ajax/dwt/dnd/DwtDropEvent";
+import {DwtMouseEvent} from "../../zimbra/ajax/dwt/events/DwtMouseEvent";
+import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
+import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
+import {DwtTreeItem, DwtTreeItemParams} from "../../zimbra/ajax/dwt/widgets/DwtTreeItem";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {ZmContact} from "../../zimbra/zimbraMail/abook/model/ZmContact";
+import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {DropTarget} from "../dnd/DropTarget";
+import {TransferType} from "../dnd/TransferType";
+import {IdGenerator} from "../IdGenerator";
+import {SortFcns} from "../SortFcns";
+import {BuddyTreeItem} from "./BuddyTreeItem";
+import {IDwtChatTreeItem} from "./DwtChatTreeItem";
+import {GroupTreeItemActionMenuFactory} from "./GroupTreeItemActionMenuFactory";
 
-export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
+export class GroupTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
 
   public static MAX_LENGTH: number = ZimbraUtils.isUniversalUI() ? 217 : 150;
 
@@ -75,22 +75,21 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     parent: DwtComposite,
     group: Group,
     appCtxt: ZmAppCtxt,
-    mainWindowPluginManager: ChatPluginManager
+    mainWindowPluginManager: ChatPluginManager,
   ) {
-    let isDefault: boolean = group.getName() === BuddyList.DEFAULT_GROUP_NAME;
-    let groupParams: DwtTreeItemParams = {
-      parent: parent,
-      id: IdGenerator.generateId(`ZxChat_GroupTreeItem_${group.getName()}`),
+    const isDefault: boolean = group.getName() === BuddyList.DEFAULT_GROUP_NAME;
+    const groupParams: DwtTreeItemParams = {
       dndScrollCallback: parent._dndScrollCallback,
-      dndScrollId: parent._dndScrollId
+      dndScrollId: parent._dndScrollId,
+      id: IdGenerator.generateId(`ZxChat_GroupTreeItem_${group.getName()}`),
+      parent: parent,
     };
     if (isDefault) {
       groupParams.className = "FirstOverviewHeader overviewHeader";
       groupParams.text = StringUtils.getMessage("online_offline_count", ["0", "0"]);
       groupParams.selectable = false;
       groupParams.arrowDisabled = true;
-    }
-    else {
+    } else {
       let treeText: string = group.getName();
       if (group.getName().length > 22) {
         treeText = LearningClipUtils.clip(group.getName(), GroupTreeItem.MAX_LENGTH, "DwtTreeItem-Text");
@@ -113,12 +112,11 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     if (typeof ZmContact !== "undefined") {
       dropTarget = new DropTarget ([
         new TransferType("BuddyTreeItem", BuddyTreeItem),
-        new TransferType("ZmContact", ZmContact)
+        new TransferType("ZmContact", ZmContact),
       ]);
-    }
-    else {
+    } else {
       dropTarget = new DropTarget([
-        new TransferType("BuddyTreeItem", BuddyTreeItem)
+        new TransferType("BuddyTreeItem", BuddyTreeItem),
       ]);
     }
     dropTarget.addDropListener(new AjxListener(this, this.dropListener));
@@ -128,15 +126,14 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     group.onDelete(new Callback(this, this.onDelete));
     group.onNameChange(new Callback(this, this.onNameChange));
     group.onSort(new Callback(this, this.sort));
-    for (let buddy of this.mRefGroup.getBuddies()) {
+    for (const buddy of this.mRefGroup.getBuddies()) {
       this.addBuddy(buddy, false);
     }
     if (isDefault) {
       try {
         this.mOriginalExpanded = true;
         this._expand(true, null, true);
-      }
-      catch (ignored) {}
+      } catch (ignored) {}
     }
     this.mOnDeleteBuddyCbkMgr = new CallbackManager();
     this.mOnRenameBuddyCbkMgr = new CallbackManager();
@@ -149,7 +146,7 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnBuddyStatusChangeCbkMgr = new CallbackManager();
     this.mOnGroupExpandCollapseCbkMgr = new CallbackManager();
     if (parent instanceof GroupTreeItem && parent.getChildren().length > 0) {
-      (<GroupTreeItem>parent)._expand((<GroupTreeItem>parent).mOriginalExpanded, null, null, false);
+      (parent as GroupTreeItem)._expand((parent as GroupTreeItem).mOriginalExpanded, null, null, false);
     }
   }
 
@@ -161,8 +158,8 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     return false;
   }
 
-  public getChildren(): (DwtTreeItem & DwtChatTreeItem)[] {
-    return <(DwtTreeItem & DwtChatTreeItem)[]>super.getChildren();
+  public getChildren(): Array<DwtTreeItem & IDwtChatTreeItem> {
+    return super.getChildren() as Array<DwtTreeItem & IDwtChatTreeItem>;
   }
 
   // Called on setGroupsData
@@ -172,16 +169,15 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
 
   public showHideOfflineBuddies(hide: boolean): void {
     this.mHideOfflineBuddies = hide;
-    for (let treeItem of this.getChildren()) {
+    for (const treeItem of this.getChildren()) {
       if (treeItem.isBuddyTreeItem()) {
-        (<BuddyTreeItem>treeItem).showHideOffline(hide);
+        (treeItem as BuddyTreeItem).showHideOffline(hide);
       }
       if (treeItem.isGroupTreeItem()) {
-        (<GroupTreeItem>treeItem).showHideOfflineBuddies(hide);
+        (treeItem as GroupTreeItem).showHideOfflineBuddies(hide);
       }
     }
   }
-
 
   public _expand(expand: boolean, ev: DwtMouseEvent, skipNotify: boolean, notify: boolean = true): void {
     if (typeof this._childDiv === "undefined" || this._childDiv === null) {
@@ -199,66 +195,45 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     }
   }
 
-  private addBuddy(buddy: Buddy, sort: boolean = true): void {
-    let buddyItem: BuddyTreeItem = new BuddyTreeItem(this, buddy, this.mAppCtxt, this.mMainWindowPluginManager);
-    buddyItem.onDeleteBuddy(new Callback(this, this.buddyDelete));
-    buddyItem.onRenameBuddy(new Callback(this, this.buddyRename));
-    buddyItem.onSendInvitation(new Callback(this, this.invitationSent));
-    buddyItem.onAcceptInvitation(new Callback(this, this.invitationAccepted));
-    buddy.onStatusChange(new Callback(this, this.buddyStatusChanged));
-    buddy.onStatusChange(new Callback(this, this.promiseSort));
-    buddy.onNicknameChange(new Callback(this, this.sort));
-    this.updateCounter();
-    for (let child of this.getChildren()) {
-      if (typeof child.isBuddyTreeItem !== "undefined" && child.isBuddyTreeItem()) {
-        this._expand(this.mOriginalExpanded, null, null, false);
-        break;
-      }
-    }
-    buddyItem.showHideOffline(this.mHideOfflineBuddies);
-    if (sort) {
-      this.sort();
-    }
-  }
-
-  public removeBuddy(buddy: Buddy): boolean {
+  public removeBuddy(buddy: IBuddy): boolean {
     this.Log.debug({
       id: buddy.getId(),
-      name: buddy.getNickname()
+      name: buddy.getNickname(),
     }, "Buddy removed from group");
-    for (let child of this.getChildren()) {
-      if (child.isBuddyTreeItem() && (<BuddyTreeItem>child).getBuddy().getId() === buddy.getId()) {
+    for (const child of this.getChildren()) {
+      if (child.isBuddyTreeItem() && (child as BuddyTreeItem).getBuddy().getId() === buddy.getId()) {
         this.removeChild(child);
       }
       if (child.isGroupTreeItem()) {
-        (<GroupTreeItem>child).removeBuddy(buddy);
+        (child as GroupTreeItem).removeBuddy(buddy);
       }
     }
     return true;
   }
 
   public updateCounter(): void {
-    let stats: GroupStats = this.getGroup().getStatistics().clone();
-    for (let child of this.getChildren()) {
+    const stats: GroupStats = this.getGroup().getStatistics().clone();
+    for (const child of this.getChildren()) {
       if (child.isGroupTreeItem()) {
-        stats.add((<GroupTreeItem>child).getGroup().getStatistics());
+        stats.add((child as GroupTreeItem).getGroup().getStatistics());
       }
     }
     let name: string = `${this.getGroup().getName()} ${stats.getOnlineBuddiesCount()}/${stats.getTotalBuddiesCount()}`;
     if (this.getGroup().getName() === BuddyList.DEFAULT_GROUP_NAME) {
-      name = StringUtils.getMessage("online_offline_count", [stats.getOnlineBuddiesCount().toString(), stats.getOfflineBuddiesCount().toString()]);
+      name = StringUtils.getMessage(
+        "online_offline_count",
+        [stats.getOnlineBuddiesCount().toString(), stats.getOfflineBuddiesCount().toString()],
+      );
     }
     if (name.length > 23) {
       name = LearningClipUtils.clip(name, GroupTreeItem.MAX_LENGTH, "DwtTreeItem-Text");
     }
     this.setText(name);
-    if (typeof (<GroupTreeItem>this.parent).isGroupTreeItem !== "undefined" && (<GroupTreeItem>this.parent).isGroupTreeItem()) {
-      (<GroupTreeItem>this.parent).updateCounter();
+    if (typeof (this.parent as GroupTreeItem).isGroupTreeItem !== "undefined"
+      && (this.parent as GroupTreeItem).isGroupTreeItem()
+    ) {
+      (this.parent as GroupTreeItem).updateCounter();
     }
-  }
-
-  private onNameChange(newName: string): void {
-    this.updateCounter();
   }
 
   public getGroup(): Group {
@@ -269,32 +244,16 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mOnDeleteBuddyCbkMgr.addCallback(callback);
   }
 
-  private buddyDelete(buddy: Buddy): void {
-    this.mOnDeleteBuddyCbkMgr.run(buddy);
-  }
-
   public onRenameBuddy(callback: Callback): void {
     this.mOnRenameBuddyCbkMgr.addCallback(callback);
-  }
-
-  private buddyRename(buddy: Buddy): void {
-    this.mOnRenameBuddyCbkMgr.run(buddy);
   }
 
   public onSendInvitation(callback: Callback): void {
     this.mOnSendInvitationCbkMgr.addCallback(callback);
   }
 
-  private invitationSent(buddy: Buddy): void {
-    this.mOnSendInvitationCbkMgr.run(buddy);
-  }
-
   public onAcceptInvitation(callback: Callback): void {
     this.mOnAcceptInvitationCbkMgr.addCallback(callback);
-  }
-
-  private invitationAccepted(buddy: Buddy): void {
-    this.mOnAcceptInvitationCbkMgr.run(buddy);
   }
 
   public onDeleteGroupSelected(callback: Callback): void {
@@ -315,11 +274,6 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
 
   public onBuddyStatusChange(callback: Callback): void {
     this.mOnBuddyStatusChangeCbkMgr.addCallback(callback);
-  }
-
-  private buddyStatusChanged(buddy: Buddy, status: BuddyStatus): void {
-    this.updateCounter();
-    this.mOnBuddyStatusChangeCbkMgr.run(buddy, status);
   }
 
   public onBuddyDroppedInGroup(callback: Callback): void {
@@ -344,8 +298,113 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
     this.mActionMenu.popup(0, ev.docX, ev.docY, false);
   }
 
+  public setRootGroupLabel(buddyList: BuddyList): void {
+    let online: number = 0;
+    let offline: number = 0;
+    for (const group of buddyList.getGroups()) {
+      const stats: GroupStats = group.getStatistics();
+      online += stats.getOnlineBuddiesCount();
+      offline += stats.getOfflineBuddiesCount();
+    }
+    this.setText(StringUtils.getMessage("online_offline_count", [online.toString(), offline.toString()]));
+  }
+
+  public applyFilter(regex: RegExp): number {
+    let itemsShown: number = 0;
+    for (const treeItem of this.getChildren()){
+      try {
+        if (treeItem.isGroupTreeItem()) {
+          itemsShown += (treeItem as GroupTreeItem).applyFilter(regex);
+        }
+        if (treeItem.isBuddyTreeItem()) {
+          itemsShown += (treeItem as BuddyTreeItem).applyFilter(regex);
+        }
+      } catch (err) {
+        this.Log.err(err, "GroupTreeItem.applyFilter");
+      }
+    }
+    if (regex.toString() in ["/(?:)/", "/(?:)/i", "//i", "//"]) {
+      this._expand(this.mOriginalExpanded, null, null, false);
+    } else {
+      this._expand(true, null, null, false);
+    }
+    this.setVisible(true);
+    return itemsShown;
+  }
+
+  public setSortMethod(sortMethod: string, sortFunction: SortFcns): void {
+    this.mSortMethod = sortMethod;
+    this.mSortFunction = sortFunction;
+    for (const child of this.getChildren()) {
+      if (child.isGroupTreeItem()) {
+        (child as GroupTreeItem).setSortMethod(this.mSortMethod, this.mSortFunction);
+      }
+    }
+    this.sort();
+  }
+
+  public sort(): void {
+    if (this.mSortMethod === Setting.BUDDY_SORT_NAME) {
+      super.sort(this.mSortFunction.sortBuddyListByNickname);
+    } else if (this.mSortMethod === Setting.BUDDY_SORT_PRESENCE) {
+      super.sort(this.mSortFunction.sortBuddyListByNickname);
+      super.sort(this.mSortFunction.sortBuddyListByStatus);
+    }
+  }
+
+  public promiseSort(): void {
+    this.mRefGroup.promiseSort();
+  }
+
+  private addBuddy(buddy: IBuddy, sort: boolean = true): void {
+    const buddyItem: BuddyTreeItem = new BuddyTreeItem(this, buddy, this.mAppCtxt, this.mMainWindowPluginManager);
+    buddyItem.onDeleteBuddy(new Callback(this, this.buddyDelete));
+    buddyItem.onRenameBuddy(new Callback(this, this.buddyRename));
+    buddyItem.onSendInvitation(new Callback(this, this.invitationSent));
+    buddyItem.onAcceptInvitation(new Callback(this, this.invitationAccepted));
+    buddy.onStatusChange(new Callback(this, this.buddyStatusChanged));
+    buddy.onStatusChange(new Callback(this, this.promiseSort));
+    buddy.onNicknameChange(new Callback(this, this.sort));
+    this.updateCounter();
+    for (const child of this.getChildren()) {
+      if (typeof child.isBuddyTreeItem !== "undefined" && child.isBuddyTreeItem()) {
+        this._expand(this.mOriginalExpanded, null, null, false);
+        break;
+      }
+    }
+    buddyItem.showHideOffline(this.mHideOfflineBuddies);
+    if (sort) {
+      this.sort();
+    }
+  }
+
+  private onNameChange(newName: string): void {
+    this.updateCounter();
+  }
+
+  private buddyDelete(buddy: IBuddy): void {
+    this.mOnDeleteBuddyCbkMgr.run(buddy);
+  }
+
+  private buddyRename(buddy: IBuddy): void {
+    this.mOnRenameBuddyCbkMgr.run(buddy);
+  }
+
+  private invitationSent(buddy: IBuddy): void {
+    this.mOnSendInvitationCbkMgr.run(buddy);
+  }
+
+  private invitationAccepted(buddy: IBuddy): void {
+    this.mOnAcceptInvitationCbkMgr.run(buddy);
+  }
+
+  private buddyStatusChanged(buddy: IBuddy, status: IBuddyStatus): void {
+    this.updateCounter();
+    this.mOnBuddyStatusChangeCbkMgr.run(buddy, status);
+  }
+
   private onDelete(group: Group): void {
-    (<DwtComposite>this.parent).removeChild(this);
+    (this.parent as DwtComposite).removeChild(this);
   }
 
   private dropListener(ev: DwtDropEvent): boolean {
@@ -359,12 +418,10 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
           if (ev.srcData.data.length > 1) {
             ev.doIt = false;
             return true;
-          }
-          else {
+          } else {
             objToCheck = ev.srcData.data[0];
           }
-        }
-        else {
+        } else {
           objToCheck = ev.srcData.data;
         }
       }
@@ -372,90 +429,27 @@ export class GroupTreeItem extends DwtTreeItem implements DwtChatTreeItem {
         typeof ev.srcData !== "undefined" && ev.srcData !== null &&
         typeof ev.srcData.getBuddy !== "undefined" && ev.srcData.getBuddy !== null
       ) {
-        let buddy: Buddy = this.getGroup().getBuddyById((<BuddyTreeItem>ev.srcData).getBuddy().getId());
+        const buddy: IBuddy = this.getGroup().getBuddyById((ev.srcData as BuddyTreeItem).getBuddy().getId());
         if (typeof buddy !== "undefined" && buddy !== null) {
           ev.doIt = false;
           return true;
         }
       }
       ev.doIt = this.getDropTarget().isValidTarget(objToCheck);
-    }
-    else if (ev.action === DwtDropEvent.DRAG_DROP) {
+    } else if (ev.action === DwtDropEvent.DRAG_DROP) {
       if (typeof ev.srcData.data !== "undefined" && ev.srcData.data !== null) {
         let contactInfo: ZmContact;
         if (ArrayUtils.isArray(ev.srcData.data)) {
           contactInfo = ev.srcData.data[0];
-        }
-        else {
+        } else {
           contactInfo = ev.srcData.data;
         }
         this.mOnContactDroppedInGroupCbkMgr.run(contactInfo, this.getGroup());
-      }
-      else if (typeof ev.srcData !== "undefined" && ev.srcData !== null) {
-        this.mOnBuddyDroppedInGroupCbkMgr.run((<BuddyTreeItem>ev.srcData).getBuddy(), this.getGroup());
+      } else if (typeof ev.srcData !== "undefined" && ev.srcData !== null) {
+        this.mOnBuddyDroppedInGroupCbkMgr.run((ev.srcData as BuddyTreeItem).getBuddy(), this.getGroup());
       }
     }
     return true;
   }
 
-  public setRootGroupLabel(buddyList: BuddyList): void {
-    let online: number = 0,
-      offline: number = 0;
-    for (let group of buddyList.getGroups()) {
-      let stats: GroupStats = group.getStatistics();
-      online += stats.getOnlineBuddiesCount();
-      offline += stats.getOfflineBuddiesCount();
-    }
-    this.setText(StringUtils.getMessage("online_offline_count", [online.toString(), offline.toString()]));
-  }
-
-  public applyFilter(regex: RegExp): number {
-    let itemsShown: number = 0;
-    for (let treeItem of this.getChildren()){
-      try {
-        if (treeItem.isGroupTreeItem()) {
-          itemsShown += (<GroupTreeItem>treeItem).applyFilter(regex);
-        }
-        if (treeItem.isBuddyTreeItem()) {
-          itemsShown += (<BuddyTreeItem>treeItem).applyFilter(regex);
-        }
-      }
-      catch (err) {
-        this.Log.err(err, "GroupTreeItem.applyFilter");
-      }
-    }
-    if (regex.toString() in ["/(?:)/", "/(?:)/i", "//i", "//"]) {
-      this._expand(this.mOriginalExpanded, null, null, false);
-    }
-    else {
-      this._expand(true, null, null, false);
-    }
-    this.setVisible(true);
-    return itemsShown;
-  }
-
-  public setSortMethod(sortMethod: string, sortFunction: SortFcns): void {
-    this.mSortMethod = sortMethod;
-    this.mSortFunction = sortFunction;
-    for (let child of this.getChildren()) {
-      if (child.isGroupTreeItem()) {
-        (<GroupTreeItem>child).setSortMethod(this.mSortMethod, this.mSortFunction);
-      }
-    }
-    this.sort();
-  }
-
-  public sort(): void {
-    if (this.mSortMethod === Setting.BUDDY_SORT_NAME) {
-      super.sort(this.mSortFunction.sortBuddyListByNickname);
-    }
-    else if (this.mSortMethod === Setting.BUDDY_SORT_PRESENCE) {
-      super.sort(this.mSortFunction.sortBuddyListByNickname);
-      super.sort(this.mSortFunction.sortBuddyListByStatus);
-    }
-  }
-
-  public promiseSort(): void {
-    this.mRefGroup.promiseSort();
-  }
 }

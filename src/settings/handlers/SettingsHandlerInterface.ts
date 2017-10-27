@@ -20,13 +20,12 @@ import {Callback} from "../../lib/callbacks/Callback";
 /**
  * Interface for the various settings type handler.
  */
-export interface SettingsHandlerInterface {
+export interface ISettingsHandlerInterface {
 
   /**
    * Store a setting.
    */
-  set(key: string, value: string, callback: Callback): void;
-  set(key: string, value: number, callback: Callback): void;
+  set(key: string, value: string|number, callback: Callback): void;
 
   /**
    * Get a setting.

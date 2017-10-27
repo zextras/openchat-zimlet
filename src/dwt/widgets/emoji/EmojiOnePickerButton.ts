@@ -15,17 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtToolBarButton, DwtToolBarButtonParams} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
-import {EmojiOnePicker} from "./EmojiOnePicker";
 import {Callback} from "../../../lib/callbacks/Callback";
-import {DwtMenu} from "../../../zimbra/ajax/dwt/widgets/DwtMenu";
-import {DwtSelectionEvent} from "../../../zimbra/ajax/dwt/events/DwtSelectionEvent";
-import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
-import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {FocusKeeper} from "../../../lib/FocusKeeper";
-import {DwtKeyMap} from "../../../zimbra/ajax/dwt/keyboard/DwtKeyMap";
 import {ZimbraUtils} from "../../../lib/ZimbraUtils";
-import {EmojiData} from "./EmojiTemplate";
+import {DwtSelectionEvent} from "../../../zimbra/ajax/dwt/events/DwtSelectionEvent";
+import {DwtMenu} from "../../../zimbra/ajax/dwt/widgets/DwtMenu";
+import {DwtToolBarButton, DwtToolBarButtonParams} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
+import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
+import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
+import {EmojiOnePicker} from "./EmojiOnePicker";
+import {IEmojiData} from "./EmojiTemplate";
 
 export class EmojiOnePickerButton extends DwtToolBarButton {
 
@@ -33,9 +32,9 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
   private mOnEmojiSelectedCallback: Callback;
 
   constructor(
-    params: EmojiOnePickerButtonParams,
+    params: IEmojiOnePickerButtonParams,
     onEmojiSelectedCallback: Callback,
-    popAbove: boolean = false
+    popAbove: boolean = false,
   ) {
     if (typeof params === "undefined") { return; }
     params.className = `ZToolbarButton EmojiPickerButton${ !ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`;
@@ -52,7 +51,7 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     // Change following AjxListener in order to change button behaviour that add current emoji to inputfield
     //   Also uncomment "this.setEmoji(tmpEmoji);" in pickerListener;
     this.addSelectionListener(
-      new AjxListener(this, this.popup)
+      new AjxListener(this, this.popup),
       // new AjxListener(this, this.buttonListener, onEmojiSelectedCallback)
     );
   }
@@ -64,12 +63,12 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     super.popup();
   }
 
-  private setEmoji(emoji: EmojiData): void {
+  private setEmoji(emoji: IEmojiData): void {
     this.setData(EmojiOnePicker.KEY_EMOJI_DATA, emoji.name);
     this.setText(emoji.data);
   }
 
-  private onEmojiSelected(callback: Callback, ev: DwtSelectionEvent, emojiData: EmojiData): void {
+  private onEmojiSelected(callback: Callback, ev: DwtSelectionEvent, emojiData: IEmojiData): void {
     if (typeof emojiData !== "undefined") {
       this.pickerListener(callback, ev, emojiData);
     }
@@ -77,17 +76,17 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
 
   private setEmojiPickerMenu(): void {
     if (typeof EmojiOnePicker.getInstance() === "undefined") {
-      let picker: EmojiOnePicker = new EmojiOnePicker(this);
+      const picker: EmojiOnePicker = new EmojiOnePicker(this);
     }
     this.setMenu(
       EmojiOnePicker.getInstance().getMenu(
         this,
-        this.mOnEmojiSelectedCallback
+        this.mOnEmojiSelectedCallback,
       ),
       false,
       false,
       this.mPopAbove,
-      false
+      false,
     );
   }
 
@@ -95,17 +94,17 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
     if (typeof callback !== "undefined") {
       callback.run(
         ev,
-        {name: this.getData(EmojiOnePicker.KEY_EMOJI_DATA), data: this.getText()}
+        {name: this.getData(EmojiOnePicker.KEY_EMOJI_DATA), data: this.getText()},
       );
     }
   }
 
-  private pickerListener(callback: Callback, ev: DwtSelectionEvent, emoji: EmojiData): void {
-    let tmpEmoji: EmojiData = emoji;
+  private pickerListener(callback: Callback, ev: DwtSelectionEvent, emoji: IEmojiData): void {
+    let tmpEmoji: IEmojiData = emoji;
     if (typeof emoji === "undefined") {
       tmpEmoji = {
+        data: this.getText(),
         name: this.getData(EmojiOnePicker.KEY_EMOJI_DATA),
-        data: this.getText()
       };
     }
     if (typeof tmpEmoji !== "undefined") {
@@ -120,4 +119,4 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
 
 }
 
-export interface EmojiOnePickerButtonParams extends DwtToolBarButtonParams {}
+export interface IEmojiOnePickerButtonParams extends DwtToolBarButtonParams {}

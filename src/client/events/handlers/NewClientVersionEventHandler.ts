@@ -15,22 +15,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {NewClientVersionEvent} from "../chat/NewClientVersionEvent";
-import {Version} from "../../../lib/Version";
-import {ZimletVersion} from "../../../ZimletVersion";
 import {ChatZimletBase} from "../../../ChatZimletBase";
-import {DwtMessageDialog} from "../../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
-import {DwtDialog} from "../../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {IdGenerator} from "../../../dwt/IdGenerator";
-import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
+import {Version} from "../../../lib/Version";
+import {DwtDialog} from "../../../zimbra/ajax/dwt/widgets/DwtDialog";
+import {DwtMessageDialog} from "../../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {appCtxt} from "../../../zimbra/zimbraMail/appCtxt";
+import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
+import {ZimletVersion} from "../../../ZimletVersion";
+import {IChatClient} from "../../IChatClient";
+import {NewClientVersionEvent} from "../chat/NewClientVersionEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class NewClientVersionEventHandler implements ChatEventHandler {
+export class NewClientVersionEventHandler implements IChatEventHandler {
 
   private mUpdateNotified: boolean;
 
@@ -38,18 +38,18 @@ export class NewClientVersionEventHandler implements ChatEventHandler {
     return OpenChatEventCode.NEW_CLIENT_VERSION;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let newClientVersionEvent: NewClientVersionEvent = <NewClientVersionEvent> chatEvent;
-    let version: Version = newClientVersionEvent.getNewClientVersion();
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const newClientVersionEvent: NewClientVersionEvent = chatEvent as NewClientVersionEvent;
+    const version: Version = newClientVersionEvent.getNewClientVersion();
     if (ZimletVersion.TESTING) {
       return true;
     }
     if (!ChatZimletBase.getVersion().equals(version) && !this.mUpdateNotified) {
       this.mUpdateNotified = true;
-      let dialog: DwtMessageDialog = new DwtMessageDialog({
+      const dialog: DwtMessageDialog = new DwtMessageDialog({
         buttons: [DwtDialog.YES_BUTTON, DwtDialog.DISMISS_BUTTON],
+        id: IdGenerator.generateId("ZxChat_NewClientMessageDialog"),
         parent: appCtxt.getShell(),
-        id: IdGenerator.generateId("ZxChat_NewClientMessageDialog")
       });
       let message: string = ZmMsg.zimletChangeRestart;
       if (version.equals(new Version(0, 0, 0))) {
@@ -58,14 +58,14 @@ export class NewClientVersionEventHandler implements ChatEventHandler {
       dialog.setMessage(
         message,
         DwtMessageDialog.INFO_STYLE,
-        "Chat Zimlet"
+        "Chat Zimlet",
       );
       dialog.setButtonListener(
         DwtDialog.YES_BUTTON,
         new AjxListener(
           location,
-          location.reload
-        )
+          location.reload,
+        ),
       );
       dialog.popup();
     }

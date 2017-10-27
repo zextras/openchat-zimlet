@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SuperSecretEvent} from "./SuperSecretEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
+import {SuperSecretEvent} from "./SuperSecretEvent";
 
 export class SecretTestEvent extends SuperSecretEvent {
 

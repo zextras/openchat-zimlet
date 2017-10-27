@@ -35,7 +35,7 @@ export class MessageAckWaiter {
   /**
    * Remove the reference from the internal map
    */
-  removeMessage(message: MessageSent): void {
+  public removeMessage(message: MessageSent): void {
     delete this.mMap[message.getMessageId()];
   }
 

@@ -15,34 +15,45 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message} from "./Message";
-import {DateProvider} from "../../lib/DateProvider";
-import {Conversation} from "./Conversation";
-import {Callback} from "../../lib/callbacks/Callback";
+import {IBuddy} from "../../client/IBuddy";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
-import {Buddy} from "../../client/Buddy";
+import {Callback} from "../../lib/callbacks/Callback";
+import {DateProvider} from "../../lib/DateProvider";
+import {LearningClipUtils} from "../../lib/LearningClipUtils";
+import {Conversation} from "./Conversation";
+import {Message} from "./Message";
 
 export class MessageReceived extends Message {
 
   constructor(parent: Conversation, message: MessageReceivedObj, dateProvider: DateProvider) {
     super(parent, message, dateProvider);
-    (<HTMLElement>this.getHtmlElement().childNodes[0]).setAttribute("sender", "true");
-    let buddy: Buddy = message.getSender();
+    (this.getHtmlElement().childNodes[0] as HTMLElement).setAttribute("sender", "true");
+    const buddy: IBuddy = message.getSender();
     buddy.onNicknameChange(new Callback(this, this._updateBuddyNickname));
   }
 
   public _createHtml(): void {
+    const shortNickname = LearningClipUtils.clip(
+      (this.mMessage as MessageReceivedObj).getSender().getNickname(),
+      165,
+      "ZxChat_MessageSender",
+    );
     super._createHtml({
-      sender: (<MessageReceivedObj>this.mMessage).getSender().getNickname()
+      sender: shortNickname,
     });
   }
 
   public _updateBuddyNickname(nickname: string): void {
-    if (this._senderEl) {
-      if (typeof this._senderEl.innerHTML !== "undefined") {
-        this._senderEl.innerHTML = nickname;
-      } else if (typeof this._senderEl.innerText !== "undefined") {
-        this._senderEl.innerText = nickname;
+    const shortNickname = LearningClipUtils.clip(
+      nickname,
+      165,
+      "ZxChat_MessageSender",
+    );
+    if (this.senderEl) {
+      if (typeof this.senderEl.innerHTML !== "undefined") {
+        this.senderEl.innerHTML = shortNickname;
+      } else if (typeof this.senderEl.innerText !== "undefined") {
+        this.senderEl.innerText = shortNickname;
       }
     }
   }

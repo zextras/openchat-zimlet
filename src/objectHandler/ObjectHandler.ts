@@ -15,18 +15,33 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Message} from "../dwt/widgets/Message";
+import {ZmMailMsg} from "../zimbra/zimbraMail/mail/model/ZmMailMsg";
 import {ZmObjectHandler} from "../zimbra/zimbraMail/share/model/ZmObjectHandler";
 import {ZmObjectManager} from "../zimbra/zimbraMail/share/model/ZmObjectManager";
-import {EmojiOneHandler} from "./handlers/EmojiOneHandler";
-import {ZmMailMsg} from "../zimbra/zimbraMail/mail/model/ZmMailMsg";
-import {Dwt} from "../zimbra/ajax/dwt/core/Dwt";
 import {ZmOrganizer} from "../zimbra/zimbraMail/share/model/ZmOrganizer";
-import {Message} from "../dwt/widgets/Message";
+import {EmojiOneHandler} from "./handlers/EmojiOneHandler";
 import {UrlHandler} from "./handlers/UrlHandler";
 
 export class ObjectHandler extends ZmObjectHandler {
 
+  public static getInstance(): ObjectHandler {
+    if (typeof ObjectHandler.INSTANCE === "undefined") {
+      ObjectHandler.INSTANCE = new ObjectHandler();
+    }
+    return ObjectHandler.INSTANCE;
+  }
+
   private static INSTANCE: ObjectHandler;
+
+  private static hasEmojiHandler(manager: ZmObjectManager): boolean {
+    return (typeof manager.__hasEmojiHandler !== "undefined" && manager.__hasEmojiHandler);
+  }
+
+  private static removeAllHandlersWithType(manager: ZmObjectManager, type: string): void {
+    manager.getHandlers()[type] = [];
+  }
+
   private enabledEmojiInConv: boolean;
   private enabledEmojiInHist: boolean;
   private enabledEmojiInMail: boolean;
@@ -36,43 +51,49 @@ export class ObjectHandler extends ZmObjectHandler {
   private emojiOneHdlr: EmojiOneHandler;
   private urlHdlr: UrlHandler;
 
+  /**
+   * @deprecated
+   */
   constructor() {
     super("none");
-    if (typeof ObjectHandler.INSTANCE === "undefined") {
-      ObjectHandler.INSTANCE = this;
-    }
-    this._init();
+    this.enabledEmojiInConv = true;
+    this.enabledEmojiInHist = true;
+    this.enabledEmojiInMail = true;
+    this.emojiOneHdlr = new EmojiOneHandler();
+
+    this.enabledUrlInConv = true;
+    this.enabledUrlInHist = true;
+    this.enabledUrlInMail = true;
+    this.urlHdlr = new UrlHandler();
   }
 
   public setEmojiEnabledInConv(enabled: boolean): void {
-    this._getInstance().enabledEmojiInConv = enabled;
+    this.enabledEmojiInConv = enabled;
   }
 
   public setEmojiEnabledInHist(enabled: boolean): void {
-    this._getInstance().enabledEmojiInHist = enabled;
+    this.enabledEmojiInHist = enabled;
   }
 
   public setEmojiEnabledInMail(enabled: boolean): void {
-    this._getInstance().enabledEmojiInMail = enabled;
+    this.enabledEmojiInMail = enabled;
   }
 
   public setUrlEnabledInConv(enabled: boolean): void {
-    this._getInstance().enabledUrlInConv = enabled;
+    this.enabledUrlInConv = enabled;
   }
 
   public setUrlEnabledInHist(enabled: boolean): void {
-    this._getInstance().enabledUrlInHist = enabled;
+    this.enabledUrlInHist = enabled;
   }
 
   public setUrlEnabledInMail(enabled: boolean): void {
-    this._getInstance().enabledUrlInMail = enabled;
+    this.enabledUrlInMail = enabled;
   }
 
-  public onFindMsgObjects(msg: ZmMailMsg, manager: ZmObjectManager): void;
-  public onFindMsgObjects(msg: Message, manager: ZmObjectManager): void;
   public onFindMsgObjects(msg: ZmMailMsg|Message, manager: ZmObjectManager): void {
-    let headerElement: HTMLElement = Dwt.getElement("zv__CLV-main__CV__header");
-    let mailTitleElement: HTMLElement = Dwt.getElement("zv__CLV-main__CV__header_subject");
+    // const headerElement: HTMLElement = Dwt.getElement("zv__CLV-main__CV__header");
+    // const mailTitleElement: HTMLElement = Dwt.getElement("zv__CLV-main__CV__header_subject");
     // if ((mailTitleElement != null) && (headerElement != null)) {
     //   if (mailTitleElement.style != null) {
     //     mailTitleElement.style.overflow = "hidden";
@@ -82,16 +103,19 @@ export class ObjectHandler extends ZmObjectHandler {
     //     Dwt.setSize(mailTitleElement, Dwt.getSize(headerElement).x - 24);
     //   }
     // }
-    let addEmojiHandler = false,
-      addUrlHandler = false;
+    let addEmojiHandler = false;
+    let addUrlHandler = false;
     if (msg instanceof Message) {
       // Is chat message
-      this.removeAllHandlersWithType(manager, "url");
+      ObjectHandler.removeAllHandlersWithType(manager, "url");
       addEmojiHandler = this.enabledEmojiInConv;
       addUrlHandler = this.enabledUrlInConv;
     } else {
       // Is Zimbra Message
-      let isChatFolder = ((<ZmMailMsg>msg).folderId === `${ZmOrganizer.ID_CHATS}` || (<ZmMailMsg>msg).folderId === ZmOrganizer.ID_CHATS);
+      const isChatFolder = (
+        (msg as ZmMailMsg).folderId === `${ZmOrganizer.ID_CHATS}`
+        || (msg as ZmMailMsg).folderId === ZmOrganizer.ID_CHATS
+      );
       if (!!msg && isChatFolder && this.enabledEmojiInHist) {
         addEmojiHandler = true;
       } else {
@@ -112,14 +136,10 @@ export class ObjectHandler extends ZmObjectHandler {
       this._removeEmojiHandlerToManager(manager);
     }
     if (addUrlHandler) {
-      this.removeAllHandlersWithType(manager, "url");
-      manager.addHandler(this.urlHdlr );
+      ObjectHandler.removeAllHandlersWithType(manager, "url");
+      manager.addHandler(this.urlHdlr);
     }
     manager.sortHandlers();
-  }
-
-  private static hasEmojiHandler(manager: ZmObjectManager): boolean {
-    return (typeof manager.__hasEmojiHandler !== "undefined" && manager.__hasEmojiHandler);
   }
 
   private _addEmojiHandlerToManager(manager: ZmObjectManager): void {
@@ -130,27 +150,6 @@ export class ObjectHandler extends ZmObjectHandler {
   private _removeEmojiHandlerToManager(manager: ZmObjectManager): void {
     manager.removeHandler(this.emojiOneHdlr);
     manager.__hasEmojiHandler = false;
-  }
-
-  private _getInstance(): ObjectHandler {
-    if (typeof ObjectHandler.INSTANCE === "undefined") {
-      ObjectHandler.INSTANCE = new ObjectHandler();
-    }
-    return ObjectHandler.INSTANCE;
-  }
-
-  private _init(): void {
-    let instance = this._getInstance();
-    instance.enabledEmojiInConv = true;
-    instance.enabledEmojiInHist = true;
-    instance.enabledEmojiInMail = true;
-
-    instance.emojiOneHdlr = new EmojiOneHandler();
-    instance.urlHdlr = new UrlHandler();
-  }
-
-  private removeAllHandlersWithType(manager: ZmObjectManager, type: string): void {
-    manager.getHandlers()[type] = [];
   }
 
 }

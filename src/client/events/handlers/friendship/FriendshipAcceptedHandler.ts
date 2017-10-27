@@ -15,23 +15,24 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {FriendshipAcceptedEvent} from "../../chat/friendship/FriendshipAcceptedEvent";
-import {ChatClient} from "../../../ChatClient";
+import {BuddyList} from "../../../BuddyList";
+import {BuddyStatusImp} from "../../../BuddyStatus";
 import {BuddyStatusType} from "../../../BuddyStatusType";
-import {BuddyStatusImp} from "../../../BuddyStatusImp";
+import {IChatClient} from "../../../IChatClient";
+import {FriendshipAcceptedEvent} from "../../chat/friendship/FriendshipAcceptedEvent";
 import {ChatEvent} from "../../ChatEvent";
-import {ChatEventHandler} from "../ChatEventHandler";
+import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipAcceptedHandler implements ChatEventHandler {
+export class FriendshipAcceptedHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return FriendshipAcceptedEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let friendshipEvent = <FriendshipAcceptedEvent> chatEvent,
-      buddyList = client.getBuddyList(),
-      buddy = buddyList.getBuddyById(friendshipEvent.getSender());
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const friendshipEvent = chatEvent as FriendshipAcceptedEvent;
+    const buddyList = client.getBuddyList();
+    const buddy = buddyList.getBuddyById(friendshipEvent.getSender());
     if (buddy != null) {
       buddy.setStatus(new BuddyStatusImp(BuddyStatusType.OFFLINE));
     }

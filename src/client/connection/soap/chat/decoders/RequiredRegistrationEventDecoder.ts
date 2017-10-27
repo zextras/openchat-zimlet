@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {RequiredRegistrationEvent} from "../../../../events/chat/RequiredRegistrationEvent";
 import {DateProvider} from "../../../../../lib/DateProvider";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {RequiredRegistrationEvent} from "../../../../events/chat/RequiredRegistrationEvent";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class RequiredRegistrationEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;

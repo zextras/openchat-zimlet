@@ -23,9 +23,9 @@
 export class TransferType {
 
   private mClassName: string;
-  private mConstructorFcn: Function;
+  private mConstructorFcn: new (...args: any[]) => any;
 
-  constructor(className: string, constructorFcn: Function) {
+  constructor(className: string, constructorFcn: new (...args: any[]) => any) {
     this.mClassName = className;
     this.mConstructorFcn = constructorFcn;
 
@@ -35,7 +35,7 @@ export class TransferType {
     return this.mClassName;
   }
 
-  public getConstructor(): Function {
+  public getConstructor(): new (...args: any[]) => any {
     return this.mConstructorFcn;
   }
 

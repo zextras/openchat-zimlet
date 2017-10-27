@@ -15,33 +15,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JQueryPlugin} from "./JQueryPlugin";
+import {emojioneList, toImage} from "../libext/emojione";
 import {JQueryTextComplete} from "../libext/jquery-textcomplete";
-import {toImage, emojioneList} from "../libext/emojione";
+import {IJQueryPlugin} from "./JQueryPlugin";
 
 declare let $: any;
 
-const sorFcn = (a: string, b: string) => { return a.length - b.length; };
+const sorFcn = (a: string, b: string) => a.length - b.length;
 
-export class TextCompletePlugin implements JQueryPlugin {
-
-  private static sInstalled: boolean = false;
-
-  public install(): void {
-    let imported = JQueryTextComplete;
-    TextCompletePlugin.sInstalled = true;
-  }
+export class TextCompletePlugin implements IJQueryPlugin {
 
   public static installOnTextField(el: string|HTMLElement): void {
-    if (!TextCompletePlugin.sInstalled) return;
+    if (!TextCompletePlugin.sInstalled) { return; }
     $(el).textcomplete(
       [
         {
+          index: 1,
           match: /\B:([\-+\w]*)$/,
-          search: function (term: string, callback: Function) {
-            let results: string[] = [],
-              returnResult: string[] = [];
-            $.each(emojioneList, function (shortname: string, data: any) {
+          maxCount: 10,
+          replace: (shortname: string) => {
+            return `${shortname} `;
+          },
+          search: (term: string, callback: (returnResult: string[]) => void) => {
+            const results: string[] = [];
+            let returnResult: string[] = [];
+            $.each(emojioneList, (shortname: string, data: any) => {
               if (shortname.indexOf(term) > -1) {
                 results.push(shortname);
               }
@@ -52,18 +50,20 @@ export class TextCompletePlugin implements JQueryPlugin {
             }
             callback(returnResult);
           },
-          template: function (shortname: string) {
+          template: (shortname: string) => {
             return `${toImage(shortname)} ${shortname}`;
           },
-          replace: function (shortname: string) {
-            return `${shortname} `;
-          },
-          index: 1,
-          maxCount: 10
-        }
+        },
       ],
-      {}
+      {},
     );
+  }
+
+  private static sInstalled: boolean = false;
+
+  public install(): void {
+    const imported = JQueryTextComplete;
+    TextCompletePlugin.sInstalled = true;
   }
 
 }

@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {MessageAckReceivedEvent} from "../../../../events/chat/MessageAckReceivedEvent";
 import {DateProvider} from "../../../../../lib/DateProvider";
+import {MessageAckReceivedEvent} from "../../../../events/chat/MessageAckReceivedEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class MessageAckReceivedEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -33,15 +33,15 @@ export class MessageAckReceivedEventDecoder extends SoapEventDecoder {
     eventObj: {
       from: string,
       to: string,
-      ID: string
+      ID: string,
     },
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
     return new MessageAckReceivedEvent(
-      eventObj["from"],
-      eventObj["to"],
-      eventObj["ID"],
-      this.mDateProvider.getNow()
+      eventObj.from,
+      eventObj.to,
+      eventObj.ID,
+      this.mDateProvider.getNow(),
     );
   }
 

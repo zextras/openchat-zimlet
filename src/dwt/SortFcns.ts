@@ -32,14 +32,10 @@ export class SortFcns {
     }
   }
 
-  public static sortBuddiesAndGroups(a: BuddyTreeItem, b: BuddyTreeItem): number;
-  public static sortBuddiesAndGroups(a: GroupTreeItem, b: BuddyTreeItem): number;
-  public static sortBuddiesAndGroups(a: BuddyTreeItem, b: GroupTreeItem): number;
-  public static sortBuddiesAndGroups(a: GroupTreeItem, b: GroupTreeItem): number;
-  public static sortBuddiesAndGroups(a: any, b: any): number {
-    if (typeof a["getBuddy"] === "function" && typeof b["getGroup"] === "function") {
+  public static sortBuddiesAndGroups(a: BuddyTreeItem|GroupTreeItem|any, b: BuddyTreeItem|GroupTreeItem|any): number {
+    if (typeof a.getBuddy === "function" && typeof b.getGroup === "function") {
       return 1;
-    } else if (typeof a["getGroup"] === "function" && typeof b["getBuddy"] === "function") {
+    } else if (typeof a.getGroup === "function" && typeof b.getBuddy === "function") {
       return -1;
     } else {
       return 0;
@@ -47,7 +43,7 @@ export class SortFcns {
   }
 
   public static sortGroupsByName(a: GroupTreeItem, b: GroupTreeItem): number {
-    if (typeof a["getGroup"] === "function" && typeof b["getGroup"] === "function") {
+    if (typeof a.getGroup === "function" && typeof b.getGroup === "function") {
       return SortFcns.baseSort(a.getGroup().getName(), b.getGroup().getName());
     } else {
       return 0;
@@ -55,7 +51,7 @@ export class SortFcns {
   }
 
   public static sortBuddyByNickname(a: BuddyTreeItem, b: BuddyTreeItem): number {
-    if (typeof a["getBuddy"] === "function" && typeof b["getBuddy"] === "function") {
+    if (typeof a.getBuddy === "function" && typeof b.getBuddy === "function") {
       return SortFcns.baseSort(a.getBuddy().getNickname(), b.getBuddy().getNickname());
     } else {
       return 0;
@@ -63,18 +59,17 @@ export class SortFcns {
   }
 
   public static sortBuddyByStatus(a: BuddyTreeItem, b: BuddyTreeItem): number {
-    if (typeof a["getBuddy"] === "function" && typeof b["getBuddy"] === "function") {
-      return SortFcns.baseSort(a.getBuddy().getStatus().getStatusPriority(), b.getBuddy().getStatus().getStatusPriority());
+    if (typeof a.getBuddy === "function" && typeof b.getBuddy === "function") {
+      return SortFcns.baseSort(
+        a.getBuddy().getStatus().getStatusPriority(),
+        b.getBuddy().getStatus().getStatusPriority(),
+      );
     } else {
       return 0;
     }
   }
 
-  public sortBuddyListByNickname(a: BuddyTreeItem, b: BuddyTreeItem): number;
-  public sortBuddyListByNickname(a: GroupTreeItem, b: BuddyTreeItem): number;
-  public sortBuddyListByNickname(a: BuddyTreeItem, b: GroupTreeItem): number;
-  public sortBuddyListByNickname(a: GroupTreeItem, b: GroupTreeItem): number;
-  public sortBuddyListByNickname(a: any, b: any): number {
+  public sortBuddyListByNickname(a: BuddyTreeItem|GroupTreeItem|any, b: BuddyTreeItem|GroupTreeItem|any): number {
     let sortValue: number = SortFcns.sortBuddiesAndGroups(a, b);
     if (sortValue !== 0) { return sortValue; }
     sortValue = SortFcns.sortGroupsByName(a, b);
@@ -82,11 +77,7 @@ export class SortFcns {
     return SortFcns.sortBuddyByNickname(a, b);
   }
 
-  public sortBuddyListByStatus(a: BuddyTreeItem, b: BuddyTreeItem): number;
-  public sortBuddyListByStatus(a: GroupTreeItem, b: BuddyTreeItem): number;
-  public sortBuddyListByStatus(a: BuddyTreeItem, b: GroupTreeItem): number;
-  public sortBuddyListByStatus(a: GroupTreeItem, b: GroupTreeItem): number;
-  public sortBuddyListByStatus(a: any, b: any): number {
+  public sortBuddyListByStatus(a: BuddyTreeItem|GroupTreeItem|any, b: BuddyTreeItem|GroupTreeItem|any): number {
     let sortValue: number = SortFcns.sortBuddiesAndGroups(a, b);
     if (sortValue !== 0) { return sortValue; }
     sortValue = SortFcns.sortGroupsByName(a, b);

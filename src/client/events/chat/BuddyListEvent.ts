@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IBuddy} from "../../IBuddy";
 import {ChatEvent} from "../ChatEvent";
-import {Buddy} from "../../Buddy";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class BuddyListEvent extends ChatEvent {
 
-  private mBuddies: Buddy[] = [];
+  private mBuddies: IBuddy[] = [];
 
   constructor(creationDate: Date) {
     super(OpenChatEventCode.BUDDY_LIST, creationDate, true);
@@ -31,15 +31,15 @@ export class BuddyListEvent extends ChatEvent {
    * Register a buddy into the buddy list event
    * @param buddy
    */
-  public addBuddy(buddy: Buddy): void {
+  public addBuddy(buddy: IBuddy): void {
     this.mBuddies.push(buddy);
   }
 
   /**
    * Get all the buddies contained in the buddy list event
-   * @return {Buddy[]}
+   * @return {IBuddy[]}
    */
-  public getBuddies(): Buddy[] {
+  public getBuddies(): IBuddy[] {
     return this.mBuddies;
   }
 }

@@ -19,9 +19,9 @@ export declare let printStackTrace: (options?: {
   e?: Error;
   guess?: boolean;
   mode?: "phantomjs"|"chrome"|"safari"|"ie"|"firefox"|"opera9"|"opera10a"|"opera10b"|"opera11"|"chrome"|"other"
-}) => TraceLine[];
+}) => ITraceLine[];
 
-export interface TraceLine {
+export interface ITraceLine {
   className?: string;
   fileName?: string;
   lineNumber?: number;

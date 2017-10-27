@@ -15,13 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ZmSkin} from "../zimbra/zimbraMail/ZmSkin";
 import {appCtxt} from "../zimbra/zimbraMail/appCtxt";
 import {ZmSetting} from "../zimbra/zimbraMail/share/model/ZmSetting";
+import {ZmSkin} from "../zimbra/zimbraMail/ZmSkin";
 
 export class ZimbraUtils {
-
-  private static ZIMBRA_VERSION: string = appCtxt.get(ZmSetting.CLIENT_VERSION);
 
   public static isUniversalUI(): boolean {
     return (ZmSkin.hints.name === "harmony2")
@@ -30,7 +28,7 @@ export class ZimbraUtils {
 
   public static getZimbraMajorVersion(): number {
     if (typeof ZimbraUtils.ZIMBRA_VERSION !== "undefined" && ZimbraUtils.ZIMBRA_VERSION !== null) {
-      let zimbraParts: string[] = ZimbraUtils.ZIMBRA_VERSION.split(".");
+      const zimbraParts: string[] = ZimbraUtils.ZIMBRA_VERSION.split(".");
       return parseInt(zimbraParts[0], 10);
     }
     return 0;
@@ -38,13 +36,17 @@ export class ZimbraUtils {
 
   public static getZimbraMinorVersion(): number {
     if (typeof ZimbraUtils.ZIMBRA_VERSION !== "undefined" && ZimbraUtils.ZIMBRA_VERSION !== null) {
-      let zimbraParts: string[] = ZimbraUtils.ZIMBRA_VERSION.split(".");
+      const zimbraParts: string[] = ZimbraUtils.ZIMBRA_VERSION.split(".");
       return zimbraParts.length > 0 ? parseInt(zimbraParts[1], 10) : 0;
     }
     return 0;
   }
 
   public static isZimbraVersionLessThan85(): boolean {
-    return ZimbraUtils.getZimbraMajorVersion() < 8 || (ZimbraUtils.getZimbraMajorVersion() === 8 && ZimbraUtils.getZimbraMinorVersion() < 5);
+    return ZimbraUtils.getZimbraMajorVersion() < 8
+      || (ZimbraUtils.getZimbraMajorVersion() === 8
+        && ZimbraUtils.getZimbraMinorVersion() < 5);
   }
+
+  private static ZIMBRA_VERSION: string = appCtxt.get(ZmSetting.CLIENT_VERSION);
 }

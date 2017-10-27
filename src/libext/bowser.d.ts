@@ -16,12 +16,12 @@
  */
 
 export declare class Bowser {
-  static firefox: boolean;
-  static chrome: boolean;
-  static opera: boolean;
-  static msie: boolean;
-  static msedge: boolean;
-  static chromium: boolean;
-  static safari: boolean;
-  static version: string;
+  public static firefox: boolean;
+  public static chrome: boolean;
+  public static opera: boolean;
+  public static msie: boolean;
+  public static msedge: boolean;
+  public static chromium: boolean;
+  public static safari: boolean;
+  public static version: string;
 }

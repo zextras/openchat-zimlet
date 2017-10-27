@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventEncoder} from "./SoapEventEncoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {RegisterSessionEvent} from "../../../../events/chat/RegisterSessionEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {RegisterSessionEvent} from "../../../../events/chat/RegisterSessionEvent";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventEncoder} from "./SoapEventEncoder";
 
 export class RegisterSessionEventEncoder extends SoapEventEncoder {
 
@@ -27,9 +27,9 @@ export class RegisterSessionEventEncoder extends SoapEventEncoder {
   }
 
   protected getEventDetails(event: ChatEvent): {} {
-    let ev: RegisterSessionEvent = <RegisterSessionEvent> event;
+    const ev: RegisterSessionEvent = event as RegisterSessionEvent;
     return {
-      clientVersion: ev.getClientVersion().toString()
+      clientVersion: ev.getClientVersion().toString(),
     };
   }
 

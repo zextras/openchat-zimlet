@@ -15,18 +15,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../ChatEvent";
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatClient} from "../../ChatClient";
+import {IChatClient} from "../../IChatClient";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class RequiredRegistrationEventHandler implements ChatEventHandler {
+export class RequiredRegistrationEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.REQUIRED_REGISTRATION;
   }
 
-  public handleEvent(event: ChatEvent, client: ChatClient): boolean {
+  public handleEvent(event: ChatEvent, client: IChatClient): boolean {
     client.stopPing();
     client.registerSession();
     return true;

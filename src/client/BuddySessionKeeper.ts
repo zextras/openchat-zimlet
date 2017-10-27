@@ -15,18 +15,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BuddyStatusImp} from "./BuddyStatusImp";
+import {BuddyStatusImp} from "./BuddyStatus";
 import {BuddyStatusType} from "./BuddyStatusType";
-import {BuddyStatus} from "./BuddyStatus";
+import {IBuddyStatus} from "./IBuddyStatus";
 
 export class BuddySessionKeeper {
 
-  private mStatusMap: {[address: string]: BuddyStatus} = {};
+  private mStatusMap: {[address: string]: IBuddyStatus} = {};
 
-  public getMostAvailableStatus(): BuddyStatus {
-    let bestStatus: BuddyStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
+  public getMostAvailableStatus(): IBuddyStatus {
+    let bestStatus: IBuddyStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
 
-    for (let address in this.mStatusMap) {
+    for (const address in this.mStatusMap) {
       if (!this.mStatusMap.hasOwnProperty(address)) { continue; }
       if (this.mStatusMap[address].isMoreAvailableThan(bestStatus)) {
         bestStatus = this.mStatusMap[address];
@@ -36,11 +36,11 @@ export class BuddySessionKeeper {
     return bestStatus;
   }
 
-  public writeStatus(resource: string = "default", status: BuddyStatus): void {
+  public writeStatus(resource: string = "default", status: IBuddyStatus): void {
     this.mStatusMap[resource] = status;
     // Fix for ZXCHAT-211
     if (this.mStatusMap.hasOwnProperty("default") && "default" !== resource) {
-       delete this.mStatusMap["default"];
+       delete this.mStatusMap.default;
     }
   }
 

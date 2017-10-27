@@ -15,15 +15,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {WindowMover} from "./WindowMover";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
+import {IWindowMover} from "./WindowMover";
 
-import {WindowBase} from "./WindowBase";
 import {TimedCallback} from "../../lib/callbacks/TimedCallback";
+import {WindowBase} from "./WindowBase";
 
-export class SmoothRoomWindowMover implements WindowMover {
+export class SmoothRoomWindowMover implements IWindowMover {
   public static DEFAULT_TIME: number = 70;
 
   private static DELAY: number = 7;
@@ -56,15 +56,14 @@ export class SmoothRoomWindowMover implements WindowMover {
     this.callbackMgr = cbkMgr;
     if (moveTime <= 0) {
       this.totalSteps = 1;
-    }
-    else {
+    } else {
       this.totalSteps = Math.round(moveTime / SmoothRoomWindowMover.DELAY);
     }
     if (this.totalSteps < 1) {
       this.totalSteps = 1;
     }
-    let xStep: number = Math.round((this.endLocation.x - this.startLocation.x) / this.totalSteps);
-    let yStep: number = Math.round((this.endLocation.y - this.startLocation.y) / this.totalSteps);
+    const xStep: number = Math.round((this.endLocation.x - this.startLocation.x) / this.totalSteps);
+    const yStep: number = Math.round((this.endLocation.y - this.startLocation.y) / this.totalSteps);
 
     for (let i = 0; i < this.totalSteps; i++) {
       // i = 0: this.startLocation; i = this.totalSteps: this.endLocation
@@ -74,10 +73,10 @@ export class SmoothRoomWindowMover implements WindowMover {
     this.timedStepCallback = new TimedCallback(
       new Callback(
         this,
-        this.applyStep
+        this.applyStep,
       ),
       SmoothRoomWindowMover.DELAY,
-      true
+      true,
     );
   }
 
@@ -86,12 +85,12 @@ export class SmoothRoomWindowMover implements WindowMover {
       if (this.startLocation.x !== this.endLocation.x ||
         this.startLocation.y !== this.endLocation.y) {
         this.timedStepCallback.start();
-      }
-      else {
+      } else {
         this.callbackMgr.run();
       }
+    } else {
+      this.setToEndLocation();
     }
-    else this.setToEndLocation();
   }
 
   /**
@@ -102,10 +101,9 @@ export class SmoothRoomWindowMover implements WindowMover {
     if (this.currentStep < this.totalSteps) {
       this.roomWindow.setLocation(
         this.xSteps[this.currentStep],
-        this.ySteps[this.currentStep]
+        this.ySteps[this.currentStep],
       );
-    }
-    else {
+    } else {
       this.timedStepCallback.stop();
       this.setToEndLocation();
     }
@@ -117,7 +115,7 @@ export class SmoothRoomWindowMover implements WindowMover {
   private setToEndLocation(): void {
     this.roomWindow.setLocation(
       this.endLocation.x,
-      this.endLocation.y
+      this.endLocation.y,
     );
     this.callbackMgr.run();
   }

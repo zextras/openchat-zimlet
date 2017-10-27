@@ -15,20 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
+import {IChatClient} from "../../IChatClient";
 import {ErrorEvent} from "../chat/ErrorEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class ErrorEventHandler implements ChatEventHandler {
+export class ErrorEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.ERROR;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let errorEvent: ErrorEvent = <ErrorEvent> chatEvent;
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const errorEvent: ErrorEvent = chatEvent as ErrorEvent;
     client.Log.err(errorEvent.getError(), "Client error");
     return true;
   }

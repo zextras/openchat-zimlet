@@ -23,5 +23,5 @@ export enum BuddyStatusType {
   INVISIBLE,
   NEED_RESPONSE,
   INVITED,
-  UNREACHABLE
+  UNREACHABLE,
 }
