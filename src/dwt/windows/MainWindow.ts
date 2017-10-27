@@ -590,9 +590,7 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.setSize(
       (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "213px", // problem with DwtTree border
       `${this.mAppCtxt.getShell().getSize().y
-        - 107
-        - 15
-        - this.mTitleBar.getSize().y
+        - 117
         - this.mStatusSelectorToolbar.getSize().y
         - this.mSearchToolBar.getSize().y}px`,
     );
