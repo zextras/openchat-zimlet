@@ -170,7 +170,6 @@ export class MainWindow extends WindowBase {
       className: `WindowBaseTitleBar${ ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`,
       parent: this.mTitleExpandBar,
     });
-    this.mTitleLbl.addListener(DwtEvent.ONCLICK, new AjxListener(this, this.onTitleBarClick));
     this.mTitleLbl.setText("Chat");
     this.mTitleExpandBar.addFiller();
     this.mMainMenuButton  = this.createMainMenuButton(this.mTitleBar, true);
