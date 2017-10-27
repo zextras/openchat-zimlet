@@ -438,7 +438,9 @@ export class WindowBase extends DwtBaseDialog {
     obj.focus = ((object: DwtComposite, callback: (...args: any[]) => void) =>
       () => {
         for (const window of WindowBase.sWindows) {
-          window.setZIndex(WindowBase.Z_INDEX);
+          if (window.isPoppedUp()) {
+            window.setZIndex(WindowBase.Z_INDEX);
+          }
         }
         callback(WindowBase.Z_INDEX + 1);
         WindowBase.prototype.focus.call(object);

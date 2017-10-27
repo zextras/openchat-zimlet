@@ -154,6 +154,7 @@ export class EmojiOnePicker extends DwtMenu {
 
   public popup(delay: number, x: number, y: number, kbGenereated?: boolean): void {
     super.popup(delay, x, y, kbGenereated);
+    this.setZIndex(501);
     // Fix for Zimbra 7, not necessary in 8+
     this.resetSize();
   }
