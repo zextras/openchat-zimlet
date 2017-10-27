@@ -101,7 +101,9 @@ export class WindowBase extends DwtBaseDialog {
     }
     this.addFocusCallback(
       (zIndex: number) => {
-        this.setZIndex(zIndex);
+        if (this.isPoppedUp()) {
+          this.setZIndex(zIndex);
+        }
       },
     );
   }
@@ -437,9 +439,9 @@ export class WindowBase extends DwtBaseDialog {
   private static addRecursiveFocusCallback(obj: DwtComposite, cbk: (...args: any[]) => void): void {
     obj.focus = ((object: DwtComposite, callback: (...args: any[]) => void) =>
       () => {
-        for (const window of WindowBase.sWindows) {
-          if (window.isPoppedUp()) {
-            window.setZIndex(WindowBase.Z_INDEX);
+        for (const wnd of WindowBase.sWindows) {
+          if (wnd.isPoppedUp()) {
+            wnd.setZIndex(WindowBase.Z_INDEX);
           }
         }
         callback(WindowBase.Z_INDEX + 1);
