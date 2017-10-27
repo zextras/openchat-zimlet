@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NotificationTaskType} from "./NotificationTaskType";
-import {NotificationTask} from "./NotificationTask";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {ZmBrowserAlert} from "../../zimbra/zimbraMail/share/view/ZmBrowserAlert";
+import {INotificationTask} from "./NotificationTask";
+import {NotificationTaskType} from "./NotificationTaskType";
 
-export class TitlebarNotification implements NotificationTask {
+export class TitlebarNotification implements INotificationTask {
   private static TASKID: number = 0;
   private id: string;
   private notified: boolean;
@@ -37,18 +37,20 @@ export class TitlebarNotification implements NotificationTask {
   }
 
   public start(): void {
-    if (this.isNotified()) return;
-    if (typeof ZmBrowserAlert === "undefined") return;
-    if (typeof document === "undefined") return;
-    if (document.hasFocus()) return;
+    if (this.isNotified()) { return; }
+    if (typeof ZmBrowserAlert === "undefined") { return; }
+    if (typeof document === "undefined") { return; }
+    if (document.hasFocus()) { return; }
     ZmBrowserAlert.getInstance().start(this.text);
     this.notified = true;
   }
 
   public stop(): void {
+    return;
   }
 
   public setAppContext(context: ZmAppCtxt) {
+    return;
   }
 
   public isNotified(): boolean {

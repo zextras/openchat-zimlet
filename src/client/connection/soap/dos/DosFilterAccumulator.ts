@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Request} from "../../Request";
 import {Callback} from "../../../../lib/callbacks/Callback";
+import {IRequest} from "../../IRequest";
 
 export class DosFilterAccumulator {
 
@@ -25,17 +25,17 @@ export class DosFilterAccumulator {
   private mId: number;
   private mOnExecute: Callback;
 
-  private mRequests: Request[] = [];
+  private mRequests: IRequest[] = [];
   private mExecuted: boolean = false;
 
   constructor(
-    onExecute: Callback
+    onExecute: Callback,
   ) {
     this.mId = (DosFilterAccumulator.sCounter++);
     this.mOnExecute = onExecute;
   }
 
-  public pushRequest(request: Request): void {
+  public pushRequest(request: IRequest): void {
     if (this.mExecuted) {
       throw new Error("Cannot add a request to an executed DosFilterAccumulator");
     }
@@ -58,7 +58,7 @@ export class DosFilterAccumulator {
     return this.mRequests.length;
   }
 
-  public getRequests(): Request[] {
+  public getRequests(): IRequest[] {
     return this.mRequests;
   }
 

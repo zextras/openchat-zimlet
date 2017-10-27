@@ -39,8 +39,8 @@ export class WindowDragTask {
    * @return {boolean}
    */
   public isReallyMoved(x: number, y: number): boolean {
-    let diffX: number = this.startLocation.x - x,
-      diffY: number = this.startLocation.y - y;
+    const diffX: number = this.startLocation.x - x;
+    const diffY: number = this.startLocation.y - y;
 
     return (Math.abs(diffX) > WindowDragTask.THRESHOLD || Math.abs(diffY) > WindowDragTask.THRESHOLD);
   }

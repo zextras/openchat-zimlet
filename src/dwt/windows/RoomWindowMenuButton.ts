@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
-import {RoomWindow} from "./RoomWindow";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
-import {ZxPopupMenu} from "./WindowBase";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
+import {DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
+import {RoomWindow} from "./RoomWindow";
+import {ZxPopupMenu} from "./WindowBase";
 
 export class RoomWindowMenuButton extends DwtToolBarButton {
 
@@ -33,17 +33,16 @@ export class RoomWindowMenuButton extends DwtToolBarButton {
   constructor(
     roomWindow: RoomWindow,
     parent: DwtComposite,
-    roomWindowPluginManager: ChatPluginManager
+    roomWindowPluginManager: ChatPluginManager,
   ) {
     super({
+      className: `ZxChat_Button ZxChat_TitleBar_Button${ZimbraUtils.isUniversalUI() ? "" : "_legacy"} ZToolbarButton`,
       parent: parent,
-      className: `ZxChat_Button ZxChat_TitleBar_Button${ZimbraUtils.isUniversalUI() ? "" : "_legacy"} ZToolbarButton`
     });
     this.mRoomWindow = roomWindow;
     if (ZimbraUtils.isUniversalUI()) {
       this.setImage("MoreVertical,color=#b4d7eb");
-    }
-    else {
+    } else {
       this.setImage("ZxChat_preferences");
     }
     this.setDropDownImages("", "", "", "");

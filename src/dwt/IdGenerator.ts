@@ -19,26 +19,23 @@ import {Dwt} from "../zimbra/ajax/dwt/core/Dwt";
 
 export class IdGenerator {
 
-  private static sLastId: number = 0;
-
   /**
    * Generate a DWT compatible ID for an HTML element, following the MDN standards.
    * @param {string=} part Part to append to the generated element (will be sanitized).
    * @return {string}
    */
   public static generateId(part: string = ""): string {
-    let dwtId: string, sanitizedPart: string;
+    let dwtId: string;
+    let sanitizedPart: string;
     if (typeof Dwt === "undefined") {
       dwtId = "IdGenerator_" + (++IdGenerator.sLastId);
-    }
-    else {
+    } else {
       dwtId = Dwt.getNextId();
     }
     sanitizedPart = IdGenerator.sanitizePart(part);
     if (part === "") {
       return dwtId;
-    }
-    else {
+    } else {
       return dwtId + "_" + sanitizedPart;
     }
   }
@@ -52,4 +49,7 @@ export class IdGenerator {
   public static sanitizePart(part: string): string {
     return part.replace(/[^A-Za-z0-9\._-]/g, "_");
   }
+
+  private static sLastId: number = 0;
+
 }

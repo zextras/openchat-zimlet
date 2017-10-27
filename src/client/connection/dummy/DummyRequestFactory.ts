@@ -15,17 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Request} from "../Request";
 import {Callback} from "../../../lib/callbacks/Callback";
+import {IRequest} from "../IRequest";
+import {IRequestFactory} from "../IRequestFactory";
 import {DummyRequest, DummyRequestBehavior} from "./DummyRequest";
-import {RequestFactory} from "../RequestFactory";
 
-export class DummyRequestFactory implements RequestFactory {
+export class DummyRequestFactory implements IRequestFactory {
 
   private mBehavior: DummyRequestBehavior;
 
   constructor(
-    behavior: DummyRequestBehavior
+    behavior: DummyRequestBehavior,
   ) {
     this.mBehavior = behavior;
   }
@@ -35,28 +35,28 @@ export class DummyRequestFactory implements RequestFactory {
     command: string,
     params: {[key: string]: any},
     callback: Callback = new Callback(this, this.voidFcn),
-    errorCallback: Callback = new Callback(this, this.voidFcn)
-  ): Request {
+    errorCallback: Callback = new Callback(this, this.voidFcn),
+  ): IRequest {
 
     callback = Callback.standardize(callback);
     errorCallback = Callback.standardize(errorCallback);
 
-    let fakeRequest = new DummyRequest(
+    const fakeRequest = new DummyRequest(
       this.mBehavior,
       params,
       callback,
-      errorCallback
+      errorCallback,
     );
 
     return fakeRequest;
 
   }
 
-  public setRequestBehavior (
-    behavior: DummyRequestBehavior
+  public setRequestBehavior(
+    behavior: DummyRequestBehavior,
   ): void {
     this.mBehavior = behavior;
   }
 
-  private voidFcn(): void {}
+  private voidFcn(): void { return; }
 }

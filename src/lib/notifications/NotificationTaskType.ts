@@ -19,5 +19,5 @@ export enum NotificationTaskType {
   DESKTOP,
   SOUND,
   TITLEBAR,
-  TOAST
+  TOAST,
 }

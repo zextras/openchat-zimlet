@@ -15,17 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../lib/DateProvider";
-import {CallbackManager} from "../lib/callbacks/CallbackManager";
-import {Room} from "./Room";
 import {Callback} from "../lib/callbacks/Callback";
-import {Buddy} from "./Buddy";
-import {MessageSent} from "./MessageSent";
-import {ChatEvent} from "./events/ChatEvent";
-import {BuddyStatusImp} from "./BuddyStatusImp";
+import {CallbackManager} from "../lib/callbacks/CallbackManager";
+import {DateProvider} from "../lib/DateProvider";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
-import {RoomImp} from "./RoomImp";
-import {BuddyStatus} from "./BuddyStatus";
+import {ChatEvent} from "./events/ChatEvent";
+import {IBuddy} from "./IBuddy";
+import {IBuddyStatus} from "./IBuddyStatus";
+import {IRoom} from "./IRoom";
+import {MessageSent} from "./MessageSent";
+import {Room} from "./Room";
 
 export class RoomManager {
 
@@ -35,7 +34,7 @@ export class RoomManager {
   public static CreateRoomPluginManager = "Room Manager Create Room Plugin Manager";
 
   private mDateProvider: DateProvider;
-  private mRooms: Room[];
+  private mRooms: IRoom[];
   private onNewRoomCallbacks: CallbackManager;
   private onSendEventCallbacks: CallbackManager;
   private onSendMessageCallbacks: CallbackManager;
@@ -61,13 +60,13 @@ export class RoomManager {
   /**
    * Create a room for a user-to-user conversation
    */
-  public createRoom(buddyId: string, buddyNickname: string, roomPluginManager: ChatPluginManager): Room {
+  public createRoom(buddyId: string, buddyNickname: string, roomPluginManager: ChatPluginManager): IRoom {
     this.mRoomManagerPluginManager.triggerPlugins(RoomManager.CreateRoomPluginManager, roomPluginManager);
-    let newRoom: Room = new RoomImp(
+    const newRoom: IRoom = new Room(
       buddyId,
       buddyNickname,
       this.mDateProvider,
-      roomPluginManager
+      roomPluginManager,
     );
     newRoom.onSendEvent(new Callback(this, this._onSendEvent));
     newRoom.onSendMessage(new Callback(this, this._onSendMessage));
@@ -78,7 +77,7 @@ export class RoomManager {
   /**
    * Add a room to the room list
    */
-  public addRoom(room: Room): void {
+  public addRoom(room: IRoom): void {
     this.mRooms.push(room);
     this.onNewRoomCallbacks.run(room);
   }
@@ -86,32 +85,32 @@ export class RoomManager {
   /**
    * Get a room by Id
    */
-  public getRoomById(roomId: string): Room {
-    for (let room of this.getRooms()) {
+  public getRoomById(roomId: string): IRoom {
+    for (const room of this.getRooms()) {
       if (room.getId() === roomId) {
         return room;
       }
     }
   }
 
-  public getRooms(): Room[] {
+  public getRooms(): IRoom[] {
     return this.mRooms;
   }
 
-  public statusSelected(status: BuddyStatus, callback: Callback): void {
+  public statusSelected(status: IBuddyStatus, callback: Callback): void {
     this.mRoomManagerPluginManager.triggerPlugins(RoomManager.StatusSelectedPlugin, status, callback);
   }
 
-  public statusChanged(status: BuddyStatus) {
+  public statusChanged(status: IBuddyStatus) {
     this.mRoomManagerPluginManager.triggerPlugins(RoomManager.StatusChangedPlugin, status);
   }
   /**
    * Remove a room by Id
    */
   public removeRoom(roomId: string): void {
-    let idx: number[] = [];
+    const idx: number[] = [];
     let index: number = -1;
-    for (let room of this.mRooms) {
+    for (const room of this.mRooms) {
       index++;
       if (!(roomId === room.getId())) {
         continue;
@@ -119,7 +118,7 @@ export class RoomManager {
       idx.push(index);
     }
     idx.reverse();
-    for (let tmpIndex of idx) {
+    for (const tmpIndex of idx) {
       this.mRooms.splice(tmpIndex, 1);
     }
   }
@@ -145,33 +144,33 @@ export class RoomManager {
     this.onSendMessageCallbacks.addCallback(callback);
   }
 
-  /**
-   * Propagate to the callbacks to send an event
-   */
-  protected _onSendEvent(event: ChatEvent, callback: Callback, errorCallback: Callback): void {
-    this.onSendEventCallbacks.run(event, callback, errorCallback);
-  }
-
-  /**
-   * Propagate to the callbacks to send an event
-   */
-  protected _onSendMessage(message: MessageSent): void {
-    this.onSendMessageCallbacks.run(message);
-  }
-
-  public removeBuddyFromAllRooms(buddy: Buddy): void {
-    for (let room of this.mRooms) {
+  public removeBuddyFromAllRooms(buddy: IBuddy): void {
+    for (const room of this.mRooms) {
       if (room.containsBuddy(buddy)) {
         room.removeMember(buddy);
       }
     }
   }
 
-  public addBuddyToHisRooms(buddy: Buddy): void {
-    let room = this.getRoomById(buddy.getId());
+  public addBuddyToHisRooms(buddy: IBuddy): void {
+    const room = this.getRoomById(buddy.getId());
     if (room != null) {
       room.addMember(buddy);
     }
+  }
+
+  /**
+   * Propagate to the callbacks to send an event
+   */
+  private _onSendEvent(event: ChatEvent, callback: Callback, errorCallback: Callback): void {
+    this.onSendEventCallbacks.run(event, callback, errorCallback);
+  }
+
+  /**
+   * Propagate to the callbacks to send an event
+   */
+  private _onSendMessage(message: MessageSent): void {
+    this.onSendMessageCallbacks.run(message);
   }
 
 }

@@ -15,22 +15,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {FriendshipRenameEvent} from "../../chat/friendship/FriendshipRenameEvent";
-import {ChatClient} from "../../../ChatClient";
 import {Group} from "../../../Group";
-import {ChatEventHandler} from "../ChatEventHandler";
+import {IBuddy} from "../../../IBuddy";
+import {IChatClient} from "../../../IChatClient";
+import {FriendshipRenameEvent} from "../../chat/friendship/FriendshipRenameEvent";
 import {ChatEvent} from "../../ChatEvent";
+import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipRenameHandler implements ChatEventHandler {
+export class FriendshipRenameHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return FriendshipRenameEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let friendshipEvent = <FriendshipRenameEvent> chatEvent,
-      buddyList = client.getBuddyList(),
-      buddy = buddyList.getBuddyById(friendshipEvent.getSender());
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const friendshipEvent = chatEvent as FriendshipRenameEvent;
+    const buddyList = client.getBuddyList();
+    const buddy: IBuddy = buddyList.getBuddyById(friendshipEvent.getSender());
     if (buddy != null) {
       if (buddy.getNickname() !== friendshipEvent.getNickname()) {
         buddy.setNickname(friendshipEvent.getNickname());
@@ -41,15 +42,15 @@ export class FriendshipRenameHandler implements ChatEventHandler {
         buddyList.addGroup(group);
       }
       let needToBeAdded = true;
-      let removeFrom = [];
-      for (let buddyGroup of buddy.getGroups()) {
+      const removeFrom = [];
+      for (const buddyGroup of buddy.getGroups()) {
         if (buddyGroup.getName() === friendshipEvent.getGroup()) {
           needToBeAdded = false;
         } else {
           removeFrom.push(buddyGroup);
         }
       }
-      for (let buddyGroup of removeFrom) {
+      for (const buddyGroup of removeFrom) {
         buddyGroup.removeBuddy(buddy);
         buddy.removeGroup(buddyGroup.getName());
       }

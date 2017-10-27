@@ -20,53 +20,6 @@ import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class MessageEvent extends ChatEvent {
 
-  private mMsgId: string;
-  public mMessage: string;
-  private mDate: Date;
-  private mDelivered: boolean;
-  private mType: MessageType;
-
-  constructor(
-    msgId: string,
-    sender: string,
-    destination: string,
-    message: string,
-    type: string,
-    eventDate: Date,
-    creationDate: Date
-  ) {
-    super(OpenChatEventCode.MESSAGE, creationDate, true);
-    this.mMsgId = msgId;
-    if (typeof sender !== "undefined" && sender !== null)
-      this.setSender(sender);
-    if (typeof destination !== "undefined" && destination !== null)
-      this.setDestination(destination);
-    this.mMessage = message;
-    this.mType = MessageEvent.convertToMessageType(type);
-    this.mDate = eventDate;
-    this.mDelivered = false;
-  }
-
-  public setMessageId(id: string): void {
-    this.mMsgId = id;
-  }
-
-  public getMessageId(): string {
-    return this.mMsgId;
-  }
-
-  public getMessage(): string {
-    return this.mMessage;
-  }
-
-  public getDate(): Date {
-    return this.mDate;
-  }
-
-  public getType(): MessageType {
-    return this.mType;
-  }
-
   /**
    * Xmpp compliant
    * @param type
@@ -97,6 +50,57 @@ export class MessageEvent extends ChatEvent {
         return "chat";
     }
   }
+
+  public mMessage: string;
+
+  private mMsgId: string;
+  private mDate: Date;
+  private mDelivered: boolean;
+  private mType: MessageType;
+
+  constructor(
+    msgId: string,
+    sender: string,
+    destination: string,
+    message: string,
+    type: string,
+    eventDate: Date,
+    creationDate: Date,
+  ) {
+    super(OpenChatEventCode.MESSAGE, creationDate, true);
+    this.mMsgId = msgId;
+    if (typeof sender !== "undefined" && sender !== null) {
+      this.setSender(sender);
+    }
+    if (typeof destination !== "undefined" && destination !== null) {
+      this.setDestination(destination);
+    }
+    this.mMessage = message;
+    this.mType = MessageEvent.convertToMessageType(type);
+    this.mDate = eventDate;
+    this.mDelivered = false;
+  }
+
+  public setMessageId(id: string): void {
+    this.mMsgId = id;
+  }
+
+  public getMessageId(): string {
+    return this.mMsgId;
+  }
+
+  public getMessage(): string {
+    return this.mMessage;
+  }
+
+  public getDate(): Date {
+    return this.mDate;
+  }
+
+  public getType(): MessageType {
+    return this.mType;
+  }
+
 }
 
   /**
@@ -106,5 +110,5 @@ export class MessageEvent extends ChatEvent {
    */
 export enum MessageType {
   CHAT,
-  GROUPCHAT
+  GROUPCHAT,
 }

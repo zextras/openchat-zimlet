@@ -15,53 +15,41 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
-import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
-import {RoomWindow} from "../../dwt/windows/RoomWindow";
-import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
-import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
-import {StringUtils} from "../../lib/StringUtils";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {Room} from "../../client/Room";
-import {ZmOperation} from "../../zimbra/zimbraMail/core/ZmOperation";
-import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
-import {DateProvider} from "../../lib/DateProvider";
+import {IRoom} from "../../client/IRoom";
 import {Message} from "../../client/Message";
-import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 import {MessageReceived} from "../../client/MessageReceived";
-import {HTMLUtils} from "../../lib/HTMLUtils";
 import {MessageSent} from "../../client/MessageSent";
-import {RoomImp} from "../../client/RoomImp";
+import {Room} from "../../client/Room";
+import {RoomWindow} from "../../dwt/windows/RoomWindow";
+import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
+import {DateProvider} from "../../lib/DateProvider";
+import {HTMLUtils} from "../../lib/HTMLUtils";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {StringUtils} from "../../lib/StringUtils";
+import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
+import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {ZmOperation} from "../../zimbra/zimbraMail/core/ZmOperation";
+import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
+import {RoomHistoryFieldPlugin} from "./RoomHistoryFieldPlugin";
 
-export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
+export class RoomWindowSendHistoryMenuItemPlugin implements IChatPlugin {
 
   public static Name = RoomWindowMenuButton.AddMenuItemPlugin;
 
-  public trigger(roomWindow: RoomWindow, menu: ZmPopupMenu): void {
-     let sendHistory: DwtMenuItem = menu.createMenuItem(
-      "ZxChat_MenuItem_NewMail",
-      {
-        text: StringUtils.getMessage("send_email_conversation")
-      }
-     );
-    sendHistory.addSelectionListener(
-      new AjxListener(null, RoomWindowSendHistoryMenuItemPlugin.sendHistory, [roomWindow])
-    );
-  }
-
   private static sendHistory(roomWindow: RoomWindow): void {
-    let body = RoomWindowSendHistoryMenuItemPlugin.getFormattedConversionHistory(
+    const body = RoomWindowSendHistoryMenuItemPlugin.getFormattedConversionHistory(
       roomWindow.getRoom(),
       roomWindow.getDateProvider(),
-      RoomImp.FORMAT_PLAIN
+      Room.FORMAT_PLAIN,
     );
-    let nicknames: string[] = [];
-    let history: Message[] = roomWindow.getRoom().getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName);
-    for (let message of history) {
+    const nicknames: string[] = [];
+    const history: Message[] = roomWindow.getRoom().getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName);
+    for (const message of history) {
       if (message instanceof MessageReceived) {
-        let user = (<MessageReceived>message).getSender().getNickname(),
-          alreadyAdded: boolean = false;
-        for (let nickname of nicknames) {
+        const user = (message as MessageReceived).getSender().getNickname();
+        let alreadyAdded: boolean = false;
+        for (const nickname of nicknames) {
           if (nickname === user) {
             alreadyAdded = true;
             break;
@@ -72,11 +60,14 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
         }
       }
     }
-    let email: {} = {
+    const email: {} = {
       action: ZmOperation.NEW_MESSAGE,
-      subjOverride: StringUtils.getMessage("mail_title_prefix_chat_conversation", [nicknames.join(", ")]),
+      composeMode: "text/plain",
       extraBodyText: body,
-      composeMode: "text/plain"
+      subjOverride: StringUtils.getMessage(
+        "mail_title_prefix_chat_conversation",
+        [nicknames.join(", ")],
+      ),
     };
     AjxDispatcher.run("Compose", email);
   }
@@ -84,9 +75,13 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
   /**
    * Get the history of the conversation in a human-readable format
    */
-  private static getFormattedConversionHistory(room: Room, dateProvider: DateProvider, format: string = RoomImp.FORMAT_PLAIN): string {
+  private static getFormattedConversionHistory(
+    room: IRoom,
+    dateProvider: DateProvider,
+    format: string = Room.FORMAT_PLAIN,
+  ): string {
     switch (format) {
-      case RoomImp.FORMAT_HTML:
+      case Room.FORMAT_HTML:
         return RoomWindowSendHistoryMenuItemPlugin.getHtmlFormattedHistory(room, dateProvider);
       default:
         return RoomWindowSendHistoryMenuItemPlugin.getPlainFormattedHistory(room, dateProvider);
@@ -96,30 +91,43 @@ export class RoomWindowSendHistoryMenuItemPlugin implements ChatPlugin {
   /**
    * Get the history of the conversation in HTML
    */
-  private static getHtmlFormattedHistory(room: Room, dateProvider: DateProvider): string {
+  private static getHtmlFormattedHistory(room: IRoom, dateProvider: DateProvider): string {
     return RoomWindowSendHistoryMenuItemPlugin.getPlainFormattedHistory(room, dateProvider);
   }
 
   /**
    * Get the history of the conversation in plain text
    */
-  private static getPlainFormattedHistory(room: Room, dateProvider: DateProvider): string {
-    let textPlain = [];
-    let history: Message[] = room.getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName);
-    for (let message of history) {
+  private static getPlainFormattedHistory(room: IRoom, dateProvider: DateProvider): string {
+    const textPlain = [];
+    const history: Message[] = room.getPluginManager().getFieldPlugin(RoomHistoryFieldPlugin.FieldName);
+    for (const message of history) {
       if (message instanceof MessageReceived) {
-        let user = (<MessageReceived>message).getSender().getNickname();
-        let date = StringUtils.localizeHour(message.getDate(), dateProvider.getNow());
-        let text = message.getMessage();
+        const user = (message as MessageReceived).getSender().getNickname();
+        const date = StringUtils.localizeHour(message.getDate(), dateProvider.getNow());
+        const text = message.getMessage();
         textPlain.push("[" + date + "] " + user + ": " + HTMLUtils.htmlUnEscape(text));
       }
       if (message instanceof MessageSent) {
-        let user = StringUtils.getMessage("Me");
-        let date = StringUtils.localizeHour(message.getDate(), dateProvider.getNow());
-        let text = message.getMessage();
+        const user = StringUtils.getMessage("Me");
+        const date = StringUtils.localizeHour(message.getDate(), dateProvider.getNow());
+        const text = message.getMessage();
         textPlain.push("[" + date + "] " + user + ": " + HTMLUtils.htmlUnEscape(text));
       }
     }
     return textPlain.join("\n");
   }
+
+  public trigger(roomWindow: RoomWindow, menu: ZmPopupMenu): void {
+     const sendHistory: DwtMenuItem = menu.createMenuItem(
+      "ZxChat_MenuItem_NewMail",
+      {
+        text: StringUtils.getMessage("send_email_conversation"),
+      },
+     );
+     sendHistory.addSelectionListener(
+      new AjxListener(null, RoomWindowSendHistoryMenuItemPlugin.sendHistory, [roomWindow]),
+    );
+  }
+
 }

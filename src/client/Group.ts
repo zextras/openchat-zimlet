@@ -15,18 +15,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {GroupStats} from "./GroupStats";
-import {CallbackManager} from "../lib/callbacks/CallbackManager";
-import {Callback} from "../lib/callbacks/Callback";
 import {ArrayUtils} from "../lib/ArrayUtils";
-import {Buddy} from "./Buddy";
-import {BuddyStatus} from "./BuddyStatus";
+import {Callback} from "../lib/callbacks/Callback";
+import {CallbackManager} from "../lib/callbacks/CallbackManager";
 import {AjxStringUtil} from "../zimbra/ajax/util/AjxStringUtil";
+import {GroupStats} from "./GroupStats";
+import {IBuddy} from "./IBuddy";
+import {IBuddyStatus} from "./IBuddyStatus";
 
 export class Group {
+
+  private static buddyFilterFcnReturnTrue(buddy: IBuddy): boolean {
+    return true;
+  }
+
   private mId: string;
   private mName: string;
-  private mBuddies: Buddy[] = [];
+  private mBuddies: IBuddy[] = [];
   private mOnAddBuddyCallbacks: CallbackManager = new CallbackManager();
   private mOnRemoveBuddyCallbacks: CallbackManager = new CallbackManager();
   private mOnNameChangeCallbacks: CallbackManager = new CallbackManager();
@@ -75,22 +80,18 @@ export class Group {
    * Get all the buddies contained into the group
    * If a filter function is provided, the list will be filtered
    * @param {function} filterFcn
-   * @return {Buddy[]}
+   * @return {IBuddy[]}
    */
-  public getBuddies(filterFcn: Function = Group.buddyFilterFcnReturnTrue): Buddy[] {
+  public getBuddies(filterFcn: (val: any) => boolean = Group.buddyFilterFcnReturnTrue): IBuddy[] {
     return ArrayUtils.filter(this.mBuddies, filterFcn);
-  }
-
-  private static buddyFilterFcnReturnTrue(buddy: Buddy): boolean {
-    return true;
   }
 
   /**
    * Return a buddy by Id
    * @param {string} buddyId
-   * @return {Buddy}
+   * @return {IBuddy}
    */
-  public getBuddyById(buddyId: string): Buddy {
+  public getBuddyById(buddyId: string): IBuddy {
     let i: number;
     for (i = 0; i < this.mBuddies.length; i++) {
       if (this.mBuddies[i].getId() === buddyId) {
@@ -101,21 +102,21 @@ export class Group {
 
   /**
    * Add a buddy to the group
-   * @param {Buddy} buddy
+   * @param {IBuddy} buddy
    * @param {boolean} [sortGroup=true]
    */
-  public addBuddy(buddy: Buddy, sortGroup: boolean = true): void {
+  public addBuddy(buddy: IBuddy, sortGroup: boolean = true): void {
     this.mBuddies.push(buddy);
     this.mOnAddBuddyCallbacks.run(buddy, sortGroup);
   }
 
   /**
    * Remove a buddy from this group.
-   * @param {Buddy} buddy
+   * @param {IBuddy} buddy
    */
-  public removeBuddy(buddy: Buddy): void {
-    let indexes: number[] = [],
-      i: number;
+  public removeBuddy(buddy: IBuddy): void {
+    const indexes: number[] = [];
+    let i: number;
     for (i = 0; i < this.mBuddies.length; i++) {
       if (this.mBuddies[i].getId() === buddy.getId()) {
         indexes.push(i);
@@ -174,24 +175,21 @@ export class Group {
    * @return {GroupStats}
    */
   public getStatistics(): GroupStats {
-    let online: number = 0,
-      offline: number = 0,
-      invited: number = 0,
-      waiting: number = 0,
-      i: number,
-      buddyStatus: BuddyStatus;
+    let online: number = 0;
+    let offline: number = 0;
+    let invited: number = 0;
+    let waiting: number = 0;
+    let i: number;
+    let buddyStatus: IBuddyStatus;
     for (i = 0; i < this.mBuddies.length; i++) {
       buddyStatus = this.mBuddies[i].getStatus();
       if (buddyStatus.isOnline()) {
         online += 1;
-      }
-      else if (buddyStatus.isOffline()) {
+      } else if (buddyStatus.isOffline()) {
         offline += 1;
-      }
-      else if (buddyStatus.isInvited()) {
+      } else if (buddyStatus.isInvited()) {
         invited += 1;
-      }
-      else if (buddyStatus.isWaitingForResponse()) {
+      } else if (buddyStatus.isWaitingForResponse()) {
         waiting += 1;
       }
     }
@@ -203,8 +201,8 @@ export class Group {
    * Clean the group removing all the buddies.
    */
   public reset(): void {
-    let i: number,
-      toRemove: Buddy[] = [];
+    let i: number;
+    const toRemove: IBuddy[] = [];
     for (i = 0; i < this.mBuddies.length; i++) {
       toRemove.push(this.mBuddies[i]);
     }

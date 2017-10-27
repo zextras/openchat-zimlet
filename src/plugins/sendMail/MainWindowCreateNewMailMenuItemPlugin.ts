@@ -15,37 +15,43 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {BuddyTreeItem} from "../../dwt/widgets/BuddyTreeItem";
+import {BuddyTreeItemActionMenuFactory} from "../../dwt/widgets/BuddyTreeItemActionMenuFactory";
 import {MainWindow} from "../../dwt/windows/MainWindow";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
+import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
 import {DwtMenu} from "../../zimbra/ajax/dwt/widgets/DwtMenu";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
-import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {BuddyTreeItem} from "../../dwt/widgets/BuddyTreeItem";
 import {ZmOperation} from "../../zimbra/zimbraMail/core/ZmOperation";
-import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
-import {BuddyTreeItemActionMenuFactory} from "../../dwt/widgets/BuddyTreeItemActionMenuFactory";
+import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 
-export class MainWindowCreateNewMailMenuItemPlugin implements ChatPlugin {
+export class MainWindowCreateNewMailMenuItemPlugin implements IChatPlugin {
 
   public static Name = BuddyTreeItemActionMenuFactory.AddMenuItemPlugin;
 
-  public trigger(mainWindow: MainWindow, menu: DwtMenu, treeItem: BuddyTreeItem): void {
-    let newMailMenuItem: DwtMenuItem = new DwtMenuItem({
-      parent: menu,
-      style: DwtMenuItem.IMAGE_LEFT
-    });
-    newMailMenuItem.setText(ZmMsg.newEmail);
-    newMailMenuItem.addSelectionListener(new AjxListener(null, MainWindowCreateNewMailMenuItemPlugin.sendNewMail, [treeItem.getBuddy().getId()]));
-    newMailMenuItem.setEnabled(true);
-  }
-
   private static sendNewMail(buddyId: string): void {
-    let emailData = {
+    const emailData = {
       action: ZmOperation.NEW_MESSAGE,
-      toOverride: buddyId
+      toOverride: buddyId,
     };
     AjxDispatcher.run("Compose", emailData);
+  }
+
+  public trigger(mainWindow: MainWindow, menu: DwtMenu, treeItem: BuddyTreeItem): void {
+    const newMailMenuItem: DwtMenuItem = new DwtMenuItem({
+      parent: menu,
+      style: DwtMenuItem.IMAGE_LEFT,
+    });
+    newMailMenuItem.setText(ZmMsg.newEmail);
+    newMailMenuItem.addSelectionListener(
+      new AjxListener(
+        null,
+        MainWindowCreateNewMailMenuItemPlugin.sendNewMail,
+        [treeItem.getBuddy().getId()],
+      ),
+    );
+    newMailMenuItem.setEnabled(true);
   }
 
 }

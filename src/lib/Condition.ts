@@ -17,12 +17,12 @@
 
 export class Condition {
 
-  public static pass: Condition = new Condition(function() { return true; });
-  public static fail: Condition = new Condition(function() { return false; });
+  public static pass: Condition = new Condition(() => true);
+  public static fail: Condition = new Condition(() => false);
 
-  private mFcn: Function;
+  private mFcn: (val?: any) => boolean;
 
-  constructor(fcn: Function) {
+  constructor(fcn: (val?: any) => boolean) {
     this.mFcn = fcn;
   }
 

@@ -15,18 +15,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
+import {IChatClient} from "../../IChatClient";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class ShutdownEventHandler implements ChatEventHandler {
+export class ShutdownEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.SHUTDOWN;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
     client.shutdown();
     return true;
   }

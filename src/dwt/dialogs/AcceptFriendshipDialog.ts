@@ -15,40 +15,59 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtMessageDialog, DwtMessageDialogParams} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
-import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
-import {IdGenerator} from "../IdGenerator";
+import {IBuddy} from "../../client/IBuddy";
+import {IChatClient} from "../../client/IChatClient";
 import {StringUtils} from "../../lib/StringUtils";
-import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
-import {ChatClient} from "../../client/ChatClient";
-import {Buddy} from "../../client/Buddy";
+import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
+import {DwtMessageDialog, DwtMessageDialogParams} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
+import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
+import {IdGenerator} from "../IdGenerator";
 
 export class AcceptFriendshipDialog extends DwtMessageDialog {
 
-  private static _dialog: AcceptFriendshipDialog = null;
-  private client: ChatClient;
-  private buddy: Buddy;
+  public static getDialog(params: DwtMessageDialogParams, client: IChatClient, buddy: IBuddy): AcceptFriendshipDialog {
+    if (AcceptFriendshipDialog._DIALOG === null) {
+      AcceptFriendshipDialog._DIALOG = new AcceptFriendshipDialog(params, client, buddy);
+    }
+    if (typeof buddy !== "undefined" && buddy !== null) {
+      AcceptFriendshipDialog._DIALOG.buddy = buddy;
+      AcceptFriendshipDialog._DIALOG.setMessage(
+        StringUtils.getMessage(
+          "accept_friends_text",
+          [buddy.getNickname()],
+        ),
+      );
+    }
+    return AcceptFriendshipDialog._DIALOG;
+  }
 
-  constructor(params: DwtMessageDialogParams, client: ChatClient, buddy: Buddy) {
+  private static _DIALOG: AcceptFriendshipDialog = null;
+  private client: IChatClient;
+  private buddy: IBuddy;
+
+  constructor(params: DwtMessageDialogParams, client: IChatClient, buddy: IBuddy) {
     super({
-      parent: params.parent,
       buttons: [DwtDialog.YES_BUTTON, DwtDialog.NO_BUTTON],
-      id: IdGenerator.generateId("ZxChat_AcceptFriendshipDialog")
+      id: IdGenerator.generateId("ZxChat_AcceptFriendshipDialog"),
+      parent: params.parent,
     });
     this.client = client;
     this.buddy = buddy;
     this.setTitle(StringUtils.getMessage("accept_friends_title"));
     this.setMessage(
-      StringUtils.getMessage("accept_friends_text", [this.buddy.getNickname()])
+      StringUtils.getMessage(
+        "accept_friends_text",
+        [this.buddy.getNickname()],
+      ),
     );
     this.setButtonListener(
       DwtDialog.YES_BUTTON,
-      new AjxListener(this, this._yesBtnListener)
+      new AjxListener(this, this._yesBtnListener),
     );
     this.addListener(
       DwtEvent.ENTER,
-      new AjxListener(this, this._yesBtnListener)
+      new AjxListener(this, this._yesBtnListener),
     );
   }
 
@@ -56,19 +75,6 @@ export class AcceptFriendshipDialog extends DwtMessageDialog {
     this.client.acceptFriendship(this.buddy);
     this.buddy = null;
     this.popdown();
-  }
-
-  public static getDialog(params: DwtMessageDialogParams, client: ChatClient, buddy: Buddy): AcceptFriendshipDialog {
-    if (AcceptFriendshipDialog._dialog === null) {
-      AcceptFriendshipDialog._dialog = new AcceptFriendshipDialog(params, client, buddy);
-    }
-    if (typeof buddy !== undefined && buddy !== null) {
-      AcceptFriendshipDialog._dialog.buddy = buddy;
-      AcceptFriendshipDialog._dialog.setMessage(
-        StringUtils.getMessage("accept_friends_text", [buddy.getNickname()])
-      );
-    }
-    return AcceptFriendshipDialog._dialog;
   }
 
 }

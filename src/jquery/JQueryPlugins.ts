@@ -15,21 +15,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JQueryPlugin} from "./JQueryPlugin";
+import {IJQueryPlugin} from "./JQueryPlugin";
 
 declare let $: any;
 
 export class JQueryPlugins {
 
-  private mPlugins: JQueryPlugin[];
+  private mPlugins: IJQueryPlugin[];
 
-  constructor(...plugins: JQueryPlugin[]) {
+  constructor(...plugins: IJQueryPlugin[]) {
     this.mPlugins = plugins;
   }
 
   public installPlugins() {
     if (typeof $ !== "undefined") {
-      for (let plugin of this.mPlugins) {
+      for (const plugin of this.mPlugins) {
         plugin.install();
       }
     }

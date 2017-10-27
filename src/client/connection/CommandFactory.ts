@@ -15,20 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../events/ChatEvent";
-import {ZxErrorCode} from "../../lib/error/ZxErrorCode";
 import {ZxError} from "../../lib/error/ZxError";
+import {ZxErrorCode} from "../../lib/error/ZxErrorCode";
+import {ChatEvent} from "../events/ChatEvent";
 
 export class CommandFactory {
 
-  mCommandsMap: {[eventId: number]: string} = {};
-  mSpecialCommandsMap: {[eventId: number]: Function} = {};
+  public mCommandsMap: {[eventId: number]: string} = {};
+  public mSpecialCommandsMap: {[eventId: number]: (event: ChatEvent) => string} = {};
 
   public addCommand(eventId: number, command: string): void {
     this.mCommandsMap[eventId] = command;
   }
 
-  public addSpecialCommand(eventId: number, controlFunction: Function): void {
+  public addSpecialCommand(eventId: number, controlFunction: (event: ChatEvent) => string): void {
     this.mSpecialCommandsMap[eventId] = controlFunction;
   }
 
@@ -36,12 +36,11 @@ export class CommandFactory {
     if (typeof event.getCode() !== "undefined" && event.getCode() !== null) {
       if (this.mCommandsMap.hasOwnProperty(event.getCode().toString())) {
         return this.mCommandsMap[event.getCode()];
-      }
-      else if (this.mSpecialCommandsMap.hasOwnProperty(event.getCode().toString())) {
+      } else if (this.mSpecialCommandsMap.hasOwnProperty(event.getCode().toString())) {
         return this.mSpecialCommandsMap[event.getCode()](event);
       }
     }
-    let error = new ZxError(ZxErrorCode.UNABLE_TO_FIND_COMMAND_FOR_EVENT);
+    const error = new ZxError(ZxErrorCode.UNABLE_TO_FIND_COMMAND_FOR_EVENT);
     error.setDetail("eventId", event.getCode().toString());
     throw error;
   }

@@ -24,8 +24,9 @@ export class AcceptFriendshipEvent extends ChatEvent {
 
   constructor(buddyId: string, nickname: string, creationDate: Date) {
     super(OpenChatEventCode.ACCEPT_FRIENDSHIP, creationDate, true);
-    if (typeof buddyId !== "undefined" && buddyId !== null)
+    if (typeof buddyId !== "undefined" && buddyId !== null) {
       this.setDestination(buddyId);
+    }
     this.mNickname = nickname;
   }
 

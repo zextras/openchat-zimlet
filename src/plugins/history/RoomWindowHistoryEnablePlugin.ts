@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {RoomWindow} from "../../dwt/windows/RoomWindow";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {DwtMenuItem} from "../../zimbra/ajax/dwt/widgets/DwtMenuItem";
 
-export class RoomWindowHistoryEnablePlugin implements ChatPlugin {
+export class RoomWindowHistoryEnablePlugin implements IChatPlugin {
 
   public static Name = "History Menu Item Enable";
 

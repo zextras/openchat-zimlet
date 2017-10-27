@@ -15,18 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
-import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
-import {DateProvider} from "../../lib/DateProvider";
-import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
+import {IBuddy} from "../../client/IBuddy";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
 import {MessageSent as MessageSentObj} from "../../client/MessageSent";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
-import {Buddy} from "../../client/Buddy";
+import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
+import {DateProvider} from "../../lib/DateProvider";
+import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {MessageReceived} from "./MessageReceived";
 import {MessageSent} from "./MessageSent";
 import {MessageStatus} from "./MessageStatus";
-import {BuddyStatus} from "../../client/BuddyStatus";
 
 export class Conversation extends DwtComposite {
 
@@ -36,8 +35,8 @@ export class Conversation extends DwtComposite {
 
   constructor(parent: DwtComposite, dateProvider: DateProvider, timedCallbackFactory: TimedCallbackFactory) {
     super({
+      className: "ZxChat_Conversation",
       parent: parent,
-      className: "ZxChat_Conversation"
     });
     this.mDateProvider = dateProvider;
     this.mTimedCallbackFactory = timedCallbackFactory;
@@ -47,16 +46,16 @@ export class Conversation extends DwtComposite {
   }
 
   public addMessageReceived(message: MessageReceivedObj): void {
-    let newMessage = new MessageReceived(this, message, this.mDateProvider);
+    const newMessage = new MessageReceived(this, message, this.mDateProvider);
     this.scrollToTop();
   }
 
   public addMessageSent(message: MessageSentObj): void {
-    let newMessage = new MessageSent(this, message, this.mDateProvider);
+    const newMessage = new MessageSent(this, message, this.mDateProvider);
     this.scrollToTop();
   }
 
-  public addMessageStatus(buddy: Buddy, buddyStatus: BuddyStatus): void {
+  public addMessageStatus(buddy: IBuddy, buddyStatus: IBuddyStatus): void {
     if (this.mLastBuddyStatusMessages.hasOwnProperty(buddy.getId())) {
       this.mLastBuddyStatusMessages[buddy.getId()].setVisible(false);
     }

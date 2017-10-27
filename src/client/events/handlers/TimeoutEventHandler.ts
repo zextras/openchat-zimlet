@@ -15,20 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {TimeoutEvent} from "../chat/TimeoutEvent";
+import {IChatClient} from "../../IChatClient";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {TimeoutEvent} from "../chat/TimeoutEvent";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class TimeoutEventHandler implements ChatEventHandler {
+export class TimeoutEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.TIMEOUT;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let timeoutEvent: TimeoutEvent = <TimeoutEvent> chatEvent;
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const timeoutEvent: TimeoutEvent = chatEvent as TimeoutEvent;
     client.Log.warn(undefined, "Ping requested timed out.");
     return true;
   }

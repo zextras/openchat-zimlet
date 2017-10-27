@@ -15,12 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ConnectionEventParser} from "./ConnectionEventParser";
-import {ChatEvent} from "../ChatEvent";
+import {BasicEvent} from "../BasicEvent";
 
-export interface ChatEventParser extends ConnectionEventParser {
+export interface IConnectionEventParser {
 
-  encodeEvent(chatEvent: ChatEvent): {};
-  decodeEvent(originEvent: ChatEvent, object: {}): ChatEvent;
+  encodeEvent(connectionEvent: BasicEvent): {};
+  decodeEvent(originEvent: BasicEvent, object: {}): BasicEvent;
 
 }

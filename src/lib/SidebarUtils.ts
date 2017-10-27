@@ -21,7 +21,7 @@ import {ZmZimletContext} from "../zimbra/zimbraMail/share/model/ZmZimletContext"
 export class SidebarUtils {
 
   private static BLACKLIST: string[] = [
-    "ca_uoguelph_ccs_sidebar"
+    "ca_uoguelph_ccs_sidebar",
   ];
 
   public isSidebarUsed(): boolean {
@@ -29,9 +29,9 @@ export class SidebarUtils {
   }
 
   private thereIsSomeBlacklisted(): boolean {
-    let zimlets: ZmZimletContext[] = appCtxt.getZimletMgr().getZimlets();
-    for (let zmCtxt of zimlets) {
-      for (let zmName of SidebarUtils.BLACKLIST) {
+    const zimlets: ZmZimletContext[] = appCtxt.getZimletMgr().getZimlets();
+    for (const zmCtxt of zimlets) {
+      for (const zmName of SidebarUtils.BLACKLIST) {
         if (zmCtxt.name === zmName) {
           return true;
         }

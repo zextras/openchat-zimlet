@@ -15,13 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Callback} from "../callbacks/Callback";
-import {NotificationTaskType} from "./NotificationTaskType";
-import {NotificationTask} from "./NotificationTask";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {Callback} from "../callbacks/Callback";
 import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
+import {INotificationTask} from "./NotificationTask";
+import {NotificationTaskType} from "./NotificationTaskType";
 
-export class DesktopNotification implements NotificationTask {
+export class DesktopNotification implements INotificationTask {
   private static TASKID: number = 0;
   private id: string;
   private notified: boolean;
@@ -32,7 +32,13 @@ export class DesktopNotification implements NotificationTask {
   private duration: number;
   private mTimedCallbackFactory: TimedCallbackFactory;
 
-  constructor(title: string, text: string, icon: string, timedCallbackFactory: TimedCallbackFactory, duration: number = 10000) {
+  constructor(
+    title: string,
+    text: string,
+    icon: string,
+    timedCallbackFactory: TimedCallbackFactory,
+    duration: number = 10000,
+  ) {
     this.id = "D_" + (++DesktopNotification.TASKID);
     this.notified = false;
     this.duration = duration;
@@ -50,20 +56,20 @@ export class DesktopNotification implements NotificationTask {
   }
 
   public start(): void {
-    if (this.isNotified()) return;
-    if (typeof Notification === "undefined") return;
-    if (typeof document === "undefined") return;
-    if (document.hasFocus()) return;
+    if (this.isNotified()) { return; }
+    if (typeof Notification === "undefined") { return; }
+    if (typeof document === "undefined") { return; }
+    if (document.hasFocus()) { return; }
 
     this.internalNotification = new Notification(
       this.title,
       {
+        body: this.text,
         dir : "auto",
+        icon: this.icon,
         // lang: ""
         tag : this.getId(),
-        body: this.text,
-        icon: this.icon
-      }
+      },
     );
     this.internalNotification.onclick = (new Callback(this, this.onClick)).toClosure();
     this.internalNotification.onshow = (new Callback(this, this.onShow)).toClosure();
@@ -76,7 +82,8 @@ export class DesktopNotification implements NotificationTask {
     }
   }
 
-  public setAppContext(context: ZmAppCtxt) {
+  public setAppContext(context: ZmAppCtxt): void {
+    return;
   }
 
   public isNotified(): boolean {
@@ -88,15 +95,15 @@ export class DesktopNotification implements NotificationTask {
   }
 
   private onClick(): void {
-    if (typeof window !== "undefined") window.focus();
+    if (typeof window !== "undefined") { window.focus(); }
     this.stop();
   }
 
   private onShow(): void {
-    if (typeof setTimeout === "undefined") return;
+    if (typeof setTimeout === "undefined") { return; }
     this.mTimedCallbackFactory.createTimedCallback(
       new Callback(this, this.stop),
-      this.duration
+      this.duration,
     ).start();
   }
 }

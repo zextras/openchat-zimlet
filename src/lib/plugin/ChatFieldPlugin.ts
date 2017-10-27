@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export interface ChatFieldPlugin {
+export interface IChatFieldPlugin {
 
   setField(value: any): void;
 

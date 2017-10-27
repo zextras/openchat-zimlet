@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
+set -e
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 nvm use 6
 
-make clean dist/com_zextras_chat_open.zip
+make clean
+rm -rf node_modules
+make node_modules
+make dist/com_zextras_chat_open.zip

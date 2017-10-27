@@ -22,7 +22,8 @@ export class FriendshipDeniedEvent extends FriendshipEvent {
 
   constructor(buddyId: string, creationDate: Date) {
     super(FriendshipDeniedEvent.TYPE, creationDate);
-    if (typeof buddyId !== "undefined" && buddyId !== null)
+    if (typeof buddyId !== "undefined" && buddyId !== null) {
       this.setSender(buddyId);
+    }
   }
 }

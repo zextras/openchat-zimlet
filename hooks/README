@@ -1,0 +1,10 @@
+/hooks
+======
+
+This directory contains some shared git hooks to help You to maintain a clean develop environment and some quality tests
+useful to test the code before a push.
+
+To enable them please add the configuration to Your local git repository with this command:
+```bash
+$ git config core.hooksPath hooks
+```

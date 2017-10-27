@@ -15,25 +15,25 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {FriendBackAddedEvent} from "../chat/FriendBackAddedEvent";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {Buddy} from "../../Buddy";
 import {BuddyList} from "../../BuddyList";
 import {Group} from "../../Group";
+import {IBuddy} from "../../IBuddy";
+import {IChatClient} from "../../IChatClient";
+import {FriendBackAddedEvent} from "../chat/FriendBackAddedEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class FriendBackAddedEventHandler implements ChatEventHandler {
+export class FriendBackAddedEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.FRIEND_BACK_ADDED;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let friendBackAddedEvent: FriendBackAddedEvent = <FriendBackAddedEvent> chatEvent;
-    let buddy: Buddy = friendBackAddedEvent.getBuddy();
-    let oldBuddy: Buddy = client.getBuddyList().getBuddyById(buddy.getId());
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const friendBackAddedEvent: FriendBackAddedEvent = chatEvent as FriendBackAddedEvent;
+    const buddy: IBuddy = friendBackAddedEvent.getBuddy();
+    const oldBuddy: IBuddy = client.getBuddyList().getBuddyById(buddy.getId());
     if ((oldBuddy != null) && typeof oldBuddy !== "undefined") {
       oldBuddy.setStatus(buddy.getStatus());
     } else {

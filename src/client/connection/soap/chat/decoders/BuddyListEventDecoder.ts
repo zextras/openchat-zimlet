@@ -15,15 +15,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {BuddyListEvent} from "../../../../events/chat/BuddyListEvent";
-import {Group} from "../../../../Group";
-import {Buddy} from "../../../../Buddy";
-import {BuddyStatusImp} from "../../../../BuddyStatusImp";
 import {DateProvider} from "../../../../../lib/DateProvider";
-import {BuddyImp} from "../../../../BuddyImp";
+import {Buddy} from "../../../../Buddy";
+import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {BuddyListEvent} from "../../../../events/chat/BuddyListEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {Group} from "../../../../Group";
+import {IBuddy} from "../../../../IBuddy";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class BuddyListEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -33,31 +33,40 @@ export class BuddyListEventDecoder extends SoapEventDecoder {
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {buddy_list: {id: string, nickname: string, group: string, statusType: number}[]}, originEvent?: ChatEvent): ChatEvent {
-    let event: BuddyListEvent = new BuddyListEvent(this.mDateProvider.getNow()),
-      groups: Group[] = [];
+  public decodeEvent(
+    eventObj: {
+      buddy_list: Array<{
+        group: string,
+        id: string,
+        nickname: string,
+        statusType: number,
+      }>,
+    },
+    originEvent?: ChatEvent,
+  ): ChatEvent {
+    const event: BuddyListEvent = new BuddyListEvent(this.mDateProvider.getNow());
+    const groups: Group[] = [];
 
-    for (let i: number = 0; i < eventObj["buddy_list"].length; i++) {
-      let buddyData = eventObj["buddy_list"][i],
-        group: Group = void 0;
-      for (let j: number = 0; j < groups.length; j++) {
-        if (groups[j].getName() === buddyData["group"]) {
-          group = groups[j];
+    for (const buddyData of eventObj.buddy_list) {
+      let tmpGroup: Group = void 0;
+      for (const group of groups) {
+        if (group.getName() === buddyData.group) {
+          tmpGroup = group;
         }
       }
-      if (typeof group === "undefined") {
-        group = new Group(buddyData["group"]);
-        groups.push(group);
+      if (typeof tmpGroup === "undefined") {
+        tmpGroup = new Group(buddyData.group);
+        groups.push(tmpGroup);
       }
-      let buddy: Buddy = new BuddyImp(
-        buddyData["id"],
-        buddyData["nickname"]
+      const buddy: IBuddy = new Buddy(
+        buddyData.id,
+        buddyData.nickname,
       );
       buddy.setStatus(
-        new BuddyStatusImp(BuddyStatusImp.GetTypeFromNumber(buddyData["statusType"]))
+        new BuddyStatusImp(BuddyStatusImp.GetTypeFromNumber(buddyData.statusType)),
       );
-      buddy.addGroup(group);
-      group.addBuddy(buddy, false);
+      buddy.addGroup(tmpGroup);
+      tmpGroup.addBuddy(buddy, false);
       event.addBuddy(buddy);
     }
 

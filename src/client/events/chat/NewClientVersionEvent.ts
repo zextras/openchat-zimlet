@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Version} from "../../../lib/Version";
 import {ChatEvent} from "../ChatEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
-import {Version} from "../../../lib/Version";
 
 export class NewClientVersionEvent extends ChatEvent {
 

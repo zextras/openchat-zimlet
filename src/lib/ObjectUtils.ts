@@ -17,14 +17,14 @@
 
 export class ObjectUtils {
 
-  private static sHasOwnProperty: Function = {}.hasOwnProperty;
-
   public static isEmpty(object: {}): boolean {
-    for (let key in object) {
-      if (!ObjectUtils.sHasOwnProperty.call(object, key)) continue;
+    for (const key in object) {
+      if (!ObjectUtils.sHasOwnProperty.call(object, key)) { continue; }
       return false;
     }
     return true;
   }
+
+  private static sHasOwnProperty: (v: string) => boolean = {}.hasOwnProperty;
 
 }

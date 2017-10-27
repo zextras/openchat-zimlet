@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Request} from "../Request";
 import {Callback} from "../../../lib/callbacks/Callback";
 import {ZxError} from "../../../lib/error/ZxError";
+import {IRequest} from "../IRequest";
 
-export class DummyRequest implements Request {
+export class DummyRequest implements IRequest {
 
   private mParams: {};
   private mCallback: Callback;
@@ -28,11 +28,11 @@ export class DummyRequest implements Request {
   private mErrorResponse: any;
   private mBehavior: DummyRequestBehavior;
 
-  constructor (
+  constructor(
     behavior: DummyRequestBehavior,
     object: {},
     callback: Callback,
-    errorCallback: Callback
+    errorCallback: Callback,
   ) {
     this.mBehavior = behavior;
     this.mParams = object;
@@ -76,5 +76,5 @@ export class DummyRequest implements Request {
 
 export enum DummyRequestBehavior {
   CALLBACK,
-  ERROR_CALLBACK
+  ERROR_CALLBACK,
 }

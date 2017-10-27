@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 import {Message} from "../../client/Message";
+import {IChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 
-export class RoomHistoryFieldPlugin implements ChatFieldPlugin {
+export class RoomHistoryFieldPlugin implements IChatFieldPlugin {
 
   public static FieldName = "Room History";
 

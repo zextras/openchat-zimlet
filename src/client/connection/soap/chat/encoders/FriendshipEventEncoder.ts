@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventEncoder} from "./SoapEventEncoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {FriendshipEvent} from "../../../../events/chat/FriendshipEvent";
 import {FriendshipInvitationEvent} from "../../../../events/chat/friendship/FriendshipInvitationEvent";
+import {FriendshipEvent} from "../../../../events/chat/FriendshipEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {SoapEventEncoder} from "./SoapEventEncoder";
 
 export class FriendshipEventEncoder extends SoapEventEncoder {
 
@@ -29,13 +29,13 @@ export class FriendshipEventEncoder extends SoapEventEncoder {
 
   protected getEventDetails(event: ChatEvent): {} {
 
-    if ((<FriendshipEvent> event).getFriendshipStatus() === FriendshipInvitationEvent.TYPE) {
+    if ((event as FriendshipEvent).getFriendshipStatus() === FriendshipInvitationEvent.TYPE) {
       // Add Friendship
-      let ev: FriendshipInvitationEvent = <FriendshipInvitationEvent> event;
+      const ev: FriendshipInvitationEvent = event as FriendshipInvitationEvent;
       return {
+        group: ev.getGroup(),
         target_address: ev.getDestination(),
         target_username: ev.getNickname(),
-        group: ev.getGroup()
       };
     }
 

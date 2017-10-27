@@ -15,12 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {NotificationTaskType} from "./NotificationTaskType";
-import {NotificationTask} from "./NotificationTask";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {ZmSoundAlert} from "../../zimbra/zimbraMail/share/view/ZmSoundAlert";
+import {INotificationTask} from "./NotificationTask";
+import {NotificationTaskType} from "./NotificationTaskType";
 
-export class SoundNotification implements NotificationTask {
+export class SoundNotification implements INotificationTask {
 
   private static TASKID: number = 0;
   private id: string;
@@ -36,18 +36,20 @@ export class SoundNotification implements NotificationTask {
   }
 
   public start(): void {
-    if (this.isNotified()) return;
-    if (typeof ZmSoundAlert === "undefined") return;
-    if (typeof document === "undefined") return;
-    if (document.hasFocus()) return;
+    if (this.isNotified()) { return; }
+    if (typeof ZmSoundAlert === "undefined") { return; }
+    if (typeof document === "undefined") { return; }
+    if (document.hasFocus()) { return; }
     ZmSoundAlert.getInstance().start();
     this.notified = true;
   }
 
   public stop(): void {
+    return;
   }
 
   public setAppContext(context: ZmAppCtxt) {
+    return;
   }
 
   public isNotified(): boolean {

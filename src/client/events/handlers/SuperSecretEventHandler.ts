@@ -15,28 +15,28 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {Buddy} from "../../Buddy";
+import {IBuddy} from "../../IBuddy";
+import {IChatClient} from "../../IChatClient";
 import {MessageReceived} from "../../MessageReceived";
 import {SuperSecretEvent} from "../chat/SuperSecretEvent";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class SuperSecretEventHandler implements ChatEventHandler {
+export class SuperSecretEventHandler implements IChatEventHandler {
 
-  getEventCode(): number {
+  public getEventCode(): number {
     return SuperSecretEvent.ID;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let superSecretEvent: SuperSecretEvent = <SuperSecretEvent> chatEvent;
-    let origin: string = superSecretEvent.getSender();
-    let originBuddy: Buddy = client.getBuddyList().getBuddyById(origin);
-    let messageReceived: MessageReceived = new MessageReceived(
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const superSecretEvent: SuperSecretEvent = chatEvent as SuperSecretEvent;
+    const origin: string = superSecretEvent.getSender();
+    const originBuddy: IBuddy = client.getBuddyList().getBuddyById(origin);
+    const messageReceived: MessageReceived = new MessageReceived(
       superSecretEvent.getMessageId(),
       originBuddy,
       superSecretEvent.getDate(),
-      superSecretEvent.getMessage()
+      superSecretEvent.getMessage(),
     );
     client.notifyMessageReceived(messageReceived);
     client.Log.debug(event, "Received SecretTestEvent");

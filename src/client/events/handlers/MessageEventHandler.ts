@@ -15,71 +15,79 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEventHandler} from "./ChatEventHandler";
-import {MessageEvent, MessageType} from "../chat/MessageEvent";
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {WritingStatusEvent} from "../chat/WritingStatusEvent";
-import {MessageWritingStatus} from "../../MessageWritingStatus";
-import {MessageReceived} from "../../MessageReceived";
-import {Buddy} from "../../Buddy";
-import {Room} from "../../Room";
-import {MessageSent} from "../../MessageSent";
 import {ChatPluginManager} from "../../../lib/plugin/ChatPluginManager";
+import {IBuddy} from "../../IBuddy";
+import {IChatClient} from "../../IChatClient";
+import {IRoom} from "../../IRoom";
+import {MessageReceived} from "../../MessageReceived";
+import {MessageSent} from "../../MessageSent";
+import {MessageWritingStatus} from "../../MessageWritingStatus";
+import {MessageEvent, MessageType} from "../chat/MessageEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {WritingStatusEvent} from "../chat/WritingStatusEvent";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class MessageEventHandler implements ChatEventHandler {
+export class MessageEventHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.MESSAGE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    let messageEvent: MessageEvent = <MessageEvent> chatEvent;
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    const messageEvent: MessageEvent = chatEvent as MessageEvent;
     if (messageEvent.getType() === MessageType.CHAT) {
       if (messageEvent.getSender() === client.getSessionInfoProvider().getUsername()) {
-        let dest = messageEvent.getDestination();
-        let destBuddy = client.getBuddyList().getBuddyById(dest);
+        const dest = messageEvent.getDestination();
+        const destBuddy = client.getBuddyList().getBuddyById(dest);
         if (destBuddy != null) {
           let destRoom = client.getRoomManager().getRoomById(dest);
           if (typeof destRoom === "undefined") {
-            let roomPluginManager = new ChatPluginManager();
-            destRoom = client.getRoomManager().createRoom(destBuddy.getId(), destBuddy.getNickname(), roomPluginManager);
+            const roomPluginManager = new ChatPluginManager();
+            destRoom = client.getRoomManager().createRoom(
+              destBuddy.getId(),
+              destBuddy.getNickname(),
+              roomPluginManager,
+              );
             destRoom.addMember(destBuddy);
           }
-          let messageSent = new MessageSent(
+          const messageSent = new MessageSent(
             messageEvent.getMessageId(),
             destBuddy.getId(),
             messageEvent.getDate(),
-            messageEvent.getMessage()
+            messageEvent.getMessage(),
           );
           destRoom.addMessageSentFromAnotherSession(messageSent);
         } else {
           client.Log.warn(messageEvent, "Received a message for a non-buddy");
         }
       } else {
-        let origin: string = messageEvent.getSender();
-        let originBuddy: Buddy = client.getBuddyList().getBuddyById(origin);
-        let originRoom: Room = client.getRoomManager().getRoomById(origin);
+        const origin: string = messageEvent.getSender();
+        const originBuddy: IBuddy = client.getBuddyList().getBuddyById(origin);
+        let originRoom: IRoom = client.getRoomManager().getRoomById(origin);
         if (originBuddy != null) {
           if (typeof originRoom === "undefined") {
-            let roomPluginManager = new ChatPluginManager();
-            originRoom = client.getRoomManager().createRoom(originBuddy.getId(), originBuddy.getNickname(), roomPluginManager);
+            const roomPluginManager = new ChatPluginManager();
+            originRoom = client.getRoomManager().createRoom(
+              originBuddy.getId(),
+              originBuddy.getNickname(),
+              roomPluginManager,
+            );
             originRoom.addMember(originBuddy);
           }
-          let messageReceived: MessageReceived = new MessageReceived(
+          const messageReceived: MessageReceived = new MessageReceived(
             messageEvent.getMessageId(),
             originBuddy,
             messageEvent.getDate(),
-            messageEvent.getMessage()
+            messageEvent.getMessage(),
           );
           originRoom.addMessageReceived(messageReceived);
           originRoom.addWritingStatusEvent(
             new MessageWritingStatus(
               originBuddy,
               client.getDateProvider().getNow(),
-              WritingStatusEvent.RESET
-            )
+              WritingStatusEvent.RESET,
+            ),
           );
           client.notifyMessageReceived(messageReceived);
         } else {

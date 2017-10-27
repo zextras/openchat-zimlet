@@ -25,12 +25,13 @@ LABEL = OpenChat Zimlet
 
 all: dist/com_zextras_chat_open.zip
 
-.PHONY: check-yui node_modules clean init install guard-%
+.PHONY: check-yui lint node_modules clean init install guard-%
+
+lint: src/ZimletVersion.ts src/dwt/widgets/emoji/EmojiTemplate.ts
+	npm run lint
 
 node_modules:
 	if [ ! -d "node_modules" ]; then npm install; fi
-	npm update
-	./utils/patchNodeModules
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
@@ -79,7 +80,7 @@ build/com_zextras_chat_open_bundle.js: node_modules \
 	# Check T4Z project if there are modifications
 	cd src/zimbra && make check-exports
 	# Lint the files
-	./node_modules/.bin/tslint -c tslint.json --project tsconfig.json
+	make lint
 	# Create the JS bundle
 	./node_modules/.bin/webpack --config webpack.config-open.js
 

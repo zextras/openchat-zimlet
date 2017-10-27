@@ -40,37 +40,40 @@ export class ZxErrorCode {
   public static UNABLE_TO_PARSE_JSON_STRING: string = "UNABLE_TO_PARSE_JSON_STRING";
   public static UNKNOWN_JS_EXCEPTION: string = "UNKNOWN_JS_EXCEPTION";
 
+  public static getMessage(code: string): string { return ZxErrorCode.sMsgs[code]; }
+
   private static sMsgs: {[key: string]: string} = {
-    GENERIC_ERROR: "Generic Error: {details}",
-    CHAT_DB_EXCEPTION: "Chat database error: {message}",
-    CHAT_SQL_EXCEPTION: "Unable to execute the SQL statement: {sqlStatement}",
+    AJX_EXCEPTION: "AJX_EXCEPTION",
     CHAT_CONCURRENT_PING: "Multiple concurrent pings, older ping has been killed",
-    DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT: "Talk is disabled for delegated access or resource accounts",
+    CHAT_DB_EXCEPTION: "Chat database error: {message}",
+    // tslint:disable-next-line:max-line-length
     CHAT_MESSAGE_SIZE_EXCEEDED: "The message sent to {target} is {length} long and exceeds {max_size} max permitted size.",
+    CHAT_SQL_EXCEPTION: "Unable to execute the SQL statement: {sqlStatement}",
+    DELEGATED_OR_RESOURCES_NOT_ALLOWED_TO_CHAT: "Talk is disabled for delegated access or resource accounts",
+    DETECTED_502: "DETECTED_502",
+    GENERIC_ERROR: "Generic Error: {details}",
     INVALID_CHAT_ACCOUNT: "{account} is not a vaild account for the chat server",
     NO_SUCH_CHAT_SESSION: "Chat session {session_id} not found",
-    UNABLE_TO_START_MANDATORY_SERVICE: "{message}",
-    UNABLE_TO_FIND_LOGGER: "Unable to find logger with id {loggerId}.",
-    UNABLE_TO_START_UNNECESSARY_SERVICE: "{message}",
-    ZM_CSFE_EXCEPTION: "ZM_CSFE_EXCEPTION",
-    AJX_EXCEPTION: "AJX_EXCEPTION",
-    UNABLE_TO_ENCODE_EVENT_OBJECT: "UNABLE_TO_ENCODE_EVENT_OBJECT",
     UNABLE_TO_DECODE_EVENT_OBJECT: "UNABLE_TO_DECODE_EVENT_OBJECT",
-    UNABLE_TO_SEND_EVENT_OBJECT: "UNABLE_TO_SEND_EVENT_OBJECT",
-    DETECTED_502: "DETECTED_502",
+    UNABLE_TO_ENCODE_EVENT_OBJECT: "UNABLE_TO_ENCODE_EVENT_OBJECT",
     UNABLE_TO_FIND_COMMAND_FOR_EVENT: "UNABLE_TO_FIND_COMMAND_FOR_EVENT",
-    UNKNOWN_ERROR: "UNKNOWN_ERROR",
+    UNABLE_TO_FIND_LOGGER: "Unable to find logger with id {loggerId}.",
     UNABLE_TO_PARSE_JSON_STRING: "UNABLE_TO_PARSE_JSON_STRING",
+    UNABLE_TO_SEND_EVENT_OBJECT: "UNABLE_TO_SEND_EVENT_OBJECT",
+    UNABLE_TO_START_MANDATORY_SERVICE: "{message}",
+    UNABLE_TO_START_UNNECESSARY_SERVICE: "{message}",
+    UNKNOWN_ERROR: "UNKNOWN_ERROR",
     UNKNOWN_JS_EXCEPTION: "JavaScript Exception: {details}",
+    ZM_CSFE_EXCEPTION: "ZM_CSFE_EXCEPTION",
   };
 
-  public static getMessage(code: string): string { return ZxErrorCode.sMsgs[code]; }
 }
 
 if (typeof window !== "undefined") {
-  (<ZxErrorCodeWindow> window)["ZxErrorCode"] = ZxErrorCode;
+  // tslint:disable-next-line:no-string-literal
+  (window as IZxErrorCodeWindow)["ZxErrorCode"] = ZxErrorCode;
 }
 
-interface ZxErrorCodeWindow extends Window {
-  ZxErrorCode: Function;
+interface IZxErrorCodeWindow extends Window {
+  ZxErrorCode: typeof ZxErrorCode;
 }

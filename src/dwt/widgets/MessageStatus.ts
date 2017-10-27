@@ -15,28 +15,28 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Message, MessageCreateHtmlData} from "./Message";
-import {Buddy} from "../../client/Buddy";
-import {BuddyStatusImp} from "../../client/BuddyStatusImp";
-import {DateProvider} from "../../lib/DateProvider";
-import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
-import {Conversation} from "./Conversation";
+import {IBuddy} from "../../client/IBuddy";
+import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {MessageReceived} from "../../client/MessageReceived";
+import {DateProvider} from "../../lib/DateProvider";
+import {LearningClipUtils} from "../../lib/LearningClipUtils";
+import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
-import {BuddyStatus} from "../../client/BuddyStatus";
+import {Conversation} from "./Conversation";
+import {IMessageCreateHtmlData, Message} from "./Message";
 
 export class MessageStatus extends Message {
 
   private mDate: Date;
-  private mBuddy: Buddy;
-  private mStatus: BuddyStatus;
+  private mBuddy: IBuddy;
+  private mStatus: IBuddyStatus;
 
-  constructor(parent: Conversation, buddy: Buddy, status: BuddyStatus, dateProvider: DateProvider) {
+  constructor(parent: Conversation, buddy: IBuddy, status: IBuddyStatus, dateProvider: DateProvider) {
     super(
       parent,
       new MessageReceived("", buddy, dateProvider.getNow(), status.getMessage()),
       dateProvider,
-      "com_zextras_chat_open.Widgets#MessageStatus"
+      "com_zextras_chat_open.Widgets#MessageStatus",
     );
     this.mDate = dateProvider.getNow();
     this.mBuddy = buddy;
@@ -45,15 +45,24 @@ export class MessageStatus extends Message {
     this.getHtmlElement().setAttribute("status", AjxStringUtil.htmlEncode(status.getMessageLabel()));
   }
 
-  protected _createHtml(data: MessageCreateHtmlData = {}): void {
+  protected _createHtml(data: IMessageCreateHtmlData = {}): void {
+    const statusWidth: number = LearningClipUtils.getStringWidth(
+      this.mMessage.getMessage(),
+      "ZxChat_MessageStatusContent",
+    );
+    const shortNickname: string = LearningClipUtils.clip(
+      this.mBuddy.getNickname(),
+      198 - statusWidth,
+      "ZxChat_MessageStatusSender",
+    );
     data = {
       ...data,
+      content: this.mMessage.getMessage(),
       id: this._htmlElId,
-      sender: this.mBuddy.getNickname(),
-      content: this.mMessage.getMessage()
+      sender: shortNickname,
     };
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
-    this._senderEl = document.getElementById(data.id + "_sender");
-    this._contentEl = document.getElementById(data.id + "_content");
+    this.senderEl = document.getElementById(data.id + "_sender");
+    this.contentEl = document.getElementById(data.id + "_content");
   }
 }

@@ -15,15 +15,15 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {SoapEventDecoder} from "./SoapEventDecoder";
-import {ChatEvent} from "../../../../events/ChatEvent";
-import {FriendBackAddedEvent} from "../../../../events/chat/FriendBackAddedEvent";
-import {Buddy} from "../../../../Buddy";
-import {BuddyStatusType} from "../../../../BuddyStatusType";
-import {BuddyStatusImp} from "../../../../BuddyStatusImp";
 import {DateProvider} from "../../../../../lib/DateProvider";
-import {BuddyImp} from "../../../../BuddyImp";
+import {Buddy} from "../../../../Buddy";
+import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {BuddyStatusType} from "../../../../BuddyStatusType";
+import {FriendBackAddedEvent} from "../../../../events/chat/FriendBackAddedEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
+import {ChatEvent} from "../../../../events/ChatEvent";
+import {IBuddy} from "../../../../IBuddy";
+import {SoapEventDecoder} from "./SoapEventDecoder";
 
 export class FriendBackAddedEventDecoder extends SoapEventDecoder {
   private mDateProvider: DateProvider;
@@ -35,17 +35,17 @@ export class FriendBackAddedEventDecoder extends SoapEventDecoder {
 
   public decodeEvent(
     eventObj: {
-      buddyAddress: string
-      buddyNickname: string
+      buddyAddress: string,
+      buddyNickname: string,
     },
-    originEvent?: ChatEvent
+    originEvent?: ChatEvent,
   ): ChatEvent {
-    let buddy: Buddy = new BuddyImp(
-      eventObj["buddyAddress"],
-      eventObj["buddyNickname"]
+    const buddy: IBuddy = new Buddy(
+      eventObj.buddyAddress,
+      eventObj.buddyNickname,
     );
     buddy.setStatus(
-      new BuddyStatusImp(BuddyStatusType.INVITED)
+      new BuddyStatusImp(BuddyStatusType.INVITED),
     );
     return new FriendBackAddedEvent(buddy, this.mDateProvider.getNow());
   }

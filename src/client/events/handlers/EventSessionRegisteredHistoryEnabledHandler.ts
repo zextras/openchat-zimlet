@@ -15,26 +15,28 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../ChatEvent";
-import {ChatClient} from "../../ChatClient";
-import {ZmFolder} from "../../../zimbra/zimbraMail/share/model/ZmFolder";
-import {ZmApp} from "../../../zimbra/zimbraMail/core/ZmApp";
 import {ChatFolderHandler} from "../../../dwt/ChatFolderHandler";
-import {ChatEventHandler} from "./ChatEventHandler";
+import {ZmApp} from "../../../zimbra/zimbraMail/core/ZmApp";
+import {ZmFolder} from "../../../zimbra/zimbraMail/share/model/ZmFolder";
+import {IChatClient} from "../../IChatClient";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
+import {ChatEvent} from "../ChatEvent";
+import {IChatEventHandler} from "./IChatEventHandler";
 
-export class EventSessionRegisteredHistoryEnabledHandler implements ChatEventHandler {
+export class EventSessionRegisteredHistoryEnabledHandler implements IChatEventHandler {
 
   public getEventCode(): number {
     return OpenChatEventCode.REGISTER_SESSION;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: ChatClient): boolean {
-    // client.getSessionInfoProvider().setHistoryEnabled((<EventSessionRegistered> chatEvent).getInfo("history_enabled"));
-    let chatFolderHandler = new ChatFolderHandler(
+  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+    // client.getSessionInfoProvider().setHistoryEnabled(
+    //   (<EventSessionRegistered> chatEvent).getInfo("history_enabled"),
+    // );
+    const chatFolderHandler = new ChatFolderHandler(
       ZmFolder.ID_CHATS,
       ZmFolder.HIDE_ID,
-      [ZmApp.MAIL, ZmApp.PORTAL]
+      [ZmApp.MAIL, ZmApp.PORTAL],
     );
     chatFolderHandler.setVisible(true);
     return true;

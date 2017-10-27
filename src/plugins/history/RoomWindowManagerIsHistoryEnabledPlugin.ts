@@ -15,15 +15,18 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatPlugin} from "../../lib/plugin/ChatPlugin";
-import {RoomWindowManager} from "../../dwt/windows/RoomWindowManager";
 import {RoomWindow} from "../../dwt/windows/RoomWindow";
+import {RoomWindowManager} from "../../dwt/windows/RoomWindowManager";
+import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {RoomWindowHistoryEnablePlugin} from "./RoomWindowHistoryEnablePlugin";
 
-export class RoomWindowManagerIsHistoryEnabledPlugin implements ChatPlugin {
+export class RoomWindowManagerIsHistoryEnabledPlugin implements IChatPlugin {
 
   public trigger(roomWindowManager: RoomWindowManager, roomWindow: RoomWindow): void {
-    roomWindow.getPluginManager().triggerPlugins(RoomWindowHistoryEnablePlugin.Name, roomWindowManager.getSessionInfoProvider());
+    roomWindow.getPluginManager().triggerPlugins(
+      RoomWindowHistoryEnablePlugin.Name,
+      roomWindowManager.getSessionInfoProvider(),
+    );
   }
 
 }

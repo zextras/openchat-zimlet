@@ -15,11 +15,13 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BasicEvent} from "../BasicEvent";
+import {IRequest} from "../../IRequest";
 
-export interface ConnectionEventParser {
+export interface IDosFilter {
 
-  encodeEvent(connectionEvent: BasicEvent): {};
-  decodeEvent(originEvent: BasicEvent, object: {}): BasicEvent;
+  enable(): void;
+  disable(): void;
+  enabled(): boolean;
+  sendRequest(request: IRequest): void;
 
 }
