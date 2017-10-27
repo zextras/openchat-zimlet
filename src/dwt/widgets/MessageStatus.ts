@@ -19,6 +19,7 @@ import {IBuddy} from "../../client/IBuddy";
 import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {MessageReceived} from "../../client/MessageReceived";
 import {DateProvider} from "../../lib/DateProvider";
+import {LearningClipUtils} from "../../lib/LearningClipUtils";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 import {Conversation} from "./Conversation";
@@ -45,11 +46,20 @@ export class MessageStatus extends Message {
   }
 
   protected _createHtml(data: IMessageCreateHtmlData = {}): void {
+    const statusWidth: number = LearningClipUtils.getStringWidth(
+      this.mMessage.getMessage(),
+      "ZxChat_MessageStatusContent",
+    );
+    const shortNickname: string = LearningClipUtils.clip(
+      this.mBuddy.getNickname(),
+      198 - statusWidth,
+      "ZxChat_MessageStatusSender",
+    );
     data = {
       ...data,
       content: this.mMessage.getMessage(),
       id: this._htmlElId,
-      sender: this.mBuddy.getNickname(),
+      sender: shortNickname,
     };
     DwtComposite.prototype._createHtmlFromTemplate.call(this, this.TEMPLATE, data);
     this.senderEl = document.getElementById(data.id + "_sender");

@@ -27,10 +27,10 @@ export class LearningClipUtils {
     let currentMap: Map = this.sMapContainer.get(styleClass);
     if (currentMap == null) {
       currentMap = new Map();
-      currentMap.put(LearningClipUtils.sEllipsis, LearningClipUtils._testString(" ...", styleClass));
+      currentMap.put(LearningClipUtils.sEllipsis, LearningClipUtils.getStringWidth("…", styleClass));
       this.sMapContainer.put(styleClass, currentMap);
     }
-    let labelWidth: number = LearningClipUtils._testString(label, styleClass);
+    let labelWidth: number = LearningClipUtils.getStringWidth(label, styleClass);
     if (labelWidth <= maxLength) { return label; }
     let getChar: string;
     let truncatedLabelWidth: number;
@@ -40,15 +40,21 @@ export class LearningClipUtils {
         truncatedLabelWidth = labelWidth - currentMap.get(getChar);
       } else {
         // learning step
-        truncatedLabelWidth = LearningClipUtils._testString(label.substring(0, i), styleClass);
+        truncatedLabelWidth = LearningClipUtils.getStringWidth(label.substring(0, i), styleClass);
         currentMap.put(getChar, labelWidth - truncatedLabelWidth);
       }
       labelWidth = truncatedLabelWidth;
       if (labelWidth + currentMap.get(LearningClipUtils.sEllipsis) <= maxLength) {
-        return label.substring(0, i) + " ...";
+        return label.substring(0, i) + "…";
       }
     }
     return label;
+  }
+
+  public static getStringWidth(str: string, className: string): number {
+    LearningClipUtils.sClipUtilsDiv.className = className;
+    LearningClipUtils.sClipUtilsDiv.innerHTML = AjxStringUtil.htmlEncode(str);
+    return LearningClipUtils.sClipUtilsDiv.offsetWidth;
   }
 
   private static sClipUtilsDiv: HTMLDivElement;
@@ -72,9 +78,4 @@ export class LearningClipUtils {
     }
   }
 
-  private static _testString(str: string, className: string): number {
-    LearningClipUtils.sClipUtilsDiv.className = className;
-    LearningClipUtils.sClipUtilsDiv.innerHTML = AjxStringUtil.htmlEncode(str);
-    return LearningClipUtils.sClipUtilsDiv.offsetWidth;
-  }
 }

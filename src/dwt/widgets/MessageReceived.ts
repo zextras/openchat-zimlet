@@ -19,6 +19,7 @@ import {IBuddy} from "../../client/IBuddy";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
 import {Callback} from "../../lib/callbacks/Callback";
 import {DateProvider} from "../../lib/DateProvider";
+import {LearningClipUtils} from "../../lib/LearningClipUtils";
 import {Conversation} from "./Conversation";
 import {Message} from "./Message";
 
@@ -32,17 +33,27 @@ export class MessageReceived extends Message {
   }
 
   public _createHtml(): void {
+    const shortNickname = LearningClipUtils.clip(
+      (this.mMessage as MessageReceivedObj).getSender().getNickname(),
+      165,
+      "ZxChat_MessageSender",
+    );
     super._createHtml({
-      sender: (this.mMessage as MessageReceivedObj).getSender().getNickname(),
+      sender: shortNickname,
     });
   }
 
   public _updateBuddyNickname(nickname: string): void {
+    const shortNickname = LearningClipUtils.clip(
+      nickname,
+      165,
+      "ZxChat_MessageSender",
+    );
     if (this.senderEl) {
       if (typeof this.senderEl.innerHTML !== "undefined") {
-        this.senderEl.innerHTML = nickname;
+        this.senderEl.innerHTML = shortNickname;
       } else if (typeof this.senderEl.innerText !== "undefined") {
-        this.senderEl.innerText = nickname;
+        this.senderEl.innerText = shortNickname;
       }
     }
   }
