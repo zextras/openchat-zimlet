@@ -1,0 +1,21 @@
+--- node_modules/json3/lib/json3.js
++++ node_modules/json3/lib/json3.js
+@@ -43,6 +43,7 @@
+     // Delegate to the native `stringify` and `parse` implementations.
+     if (typeof nativeJSON == "object" && nativeJSON) {
+       exports.stringify = nativeJSON.stringify;
++      exports.stringify1 = nativeJSON.stringify1;
+       exports.parse = nativeJSON.parse;
+     }
+ 
+@@ -889,7 +890,8 @@
+ 
+     root.JSON = {
+       "parse": JSON3.parse,
+-      "stringify": JSON3.stringify
++      "stringify": JSON3.stringify,
++      "stringify1": JSON3.stringify1
+     };
+   }
+ 
+
