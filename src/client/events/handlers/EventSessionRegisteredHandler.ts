@@ -34,6 +34,7 @@ export class EventSessionRegisteredHandler implements IChatEventHandler {
       client.getSessionInfoProvider().setSessionId(eventSessionRegistered.getInfo("session_id"));
       client.getSessionInfoProvider().setServerVersion(new Version(eventSessionRegistered.getInfo("server_version")));
       client.getSessionInfoProvider().setRoomServiceAddress(eventSessionRegistered.getInfo("room_service_address"));
+      client.getSessionInfoProvider().setProduct(eventSessionRegistered.getInfo("product"));
 
       client.serverOnline(eventSessionRegistered);
       client.startPing();

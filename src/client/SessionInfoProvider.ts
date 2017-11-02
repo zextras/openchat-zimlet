@@ -29,6 +29,7 @@ export class SessionInfoProvider {
   private mRoomServiceAddress: string;
   private mDisplayName: string;
   private mSessionResponsesReceivedInThisSession: number = 0;
+  private mProduct: string = "";
 
   constructor(username: string, displayName: string, zimletVersion: Version) {
     this.mUsername = username;
@@ -112,4 +113,11 @@ export class SessionInfoProvider {
     this.mSessionResponsesReceivedInThisSession = 0;
   }
 
+  public setProduct(product: string): void {
+    this.mProduct = product;
+  }
+
+  public getProduct(): string {
+    return this.mProduct;
+  }
 }
