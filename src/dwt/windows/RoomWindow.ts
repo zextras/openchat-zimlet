@@ -335,11 +335,12 @@ export class RoomWindow extends WindowBase {
         this.mLastPopup = date.getTime();
         super.popup(point);
         this.mOnWindowOpenedCallbacks.run(this, point);
+        if (setExpand === false) {
+          this.setMinimized();
+        }
       }
       if (setExpand === true) {
         this.setExpanded();
-      } else if (setExpand === false) {
-        this.setMinimized();
       }
     }
   }
