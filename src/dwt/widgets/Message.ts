@@ -19,13 +19,13 @@ import {Message as MessageObj} from "../../client/Message";
 import {DateProvider} from "../../lib/DateProvider";
 import {StringUtils} from "../../lib/StringUtils";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {Bowser} from "../../libext/bowser";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxDateFormat} from "../../zimbra/ajax/util/AjxText";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {ZmObjectManager} from "../../zimbra/zimbraMail/share/model/ZmObjectManager";
 import {Conversation} from "./Conversation";
-import {Bowser} from "../../libext/bowser";
 
 export class Message extends DwtComposite {
 

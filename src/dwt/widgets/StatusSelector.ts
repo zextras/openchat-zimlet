@@ -15,7 +15,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BuddyStatusImp} from "../../client/BuddyStatus";
 import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
@@ -73,11 +72,18 @@ export class StatusSelector extends DwtToolBarButton {
 
   public setCurrentStatus(userStatus: IBuddyStatus): void {
     this.setText(userStatus.getMessage(true));
-    const menuItems: DwtMenuItem[] = this.menu.getMenuItems();
+    const menuItems: {[id: string]: DwtMenuItem} = this.menu.getMenuItems();
     const results = [];
-    for (const item of menuItems) {
-      const itemStatus = item.getData(StatusSelector._DATA_STATUS);
-      results.push(item._setChecked(userStatus.getId().toString() === itemStatus.getId(), null, true));
+    for (const itemId in menuItems) {
+      if (!menuItems.hasOwnProperty(itemId)) { continue; }
+      const itemStatus = menuItems[itemId].getData(StatusSelector._DATA_STATUS);
+      results.push(
+        menuItems[itemId]._setChecked(
+          userStatus.getId().toString() === itemStatus.getId().toString(),
+          null,
+          true,
+        ),
+      );
     }
   }
 

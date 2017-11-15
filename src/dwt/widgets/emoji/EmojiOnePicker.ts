@@ -17,6 +17,7 @@
 
 import {Callback} from "../../../lib/callbacks/Callback";
 import {ZimbraUtils} from "../../../lib/ZimbraUtils";
+import {Bowser} from "../../../libext/bowser";
 import {DwtSelectionEvent} from "../../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {DwtPoint} from "../../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {DwtComposite} from "../../../zimbra/ajax/dwt/widgets/DwtComposite";
@@ -26,7 +27,6 @@ import {DwtTabView, DwtTabViewPage} from "../../../zimbra/ajax/dwt/widgets/DwtTa
 import {DwtToolBar, DwtToolBarButton} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {EmojiTemplate, IEmojiData} from "./EmojiTemplate";
-import {Bowser} from "../../../libext/bowser";
 
 export class EmojiOnePicker extends DwtMenu {
 
