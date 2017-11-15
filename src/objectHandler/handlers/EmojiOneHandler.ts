@@ -86,21 +86,42 @@ export class EmojiOneHandler extends ZmObjectHandler {
     }
     // populate map
     if (typeof emojiStyleSheet === "undefined") { return; }
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < emojiStyleSheet.cssRules.length; i++) {
-      const cssText: string = emojiStyleSheet.cssRules[i].cssText;
-      if ((cssText.indexOf("emojione.sprites.png") !== -1)) {
-        // example
-        // cssText: ".emojione-0030-20e3 { background-image: url("images/emojione.sprites.png");
-        // background-position: 0px -32px; width: 16px; height: 16px; }"
-        // 26 = "background-position: 0px -".length; 10 = ".emojione-".length
-        const startingIndex: number = cssText.indexOf("background-position") + 25;
-        this.mEmojiPositionMap[cssText.substring(10, cssText.indexOf(" "))] = parseInt(
-          cssText.substring(startingIndex, startingIndex + cssText.substring(startingIndex).indexOf("px")),
-          10,
-        );
+    if (typeof emojiStyleSheet.cssRules !== "undefined") {
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < emojiStyleSheet.cssRules.length; i++) {
+        const cssText: string = emojiStyleSheet.cssRules[i].cssText;
+        if ((cssText.indexOf("emojione.sprites.png") !== -1)) {
+          // example
+          // cssText: ".emojione-0030-20e3 { background-image: url("images/emojione.sprites.png");
+          // background-position: 0px -32px; width: 16px; height: 16px; }"
+          // 26 = "background-position: 0px -".length; 10 = ".emojione-".length
+          const startingIndex: number = cssText.indexOf("background-position") + 25;
+          this.mEmojiPositionMap[cssText.substring(10, cssText.indexOf(" "))] = parseInt(
+            cssText.substring(startingIndex, startingIndex + cssText.substring(startingIndex).indexOf("px")),
+            10,
+          );
+        }
+      }
+    } else if (typeof emojiStyleSheet.rules !== "undefined") {
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < emojiStyleSheet.rules.length; i++) {
+        const selectorText: string = (emojiStyleSheet.rules[i] as ICSSRuleWithStyle).selectorText;
+        const cssText: string = (emojiStyleSheet.rules[i] as ICSSRuleWithStyle).style.cssText;
+        if ((cssText.indexOf("emojione.sprites.png") !== -1)) {
+          // example
+          // selectorText: ".emojione-0035-20e3"
+          // cssText: "HEIGHT: 16px; WIDTH: 16px; BACKGROUND-IMAGE: url(images/emojione.sprites.png);
+          // BACKGROUND-POSITION: 0px 0px";
+          // 26 = "background-position: 0px -".length; 10 = ".emojione-".length
+          const startingIndex: number = cssText.indexOf("BACKGROUND-POSITION") + 25;
+          this.mEmojiPositionMap[selectorText.substring(10)] = parseInt(
+            cssText.substring(startingIndex, startingIndex + cssText.substring(startingIndex).indexOf("px")),
+            10,
+          );
+        }
       }
     }
+
   }
 
   public match(content: string, startIndex: number): RegExpExecArray {
@@ -226,4 +247,11 @@ class MatchResult {
     return this.mPriority;
   }
 
+}
+
+interface ICSSRuleWithStyle extends CSSRule {
+  selectorText: string;
+  style: {
+    cssText: string,
+  };
 }

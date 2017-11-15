@@ -156,7 +156,7 @@ export class MainWindow extends WindowBase {
     this.mTitleBar = new DwtToolBar({
       className: "ZxChat_TitleBar_Toolbar",
       parent: this.mContainerView,
-      parentElement: this._titleBarEl,
+      parentElement: (this._titleBarEl.children[0] as HTMLElement),
     });
     this.mTitleBar.setSize(
       `${MainWindow.WIDTH}px`,

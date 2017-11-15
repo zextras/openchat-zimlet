@@ -26,6 +26,7 @@ export class DropTarget extends DwtDropTarget {
     super([]);
     this.mTypes = [];
     for (const type of types) {
+      if (typeof type === "undefined") { continue; }
       this.addTransferType(type);
     }
   }

@@ -65,30 +65,26 @@
   float: left
   width: 0
   height: 0
-  border-top: 15px solid rgba(0, 123, 195, 0.3)
+  border-top: 15px solid rgb(186, 216, 237)
   border-left: 15px solid transparent
 
 .triangle-top-left
   float: left
   width: 0
   height: 0
-  border-top: 15px solid rgba(0, 123, 195, 0.12)
+  border-top: 15px solid rgb(227, 240, 248)
   border-right: 15px solid transparent
 
-.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-right,
-.ZxChat_MessageContainer-legacy-ui[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-right
-  visibility: collapse
+.ZxChat_MessageContainerSenderTrue .triangle-top-right
+  display: none
 
-.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-left,
-.ZxChat_MessageContainer-legacy-ui[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .triangle-top-left
-  visibility: collapse
+.ZxChat_MessageContainerSenderFalse .triangle-top-left
+  display: none
 
-.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer,
-.ZxChat_MessageContainer-legacy-ui[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer
+.ZxChat_MessageContainerSenderTrue .ZxChat_MessageInnerContainer
   float: right
 
-.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer,
-.ZxChat_MessageContainer-legacy-ui[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer
+.ZxChat_MessageContainerSenderFalse .ZxChat_MessageInnerContainer
   float: left
 
 //Prevent any fontsize overwrite (related to ZXCHAT-36 with MsgBody className)
@@ -100,24 +96,19 @@
   font-size: 1em !important
   max-width: 141px
 
-.ZxChat_MessageContainer[sender=true],
-.ZxChat_MessageContainer-legacy-ui[sender=true]
+.ZxChat_MessageContainerSenderTrue
   text-align: right
 
-.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageSenderDate,
-.ZxChat_MessageContainer-legacy-ui[sender=true] > .ZxChat_Message > .ZxChat_MessageSenderDate
+.ZxChat_MessageContainerSenderTrue .ZxChat_MessageSenderDate
   text-align: right
 
-.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageSenderDate,
-.ZxChat_MessageContainer-legacy-ui[sender=false] > .ZxChat_Message > .ZxChat_MessageSenderDate
+.ZxChat_MessageContainerSenderFalse .ZxChat_MessageSenderDate
   text-align: left
 
-.ZxChat_MessageContainer[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .ZxChat_MessageContent,
-.ZxChat_MessageContainer-legacy-ui[sender=true] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .ZxChat_MessageContent-legacy-ui
-  background-color: rgba(0, 123, 195, 0.12)
+.ZxChat_MessageContainerSenderTrue .ZxChat_MessageContent
+  background-color: rgb(227, 240, 248)
   border-top-right-radius: 0
 
-.ZxChat_MessageContainer[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .ZxChat_MessageContent,
-.ZxChat_MessageContainer-legacy-ui[sender=false] > .ZxChat_Message > .ZxChat_MessageInnerContainer > .ZxChat_MessageContent-legacy-ui
-  background-color: rgba(0, 123, 195, 0.3)
+.ZxChat_MessageContainerSenderFalse .ZxChat_MessageContent
+  background-color: rgb(186, 216, 237)
   border-top-left-radius: 0

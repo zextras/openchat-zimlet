@@ -17,7 +17,7 @@
 
 <template id="com_zextras_chat_open.Widgets#Message">
     <div class="ZxChat_MessageContainer${legacy}">
-        <div class="DwtDialog ZxChat_MessageOuterContainer${legacy} ZxChat_Message">
+        <div id="${id}_outer" class="DwtDialog ZxChat_MessageOuterContainer${legacy} ZxChat_Message">
             <div class="ZxChat_MessageSenderDate">
                 <span id="${id}_sender" class="ZxChat_MessageSender">
                     ${sender}

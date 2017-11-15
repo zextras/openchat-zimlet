@@ -22,5 +22,6 @@ export interface IDwtChatTreeItem {
   isGroupTreeItem(): boolean;
   isBuddyTreeItem(): boolean;
   onAction(ev: DwtSelectionEvent): void;
+  applyFilter(regex: RegExp): number;
 
 }

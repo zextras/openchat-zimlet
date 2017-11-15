@@ -46,13 +46,13 @@
 .ZxEmojiPickerButton
   margin: 0
 
-.ZxEmojiPickerButton > .ZLeftIcon
+.ZxEmojiPickerButton .ZLeftIcon
   padding: 0
 
-.ZxEmojiPickerButton > .ZRightIcon
+.ZxEmojiPickerButton .ZRightIcon
   padding: 0
 
-.ZxEmojiPickerButton > .ZDropDown
+.ZxEmojiPickerButton .ZDropDown
   padding: 0
   width: 0
   height: 0
@@ -106,28 +106,28 @@
   +sprite($chat-folder)
 
 // Override button borders and settings for the emoji picker button
-.ZxEmojiPickerButton > .ZToolbarButtonBorder
+.ZxEmojiPickerButton .ZToolbarButtonBorder
   border-radius: 0
   border-collapse: separate
   border: none
   background-image: none
   box-shadow: none
 
-.ZxChat_Button > .ZToolbarButtonBorder
+.ZxChat_Button .ZToolbarButtonBorder
   background-image: none
   box-shadow: none
   border: none
 
-.ZxChat_Button.ZHover > .ZToolbarButtonBorder,
-.ZxChat_Button.ZActive > .ZToolbarButtonBorder,
-.ZxChat_Button.ZSelected > .ZToolbarButtonBorder
+.ZxChat_Button.ZHover .ZToolbarButtonBorder,
+.ZxChat_Button.ZActive .ZToolbarButtonBorder,
+.ZxChat_Button.ZSelected .ZToolbarButtonBorder
   box-shadow: none
   border: none
   background: #007cc3 none
 
-.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZHover > .ZToolbarButtonBorder,
-.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZActive > .ZToolbarButtonBorder,
-.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZSelected > .ZToolbarButtonBorder
+.MainWindowStatusToolbar .ZxChat_Button.ZHover .ZToolbarButtonBorder,
+.MainWindowStatusToolbar .ZxChat_Button.ZActive .ZToolbarButtonBorder,
+.MainWindowStatusToolbar .ZxChat_Button.ZSelected .ZToolbarButtonBorder
   box-shadow: none
   border: none
   background: #D6D6D6 none

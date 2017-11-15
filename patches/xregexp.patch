@@ -1,0 +1,13 @@
+--- node_modules/xregexp/xregexp-all.js
++++ node_modules/xregexp/xregexp-all.js
+@@ -3348,7 +3348,9 @@
+                 pos += (result.matchLength || 1);
+             } else {
+                 // Get the native token at the current position
+-                var token = XRegExp.exec(appliedPattern, nativeTokens[scope], pos, 'sticky')[0];
++                var tokenArray = XRegExp.exec(appliedPattern, nativeTokens[scope], pos, 'sticky')
++                if (tokenArray === null) { break; }
++                var token = tokenArray[0];
+                 output += token;
+                 pos += token.length;
+                 if (token === '[' && scope === defaultScope) {

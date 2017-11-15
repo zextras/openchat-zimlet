@@ -65,7 +65,7 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
 
   private setEmoji(emoji: IEmojiData): void {
     this.setData(EmojiOnePicker.KEY_EMOJI_DATA, emoji.name);
-    this.setText(emoji.data);
+    this.setText(emoji.data.replace(/>.*</, "><"));
   }
 
   private onEmojiSelected(callback: Callback, ev: DwtSelectionEvent, emojiData: IEmojiData): void {
