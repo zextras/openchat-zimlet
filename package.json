@@ -35,6 +35,6 @@
     "spritesmith-cli": "^1.1.2",
     "tslint": "5.7.0",
     "typescript": "2.5.3",
-    "webpack": "^2.2.1"
+    "webpack": "^3.4.1"
   }
 }
