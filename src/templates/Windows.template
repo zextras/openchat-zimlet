@@ -20,6 +20,7 @@
         <table role="presentation" >
             <tr id='${id}_titlebar' class="ZxChat_TitleBar${legacy}">
                 <$ if (data.doNotRenderTitleBar === true) { $>
+                <td class='${id}_titlebar_container' class="ZxChat_TitleBar_container"/>
                 <$ } else { $>
                 <td class='minWidth ZxChatWindowIcon'>
                     <div id='${id}_icon' class='${icon}'></div>

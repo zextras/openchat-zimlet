@@ -26,7 +26,7 @@ export class MessageSent extends Message {
 
   constructor(parent: Conversation, message: MessageSentObj, dateProvider: DateProvider) {
     super(parent, message, dateProvider);
-    (this.getHtmlElement().childNodes[0] as HTMLElement).setAttribute("sender", "false");
+    (this.getHtmlElement().childNodes[0] as HTMLElement).className += " ZxChat_MessageContainerSenderFalse";
     (this.mMessage as MessageSentObj).onSetDelivered(new Callback(this, this.setDelivered));
     this.setDelivered(message.isDelivered());
   }
@@ -39,8 +39,10 @@ export class MessageSent extends Message {
 
   public setDelivered(delivered = true): void {
     const opacity: number = delivered ? 1 : 0.6;
+    const outer: number = delivered ? 100 : 50;
     if (typeof this.getHtmlElement() !== "undefined") {
       this.getHtmlElement().style.opacity = `${opacity}`;
+      this.outerEl.style.filter = `alpha(opacity=${outer})`;
     }
   }
 

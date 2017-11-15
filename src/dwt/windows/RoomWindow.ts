@@ -159,7 +159,7 @@ export class RoomWindow extends WindowBase {
     this.mTitlebar = new DwtToolBar({
       className: "ZxChat_TitleBar_Toolbar",
       parent: this.mContainerView,
-      parentElement: this._titleBarEl,
+      parentElement: (this._titleBarEl.children[0] as HTMLElement),
     });
     // Fix between versions
     this.mTitlebar.getHtmlElement().onmouseup = (ev: MouseEvent) => {
@@ -433,17 +433,13 @@ export class RoomWindow extends WindowBase {
       );
       const realMessage: string = this.mInputField.getInputElement().value; // this.mInputField.getValue execute trim
       let message: string = realMessage;
-      if (Bowser.msie) {
-        if (realMessage.substring(currentInputPosition, currentInputPosition + 2) === "\r\n") {
-          message =
-            `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
-        } else { return; } // It isn't a send DwtKeyEvent.KEY_ENTER
-      } else {
-        if (realMessage.substring(currentInputPosition - 1, currentInputPosition) === "\n") {
-          message =
-            `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
-        } else { return; } // It isn't a send DwtKeyEvent.KEY_ENTER
-      }
+      if (realMessage.substring(currentInputPosition, currentInputPosition + 2) === "\r\n") {
+        message =
+          `${realMessage.substring(0, currentInputPosition)}${realMessage.substring(currentInputPosition + 2)}`;
+      } else if (realMessage.substring(currentInputPosition - 1, currentInputPosition) === "\n") {
+        message =
+          `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
+      } else { return; } // It isn't a send DwtKeyEvent.KEY_ENTER
       message = StringUtils.trim(message);
       this.mInputField.clear();
       if (message.length > 0) {
@@ -527,10 +523,14 @@ export class RoomWindow extends WindowBase {
     const doc: IExtendedDocument = (inputElement.ownerDocument as IExtendedDocument) || inputElement.document;
     const win: Window = doc.defaultView || doc.parentWindow;
     const sel: IExtendedSelection = doc.selection;
-    if (typeof inputElement.selectionStart === "undefined" || inputElement.selectionStart !== null) {
-      // Firefox Support
-      caretOffset = inputElement.selectionStart;
-    } else if (typeof win.getSelection === "undefined" || win.getSelection !== null) {
+    if (typeof inputElement.selectionStart !== "undefined" && inputElement.selectionStart !== null) {
+      // Firefox and IE Support
+      if (inputElement.selectionStart > inputElement.value.length) {
+        caretOffset = inputElement.value.length;
+      } else {
+        caretOffset = inputElement.selectionStart;
+      }
+    } else if (typeof win.getSelection !== "undefined" && win.getSelection !== null) {
       const range: Range = win.getSelection().getRangeAt(0);
       const preCaretRange: Range = range.cloneRange();
       preCaretRange.selectNodeContents(inputElement);

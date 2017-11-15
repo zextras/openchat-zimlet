@@ -27,7 +27,7 @@ export class MessageReceived extends Message {
 
   constructor(parent: Conversation, message: MessageReceivedObj, dateProvider: DateProvider) {
     super(parent, message, dateProvider);
-    (this.getHtmlElement().childNodes[0] as HTMLElement).setAttribute("sender", "true");
+    (this.getHtmlElement().childNodes[0] as HTMLElement).className += " ZxChat_MessageContainerSenderTrue";
     const buddy: IBuddy = message.getSender();
     buddy.onNicknameChange(new Callback(this, this._updateBuddyNickname));
   }

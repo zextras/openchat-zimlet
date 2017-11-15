@@ -9,3 +9,19 @@
  
  	var	cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
  		escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+@@ -114,14 +114,13 @@
+ 				if (!value) {
+ 					return 'null';
+ 				}
+-				if (depthDecr<=0 || seen.indexOf(value)!==-1) {
++				if (depthDecr<=0) {
+ 					if (replacer) {
+ 						var replacement = replacer(value, prunedString, true);
+ 						return replacement===undefined ? undefined : ''+replacement;
+ 					}
+ 					return prunedString;
+ 				}
+-				seen.push(value);
+ 				partial = [];
+ 				if (Object.prototype.toString.apply(value) === '[object Array]') {
+ 					length = Math.min(value.length, arrayMaxLength);

@@ -26,6 +26,7 @@ import {DwtTabView, DwtTabViewPage} from "../../../zimbra/ajax/dwt/widgets/DwtTa
 import {DwtToolBar, DwtToolBarButton} from "../../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {EmojiTemplate, IEmojiData} from "./EmojiTemplate";
+import {Bowser} from "../../../libext/bowser";
 
 export class EmojiOnePicker extends DwtMenu {
 
@@ -41,8 +42,8 @@ export class EmojiOnePicker extends DwtMenu {
 
   private static sInstance: EmojiOnePicker = void 0;
   private static sEmojiPerRow: number = 10;
-  private static hEmojiToolBarBtn: number = 26;
-  private static wEmojiToolBarBtn: number = 36;
+  private static hEmojiToolBarBtn: number = 20;
+  private static wEmojiToolBarBtn: number = 40;
 
   private static createEmojiTabPage(
     emojiTabView: DwtTabView,
@@ -64,9 +65,13 @@ export class EmojiOnePicker extends DwtMenu {
       );
     }
     emojiTab.setSize(
-      `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow}px`,
+      `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow + 15}px`, // 15 is the scrollbar
       `${EmojiOnePicker.hEmojiToolBarBtn * 5}px`,
     );
+    emojiTab.showMe = ((tabPage: DwtTabViewPage) => () => {
+      tabPage._contentEl.style.height = tabPage.parent.getHtmlElement().style.height;
+      tabPage._contentEl.style.width = tabPage.parent.getHtmlElement().style.width;
+    })(emojiTab);
     return emojiTab;
   }
 
@@ -76,11 +81,13 @@ export class EmojiOnePicker extends DwtMenu {
     selectionListner: AjxListener,
   ): void {
     for (const emojiData of emojisToAdd) {
+      if (typeof emojiData === "undefined") { continue; }
       const button = new DwtToolBarButton({
         className: `EmojiOnePickerToolbarButton${ !ZimbraUtils.isUniversalUI() ? "-legacy-ui" : "" }`,
         parent: dwtToolBar,
+        style: "width: 30px",
       });
-      button.setText(emojiData.data);
+      button.setText(emojiData.data.replace(/>.*</, "><"));
       button.setData(EmojiOnePicker.KEY_EMOJI_DATA, emojiData);
       button.setToolTipContent(emojiData.name, false);
       button.addSelectionListener(selectionListner);
@@ -123,7 +130,7 @@ export class EmojiOnePicker extends DwtMenu {
       //   )
       // );
       emojiTabView.addTab(
-        EmojiTemplate.NAMES_DATA_SPRITE[pageIdx],
+        EmojiTemplate.NAMES_DATA_SPRITE[pageIdx].replace(/>.*</, "><"),
         EmojiOnePicker.createEmojiTabPage(
           emojiTabView,
           EmojiTemplate.DATA_SPRITES[pageIdx],
@@ -131,6 +138,11 @@ export class EmojiOnePicker extends DwtMenu {
         ),
       );
     }
+    emojiTabView.setSize(
+      `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow + 15}px`, // 15 is the scrollbar
+      `${EmojiOnePicker.hEmojiToolBarBtn * 5}px`,
+    );
+    emojiTabView.switchToTab(1);
 
     this.resetSize();
 
@@ -160,8 +172,8 @@ export class EmojiOnePicker extends DwtMenu {
   }
 
   private resetSize(): void {
-    const wSize: number = (EmojiTemplate.NAMES.length * 48) + 25;
-    const hSize: number = (EmojiOnePicker.hEmojiToolBarBtn * 5) + 25;
+    const wSize: number = (EmojiTemplate.NAMES.length * 48) + (Bowser.msie ? 45 : 31);
+    const hSize: number = (EmojiOnePicker.hEmojiToolBarBtn * 5) + (Bowser.msie ? 30 : 25);
     this.setSize(
       `${wSize}px`,
       `${hSize + 5}px`,

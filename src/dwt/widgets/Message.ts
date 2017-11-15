@@ -25,6 +25,7 @@ import {AjxDateFormat} from "../../zimbra/ajax/util/AjxText";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {ZmObjectManager} from "../../zimbra/zimbraMail/share/model/ZmObjectManager";
 import {Conversation} from "./Conversation";
+import {Bowser} from "../../libext/bowser";
 
 export class Message extends DwtComposite {
 
@@ -36,6 +37,7 @@ export class Message extends DwtComposite {
   protected senderEl: HTMLElement;
   protected dateEl: HTMLElement;
   protected contentEl: HTMLElement;
+  protected outerEl: HTMLElement;
   protected objectManager: ZmObjectManager;
   private mConversation: Conversation;
 
@@ -85,6 +87,10 @@ export class Message extends DwtComposite {
     this.senderEl = document.getElementById(data.id + "_sender");
     this.dateEl = document.getElementById(data.id + "_date");
     this.contentEl = document.getElementById(data.id + "_content");
+    this.outerEl = document.getElementById(data.id + "_outer");
+    if (Bowser.msie && this.contentEl.offsetWidth > 141) {
+      this.contentEl.style.width = "141px";
+    }
   }
 
   private _delayedCreationFunction(): void {

@@ -1,0 +1,23 @@
+--- node_modules/webpack/buildin/module.js
++++ node_modules/webpack/buildin/module.js
+@@ -4,18 +4,8 @@
+ 		module.paths = [];
+ 		// module.parent = undefined by default
+ 		if(!module.children) module.children = [];
+-		Object.defineProperty(module, "loaded", {
+-			enumerable: true,
+-			get: function() {
+-				return module.l;
+-			}
+-		});
+-		Object.defineProperty(module, "id", {
+-			enumerable: true,
+-			get: function() {
+-				return module.i;
+-			}
+-		});
++		module.loaded = module.l;
++		module.id = module.i;
+ 		module.webpackPolyfill = 1;
+ 	}
+ 	return module;
