@@ -323,7 +323,12 @@ export class GroupTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
         this.Log.err(err, "GroupTreeItem.applyFilter");
       }
     }
-    if (regex.toString() in ["/(?:)/", "/(?:)/i", "//i", "//"]) {
+    if (
+      regex.toString() === "/(?:)/"
+      || regex.toString() === "/(?:)/i"
+      || regex.toString() === "//"
+      || regex.toString() === "//i"
+    ) {
       this._expand(this.mOriginalExpanded, null, null, false);
     } else {
       this._expand(true, null, null, false);
