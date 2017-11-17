@@ -553,6 +553,7 @@ export class MainWindow extends WindowBase {
     this.mMainMenuButton.reparent(this.mTitleBar);
     this.mMainMenuButton.setSwitchOnSidebarStatus(false);
     this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(true));
+    (this.mMainMenuButton.getHtmlElement().children[0] as HTMLElement).style.backgroundColor = "#007dc3";
     this.mStatusSelector.setSize(
       `${MainWindow.WIDTH}px`,
       (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px",
@@ -585,6 +586,7 @@ export class MainWindow extends WindowBase {
     this.mMainMenuButton.reparent(this.mStatusSelectorToolbar);
     this.mMainMenuButton.setSwitchOnSidebarStatus(true);
     this.mMainMenuButton.setImage(this.getMainMenuButtonImageStyle(false));
+    (this.mMainMenuButton.getHtmlElement().children[0] as HTMLElement).style.backgroundColor = "#ffffff";
     const container: HTMLElement = document.getElementById(Constants.ID_SIDEBAR_DIV_CONTAINER);
     this.mContainerView.reparentHtmlElement(container, 0);
     this.mBuddyListTree.setSize(
