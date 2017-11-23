@@ -36,7 +36,10 @@ export class ChatFolderHandler {
         overView = app.getOverview();
         try {
           overView.set(app._getOverviewTrees());
-          this.folders.push(overView.getTreeItemById(folderId));
+          const folder: DwtTreeItem = overView.getTreeItemById(folderId);
+          if (folder !== null) {
+            this.folders.push(folder);
+          }
         } catch (ignored) {
           // Log.debug(ignored, "Issue on getting chat folder from trees");
         }

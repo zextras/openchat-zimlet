@@ -250,10 +250,8 @@ export class ChatZimletBase extends ZmZimletBase {
       new Callback(this.mNotificationManager, this.mNotificationManager.setDesktopEnabled),
     );
     const userGroupsData: IGroupData[] = this.mSettingsManager.loadGroupsData();
-    if (typeof userGroupsData !== "undefined") {
-      for (const groupData of userGroupsData) {
-        this.mChatClient.getBuddyList().addGroup(new Group(groupData.name));
-      }
+    for (const groupData of userGroupsData) {
+      this.mChatClient.getBuddyList().addGroup(new Group(groupData.name));
     }
 
     this.mMainWindow = new MainWindow(

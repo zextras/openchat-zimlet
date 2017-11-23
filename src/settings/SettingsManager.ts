@@ -206,7 +206,7 @@ export class SettingsManager {
 
   public loadGroupsData(): IGroupData[] {
     if ((ZmApp.ENABLED_APPS[ZmApp.PREFERENCES] == null) || !ZmApp.ENABLED_APPS[ZmApp.PREFERENCES]) {
-      return;
+      return [];
     }
     const tmpString: string = this.get(Setting.IM_USR_PREF_GROUP_DATA);
     const buffer: string[] = [];
