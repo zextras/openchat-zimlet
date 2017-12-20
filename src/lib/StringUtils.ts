@@ -49,7 +49,7 @@ export class StringUtils {
   }
 
   public static trim(input: string): string {
-    return input.replace(/^\s+|\s+$/gm, "");
+    return input.replace(/^\s*/, "").replace(/\s*$/, "");
   }
 
   public static localizeHour(date: Date, now: Date): string {
