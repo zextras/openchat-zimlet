@@ -36,9 +36,9 @@ export class TimedCallback {
 
   public start(): void {
     if (this.mRepeat) {
-      this.mIntervalId = setInterval(this.mCallback.toClosure(), this.mTimeout);
+      this.mIntervalId = window.setInterval(this.mCallback.toClosure(), this.mTimeout);
     } else {
-      this.mIntervalId = setTimeout(this.mCallback.toClosure(), this.mTimeout);
+      this.mIntervalId = window.setTimeout(this.mCallback.toClosure(), this.mTimeout);
     }
   }
 
