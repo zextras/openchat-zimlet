@@ -93,6 +93,7 @@ export class Message extends DwtComposite {
     }
   }
 
+  // tslint:disable-next-line:variable-name
   private _delayedCreationFunction = () => {
     const manager = this.getObjectManager();
     try {
