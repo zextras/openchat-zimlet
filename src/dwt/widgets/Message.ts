@@ -60,7 +60,7 @@ export class Message extends DwtComposite {
     }
     // TODO: Move to TimedCallback Factory
     setTimeout( // Lazy creation of the object manager
-      () => this._delayedCreationFunction(),
+      this._delayedCreationFunction,
       100,
     );
     this._setAllowSelection();
@@ -93,7 +93,7 @@ export class Message extends DwtComposite {
     }
   }
 
-  private _delayedCreationFunction(): void {
+  private _delayedCreationFunction = () => {
     const manager = this.getObjectManager();
     try {
       manager.__hasSmileysHandler = true;

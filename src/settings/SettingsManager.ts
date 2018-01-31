@@ -242,7 +242,8 @@ export class SettingsManager {
         // ZT-149, check the consistence of the saved/loaded groups data.
         for (const g of data) {
           if (typeof g.name === "undefined" || typeof g.expanded === "undefined") {
-            throw new Error("Groups data corrupted, resetting.");
+            this.Log.err(data, "ZT-149: Group data corrupted");
+            throw new Error("Groups data corrupted.");
           }
         }
         this.Log.debug(data, "Groups data loaded");

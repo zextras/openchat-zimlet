@@ -87,7 +87,7 @@ export class IdleTimer {
   public start(): void {
     this.stop();
     this.mWindowTimerId = window.setTimeout(
-      (new Callback(this, this.setIdle, true)).toClosure(),
+      () => this.setIdle(true),
       this.mTimeout,
     );
     this.mStopped = false;
