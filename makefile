@@ -17,7 +17,7 @@
 
 COMMIT_ID = $(shell git rev-parse --short HEAD)
 COMMIT_ID_LONG = $(shell git rev-parse HEAD)
-VERSION = $(shell fgrep "\"version\":" package.json | sed -e 's/\s*"version":\s*"\(.*\)",/\1/')
+VERSION = $(shell fgrep "\"version\":" package.json | sed -e 's/\s*"version":\s*"\([0-9]*\).*",/\1/')
 DESCRIPTION = $(shell fgrep "\"description\":" package.json | sed -e 's/\s*"description":\s*"\(.*\)",/\1/')
 NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')
 SPRITE_NAME = $(shell fgrep "\"name\":" package.json | sed -e 's/\s*"name":\s*"\(.*\)",/\1/')_sprite
