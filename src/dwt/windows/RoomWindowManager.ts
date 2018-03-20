@@ -15,30 +15,35 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
+import {IMessageUiFactory} from "../../app/messageFactory/IMessageUiFactory";
 import {ChatZimletBase} from "../../ChatZimletBase";
-import {IRoom} from "../../client/IRoom";
-import {MessageReceived} from "../../client/MessageReceived";
-import {RoomManager} from "../../client/RoomManager";
-import {SessionInfoProvider} from "../../client/SessionInfoProvider";
+import {BuddyStatusType} from "../../client/BuddyStatusType";
+import {QueryArchiveEvent} from "../../client/events/chat/QueryArchiveEvent";
+import {IRoomManager} from "../../client/IRoomManager";
+import {ISessionInfoProvider} from "../../client/ISessionInfoProvider";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {CumulativeCallback} from "../../lib/callbacks/CumulativeCallback";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
 import {ContactImg} from "../../lib/ContactImg";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {Map} from "../../lib/Map";
 import {NotificationManager} from "../../lib/notifications/NotificationManager";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
+import {IQueryArchiveAction} from "../../redux/action/IQueryArchiveAction";
+import {IOpenChatState} from "../../redux/IOpenChatState";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
+import {IRoomWindowFactory} from "./IRoomWindowFactory";
 import {MainWindow} from "./MainWindow";
 import {WindowDragTask} from "./manager/WindowDragTask";
 import {WindowsMap} from "./manager/WindowsMap";
 import {WindowsPositionContainer} from "./manager/WindowsPositionContainer";
-import {RoomWindow} from "./RoomWindow";
+import {RoomWindowType} from "./RoomWindow";
 import {SmoothRoomWindowMover} from "./SmoothRoomWindowMover";
 
 export class RoomWindowManager {
@@ -50,7 +55,7 @@ export class RoomWindowManager {
   private static ANIMATION_TIME: number = 50;
 
   private static setWindowLocation(
-    window: RoomWindow,
+    window: RoomWindowType,
     x: number,
     y: number,
     timing: number = RoomWindowManager.ANIMATION_TIME,
@@ -64,50 +69,58 @@ export class RoomWindowManager {
     ).start();
   }
 
-  private static sortByLastActivity(a: RoomWindow, b: RoomWindow) {
-    if (a.getLastRoomActivity() < b.getLastRoomActivity()) {
-      return -1;
-    }
-    if (a.getLastRoomActivity() > b.getLastRoomActivity()) {
-      return 1;
-    }
-    return 0;
-  }
+  // TODO: maybe we should hold it
+  // private static sortByLastActivity(a: RoomWindowType, b: RoomWindowType) {
+  //   if (a.getLastRoomActivity() < b.getLastRoomActivity()) {
+  //     return -1;
+  //   }
+  //   if (a.getLastRoomActivity() > b.getLastRoomActivity()) {
+  //     return 1;
+  //   }
+  //   return 0;
+  // }
 
-  private static calculateWindowXCenter(window: RoomWindow): number {
+  private static calculateWindowXCenter(window: RoomWindowType): number {
     return Math.round(window.getLocation().x + (window.getSize().x / 2));
   }
 
-  private static calculateWindowYCenter(window: RoomWindow): number {
+  private static calculateWindowYCenter(window: RoomWindowType): number {
     return Math.round(window.getLocation().y + (window.getSize().y / 2));
   }
 
   private mAppCtxt: ZmAppCtxt;
   private mShell: DwtShell;
   private mNotificationManager: NotificationManager;
-  private mZimletContext: ChatZimletBase;
-  private mSessionInfoProvider: SessionInfoProvider;
-  private mDateProvider: DateProvider;
-  private mRoomManager: RoomManager;
+  private mZimletContext: ChatZimletBase<IOpenChatState>;
+  private mSessionInfoProvider: ISessionInfoProvider;
+  private mDateProvider: IDateProvider;
+  private mRoomManager: IRoomManager;
   private mWindowsMap: WindowsMap = new WindowsMap();
   private mOpenedWindowsMap: WindowsMap = new WindowsMap();
   private mMainWindow: MainWindow;
   private mTimedCallbackFactory: TimedCallbackFactory;
   private mRoomWindowManagerPluginManager: ChatPluginManager;
+  private mStore: Store<IOpenChatState>;
+  private mRoomWindowFactory: IRoomWindowFactory;
+  private mMessageUiFactory: IMessageUiFactory<IOpenChatState>;
 
-  private mDragTasks: Map = new Map();
+  private mDragTasks: Map<WindowDragTask> = new Map();
   private mPositions: WindowsPositionContainer = new WindowsPositionContainer();
+  private mWindowsLocked: boolean = false;
 
   constructor(appCtxt: ZmAppCtxt,
               shell: DwtShell,
               notificationManager: NotificationManager,
-              zimletContext: ChatZimletBase,
+              zimletContext: ChatZimletBase<IOpenChatState>,
               timedCallbackFactory: TimedCallbackFactory,
               mainWindow: MainWindow,
-              sessionInfoProvider: SessionInfoProvider,
-              dateProvider: DateProvider,
-              roomManager: RoomManager,
+              sessionInfoProvider: ISessionInfoProvider,
+              dateProvider: IDateProvider,
+              roomManager: IRoomManager,
               chatPluginManager: ChatPluginManager,
+              store: Store<IOpenChatState>,
+              roomWindowFactory: IRoomWindowFactory,
+              messageUIFactory: IMessageUiFactory<IOpenChatState>,
   ) {
     (window as IExtendedWindow).debugWM = this;
     this.mAppCtxt = appCtxt;
@@ -120,8 +133,11 @@ export class RoomWindowManager {
     this.mDateProvider = dateProvider;
     this.mRoomManager = roomManager;
     this.mRoomWindowManagerPluginManager = chatPluginManager;
+    this.mStore = store;
+    this.mRoomWindowFactory = roomWindowFactory;
+    this.mMessageUiFactory = messageUIFactory;
     this.mRoomWindowManagerPluginManager.switchOn(this);
-    this.mRoomManager.onRoomAdded(new Callback(this, this.onRoomAdded));
+    // this.mRoomManager.onRoomAdded(new Callback(this, this.onRoomAdded));
     this.mShell.addListener(DwtEvent.CONTROL, new AjxListener(this,  this.onShellResize));
   }
 
@@ -129,7 +145,7 @@ export class RoomWindowManager {
     return this.mRoomWindowManagerPluginManager;
   }
 
-  public getSessionInfoProvider(): SessionInfoProvider {
+  public getSessionInfoProvider(): ISessionInfoProvider {
     return this.mSessionInfoProvider;
   }
 
@@ -139,8 +155,74 @@ export class RoomWindowManager {
    * @param {string} windowId
    * @return {RoomWindow}
    */
-  public getRoomWindowById(windowId: string): RoomWindow {
+  public getRoomWindowById(windowId: string): RoomWindowType {
+    if (typeof this.mWindowsMap.get(windowId) === "undefined") {
+      this.createRoomWindow(windowId);
+    }
     return this.mWindowsMap.get(windowId);
+  }
+
+  public lockdownAllWindows(): void {
+    this.closeAllWindows();
+    for (const roomWindow of this.mWindowsMap.values()) {
+      roomWindow.lockPopup();
+    }
+    this.mWindowsLocked = true;
+  }
+
+  public unlockAllWindows(): void {
+    for (const roomWindow of this.mWindowsMap.values()) {
+      roomWindow.unlockPopup();
+    }
+    this.mWindowsLocked = false;
+  }
+
+  public closeAllWindows(): void {
+    const openedWindows: RoomWindowType[] = this.mOpenedWindowsMap.values();
+    for (const roomWindow of openedWindows) {
+      roomWindow.popdown();
+    }
+  }
+
+  /**
+   * Function invoked when a message is received.
+   * @param {string} roomWindowId
+   * @param {string} messageSenderId
+   * @param {string} messageContent
+   */
+  public onMessageReceived(
+    roomWindowId: string,
+    messageSenderId: string,
+    messageContent: string,
+  ): void {
+    const isLoadingHistory: boolean = this.mStore.getState().rooms[roomWindowId].loadingHistory;
+    const roomWindow: RoomWindowType = this.getRoomWindowById(roomWindowId);
+    let onBusyStatus: boolean = false;
+    for (const userStatus of this.mStore.getState().userStatuses) {
+      if (userStatus.type === BuddyStatusType.BUSY && userStatus.selected) {
+        onBusyStatus = true;
+      }
+    }
+    if (roomWindow.getChildren().length > 0) {
+      roomWindow.popup(undefined, !onBusyStatus);
+    }
+    if (
+      !roomWindow.isFocused() && roomWindow.getChildren().length > 0 && !onBusyStatus &&
+      isLoadingHistory !== true
+    ) {
+      roomWindow.startBlinkTitle();
+      let icon = (new ContactImg(messageSenderId)).getImgUrl();
+      if (typeof icon === "undefined" || icon === null) {
+        icon = this.mZimletContext.getNotificationImage();
+      }
+      this.mNotificationManager.notify(
+        messageContent,
+        this.mStore.getState().buddyList.hasOwnProperty(messageSenderId)
+          ? this.mStore.getState().buddyList[messageSenderId].nickname
+          : messageSenderId,
+        icon,
+      );
+    }
   }
 
   /**
@@ -149,7 +231,7 @@ export class RoomWindowManager {
    * @return {boolean}
    * @private
    */
-  private hasEnoughSpace(window: RoomWindow): boolean {
+  private hasEnoughSpace(window: RoomWindowType): boolean {
     let occupiedSize: number = this.mMainWindow.getSize().x + RoomWindowManager.RIGHT_PADDING;
 
     for (const roomWindow of this.mOpenedWindowsMap.values()) {
@@ -161,23 +243,26 @@ export class RoomWindowManager {
 
   /**
    * Manage the adding of a new room
-   * @param {IRoom} room
+   * @param {string} roomJid
    * @private
    */
-  private onRoomAdded(room: IRoom) {
+  private createRoomWindow(roomJid: string) {
     const roomWindowPluginManager = new ChatPluginManager();
     this.mRoomWindowManagerPluginManager.triggerPlugins(
       RoomWindowManager.CreateRoomWindowPluginManager,
       roomWindowPluginManager,
     );
-    const roomWindow: RoomWindow = new RoomWindow(
+    const roomWindow: RoomWindowType =
+      this.mRoomWindowFactory.createRoomWindow(
         this.mShell,
         this.mTimedCallbackFactory,
-        room,
+        roomJid,
         this.mNotificationManager,
         this.mDateProvider,
         this.mSessionInfoProvider,
         roomWindowPluginManager,
+        this.mWindowsLocked,
+        this.mMessageUiFactory,
       );
     this.mWindowsMap.put(roomWindow);
     roomWindow.setLastLocation(new DwtPoint(
@@ -188,12 +273,12 @@ export class RoomWindowManager {
     roomWindow.onStartDrag(new Callback(this, this.onStartDrag));
     roomWindow.onDuringDrag(new Callback(this, this.onDuringDrag));
     roomWindow.onDragEnd(new Callback(this, this.onDragEnd));
-    roomWindow.onMessageReceived(new Callback(this, this.onMessageReceived));
+    // roomWindow.onMessageReceived(new Callback(this, this.onMessageReceived));
     roomWindow.onWindowOpened(new Callback(this, this.onWindowOpened));
     roomWindow.onWindowClosed(new Callback(this, this.onWindowClosed));
     roomWindow.onMinimize(new Callback(this, this.moveMinimizedWindow));
     roomWindow.onExpand(new Callback(this, this.moveExpandedWindow));
-    this.mRoomWindowManagerPluginManager.triggerPlugins(RoomWindowManager.AddRoomWindowPlugin, room);
+    this.mRoomWindowManagerPluginManager.triggerPlugins(RoomWindowManager.AddRoomWindowPlugin, roomJid);
   }
 
   /**
@@ -211,15 +296,16 @@ export class RoomWindowManager {
    * @return {number} The X Offset of the window.
    * @private
    */
-  private getXWindowLocation(window: RoomWindow): number {
+  private getXWindowLocation(window: RoomWindowType): number {
     const currentPosition = this.mPositions.window2position(window.getId());
     let i: number;
     let xLocation: number = this.mShell.getSize().x
         - (window.getSize().x + RoomWindowManager.RIGHT_PADDING)
         - (this.mMainWindow.getSize().x + RoomWindowManager.RIGHT_PADDING);
-    let tmpWindow: RoomWindow;
+    let tmpWindow: RoomWindowType;
     let tmpPosition: number;
-    const openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values();
+    const openedWindows: RoomWindowType[] =
+      this.mOpenedWindowsMap.values();
     for (i = 0; i < openedWindows.length; i++) {
       tmpPosition = this.mPositions.window2position(openedWindows[i].getId());
       if (tmpPosition >= currentPosition) { continue; }
@@ -235,7 +321,7 @@ export class RoomWindowManager {
    * @return {number} The Y Offset of the window.
    * @private
    */
-  private getYWindowLocation(window: RoomWindow): number {
+  private getYWindowLocation(window: RoomWindowType): number {
     return this.mShell.getSize().y - window.getSize().y;
   }
 
@@ -244,7 +330,7 @@ export class RoomWindowManager {
    * @private
    */
   private updateWindowsPositions(): void {
-    const openedWindows: RoomWindow[] = this.mOpenedWindowsMap.values();
+    const openedWindows: RoomWindowType[] = this.mOpenedWindowsMap.values();
     let i: number;
     const cbkMgr: CallbackManager = new CallbackManager();
     cbkMgr.addCallback(new CumulativeCallback(openedWindows.length, this, this.onAllWindowRelocated));
@@ -260,35 +346,11 @@ export class RoomWindowManager {
   }
 
   /**
-   * Callback function invoked when a message is received.
-   * @param roomWindow
-   * @param message
-   */
-  private onMessageReceived(roomWindow: RoomWindow, message: MessageReceived): void {
-    const onBusyStatus: boolean = this.mZimletContext.getClient().getUserStatusManager().getCurrentStatus().isBusy();
-    if (roomWindow.getChildren().length > 0) {
-      roomWindow.popup(undefined, !onBusyStatus);
-    }
-    if (!roomWindow.isFocused() && roomWindow.getChildren().length > 0 && !onBusyStatus) {
-      roomWindow.startBlinkTitle();
-      let icon = (new ContactImg(message.getSender().getId())).getImgUrl();
-      if (typeof icon === "undefined" || icon === null) {
-        icon = this.mZimletContext.getNotificationImage();
-      }
-      this.mNotificationManager.notify(
-        message.getMessage(),
-        message.getSender().getNickname(),
-        icon,
-      );
-    }
-  }
-
-  /**
    * Callback function invoked when a window is opened.
    * @param window
    * @param point
    */
-  private onWindowOpened(window: RoomWindow, point: DwtPoint): void {
+  private onWindowOpened(window: RoomWindowType, point: DwtPoint): void {
     const position: number = this.mOpenedWindowsMap.size();
     let xLocation: number = 0;
     this.mOpenedWindowsMap.put(window);
@@ -335,10 +397,10 @@ export class RoomWindowManager {
 
   /**
    * Handle the notification of a closed window.
-   * @param {RoomWindow} window
+   * @param {RoomWindowType} window
    * @private
    */
-  private onWindowClosed(window: RoomWindow): void {
+  private onWindowClosed(window: RoomWindowType): void {
     this.mOpenedWindowsMap.remove(window.getId());
     const currentPosition: number = this.mPositions.window2position(window.getId());
     let tmpPosition: number;
@@ -360,18 +422,18 @@ export class RoomWindowManager {
     }
   }
 
-  private onStartDrag(roomWindow: RoomWindow, x: number, y: number): void {
+  private onStartDrag(roomWindow: RoomWindowType, x: number, y: number): void {
     const dragTask: WindowDragTask = new WindowDragTask(roomWindow);
     this.mDragTasks.put(roomWindow.getId(), dragTask);
     // roomWindow.setZIndex(parseInt(`${roomWindow.getZIndex()}`, 10) + 1);
   }
 
-  private onDuringDrag(roomWindow: RoomWindow, x: number, y: number): void {
+  private onDuringDrag(roomWindow: RoomWindowType, x: number, y: number): void {
     // let dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId());
     // if (typeof dragTask === "undefined") return;
   }
 
-  private onDragEnd(roomWindow: RoomWindow, x: number, y: number): void {
+  private onDragEnd(roomWindow: RoomWindowType, x: number, y: number): void {
     const dragTask: WindowDragTask = this.mDragTasks.get(roomWindow.getId());
     const xCenter: number = RoomWindowManager.calculateWindowXCenter(roomWindow);
     const currentPosition: number = this.mPositions.window2position(roomWindow.getId());
@@ -439,11 +501,11 @@ export class RoomWindowManager {
 
   /**
    * Move a window when is minimized. The window is autonomously resized, but need to be relocated.
-   * @param {RoomWindow} roomWindow The window to move.
+   * @param {RoomWindowType} roomWindow The window to move.
    * @param {boolean} save The save flag passed by the window. (Not used)
    * @private
    */
-  private moveMinimizedWindow(roomWindow: RoomWindow, save: boolean): void {
+  private moveMinimizedWindow(roomWindow: RoomWindowType, save: boolean): void {
     new SmoothRoomWindowMover(
       roomWindow,
       new DwtPoint(
@@ -456,11 +518,11 @@ export class RoomWindowManager {
 
   /**
    * Move a window when is expanded. The window is autonomously resized, but need to be relocated.
-   * @param {RoomWindow} roomWindow The window to move.
+   * @param {RoomWindowType} roomWindow The window to move.
    * @param {boolean} save The save flag passed by the window. (Not used)
    * @private
    */
-  private moveExpandedWindow(roomWindow: RoomWindow, save: boolean): void {
+  private moveExpandedWindow(roomWindow: RoomWindowType, save: boolean): void {
     new SmoothRoomWindowMover(
       roomWindow,
       new DwtPoint(
@@ -477,7 +539,7 @@ export class RoomWindowManager {
    * @private
    */
   private onAllWindowRelocated(): void {
-    const toClose: RoomWindow[] = [];
+    const toClose: RoomWindowType[] = [];
     for (const openedWindow of this.mOpenedWindowsMap.values()) {
       if (openedWindow.getLocation().x >= 0) { continue; }
       toClose.push(openedWindow);
@@ -493,8 +555,8 @@ export class RoomWindowManager {
    * @param {RoomWindow} window
    * @private
    */
-  private tryToMakeRoomForWindow(window: RoomWindow): void {
-    this.mOpenedWindowsMap.values().sort(RoomWindowManager.sortByLastActivity);
+  private tryToMakeRoomForWindow(window: RoomWindowType): void {
+    // this.mOpenedWindowsMap.values().sort(RoomWindowManager.sortByLastActivity);
     for (const openedWindow of this.mOpenedWindowsMap.values()) {
       openedWindow.popdown();
       if (this.hasEnoughSpace(window)) { break; }

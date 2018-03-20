@@ -16,8 +16,9 @@
  */
 
 import {Callback} from "./callbacks/Callback";
+import {IDateProvider} from "./IDateProvider";
 
-export class DateProvider {
+export class DateProvider implements IDateProvider {
 
   public getNow(): Date {
     return new Date();

@@ -15,16 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
+
+import {IConnectionManager} from "../../client/connection/IConnectionManager";
 import {IChatClient} from "../../client/IChatClient";
-import {SessionInfoProvider} from "../../client/SessionInfoProvider";
 import {Callback} from "../../lib/callbacks/Callback";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
 import {StringUtils} from "../../lib/StringUtils";
 import {Version} from "../../lib/Version";
 import {Bowser} from "../../libext/bowser";
+import {IResetSessionInfoAction} from "../../redux/action/IResetSessionInfoAction";
+import {IOpenChatSessionInfo, IOpenChatState} from "../../redux/IOpenChatState";
 import {Setting} from "../../settings/Setting";
 import {SettingsManager} from "../../settings/SettingsManager";
 import {AjxDispatcher} from "../../zimbra/ajax/boot/AjxDispatcher";
@@ -57,20 +61,22 @@ export class SettingsDialog extends DwtDialog {
     appCtxt: ZmAppCtxt,
     shell: DwtShell,
     client: IChatClient,
-    sessionInfoProvider: SessionInfoProvider,
+    connectionManager: IConnectionManager,
     preferenceManager: SettingsManager,
     timedCallbackFactory: TimedCallbackFactory,
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
+    store: Store<IOpenChatState>,
   ): SettingsDialog {
     if (typeof SettingsDialog.dialog === "undefined" || SettingsDialog.dialog === null) {
       SettingsDialog.dialog = new SettingsDialog(
         appCtxt,
         shell,
         client,
-        sessionInfoProvider,
+        connectionManager,
         preferenceManager,
         timedCallbackFactory,
         dateProvider,
+        store,
       );
     }
     SettingsDialog.dialog.hideDebugTab();
@@ -91,10 +97,10 @@ export class SettingsDialog extends DwtDialog {
   private mLog: Logger = LogEngine.getLogger(LogEngine.CHAT);
   private mAppCtxt: ZmAppCtxt;
   private mClient: IChatClient;
-  private mSessionInfoProvider: SessionInfoProvider;
+  private mConnectionManager: IConnectionManager;
   private mPreferenceManager: SettingsManager;
   private mTimedCallbackFactory: TimedCallbackFactory;
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mSettingsObjs: { [key: string]: DwtControl };
   private mOriginals: { [key: string]: string | boolean };
   private mTabIds: { [tab: string]: number };
@@ -104,24 +110,29 @@ export class SettingsDialog extends DwtDialog {
   private mErrorTextArea: DwtInputField;
   private mDebugTab: DwtTabViewPage;
   private mResetButton: DwtButton;
+  private mStore: Store<IOpenChatState>;
 
-  constructor(appCtxt: ZmAppCtxt,
-              shell: DwtShell,
-              client: IChatClient,
-              sessionInfoProvider: SessionInfoProvider,
-              preferenceManager: SettingsManager,
-              timedCallbackFactory: TimedCallbackFactory,
-              dateProvider: DateProvider) {
+  constructor(
+    appCtxt: ZmAppCtxt,
+    shell: DwtShell,
+    client: IChatClient,
+    connectionManager: IConnectionManager,
+    preferenceManager: SettingsManager,
+    timedCallbackFactory: TimedCallbackFactory,
+    dateProvider: IDateProvider,
+    store: Store<IOpenChatState>,
+  ) {
     super({
       parent: shell,
       title: StringUtils.getMessage("title_chat_preferences"),
     });
     this.mAppCtxt = appCtxt;
     this.mClient = client;
-    this.mSessionInfoProvider = sessionInfoProvider;
+    this.mConnectionManager = connectionManager;
     this.mPreferenceManager = preferenceManager;
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mDateProvider = dateProvider;
+    this.mStore = store;
     this.mSettingsObjs = {};
     this.mOriginals = {};
     this.mTabIds = {};
@@ -147,7 +158,8 @@ export class SettingsDialog extends DwtDialog {
     this.mOnPopDownSwitchToFirstTabCallback = new Callback(tabView, tabView.switchToTab, "1");
     if (typeof ZmApp.ENABLED_APPS[ZmApp.PREFERENCES] !== "undefined" && ZmApp.ENABLED_APPS[ZmApp.PREFERENCES]) {
       this.addPreferencesTab(tabView);
-      this.addContentDisplaySettingsTab(tabView);
+      // Inhibited emoji and url settings not considered anymore.
+      // this.addContentDisplaySettingsTab(tabView);
     }
     this.addInfoTab(tabView);
     this.addDebugTab(tabView);
@@ -247,35 +259,35 @@ export class SettingsDialog extends DwtDialog {
 
   private addPreferencesTab(group: DwtTabView): void {
     const prefTab: DwtTabViewPage = new DwtTabViewPage(group);
-    const idleGroup: DwtGrouper = new DwtGrouper(prefTab);
-    idleGroup.setLabel(StringUtils.getMessage("pref_title_idle"));
-    const idleCtrl: DwtComposite = new DwtComposite({parent: idleGroup});
-    const enableIdleDetection = new DwtCheckbox({
-        checked: this.mOriginals[Setting.IM_PREF_REPORT_IDLE] as boolean,
-        name: Setting.IM_PREF_REPORT_IDLE,
-        parent: idleCtrl,
-      });
-    enableIdleDetection.setText(StringUtils.getMessage("pref_title_idle_enabled"));
-    const idleTimeoutLabel: DwtLabel = new DwtLabel({parent: idleCtrl});
-    idleTimeoutLabel.setText(`${StringUtils.getMessage("pref_title_idle_timeout")}:`);
-    const idleOptions: DwtSelectOption[] = [];
-    for (const minutes of ["1", "5", "10", "20", "30", "60"]) {
-      const minutesText: string = minutes === "1" ? ZmMsg.minute : ZmMsg.minutes;
-      idleOptions.push(new DwtSelectOption(
-        minutes,
-          this.mOriginals[Setting.IM_PREF_IDLE_TIMEOUT] === minutes,
-        `${minutes} ${minutesText}`,
-        ),
-      );
-    }
-    this.mSettingsObjs[Setting.IM_PREF_REPORT_IDLE] = enableIdleDetection;
-    this.mSettingsObjs[Setting.IM_PREF_IDLE_TIMEOUT] = new DwtSelect({
-      id: IdGenerator.generateId("ZxChat_ChatSettingsSelectTimeout"),
-      // name: Setting.IM_PREF_IDLE_TIMEOUT,
-      options: idleOptions,
-      parent: idleCtrl,
-    });
-    idleGroup.setView(idleCtrl);
+    // const idleGroup: DwtGrouper = new DwtGrouper(prefTab);
+    // idleGroup.setLabel(StringUtils.getMessage("pref_title_idle"));
+    // const idleCtrl: DwtComposite = new DwtComposite({parent: idleGroup});
+    // const enableIdleDetection = new DwtCheckbox({
+    //     checked: this.mOriginals[Setting.IM_PREF_REPORT_IDLE] as boolean,
+    //     name: Setting.IM_PREF_REPORT_IDLE,
+    //     parent: idleCtrl,
+    //   });
+    // enableIdleDetection.setText(StringUtils.getMessage("pref_title_idle_enabled"));
+    // const idleTimeoutLabel: DwtLabel = new DwtLabel({parent: idleCtrl});
+    // idleTimeoutLabel.setText(`${StringUtils.getMessage("pref_title_idle_timeout")}:`);
+    // const idleOptions: DwtSelectOption[] = [];
+    // for (const minutes of ["1", "5", "10", "20", "30", "60"]) {
+    //   const minutesText: string = minutes === "1" ? ZmMsg.minute : ZmMsg.minutes;
+    //   idleOptions.push(new DwtSelectOption(
+    //     minutes,
+    //       this.mOriginals[Setting.IM_PREF_IDLE_TIMEOUT] === minutes,
+    //     `${minutes} ${minutesText}`,
+    //     ),
+    //   );
+    // }
+    // this.mSettingsObjs[Setting.IM_PREF_REPORT_IDLE] = enableIdleDetection;
+    // this.mSettingsObjs[Setting.IM_PREF_IDLE_TIMEOUT] = new DwtSelect({
+    //   id: IdGenerator.generateId("ZxChat_ChatSettingsSelectTimeout"),
+    //   // name: Setting.IM_PREF_IDLE_TIMEOUT,
+    //   options: idleOptions,
+    //   parent: idleCtrl,
+    // });
+    // idleGroup.setView(idleCtrl);
 
     const contactGroup: DwtGrouper = new DwtGrouper(prefTab);
     contactGroup.setLabel(StringUtils.getMessage("buddy_list"));
@@ -369,10 +381,10 @@ export class SettingsDialog extends DwtDialog {
       displayUrlOptsCtrl,
       StringUtils.getMessage("label_enable_url_in_chat_history"),
     );
-    // this.addCheckboxInContentTab(Setting.IM_USR_PREF_URL_IN_MAIL,
-    //   displayUrlOptsCtrl,
-    //   StringUtils.getMessage("label_enable_url_in_mail"),
-    // );
+    this.addCheckboxInContentTab(Setting.IM_USR_PREF_URL_IN_MAIL,
+      displayUrlOptsCtrl,
+      StringUtils.getMessage("label_enable_url_in_mail"),
+    );
     displayUrlOptsGroup.setView(displayUrlOptsCtrl);
 
     this.mTabIds[SettingsDialog.CONTENTS_TAB] = group.addTab(
@@ -406,7 +418,7 @@ export class SettingsDialog extends DwtDialog {
     const versionCtrl: DwtComposite = new DwtComposite({parent: versionGroup});
     let testingMessage: string = "";
     if (this.mPreferenceManager.isZimletTesting()) {
-      testingMessage = " <span style=\"color: #FF0000; font-weight:bold;\">TESTING</span>";
+      testingMessage = " <span style=\"color: #FF0000; font-weight:700;\">TESTING</span>";
     }
     const versionMsg: string =
       `${this.mPreferenceManager.getZimletVersion().toString()}${testingMessage}
@@ -545,6 +557,7 @@ export class SettingsDialog extends DwtDialog {
   private sendDebugLogByEmail(): void {
     const logData: string = this.mErrorTextArea.getValue();
     const date: Date = this.mDateProvider.getNow();
+    const sessionInfo: IOpenChatSessionInfo = this.mStore.getState().sessionInfo;
     const email: {} = {
         action: ZmOperation.NEW_MESSAGE,
         callback: new Callback(null, this.attachLogToMail, "complete_chat_debug_log.log", logData),
@@ -552,7 +565,7 @@ export class SettingsDialog extends DwtDialog {
         extraBodyText: `${StringUtils.getMessage("mail_body_prefix_chat_debug_log")}\n${logData}`,
         subjOverride: StringUtils.getMessage(
           `mail_title_prefix_chat_debug_log`,
-          [`${this.mSessionInfoProvider.getUsernameWithResource()} - ${date.getTime()}`],
+          [`${sessionInfo.username}/${sessionInfo.sessionId} - ${date.getTime()}`],
         ),
       };
     AjxDispatcher.run("Compose", email);
@@ -655,8 +668,9 @@ export class SettingsDialog extends DwtDialog {
 //    #    uploadFcn.call(composeController, @appCtxt, fileName, logData)}
 
   private resetConnection(): void {
-    this.mClient.shutdown();
-    this.mClient.registerSession();
+    this.mConnectionManager.closeStream();
+    this.mStore.dispatch<IResetSessionInfoAction>({ type: "RESET_SESSION_INFO" });
+    this.mConnectionManager.openStream();
     this.popdown();
   }
 

@@ -18,16 +18,17 @@
 import {ChatZimletBase} from "../../ChatZimletBase";
 import {Callback} from "../../lib/callbacks/Callback";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
+import {IOpenChatState} from "../../redux/IOpenChatState";
 import {Setting} from "../Setting";
 import {SettingsUtils} from "../SettingsUtils";
 import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
 export class ConfigHandler implements ISettingsHandlerInterface {
 
-  private mZimletContext: ChatZimletBase;
+  private mZimletContext: ChatZimletBase<IOpenChatState>;
   private mTimedCallbackFactory: TimedCallbackFactory;
 
-  constructor(zimletContext: ChatZimletBase, timedCallbackFactory: TimedCallbackFactory) {
+  constructor(zimletContext: ChatZimletBase<IOpenChatState>, timedCallbackFactory: TimedCallbackFactory) {
     this.mZimletContext = zimletContext;
     this.mTimedCallbackFactory = timedCallbackFactory;
   }

@@ -1,0 +1,58 @@
+{
+// Default options
+'functions': true
+}
+
+//
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+//
+
+.emojione_32 {
+    font-size: inherit;
+    height: 32px;
+    width: 32px;
+    min-height: 32px;
+    min-width: 32px;
+    display: inline-block;
+    /* margin: -.4ex .15em .2ex; */
+    line-height: normal;
+    vertical-align: middle;
+}
+
+img.emojione_32 {
+    width: 32px;
+    height: 32px;
+}
+
+[class*=emojione_32-] {
+    text-indent: -9999em;
+    image-rendering: optimizeQuality;
+    font-size: inherit;
+    position: relative;
+    display: inline-block;
+    line-height: normal;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+}
+
+{{#items}}
+.emojione_32-{{name}} {
+    background-image: url("{{{escaped_image}}}");
+    background-position: {{px.offset_x}} {{px.offset_y}};
+    width: {{px.width}};
+    height: {{px.height}};
+}
+{{/items}}

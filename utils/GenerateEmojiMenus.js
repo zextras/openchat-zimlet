@@ -139,7 +139,17 @@ for (pageName in EMOJI_PAGES) {
     ++emojiCount;
     emojiName = page[i].shortname;
     emojiCode = page[i].unicode;
-    toRet.push('      { name: "' + emojiName + '", data: "' + emojione.shortnameToImage(emojiName).replace(/"/g, '\'').replace(/>[^<]+</, '>' + emojiName + '<') + '" },');
+    toRet.push(
+      [
+        '      { name: "',
+        emojiName,
+        '", data: "',
+        emojione.shortnameToImage(emojiName)
+          .replace(/"/g, '\'')
+          .replace(/>[^<]+</, '>' + emojiName + '<'),
+        '" },'
+      ].join("")
+    );
     toRetOnlyFileNames.push(emoji_path + emojiCode + ".png");
   }
   toRet.push('    ],');

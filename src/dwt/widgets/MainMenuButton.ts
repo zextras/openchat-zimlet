@@ -27,6 +27,8 @@ import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {ZxPopupMenu} from "../windows/WindowBase";
 
+import "./MainMenuButton.scss";
+
 export class MainMenuButton extends DwtToolBarButton {
 
   public static AddMenuItemPlugin: string = "Main Window Menu Button Add Menu Entry";
@@ -69,6 +71,7 @@ export class MainMenuButton extends DwtToolBarButton {
     this.opAddBuddy = menu.createMenuItem(
       MainMenuButton.ADD_BUDDY_MENU_ITEM_ID,
       {
+        image: "fa fas fal fa-plus-circle",
         text: StringUtils.getMessage("add_friend"),
       },
     );
@@ -78,7 +81,8 @@ export class MainMenuButton extends DwtToolBarButton {
     this.opAddGroup = menu.createMenuItem(
       MainMenuButton.ADD_GROUP_MENU_ITEM_ID,
       {
-        text: StringUtils.getMessage("create_group_title"),
+        image: "fa fas fal fa-folder",
+        text: ZmMsg.newFolder,
       },
     );
     this.opAddGroup.addSelectionListener(
@@ -88,15 +92,17 @@ export class MainMenuButton extends DwtToolBarButton {
     this.mOpSwitchToSidebar = menu.createMenuItem(
       MainMenuButton.SWITCH_TO_SIDEBAR_MENU_ITEM_ID,
       {
+        image: "fa fas fal fa-arrow-right",
         text: StringUtils.getMessage("switch_to_sidebar"),
       },
     );
     this.mOpSwitchToSidebar.addSelectionListener(
-       new AjxListener(this, this._onSwitchToSidebar, []),
+      new AjxListener(this, this._onSwitchToSidebar, []),
     );
     this.mOpSwitchToDock = menu.createMenuItem(
       MainMenuButton.SWITCH_TO_DOCK_MENU_ITEM_ID,
       {
+        image: "fa fas fal fa-arrow-down",
         text: StringUtils.getMessage("switch_to_docked"),
       },
     );
@@ -107,6 +113,7 @@ export class MainMenuButton extends DwtToolBarButton {
     this.opSHOffline = menu.createMenuItem(
       MainMenuButton.HIDE_OFFLINE_BUDDIES_MENU_ITEM_ID,
       {
+        image: "fa fas fal fa-eye-slash",
         text: StringUtils.getMessage("pref_title_hide_offline_buddies"),
       },
     );
@@ -121,6 +128,7 @@ export class MainMenuButton extends DwtToolBarButton {
     this.opSettings = menu.createMenuItem(
       MainMenuButton.OPEN_PREFERENCES_MENU_ITEM_ID,
       {
+        image: "fa fas fal fa-cog",
         text: ZmMsg.preferences,
       },
     );
@@ -144,8 +152,10 @@ export class MainMenuButton extends DwtToolBarButton {
     );
     if (hide) {
       this.opSHOffline.setText(StringUtils.getMessage("pref_title_show_offline_buddies"));
+      this.opSHOffline.setImage("fa fas fal fa-eye");
     } else {
       this.opSHOffline.setText(StringUtils.getMessage("pref_title_hide_offline_buddies"));
+      this.opSHOffline.setImage("fa fas fal fa-eye-slash");
     }
   }
 

@@ -18,17 +18,15 @@
 import {IChatClient} from "../../IChatClient";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
 import {TimeoutEvent} from "../chat/TimeoutEvent";
-import {ChatEvent} from "../ChatEvent";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class TimeoutEventHandler implements IChatEventHandler {
+export class TimeoutEventHandler implements IChatEventHandler<TimeoutEvent> {
 
   public getEventCode(): number {
     return OpenChatEventCode.TIMEOUT;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const timeoutEvent: TimeoutEvent = chatEvent as TimeoutEvent;
+  public handleEvent(ev: TimeoutEvent, client: IChatClient): boolean {
     client.Log.warn(undefined, "Ping requested timed out.");
     return true;
   }

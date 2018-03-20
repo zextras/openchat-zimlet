@@ -32,5 +32,6 @@ export class Command {
   public static PING                 = "ev_ping";
   public static RESET_USER           = "reset_user";
   public static NOTIFY_WRITING       = "ping_writing";
+  public static QUERY_ARCHIVE        = "query_archive";
 
 }

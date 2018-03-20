@@ -22,7 +22,8 @@ import {ZmSkin} from "../zimbra/zimbraMail/ZmSkin";
 export class ZimbraUtils {
 
   public static isUniversalUI(): boolean {
-    return (ZmSkin.hints.name === "harmony2")
+    return (typeof ZmSkin.hints !== "undefined" && typeof ZmSkin.hints.name !== "undefined")
+      && (ZmSkin.hints.name === "harmony2")
       || (ZmSkin.hints.name === "clarity");
   }
 
@@ -48,5 +49,9 @@ export class ZimbraUtils {
         && ZimbraUtils.getZimbraMinorVersion() < 5);
   }
 
-  private static ZIMBRA_VERSION: string = appCtxt.get(ZmSetting.CLIENT_VERSION);
+  private static ZIMBRA_VERSION: string =
+    (typeof appCtxt !== "undefined") ?
+      appCtxt.get(ZmSetting.CLIENT_VERSION)
+      :
+      "0.0.0";
 }

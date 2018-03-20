@@ -1,0 +1,151 @@
+/*
+ * Copyright (C) 2017 ZeXtras S.r.l.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, version 2 of
+ * the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * List of the possible action type that each reducers may interpret
+ */
+export type BuddyListActionType =
+  | "ADD_BUDDY_ONLY_SE"
+  | "POPULATE_BUDDY_LIST"
+  | "RESET_BUDDY_LIST"
+  | "REMOVE_BUDDIES_FROM_BUDDY_LIST"
+  | "REMOVE_BUDDIES_FROM_BUDDY_LIST_SE"
+  | "ACCEPT_FRIENDSHIP"
+  | BuddyActionType;
+
+export type BuddyActionType =
+  | "ADD_OR_UPDATE_STATUS_TO_BUDDY"
+  | "REMOVE_STATUS_TO_BUDDY"
+  | "ADD_GROUP_TO_BUDDY"
+  | "REMOVE_GROUP_FROM_BUDDY"
+  | "SET_NICKNAME"
+  | "SET_NICKNAME_SE";
+
+export type RoomsActionType =
+  | "ADD_ROOM"
+  | "REMOVE_ROOM"
+  | RoomActionType;
+
+export type RoomActionType =
+  | "ADD_PARTICIPANT_TO_ROOM"
+  | "REMOVE_PARTICIPANT_FROM_ROOM"
+  // | "ADD_MESSAGE_TO_ROOM"
+  // | "ADD_MESSAGE_TO_ROOM_SE"
+  // | "MODIFY_MESSAGE"
+  // | "SET_MESSAGE_ID"
+  // | "ADD_NOTIFICATION_UNREAD"
+  // | "MESSAGE_READ"
+  // | "MESSAGE_RECEIVED"
+  // | "BULK_READ_MESSAGES"
+  | "SET_WRITING_STATUS"
+  | "SEND_WRITING_STATUS";
+
+export type UserStatusActionType =
+  | "ADD_USER_STATUS"
+  | "UPDATE_USER_STATUS"
+  | "REMOVE_USER_STATUS"
+  | "SET_USER_STATUS"
+  | "SET_USER_STATUS_SE";
+
+// export type SessionInfoActionType =
+//   | "REGISTER_SESSION"
+//   | "RESET_SESSION"
+//   | "SET_USER_INFO";
+
+export type SelectConversationActionType =
+  | "SELECT_CONVERSATION"
+  | "RESET_SELECTED_CONVERSATION";
+
+export type TopToolbarButtonsActionType =
+  | "ADD_BUTTON_TO_TOP_TOOLBAR"
+  | "REMOVE_BUTTON_FROM_TOP_TOOLBAR"
+  | "UPDATE_BUTTON_OF_TOP_TOOLBAR"
+  // | "SET_BUTTONS_TO_MAINTOOLBAR"
+  | "RESET_MAINTOOLBAR_BUTTONS";
+
+export type InputToolbarButtonsActionType =
+  | "ADD_BUTTON_TO_INPUTTOOLBAR"
+  | "RESET_BUTTONS_IN_INPUTTOOLBAR";
+
+export type ShowHideOptionPanelActionType =
+  | "SHOW_OPTION_PANEL"
+  | "HIDE_OPTION_PANEL";
+
+export type ShowHideEmojiSelectorActionType =
+  | "SHOW_EMOJI_SELECTOR"
+  | "HIDE_EMOJI_SELECTOR";
+
+// This enum has only dev purpose
+enum OpenChatAction {
+  // BuddyList Actions
+  ADD_BUDDY_ONLY_SE = "ADD_BUDDY_ONLY_SE",
+  POPULATE_BUDDY_LIST = "POPULATE_BUDDY_LIST",
+  RESET_BUDDY_LIST = "RESET_BUDDY_LIST",
+  REMOVE_BUDDIES_FROM_BUDDY_LIST = "REMOVE_BUDDIES_FROM_BUDDY_LIST",
+  REMOVE_BUDDIES_FROM_BUDDY_LIST_SE = "REMOVE_BUDDIES_FROM_BUDDY_LIST_SE",
+  ACCEPT_FRIENDSHIP = "ACCEPT_FRIENDSHIP",
+  // Buddy Actions
+  ADD_OR_UPDATE_STATUS_TO_BUDDY = "ADD_OR_UPDATE_STATUS_TO_BUDDY",
+  REMOVE_STATUS_TO_BUDDY = "REMOVE_STATUS_TO_BUDDY",
+  ADD_GROUP_TO_BUDDY = "ADD_GROUP_TO_BUDDY",
+  REMOVE_GROUP_FROM_BUDDY = "REMOVE_GROUP_FROM_BUDDY",
+  SET_NICKNAME = "SET_NICKNAME",
+  SET_NICKNAME_SE = "SET_NICKNAME_SE",
+  // Rooms Actions
+  ADD_ROOM = "ADD_ROOM",
+  ADD_OR_UPDATE_ROOM_SE = "ADD_OR_UPDATE_ROOM_SE",
+  REMOVE_ROOM = "REMOVE_ROOM",
+  // Room Actions
+  ADD_MESSAGE_TO_ROOM = "ADD_MESSAGE_TO_ROOM",
+  // ADD_MESSAGE_TO_ROOM_SE = "ADD_MESSAGE_TO_ROOM_SE",
+  // MODIFY_MESSAGE = "MODIFY_MESSAGE",
+  // SET_MESSAGE_ID = "SET_MESSAGE_ID",
+  // ADD_NOTIFICATION_UNREAD = "ADD_NOTIFICATION_UNREAD",
+  MESSAGE_RECEIVED = "MESSAGE_RECEIVED",
+  // BULK_READ_MESSAGES = "BULK_READ_MESSAGES",
+  SET_WRITING_STATUS = "SET_WRITING_STATUS",
+  SEND_WRITING_STATUS = "SEND_WRITING_STATUS",
+  // UserStatus Actions
+  ADD_USER_STATUS = "ADD_USER_STATUS",
+  UPDATE_USER_STATUS = "UPDATE_USER_STATUS",
+  REMOVE_USER_STATUS = "REMOVE_USER_STATUS",
+  SET_USER_STATUS = "SET_USER_STATUS",
+  SET_USER_STATUS_SE = "SET_USER_STATUS_SE",
+  // SessionInfo Actions
+  // REGISTER_SESSION = "REGISTER_SESSION",
+  // RESET_SESSION = "RESET_SESSION",
+  // SET_USER_INFO = "SET_USER_INFO",
+
+  // SelectConversation Actions
+  SELECT_CONVERSATION = "SELECT_CONVERSATION",
+  RESET_SELECTED_CONVERSATION = "RESET_SELECTED_CONVERSATION",
+
+  // MainToolbarButtons Actions
+  ADD_BUTTON_TO_TOP_TOOLBAR = "ADD_BUTTON_TO_TOP_TOOLBAR",
+  REMOVE_BUTTON_FROM_TOP_TOOLBAR = "REMOVE_BUTTON_FROM_TOP_TOOLBAR",
+  UPDATE_BUTTON_OF_TOP_TOOLBAR = "UPDATE_BUTTON_OF_TOP_TOOLBAR",
+  // SET_BUTTONS_TO_MAINTOOLBAR = "SET_BUTTONS_TO_MAINTOOLBAR",
+  RESET_MAINTOOLBAR_BUTTONS = "RESET_MAINTOOLBAR_BUTTONS",
+
+  // InputToolbarButtons Actions
+  ADD_BUTTON_TO_INPUTTOOLBAR = "ADD_BUTTON_TO_INPUTTOOLBAR",
+  RESET_BUTTONS_IN_INPUTTOOLBAR = "RESET_BUTTONS_IN_INPUTTOOLBAR",
+
+  // ShowHideOptionPanel Actions
+  SHOW_OPTION_PANEL = "SHOW_OPTION_PANEL",
+  HIDE_OPTION_PANEL = "HIDE_OPTION_PANEL",
+}

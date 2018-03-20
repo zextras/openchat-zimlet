@@ -17,16 +17,16 @@
 
 import {IChatClient} from "../../IChatClient";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
-import {ChatEvent} from "../ChatEvent";
+import {ShutdownEvent} from "../chat/ShutdownEvent";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class ShutdownEventHandler implements IChatEventHandler {
+export class ShutdownEventHandler implements IChatEventHandler<ShutdownEvent> {
 
   public getEventCode(): number {
     return OpenChatEventCode.SHUTDOWN;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+  public handleEvent(chatEvent: ShutdownEvent, client: IChatClient): boolean {
     client.shutdown();
     return true;
   }

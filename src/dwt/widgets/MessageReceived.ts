@@ -18,14 +18,14 @@
 import {IBuddy} from "../../client/IBuddy";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
 import {Callback} from "../../lib/callbacks/Callback";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {LearningClipUtils} from "../../lib/LearningClipUtils";
 import {Conversation} from "./Conversation";
 import {Message} from "./Message";
 
 export class MessageReceived extends Message {
 
-  constructor(parent: Conversation, message: MessageReceivedObj, dateProvider: DateProvider) {
+  constructor(parent: Conversation, message: MessageReceivedObj, dateProvider: IDateProvider) {
     super(parent, message, dateProvider);
     (this.getHtmlElement().childNodes[0] as HTMLElement).className += " ZxChat_MessageContainerSenderTrue";
     const buddy: IBuddy = message.getSender();

@@ -18,13 +18,12 @@
 import {IChatClient} from "../../IChatClient";
 import {FriendshipEvent} from "../chat/FriendshipEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
-import {ChatEvent} from "../ChatEvent";
 import {EventManager} from "../EventManager";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class FriendshipEventHandler extends EventManager implements IChatEventHandler {
+export class FriendshipEventHandler extends EventManager implements IChatEventHandler<FriendshipEvent> {
 
-  constructor(...subHandlers: IChatEventHandler[]) {
+  constructor(...subHandlers: Array<IChatEventHandler<FriendshipEvent>>) {
     super();
     for (const handler of subHandlers) {
       this.addEventHandler(handler);
@@ -35,12 +34,11 @@ export class FriendshipEventHandler extends EventManager implements IChatEventHa
     return OpenChatEventCode.FRIENDSHIP;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const friendshipEvent: FriendshipEvent = chatEvent as FriendshipEvent;
+  public handleEvent(ev: FriendshipEvent, client: IChatClient): boolean {
     let handled: boolean = false;
-    if (this.mHandlersMap.hasOwnProperty(friendshipEvent.getFriendshipStatus().toString())) {
-      for (const handler of this.mHandlersMap[friendshipEvent.getFriendshipStatus()]) {
-        handled = handler.handleEvent(friendshipEvent, client);
+    if (this.mHandlersMap.hasOwnProperty(ev.getFriendshipStatus().toString())) {
+      for (const handler of this.mHandlersMap[ev.getFriendshipStatus()]) {
+        handled = handler.handleEvent(ev, client);
       }
     }
     return true;

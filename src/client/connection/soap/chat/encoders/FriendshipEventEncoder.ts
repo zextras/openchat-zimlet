@@ -16,22 +16,19 @@
  */
 
 import {FriendshipInvitationEvent} from "../../../../events/chat/friendship/FriendshipInvitationEvent";
-import {FriendshipEvent} from "../../../../events/chat/FriendshipEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class FriendshipEventEncoder extends SoapEventEncoder {
+export class FriendshipEventEncoder extends SoapEventEncoder<FriendshipInvitationEvent> {
 
   constructor() {
     super(OpenChatEventCode.FRIENDSHIP);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
+  protected getEventDetails(ev: FriendshipInvitationEvent): {} {
 
-    if ((event as FriendshipEvent).getFriendshipStatus() === FriendshipInvitationEvent.TYPE) {
+    if (ev.getFriendshipStatus() === FriendshipInvitationEvent.TYPE) {
       // Add Friendship
-      const ev: FriendshipInvitationEvent = event as FriendshipInvitationEvent;
       return {
         group: ev.getGroup(),
         target_address: ev.getDestination(),

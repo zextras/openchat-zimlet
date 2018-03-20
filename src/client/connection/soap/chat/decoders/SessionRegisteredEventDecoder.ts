@@ -15,28 +15,40 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {EventSessionRegistered} from "../../../../events/chat/EventSessionRegistered";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class SessionRegisteredEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class SessionRegisteredEventDecoder<T extends IUserCapabilities>
+  extends SoapEventDecoder<EventSessionRegistered<T>> {
 
-  constructor(dateProvider: DateProvider) {
+  protected mDateProvider: IDateProvider;
+
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.REGISTER_SESSION);
     this.mDateProvider = dateProvider;
   }
 
   public decodeEvent(
-    eventObj: any,
-    originEvent?: ChatEvent,
-  ): ChatEvent {
-    return new EventSessionRegistered(
+    eventObj: ISessionRegisteredEventObj<T>,
+    originEvent?: IChatEvent,
+  ): EventSessionRegistered<T> {
+    return new EventSessionRegistered<T>(
       eventObj,
       this.mDateProvider.getNow(),
     );
   }
 
+}
+
+export interface ISessionRegisteredEventObj<T extends IUserCapabilities> extends ISoapEventObject {
+  [key: string]: any;
+  capabilities?: T;
+}
+
+export interface IUserCapabilities {
+  [key: string]: any;
 }

@@ -16,7 +16,7 @@
  */
 
 import {json_prune} from "../../libext/json-prune";
-import {JSON3} from "../../libext/json3";
+import {JSON3 as JSON} from "../../libext/json3";
 import {LogLevel} from "./LogLevel";
 
 export class LogLine {
@@ -82,7 +82,7 @@ export class LogLine {
   }
 
   public getPrettyObject(): string {
-    return JSON3.stringify(JSON3.parse(json_prune(this.mObject)), null, 2);
+    return JSON.stringify(JSON.parse(json_prune(this.mObject)), null, 2);
   }
 
   public toString(prettyPrint: boolean = false): string {
@@ -93,7 +93,7 @@ export class LogLine {
     } else {
       try {
         if (prettyPrint) {
-          text = JSON3.stringify(JSON3.parse(json_prune(this.mObject)), null, 2);
+          text = JSON.stringify(JSON.parse(json_prune(this.mObject)), null, 2);
         } else {
           text = json_prune(this.mObject);
         }

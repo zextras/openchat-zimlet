@@ -15,39 +15,46 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {Buddy} from "../../../../Buddy";
-import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {BuddyStatus} from "../../../../BuddyStatus";
 import {BuddyStatusType} from "../../../../BuddyStatusType";
 import {FriendBackAddedEvent} from "../../../../events/chat/FriendBackAddedEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
 import {IBuddy} from "../../../../IBuddy";
+import {ISoapEventObject} from "../SoapEventParser";
+import {IUserCapabilities} from "./SessionRegisteredEventDecoder";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class FriendBackAddedEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class FriendBackAddedEventDecoder<T extends IUserCapabilities>
+  extends SoapEventDecoder<FriendBackAddedEvent<T>> {
 
-  constructor(dateProvider: DateProvider) {
+  private mDateProvider: IDateProvider;
+
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.FRIEND_BACK_ADDED);
     this.mDateProvider = dateProvider;
   }
 
   public decodeEvent(
-    eventObj: {
-      buddyAddress: string,
-      buddyNickname: string,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: IFriendBackAddedEventObj<T>,
+    originEvent?: IChatEvent,
+  ): FriendBackAddedEvent<T> {
     const buddy: IBuddy = new Buddy(
       eventObj.buddyAddress,
       eventObj.buddyNickname,
     );
     buddy.setStatus(
-      new BuddyStatusImp(BuddyStatusType.INVITED),
+      new BuddyStatus(BuddyStatusType.INVITED),
     );
-    return new FriendBackAddedEvent(buddy, this.mDateProvider.getNow());
+    return new FriendBackAddedEvent<T>(buddy, eventObj.capabilities, this.mDateProvider.getNow());
   }
 
+}
+
+interface IFriendBackAddedEventObj<T extends IUserCapabilities> extends ISoapEventObject {
+  buddyAddress: string;
+  buddyNickname: string;
+  capabilities: T;
 }

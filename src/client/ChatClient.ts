@@ -15,112 +15,97 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
+
 import {Callback} from "../lib/callbacks/Callback";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
-import {DateProvider} from "../lib/DateProvider";
 import {ZxError} from "../lib/error/ZxError";
 import {ZxErrorCode} from "../lib/error/ZxErrorCode";
+import {IDateProvider} from "../lib/IDateProvider";
 import {LogEngine} from "../lib/log/LogEngine";
 import {Logger} from "../lib/log/Logger";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {StringUtils} from "../lib/StringUtils";
 import {Version} from "../lib/Version";
+import {IOpenChatState} from "../redux/IOpenChatState";
 import {appCtxt} from "../zimbra/zimbraMail/appCtxt";
 import {BuddyList} from "./BuddyList";
 import {IConnectionManager} from "./connection/IConnectionManager";
-import {BasicEvent} from "./events/BasicEvent";
+import {IUserCapabilities} from "./connection/soap/chat/decoders/SessionRegisteredEventDecoder";
 import {AcceptFriendshipEvent} from "./events/chat/AcceptFriendshipEvent";
 import {EventSessionRegistered} from "./events/chat/EventSessionRegistered";
 import {FriendshipInvitationEvent} from "./events/chat/friendship/FriendshipInvitationEvent";
-import {MessageAckEvent} from "./events/chat/MessageAckEvent";
 import {MessageEvent} from "./events/chat/MessageEvent";
 import {MessageSentEvent} from "./events/chat/MessageSentEvent";
-import {RegisterSessionEvent} from "./events/chat/RegisterSessionEvent";
 import {RemoveFriendshipEvent} from "./events/chat/RemoveFriendshipEvent";
 import {RenameFriendshipEvent} from "./events/chat/RenameFriendshipEvent";
 import {RenameGroupEvent} from "./events/chat/RenameGroupEvent";
 import {ResetUserDataEvent} from "./events/chat/ResetUserDataEvent";
-import {SetStatusEvent} from "./events/chat/SetStatusEvent";
 import {UnregisterSessionEvent} from "./events/chat/UnregisterSessionEvent";
-import {ChatEvent} from "./events/ChatEvent";
-import {EventManager} from "./events/EventManager";
+import {IChatEvent} from "./events/IChatEvent";
+import {IEventManager} from "./events/IEventManager";
 import {Group} from "./Group";
 import {IBuddy} from "./IBuddy";
-import {IBuddyStatus} from "./IBuddyStatus";
 import {IChatClient} from "./IChatClient";
-import {IUserStatusManager} from "./IUserStatusManager";
-import {MessageAckWaiter} from "./MessageAckWaiter";
-import {MessageReceived} from "./MessageReceived";
+import {IRoomManager} from "./IRoomManager";
 import {MessageSent} from "./MessageSent";
-import {RoomManager} from "./RoomManager";
-import {SessionInfoProvider} from "./SessionInfoProvider";
-import {UserStatusManager} from "./UserStatusManager";
 
 export class ChatClient implements IChatClient {
 
   public static PluginName = "Chat Client";
-  public static StatusSelectedPlugin = "Chat Client Status Selected";
-  public static SetStatusesPlugin = "Chat Client Set Statuses";
 
   public Log: Logger;
 
-  private mSessionInfoProvider: SessionInfoProvider;
-  private mZimletVersion: Version;
-  private mUsername: string;
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mConnectionManager: IConnectionManager;
-  private mMessageAckWaiter: MessageAckWaiter;
-  private mRoomManager: RoomManager;
+  private mRoomManager: IRoomManager;
   private mBuddylist: BuddyList;
-  private mOnStatusChangeCallbackManager: CallbackManager;
   private mOnRegistrationErrorCallbackManager: CallbackManager;
   private mOnServerOnlineCallbackManager: CallbackManager;
   private mOnServerOfflineCallbackManager: CallbackManager;
   private mOn502ErrorCallbackManager: CallbackManager;
   private mOnFriendshipInvitationCallbackManager: CallbackManager;
   private mOnEndProcessResponsesCallbackManager: CallbackManager;
-  private mOnUserStatusesReceived: CallbackManager;
-  private mEventManager: EventManager;
+  private mEventManager: IEventManager;
   private mChatClientPluginManager: ChatPluginManager;
-  private mUserStatusManager: IUserStatusManager;
+  private mStore: Store<IOpenChatState>;
+  private mReceivedMessageCallback: (roomId: string, messageSenderId: string, messageContent: string) => void;
 
   constructor(
-    sessionInfoProvider: SessionInfoProvider,
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
     connectionManager: IConnectionManager,
-    eventManager: EventManager,
-    roomManager: RoomManager,
+    eventManager: IEventManager,
+    roomManager: IRoomManager,
     chatPluginManager: ChatPluginManager,
+    store: Store<IOpenChatState>,
   ) {
     this.Log = LogEngine.getLogger(LogEngine.CHAT);
-    this.mSessionInfoProvider = sessionInfoProvider;
-    this.mZimletVersion = this.mSessionInfoProvider.getZimletVersion();
-    this.mUsername = this.mSessionInfoProvider.getUsername();
     this.mDateProvider = dateProvider;
     this.mConnectionManager = connectionManager;
-    this.mConnectionManager.onEvent(new Callback(this, this._onStreamEvent));
-    this.mConnectionManager.onEndProcessResponses(new Callback(this, this._onEndProcessResponses));
-    this.mConnectionManager.onBadGatewayError(new Callback(this, this._onBadGatewayError));
-    this.mConnectionManager.onNoSuchChatSession(new Callback(this, this._onNoSuchChatSession));
-    this.mConnectionManager.onHTTPError(new Callback(this, this._onHTTPError));
-    this.mConnectionManager.onNetworkError(new Callback(this, this._onNetworkError));
+    this.mConnectionManager.onEvent((ev) => this._onStreamEvent(ev as IChatEvent));
+    this.mConnectionManager.onEndProcessResponses(() => this._onEndProcessResponses());
+    this.mConnectionManager.onBadGatewayError((err) => this._onBadGatewayError(err));
+    this.mConnectionManager.onNoSuchChatSession((err) => this._onNoSuchChatSession(err));
+    this.mConnectionManager.onHTTPError((err) => this._onHTTPError(err));
+    this.mConnectionManager.onNetworkError((err) => this._onNetworkError(err));
     this.mEventManager = eventManager;
-    this.mMessageAckWaiter = new MessageAckWaiter();
     this.mRoomManager = roomManager;
-    this.mUserStatusManager = new UserStatusManager();
     this.mBuddylist = new BuddyList();
     this.mBuddylist.onRemoveBuddy(new Callback(this.mRoomManager, this.mRoomManager.removeBuddyFromAllRooms));
     this.mBuddylist.onAddBuddy(new Callback(this.mRoomManager, this.mRoomManager.addBuddyToHisRooms));
     this.mRoomManager.onSendEvent(new Callback(this, this.sendEvent));
-    this.mRoomManager.onSendMessage(new Callback(this, this._sendMessage));
-    this.mOnStatusChangeCallbackManager = new CallbackManager();
+    this.mStore = store;
+    if (typeof this.mStore === "undefined") {
+    //   this.mRoomManager.onSendMessage(new Callback(this, this._storeDispatchMessage));
+    // } else {
+      this.mRoomManager.onSendMessage(new Callback(this, this._sendMessage));
+    }
     this.mOnRegistrationErrorCallbackManager = new CallbackManager();
     this.mOnServerOnlineCallbackManager = new CallbackManager();
     this.mOnServerOfflineCallbackManager = new CallbackManager();
     this.mOn502ErrorCallbackManager = new CallbackManager();
     this.mOnFriendshipInvitationCallbackManager = new CallbackManager();
     this.mOnEndProcessResponsesCallbackManager = new CallbackManager();
-    this.mOnUserStatusesReceived = new CallbackManager();
     this.mChatClientPluginManager = chatPluginManager;
     this.mChatClientPluginManager.switchOn(this);
     this.mChatClientPluginManager.triggerPlugins(ChatClient.PluginName);
@@ -131,30 +116,10 @@ export class ChatClient implements IChatClient {
   }
 
   /**
-   * Register the session
-   */
-  public registerSession(): void {
-    this.mSessionInfoProvider.resetSessionId();
-    this.getBuddyList().reset();
-    this.sendEvent(
-      new RegisterSessionEvent(
-        this.mSessionInfoProvider.getZimletVersion(),
-        this.mDateProvider.getNow(),
-      ),
-      new Callback(this, this._onStreamEvent),
-      new Callback(this, this.registrationError),
-    );
-  }
-
-  public getSessionInfoProvider(): SessionInfoProvider {
-    return this.mSessionInfoProvider;
-  }
-
-  /**
    * Unregister the session and reset the session id.
    */
   public unregisterSession(): void {
-    if (typeof this.mSessionInfoProvider.getSessionId() !== "undefined") {
+    if (this.mStore.getState().sessionInfo.sessionId !== "") {
       this.sendEvent(
         new UnregisterSessionEvent(this.mDateProvider.getNow()),
         new Callback(this, this._onStreamEvent),
@@ -186,22 +151,15 @@ export class ChatClient implements IChatClient {
   /**
    * Get the room manager
    */
-  public getRoomManager(): RoomManager {
+  public getRoomManager(): IRoomManager {
     return this.mRoomManager;
-  }
-
-  /**
-   * Get the message acknowledge waiter
-   */
-  public getMessageAckWaiter(): MessageAckWaiter {
-    return this.mMessageAckWaiter;
   }
 
   /**
    * Get the Date Provider
    */
 
-  public getDateProvider(): DateProvider {
+  public getDateProvider(): IDateProvider {
     return this.mDateProvider;
   }
 
@@ -209,24 +167,11 @@ export class ChatClient implements IChatClient {
    * Send an event using the connection manager.
    * No one should use the connection manager directly.
    */
-  public sendEvent(event: ChatEvent, callback: Callback, errorCallback?: Callback): void {
-    this.Log.debug(event, "Send event");
+  public sendEvent(event: IChatEvent, callback: Callback, errorCallback?: Callback): void {
     if (event.getSender() == null) {
-      event.setSender(this.mSessionInfoProvider.getUsername());
+      event.setSender(this.mStore.getState().sessionInfo.username);
     }
-    this.mConnectionManager.sendEvent(event as BasicEvent, callback, errorCallback);
-  }
-
-  /**
-   * Notify to the server that a message is correctly received by the client.
-   */
-  public notifyMessageReceived(messageEvent: MessageReceived, callback?: Callback, errorCallback?: Callback): void {
-    const event = new MessageAckEvent(
-      messageEvent.getSender().getId(),
-      this.mDateProvider.getNow(),
-    );
-    event.addMessageId(messageEvent.getMessageId());
-    this.sendEvent(event, callback, errorCallback);
+    this.mConnectionManager.sendEvent(event, callback, errorCallback);
   }
 
   /**
@@ -263,14 +208,14 @@ export class ChatClient implements IChatClient {
    * Delete a friendship.
    * Will remove a buddy from the user buddy list.
    */
-  public deleteFriendship(buddy: IBuddy, callback: Callback, errorCallback?: Callback) {
+  public deleteFriendship(buddy: IBuddy, callback: (ev: RemoveFriendshipEvent) => void, errorCallback?: () => void) {
     this.sendEvent(
       new RemoveFriendshipEvent(
         buddy.getId(),
         buddy.getNickname(),
         this.mDateProvider.getNow()),
-      callback,
-      errorCallback,
+      Callback.fromFunction(callback),
+      Callback.fromFunction(errorCallback),
     );
   }
 
@@ -307,31 +252,10 @@ export class ChatClient implements IChatClient {
     const event = new RenameGroupEvent(
       oldName,
       newName,
-      this.mSessionInfoProvider.getUsername(),
+      this.mStore.getState().sessionInfo.username,
       this.mDateProvider.getNow(),
     );
     this.sendEvent(event, callback, errorCallback);
-  }
-
-  public getUserStatusManager(): IUserStatusManager {
-    return this.mUserStatusManager;
-  }
-
-  public setUserStatus(userStatus: IBuddyStatus, callback?: Callback, errorCallback?: Callback): void {
-    this.sendEvent(
-      new SetStatusEvent(
-        `${userStatus.getId()}`,
-        this.mDateProvider.getNow(),
-        false,
-      ),
-      callback,
-      errorCallback,
-    );
-  }
-
-  public statusChanged(statusChanged: IBuddyStatus): void {
-    this.mRoomManager.statusChanged(statusChanged);
-    this.mOnStatusChangeCallbackManager.run(statusChanged);
   }
 
   /**
@@ -359,13 +283,6 @@ export class ChatClient implements IChatClient {
     this.unregisterSession();
   }
 
-  /**
-   * Set the callback that will be invoked when a user change message from another session.
-   */
-  public onStatusChange(callback: Callback): void {
-    return this.mOnStatusChangeCallbackManager.addCallback(callback);
-  }
-
   public onRegistrationError(callback: Callback): void {
     this.mOnRegistrationErrorCallbackManager.addCallback(callback);
   }
@@ -388,7 +305,7 @@ export class ChatClient implements IChatClient {
     this.mOnServerOnlineCallbackManager.addCallback(callback);
   }
 
-  public serverOnline(eventSessionRegistered: EventSessionRegistered) {
+  public serverOnline(eventSessionRegistered: EventSessionRegistered<IUserCapabilities>) {
     this.mOnServerOnlineCallbackManager.run(eventSessionRegistered);
   }
 
@@ -414,6 +331,30 @@ export class ChatClient implements IChatClient {
     this.mOnEndProcessResponsesCallbackManager.addCallback(callback);
   }
 
+  // transitory till client removed
+  public getConnectionManager(): IConnectionManager {
+    return this.mConnectionManager;
+  }
+
+  // TODO: find a better implementation
+  public onMessageReceived(
+    callback: (
+      roomId: string,
+      messageSenderId: string,
+      messageContent: string,
+    ) => void,
+  ): void {
+    this.mReceivedMessageCallback = callback;
+  }
+
+  public receivedMessage(
+    roomId: string,
+    messageSenderId: string,
+    messageContent: string,
+  ): void {
+    this.mReceivedMessageCallback(roomId, messageSenderId, messageContent);
+  }
+
   /**
    * Send a message to a buddy or room.
    */
@@ -421,10 +362,10 @@ export class ChatClient implements IChatClient {
     this.sendEvent(
       new MessageEvent(
         null,
-        this.mSessionInfoProvider.getUsername(),
+        this.mStore.getState().sessionInfo.username,
         message.getDestination(),
         message.getMessage(),
-        MessageEvent.convertFromMessageType(message.getType()),
+        message.getType(),
         message.getDate(),
         this.mDateProvider.getNow(),
       ),
@@ -438,15 +379,15 @@ export class ChatClient implements IChatClient {
   private _sendMessageCallback(message: MessageSent, respEvent: MessageSentEvent): boolean {
     if (respEvent != null) {
       message.setId(respEvent.getMessageId());
-      this.mMessageAckWaiter.addMessage(message);
     }
     return true;
   }
 
   private _sendFriendshipCallback(response: {is_valid: boolean}): void {
     const compatVersion = new Version(0, 55, 0);
-    if (this.mSessionInfoProvider.getServerVersion().lessThan(compatVersion)
-      || this.mSessionInfoProvider.getServerVersion().equals(compatVersion)) {
+    const serverVersion = new Version(this.mStore.getState().sessionInfo.serverVersion);
+    if (serverVersion.lessThan(compatVersion)
+      || serverVersion.equals(compatVersion)) {
       if (!response.is_valid) {
         return this._sendFriendshipErrorCallback(new ZxError());
       }
@@ -468,7 +409,7 @@ export class ChatClient implements IChatClient {
    * Handle an event received on the stream handled by the connection manager.
    * TODO: ZXCHAT-266 Move the event handling into a event manager as defined into issue
    */
-  private _onStreamEvent(event: ChatEvent): boolean {
+  private _onStreamEvent(event: IChatEvent): boolean {
     return this.mEventManager.handleEvent(event, this);
   }
 
@@ -481,9 +422,8 @@ export class ChatClient implements IChatClient {
   }
 
   private _onNoSuchChatSession(error: Error): void {
-    this.mOnServerOfflineCallbackManager.run(error);
     this.mConnectionManager.closeStream();
-    this.registerSession();
+    this.mOnServerOfflineCallbackManager.run(error);
   }
 
   private _onHTTPError(error: Error): void {

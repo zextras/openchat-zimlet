@@ -17,20 +17,21 @@
 
 import {Callback} from "../callbacks/Callback";
 import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
-import {DateProvider} from "../DateProvider";
+import {IDateProvider} from "../IDateProvider";
 import {FeedbackReporter} from "./FeedbackReporter";
+import {ILogger} from "./ILogger";
 import {LogLevel} from "./LogLevel";
 import {LogLine} from "./LogLine";
 import {ILoggerWriter} from "./writers/LoggerWriter";
 
-export class Logger {
+export class Logger implements ILogger {
 
   public static DEFAULT_LEVEL: LogLevel = LogLevel.info;
   public static MAX_LOG_LINES: number = 128;
 
   private mName: string;
   private mLog: string[];
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mTimedCallbackFactory: TimedCallbackFactory;
 
   private mLogLevel: LogLevel;
@@ -39,7 +40,7 @@ export class Logger {
 
   constructor(
     loggerWriter: ILoggerWriter,
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
     timedCallbackFactory: TimedCallbackFactory,
     name: string,
   ) {

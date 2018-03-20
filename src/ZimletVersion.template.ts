@@ -16,6 +16,8 @@
  */
 
 /* tslint:disable */
+import {Version} from "./lib/Version";
+
 export class ZimletVersion {
   public static COMMIT: string  = "#COMMIT_DATA#";
   public static VERSION: string = "#VERSION#";
@@ -24,4 +26,10 @@ export class ZimletVersion {
   public static STAGING: boolean = #IS_STAGING#;
   public static TESTING: boolean = #IS_TESTING#;
   public static PACKAGE_NAME: string = "#PACKAGE_NAME#";
+
+  public static getVersion(): Version {
+    const version: Version = new Version(ZimletVersion.VERSION);
+    version.setCommit(ZimletVersion.COMMIT);
+    return version;
+  }
 }

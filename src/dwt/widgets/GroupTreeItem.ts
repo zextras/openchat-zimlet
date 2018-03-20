@@ -47,6 +47,8 @@ import {BuddyTreeItem} from "./BuddyTreeItem";
 import {IDwtChatTreeItem} from "./DwtChatTreeItem";
 import {GroupTreeItemActionMenuFactory} from "./GroupTreeItemActionMenuFactory";
 
+import "./GroupTreeItem.scss";
+
 export class GroupTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
 
   public static MAX_LENGTH: number = ZimbraUtils.isUniversalUI() ? 217 : 150;
@@ -201,7 +203,10 @@ export class GroupTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
       name: buddy.getNickname(),
     }, "Buddy removed from group");
     for (const child of this.getChildren()) {
-      if (child.isBuddyTreeItem() && (child as BuddyTreeItem).getBuddy().getId() === buddy.getId()) {
+      if (
+        child.isBuddyTreeItem() && typeof (child as BuddyTreeItem).getBuddy !== "undefined"
+        && (child as BuddyTreeItem).getBuddy().getId() === buddy.getId()
+      ) {
         this.removeChild(child);
       }
       if (child.isGroupTreeItem()) {

@@ -24,4 +24,5 @@ export enum BuddyStatusType {
   NEED_RESPONSE,
   INVITED,
   UNREACHABLE,
+  UNSUBSCRIBED,
 }

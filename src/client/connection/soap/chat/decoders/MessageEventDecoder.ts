@@ -15,81 +15,76 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {MessageEvent} from "../../../../events/chat/MessageEvent";
 import {MessageSentEvent} from "../../../../events/chat/MessageSentEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
+import {ISecretTestEventObj} from "./SecretTestEventDecoder";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class MessageEventDecoder extends SoapEventDecoder {
+export class MessageEventDecoder extends SoapEventDecoder<MessageEvent|MessageSentEvent|IChatEvent> {
 
-  private mDateProvider: DateProvider;
-  private mSuperSecretMessageDecoder: SoapEventDecoder;
+  private mDateProvider: IDateProvider;
+  private mSuperSecretMessageDecoder: SoapEventDecoder<IChatEvent>;
 
-  constructor(dateProvider: DateProvider, superSecretMessageDecoder: SoapEventDecoder) {
+  constructor(dateProvider: IDateProvider, superSecretMessageDecoder: SoapEventDecoder<IChatEvent>) {
     super(OpenChatEventCode.MESSAGE);
     this.mDateProvider = dateProvider;
     this.mSuperSecretMessageDecoder = superSecretMessageDecoder;
   }
 
   public decodeEvent(
-    eventObj: {
-      message_type?: string,
-      ID?: string,
-      from?: string,
-      to?: string,
-      message?: string,
-      timestampSent?: number,
-      message_id?: string,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: IMessageReceivedEventObj|IMessageSentEventObj|ISecretTestEventObj,
+    originEvent?: IChatEvent,
+  ): MessageEvent|MessageSentEvent|IChatEvent {
     if (typeof originEvent !== "undefined") {
-      return this.decodeMessageSent(eventObj as {message_id: string});
+      return this.decodeMessageSent(eventObj as IMessageSentEventObj);
     } else {
-      return this.decodeMessage(eventObj as {
-        message_type: string,
-        ID: string,
-        from: string,
-        to: string,
-        message: string,
-        timestampSent: number,
-      }, originEvent);
+      return this.decodeMessage(eventObj as IMessageReceivedEventObj|ISecretTestEventObj, originEvent);
     }
   }
 
-  private decodeMessageSent(eventObj: {message_id: string}): ChatEvent {
-    return new MessageSentEvent(eventObj.message_id, this.mDateProvider.getNow());
+  private decodeMessageSent(eventObj: IMessageSentEventObj): MessageSentEvent {
+    return new MessageSentEvent(
+      eventObj.message_id,
+      new Date(eventObj.message_date),
+    );
   }
 
   private decodeMessage(
-    eventObj: {
-      message_type: string,
-      ID: string,
-      from: string,
-      to: string,
-      message: string,
-      timestampSent: number,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: IMessageReceivedEventObj|ISecretTestEventObj,
+    originEvent?: IChatEvent,
+  ): MessageEvent|IChatEvent {
     try {
-      return this.mSuperSecretMessageDecoder.decodeEvent(eventObj, originEvent);
+      return this.mSuperSecretMessageDecoder.decodeEvent(eventObj as ISecretTestEventObj, originEvent);
     } catch (error) {
-      let messageType: string = eventObj.message_type;
-      if (eventObj.message_type !== undefined) {
-        messageType = eventObj.message_type.toLowerCase();
-      }
+      const messageObj: IMessageReceivedEventObj = eventObj as IMessageReceivedEventObj;
+      const messageType: "chat" | string = messageObj.message_type as "chat" | string;
       return new MessageEvent(
-        eventObj.ID,
-        eventObj.from,
-        eventObj.to,
-        eventObj.message,
+        messageObj.ID,
+        messageObj.from,
+        messageObj.to,
+        messageObj.message,
         messageType,
-        this.mDateProvider.getDate(eventObj.timestampSent),
+        this.mDateProvider.getDate(messageObj.timestampSent),
         this.mDateProvider.getNow(),
       );
     }
   }
+}
+
+interface IMessageSentEventObj extends ISoapEventObject {
+  message_id: string;
+  message_date: number;
+}
+
+interface IMessageReceivedEventObj extends ISoapEventObject {
+  message_type: string;
+  ID: string;
+  from: string;
+  to: string;
+  message: string;
+  timestampSent: number;
 }

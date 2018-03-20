@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JSON3} from "../../libext/json3";
+import {JSON3 as JSON} from "../../libext/json3";
 import {ITraceLine, printStackTrace} from "../../libext/stacktrace-js";
 import {XRegExp} from "../../libext/xregexp";
 import {AjxException} from "../../zimbra/ajax/core/AjxException";
@@ -30,7 +30,7 @@ export class ZxError extends Error {
     let error = new ZxError();
     if ((typeof resp !== "undefined" && resp !== null) && (typeof resp.error !== "undefined" && resp.error !== null)) {
       if (typeof resp.error === "string") {
-        resp.error = JSON3.parse(resp.error);
+        resp.error = JSON.parse(resp.error);
       }
       error.setIsError();
       error.setCode(resp.error[ZxError.KEY_CODE]);
@@ -50,7 +50,7 @@ export class ZxError extends Error {
       && (typeof resp.exception !== "undefined" && resp.exception !== null)
     ) {
       if (typeof resp.exception === "string") {
-        resp.exception = JSON3.parse(resp.exception);
+        resp.exception = JSON.parse(resp.exception);
       }
       error.setIsException();
       error.setCode(resp.exception[ZxError.KEY_CODE]);
@@ -71,8 +71,8 @@ export class ZxError extends Error {
     let converted;
     let ex;
     try {
-      if (error instanceof ZxError) {
-        return error;
+      if (error.hasOwnProperty("isZxError")) {
+        return error as ZxError;
       } else if (
         (typeof error.toString !== "undefined" && error.toString !== null)
         && error.toString() === "ZmCsfeException"
@@ -159,12 +159,12 @@ export class ZxError extends Error {
       nativeMethod: false,
     };
 
-    if (error instanceof ZxError) {
+    if (error.hasOwnProperty("isZxError")) {
       if (
-        (typeof error.getStackTrace() !== "undefined" && error.getStackTrace() !== null)
-        && error.getStackTrace().length > 0
+        (typeof (error as ZxError).getStackTrace() !== "undefined" && (error as ZxError).getStackTrace() !== null)
+        && (error as ZxError).getStackTrace().length > 0
       ) {
-        trace = error.getStackTrace();
+        trace = (error as ZxError).getStackTrace();
       }
     } else if (
       error instanceof Error
@@ -268,6 +268,8 @@ export class ZxError extends Error {
   private static UNKNOWN_JS_EXCEPTION_CODE = "UNKNOWN_JS_EXCEPTION";
   private static UNKNOWN_JS_EXCEPTION_MSG  = "JavaScript Exception: {details}";
 
+  public isZxError: boolean;
+
   private mTime: number;
   private mCause: Error;
   private mCode: string;
@@ -310,6 +312,7 @@ export class ZxError extends Error {
     this.mIsException = false;
     this.mDetails = {};
     this.mTrace = printStackTrace();
+    this.isZxError = true;
   }
 
   // WARNING: Each prototype method must be added here
@@ -375,7 +378,7 @@ export class ZxError extends Error {
   }
 
   public initCause(cause: Error): ZxError {
-    if (cause instanceof ZxError) {
+    if (cause.hasOwnProperty("isZxError")) {
       this.mCause = cause;
     } else if (
       (typeof cause.toString !== "undefined" && cause.toString !== null)

@@ -17,14 +17,14 @@
 
 import {MessageSent as MessageSentObj} from "../../client/MessageSent";
 import {Callback} from "../../lib/callbacks/Callback";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {StringUtils} from "../../lib/StringUtils";
 import {Conversation} from "./Conversation";
 import {Message} from "./Message";
 
 export class MessageSent extends Message {
 
-  constructor(parent: Conversation, message: MessageSentObj, dateProvider: DateProvider) {
+  constructor(parent: Conversation, message: MessageSentObj, dateProvider: IDateProvider) {
     super(parent, message, dateProvider);
     (this.getHtmlElement().childNodes[0] as HTMLElement).className += " ZxChat_MessageContainerSenderFalse";
     (this.mMessage as MessageSentObj).onSetDelivered(new Callback(this, this.setDelivered));

@@ -18,6 +18,8 @@
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 
+import "./LoadingDots.scss";
+
 declare let $: any;
 
 export class LoadingDots extends DwtComposite {

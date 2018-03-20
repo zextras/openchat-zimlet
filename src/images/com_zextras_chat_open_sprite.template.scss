@@ -1,0 +1,61 @@
+{
+// Default options
+'functions': true
+}
+
+//
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+//
+
+{{#items}}
+${{name}}-x: {{px.x}};
+${{name}}-y: {{px.y}};
+${{name}}-offset-x: {{px.offset_x}};
+${{name}}-offset-y: {{px.offset_y}};
+${{name}}-width: {{px.width}};
+${{name}}-height: {{px.height}};
+${{name}}-total-width: {{px.total_width}};
+${{name}}-total-height: {{px.total_height}};
+${{name}}-image: url("{{{escaped_image}}}");
+${{name}}: {{px.x}} {{px.y}} {{px.offset_x}} {{px.offset_y}} {{px.width}} {{px.height}} {{px.total_width}} {{px.total_height}} url("{{{escaped_image}}}");
+{{/items}}
+
+{{#options.functions}}
+@mixin sprite-width($sprite) {
+  width: nth($sprite, 5);
+}
+
+@mixin sprite-height($sprite) {
+  height: nth($sprite, 6);
+}
+
+@mixin sprite-position($sprite) {
+  $sprite-offset-x: nth($sprite, 3);
+  $sprite-offset-y: nth($sprite, 4);
+  background-position: $sprite-offset-x $sprite-offset-y;
+}
+
+@mixin sprite-image($sprite) {
+  background-image: nth($sprite, 9);
+}
+
+@mixin sprite($sprite) {
+  @include sprite-image($sprite);
+  @include sprite-position($sprite);
+  @include sprite-width($sprite);
+  @include sprite-height($sprite);
+}
+{{/options.functions}}

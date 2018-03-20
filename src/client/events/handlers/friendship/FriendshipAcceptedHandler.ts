@@ -15,26 +15,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BuddyList} from "../../../BuddyList";
-import {BuddyStatusImp} from "../../../BuddyStatus";
+import {BuddyStatus} from "../../../BuddyStatus";
 import {BuddyStatusType} from "../../../BuddyStatusType";
 import {IChatClient} from "../../../IChatClient";
 import {FriendshipAcceptedEvent} from "../../chat/friendship/FriendshipAcceptedEvent";
-import {ChatEvent} from "../../ChatEvent";
 import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipAcceptedHandler implements IChatEventHandler {
+export class FriendshipAcceptedHandler implements IChatEventHandler<FriendshipAcceptedEvent> {
 
   public getEventCode(): number {
     return FriendshipAcceptedEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const friendshipEvent = chatEvent as FriendshipAcceptedEvent;
+  public handleEvent(ev: FriendshipAcceptedEvent, client: IChatClient): boolean {
     const buddyList = client.getBuddyList();
-    const buddy = buddyList.getBuddyById(friendshipEvent.getSender());
+    const buddy = buddyList.getBuddyById(ev.getSender());
     if (buddy != null) {
-      buddy.setStatus(new BuddyStatusImp(BuddyStatusType.OFFLINE));
+      buddy.setStatus(new BuddyStatus(BuddyStatusType.OFFLINE));
     }
     return true;
   }

@@ -15,22 +15,23 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
 import {ZxError} from "../../../../../lib/error/ZxError";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {ErrorEvent} from "../../../../events/chat/ErrorEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class ErrorEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class ErrorEventDecoder extends SoapEventDecoder<ErrorEvent> {
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.ERROR);
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {
+  public decodeEvent(eventObj: ISoapEventObject, originEvent?: IChatEvent): ErrorEvent {
     return new ErrorEvent(
       ZxError.fromResponse({ error: eventObj }),
       this.mDateProvider.getNow(),

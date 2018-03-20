@@ -17,24 +17,21 @@
 
 import {MessageEvent} from "../../../../events/chat/MessageEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class SendMessageEventEncoder extends SoapEventEncoder {
+export class SendMessageEventEncoder extends SoapEventEncoder<MessageEvent> {
 
   constructor() {
     super(OpenChatEventCode.MESSAGE);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: MessageEvent = event as MessageEvent;
+  protected getEventDetails(ev: MessageEvent): {} {
     return {
-      ID: ev.getMessageId(),
-      from: event.getSender(),
+      from: ev.getSender(),
       message: ev.getMessage(),
-      message_type: MessageEvent.convertFromMessageType(ev.getType()),
+      message_type: ev.getType(),
       timestampSent: ev.getDate().getTime(),
-      to: event.getDestination(),
+      to: ev.getDestination(),
     };
   }
 

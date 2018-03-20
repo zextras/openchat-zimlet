@@ -17,13 +17,12 @@
 
 import {Callback} from "../lib/callbacks/Callback";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
-import {DateProvider} from "../lib/DateProvider";
+import {IDateProvider} from "../lib/IDateProvider";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
-import {BuddyStatusImp} from "./BuddyStatus";
+import {BuddyStatus} from "./BuddyStatus";
 import {BuddyStatusType} from "./BuddyStatusType";
-import {MessageType} from "./events/chat/MessageEvent";
 import {WritingStatusEvent} from "./events/chat/WritingStatusEvent";
-import {ChatEvent} from "./events/ChatEvent";
+import {IChatEvent} from "./events/IChatEvent";
 import {IBuddy} from "./IBuddy";
 import {IBuddyStatus} from "./IBuddyStatus";
 import {IRoom} from "./IRoom";
@@ -31,6 +30,9 @@ import {Message} from "./Message";
 import {MessageReceived} from "./MessageReceived";
 import {MessageSent} from "./MessageSent";
 import {MessageWritingStatus} from "./MessageWritingStatus";
+
+import {Store} from "redux";
+import {IOpenChatState} from "../redux/IOpenChatState";
 
 export class Room implements IRoom {
 
@@ -40,12 +42,9 @@ export class Room implements IRoom {
   public static MessageReceivedPlugin = "Room Message Received";
   public static WritingStatusPlugin = "Room Writing Status Plugin";
 
-  public static FORMAT_PLAIN: string = "plain";
-  public static FORMAT_HTML: string = "html";
-
   private id: string;
   private title: string;
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mLastActivity: number = 0;
   private members: IBuddy[];
   private mRoomStatus: IBuddyStatus;
@@ -63,18 +62,21 @@ export class Room implements IRoom {
   private mTriggerPopupCallbacks: Array<() => void> = [];
   private mTriggerInputFocusCallbacks: Array<() => void> = [];
   private mRoomPluginManager: ChatPluginManager;
+  private mStore: Store<IOpenChatState>;
 
   constructor(
     id: string,
     title: string,
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
     roomPluginManager: ChatPluginManager,
+    store: Store<IOpenChatState>,
   ) {
     this.id = id;
     this.title = title;
     this.mDateProvider = dateProvider;
+    this.mStore = store;
     this.members = [];
-    this.mRoomStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
+    this.mRoomStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
     this.onTitleChangeCallbacks = new CallbackManager();
     this.onAddMemberCallbacks = new CallbackManager();
     this.onAddMember(new Callback(this, this.updateRoomStatus));
@@ -82,7 +84,9 @@ export class Room implements IRoom {
     this.onMemberRemoved(new Callback(this, this.updateRoomStatus));
     this.onSendEventCallbacks = new CallbackManager();
     this.onSendMessageCallbacks = new CallbackManager();
-    this.onSendMessage(new Callback(this, this.addMessageSent));
+    if (typeof this.mStore === "undefined") {
+      this.onSendMessage(new Callback(this, this.addMessageSent));
+    }
     this.onAddMessageReceivedCallbacks = new CallbackManager();
     this.onAddMessageSentCallbacks = new CallbackManager();
     this.onAddMessageSentFromAnotherSessionCallbacks = new CallbackManager();
@@ -110,6 +114,10 @@ export class Room implements IRoom {
    */
   public getTitle() {
     return this.title;
+  }
+
+  public getStore(): Store<IOpenChatState> {
+    return this.mStore;
   }
 
   /**
@@ -219,8 +227,8 @@ export class Room implements IRoom {
   /**
    * Add a message sent from another session
    */
-  public addMessageSentFromAnotherSession(message: MessageSent) {
-    this.getPluginManager().triggerPlugins(Room.MessageSentFromAnotherSessionPlugin, message);
+  public addMessageSentFromAnotherSession(message: MessageSent, index?: number) {
+    // this.getPluginManager().triggerPlugins(Room.MessageSentFromAnotherSessionPlugin, message, index);
     this.setLastActivity(message);
     this.onAddMessageSentFromAnotherSessionCallbacks.run(message);
   }
@@ -236,8 +244,8 @@ export class Room implements IRoom {
   /**
    * Add a message received
    */
-  public addMessageReceived(message: MessageReceived): void {
-    this.getPluginManager().triggerPlugins(Room.MessageReceivedPlugin, message);
+  public addMessageReceived(message: MessageReceived, index?: number): void {
+    // this.getPluginManager().triggerPlugins(Room.MessageReceivedPlugin, message, index);
     this.setLastActivity(message);
     this.onAddMessageReceivedCallbacks.run(message);
   }
@@ -253,7 +261,7 @@ export class Room implements IRoom {
     this.onSendEventCallbacks.addCallback(callback);
   }
 
-  public _sendEvent(event: ChatEvent, callback?: Callback, errorCallback?: Callback): void {
+  public _sendEvent(event: IChatEvent, callback?: Callback, errorCallback?: Callback): void {
     this.onSendEventCallbacks.run(event, callback, errorCallback);
   }
 
@@ -267,10 +275,12 @@ export class Room implements IRoom {
   /**
    * Send a message to the room
    */
-  public sendMessage(message: string, messageType: MessageType = MessageType.CHAT): void {
-    const msgObj = new MessageSent(null, this.getId(), this.mDateProvider.getNow(), message);
-    this.getPluginManager().triggerPlugins(Room.MessageSentPlugin, msgObj);
-    this.onSendMessageCallbacks.run(msgObj, messageType);
+  public sendMessage(message: string): void {
+    const tempMessageId: string = Math.random().toString(36).substring(2, 10);
+    const msgObj = new MessageSent(tempMessageId, this.getId(), this.mDateProvider.getNow(), message);
+    msgObj.setDelivered();
+    // this.getPluginManager().triggerPlugins(Room.MessageSentPlugin, msgObj);
+    this.onSendMessageCallbacks.run(msgObj);
   }
 
   /**
@@ -295,7 +305,7 @@ export class Room implements IRoom {
    * Add the writing status event of a buddy in this room.
    */
   public addWritingStatusEvent(writingStatus: MessageWritingStatus): void {
-    this.getPluginManager().triggerPlugins(Room.WritingStatusPlugin, writingStatus);
+    // this.getPluginManager().triggerPlugins(Room.WritingStatusPlugin, writingStatus);
     this.setLastActivity(writingStatus);
     this.onBuddyWritingStatusCallbacks.run(writingStatus);
   }
@@ -401,7 +411,7 @@ export class Room implements IRoom {
    * the room members.
    */
   private _calculateRoomStatus(): IBuddyStatus {
-    let bestStatus: IBuddyStatus = new BuddyStatusImp(BuddyStatusType.OFFLINE, "Offline", 0);
+    let bestStatus: IBuddyStatus = new BuddyStatus(BuddyStatusType.OFFLINE, "Offline", 0);
     for (const buddy of this.members) {
       if (buddy.getStatus().isMoreAvailableThan(bestStatus)) {
         bestStatus = buddy.getStatus();

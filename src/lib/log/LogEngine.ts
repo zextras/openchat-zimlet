@@ -16,8 +16,10 @@
  */
 
 import {Bowser} from "../../libext/bowser";
+import {DwtSelectionEvent} from "../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
 import {DateProvider} from "../DateProvider";
+import {IDateProvider} from "../IDateProvider";
 import {URLParser} from "../URLParser";
 import {Logger} from "./Logger";
 import {LogLevel} from "./LogLevel";
@@ -32,14 +34,14 @@ export class LogEngineImp {
   public CHAT: string = "chat";
 
   private mLoggers: {[name: string]: Logger} = {};
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mTimedCallbackFactory: TimedCallbackFactory;
   private mIsDev: boolean;
   private mLoggerWriter: ILoggerWriter;
 
   constructor(
     loggerWriter: ILoggerWriter,
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
     timedCallbackFactory: TimedCallbackFactory,
     devMode: boolean,
   ) {
@@ -88,6 +90,7 @@ export class LogEngineImp {
   }
 
   public exportToFile(
+    ev: DwtSelectionEvent,
     loggerName: string = LogEngineImp.ALL,
     fileName: string = ["ZeXtras_log_", loggerName, "_", this.mDateProvider.getCurrentTimeMillis(), ".log"].join(""),
   ): void {

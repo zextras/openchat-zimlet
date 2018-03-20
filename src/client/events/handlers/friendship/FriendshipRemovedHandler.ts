@@ -18,19 +18,17 @@
 import {IBuddy} from "../../../IBuddy";
 import {IChatClient} from "../../../IChatClient";
 import {FriendshipRemovedEvent} from "../../chat/friendship/FriendshipRemovedEvent";
-import {ChatEvent} from "../../ChatEvent";
 import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipRemovedHandler implements IChatEventHandler {
+export class FriendshipRemovedHandler implements IChatEventHandler<FriendshipRemovedEvent> {
 
   public getEventCode(): number {
     return FriendshipRemovedEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const friendshipEvent = chatEvent as FriendshipRemovedEvent;
+  public handleEvent(ev: FriendshipRemovedEvent, client: IChatClient): boolean {
     const buddyList = client.getBuddyList();
-    const buddy: IBuddy = buddyList.getBuddyById(friendshipEvent.getSender());
+    const buddy: IBuddy = buddyList.getBuddyById(ev.getSender());
     if (buddy != null) {
       buddyList.removeBuddy(buddy);
     }

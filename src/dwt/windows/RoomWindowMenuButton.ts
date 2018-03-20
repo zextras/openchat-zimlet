@@ -20,18 +20,20 @@ import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
-import {RoomWindow} from "./RoomWindow";
+import {RoomWindowType} from "./RoomWindow";
 import {ZxPopupMenu} from "./WindowBase";
+
+import "./RoomWindowMenuButton.scss";
 
 export class RoomWindowMenuButton extends DwtToolBarButton {
 
   public static AddMenuItemPlugin = "Room Window Menu Button Add Menu Entry";
   public static _KEY_HIDE_OFFILINE = "hideOfflineBuddies";
-  private mRoomWindow: RoomWindow;
+  private mRoomWindow: RoomWindowType;
   private mMenu: ZxPopupMenu;
 
   constructor(
-    roomWindow: RoomWindow,
+    roomWindow: RoomWindowType,
     parent: DwtComposite,
     roomWindowPluginManager: ChatPluginManager,
   ) {

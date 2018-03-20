@@ -15,20 +15,32 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {
+  ISessionRegisteredEventObj,
+  IUserCapabilities,
+} from "../../connection/soap/chat/decoders/SessionRegisteredEventDecoder";
 import {ChatEvent} from "../ChatEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
-export class EventSessionRegistered extends ChatEvent {
+export class EventSessionRegistered<T extends IUserCapabilities> extends ChatEvent {
 
-  private mEventSessionInfo: any;
+  protected mEventSessionInfo: ISessionRegisteredEventObj<T>;
 
-  constructor(eventSessionInfo: any, creationDate: Date) {
+  constructor(eventSessionInfo: ISessionRegisteredEventObj<T>, creationDate: Date) {
     super(OpenChatEventCode.REGISTER_SESSION, creationDate, true);
     this.mEventSessionInfo = eventSessionInfo;
   }
 
-  public getInfo(info: string): any {
+  public getInfo<S>(info: string): S {
     return this.mEventSessionInfo[info];
+  }
+
+  public getCapabilities(): T {
+    if (this.mEventSessionInfo.hasOwnProperty("capabilities")) {
+      return this.mEventSessionInfo.capabilities;
+    } else {
+      return {} as T;
+    }
   }
 
 }

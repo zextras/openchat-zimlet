@@ -17,21 +17,19 @@
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {WritingStatusEvent} from "../../../../events/chat/WritingStatusEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class WritingStatusEventEncoder extends SoapEventEncoder {
+export class WritingStatusEventEncoder extends SoapEventEncoder<WritingStatusEvent> {
 
   constructor() {
     super(OpenChatEventCode.WRITING_STATUS);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: WritingStatusEvent = event as WritingStatusEvent;
+  protected getEventDetails(ev: WritingStatusEvent): {} {
     return {
-      from: event.getSenderWithResource(),
+      from: ev.getSenderWithResource(),
       timestampSent: ev.getDate().getTime(),
-      to: event.getDestination(),
+      to: ev.getDestination(),
       value: ev.getValue(),
     };
   }

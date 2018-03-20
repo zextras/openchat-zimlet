@@ -15,9 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
 
-export abstract class SoapEventEncoder {
+export abstract class SoapEventEncoder<T extends IChatEvent> {
 
   protected mEventCode: number;
 
@@ -29,10 +29,10 @@ export abstract class SoapEventEncoder {
     return this.mEventCode;
   }
 
-  public encodeEvent(event: ChatEvent): {[key: string]: any} {
-    const details: {[key: string]: any} = this.getEventDetails(event);
+  public encodeEvent(ev: T): {[key: string]: any} {
+    const details: {[key: string]: any} = this.getEventDetails(ev);
     const obj: {[key: string]: any} = {
-        type: event.getCode(),
+        type: ev.getCode(),
       };
     for (const key in details) {
       if (!details.hasOwnProperty(key)) { continue; }
@@ -41,5 +41,5 @@ export abstract class SoapEventEncoder {
     return obj;
   }
 
-  protected abstract getEventDetails(event: ChatEvent): {[key: string]: any};
+  protected abstract getEventDetails(ev: T): {[key: string]: any};
 }

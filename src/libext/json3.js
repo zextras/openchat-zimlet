@@ -15,17 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports",
-    "json3"
-  ],
-  function (
-    require,
-    exports,
-    json3_1
-  ) {
-    exports.JSON3 = json3_1;
-  }
-);
+var JSON3 = require("json3");
+module.exports = {
+  JSON3: JSON3
+};

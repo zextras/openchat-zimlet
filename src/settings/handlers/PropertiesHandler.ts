@@ -17,6 +17,7 @@
 
 import {ChatZimletBase} from "../../ChatZimletBase";
 import {Callback} from "../../lib/callbacks/Callback";
+import {IOpenChatState} from "../../redux/IOpenChatState";
 import {AjxCallback} from "../../zimbra/ajax/boot/AjxCallback";
 import {AjxSoapDoc} from "../../zimbra/ajax/soap/AjxSoapDoc";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
@@ -28,9 +29,9 @@ import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
 export class PropertiesHandler implements ISettingsHandlerInterface {
 
-  private mZimletContext: ChatZimletBase;
+  private mZimletContext: ChatZimletBase<IOpenChatState>;
 
-  constructor(zimletContext: ChatZimletBase) {
+  constructor(zimletContext: ChatZimletBase<IOpenChatState>) {
     this.mZimletContext = zimletContext;
   }
 

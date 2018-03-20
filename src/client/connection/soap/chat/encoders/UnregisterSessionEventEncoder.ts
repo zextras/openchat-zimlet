@@ -17,17 +17,15 @@
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {UnregisterSessionEvent} from "../../../../events/chat/UnregisterSessionEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class UnregisterSessionEventEncoder extends SoapEventEncoder {
+export class UnregisterSessionEventEncoder extends SoapEventEncoder<UnregisterSessionEvent> {
 
   constructor() {
     super(OpenChatEventCode.UNREGISTER_SESSION);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: UnregisterSessionEvent = event as UnregisterSessionEvent;
+  protected getEventDetails(ev: UnregisterSessionEvent): {} {
     return {}; // Session id is attached by the soap engine
   }
 

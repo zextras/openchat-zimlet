@@ -26,6 +26,8 @@ import {ZmMsg} from "../../../zimbra/zimbraMail/ZmMsg";
 import {EmojiOnePicker} from "./EmojiOnePicker";
 import {IEmojiData} from "./EmojiTemplate";
 
+import "./EmojiOnePickerButton.scss";
+
 export class EmojiOnePickerButton extends DwtToolBarButton {
 
   private mPopAbove: boolean;
@@ -65,7 +67,7 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
 
   private setEmoji(emoji: IEmojiData): void {
     this.setData(EmojiOnePicker.KEY_EMOJI_DATA, emoji.name);
-    this.setText(emoji.data.replace(/>.*</, "><"));
+    this.setText(emoji.data.replace(/emojione/g, "emojione_16"));
   }
 
   private onEmojiSelected(callback: Callback, ev: DwtSelectionEvent, emojiData: IEmojiData): void {

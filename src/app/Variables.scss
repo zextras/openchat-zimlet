@@ -1,0 +1,103 @@
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+
+$selection-color: #CBDEF1;
+$hover-color: #E2ECF5;
+$text-color: #404040;
+$text-color-welcome: #707070;
+$secondary-text-color: #999999;
+$text-menu-hover-color: #ffffff;
+
+$font-family: "Open Sans", sans-serif;
+$font-family-bold: "Open Sans Bold", sans-serif;
+$font-family-semi-bold: "Open Sans Semibold", sans-serif;
+
+//$border-color: #999999;
+$bg-color-conversation: #f1f1f1;
+$bg-color-title-conversation: #e6e6e6;
+$bg-color-panel: #fafafa;
+
+$color-input: #E2ECF5;
+$color-input-focused: #fafafa;
+
+@mixin default-sidebar-padding() {
+  padding-left: 1em;
+  padding-right: 3em;
+}
+
+@mixin default-font-family() {
+  font-family: $font-family;
+}
+
+@mixin default-font-family-bold() {
+  font-family: $font-family-bold;
+}
+
+@mixin default-font-family-semi-bold() {
+  font-family: $font-family-semi-bold;
+}
+
+@mixin default-selected-item() {
+  background-color: $selection-color;
+}
+
+@mixin default-hover-item() {
+  background-color: $hover-color;
+}
+
+@mixin default-input() {
+  @include default-font-family();
+  font-size: 1em;
+  border: none;
+  outline: none;
+  background-color: $color-input;
+  color: $text-color;
+  text-overflow: unset;
+  padding: (2/14)*1em (4/14)*1em;
+  resize: none;
+
+  &:focus {
+    background-color: $color-input-focused;
+  }
+
+  &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: $secondary-text-color;
+  }
+  &::-moz-placeholder { /* Firefox 19+ */
+    color: $secondary-text-color;
+  }
+  &:-ms-input-placeholder { /* IE 10+ */
+    color: $secondary-text-color;
+  }
+  &:-moz-placeholder { /* Firefox 18- */
+    color: $secondary-text-color;
+  }
+}
+
+@mixin disable-select() {
+          user-select: none;
+     -moz-user-select: none;
+  -webkit-user-select: none;
+      -ms-user-select: none;
+}
+
+@mixin enable-select() {
+          user-select: text;
+     -moz-user-select: text;
+  -webkit-user-select: text;
+      -ms-user-select: text;
+}
+
+//$font-family-icons: "FontAwesome", sans-serif;

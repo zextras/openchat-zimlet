@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JSON3} from "../../libext/json3";
+import {JSON3 as JSON} from "../../libext/json3";
 
 import {ArrayUtils} from "../../lib/ArrayUtils";
 import {Callback} from "../../lib/callbacks/Callback";
@@ -23,10 +23,11 @@ import {ZxError} from "../../lib/error/ZxError";
 import {ZxErrorCode} from "../../lib/error/ZxErrorCode";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {ZmCsfeException} from "../../zimbra/zimbra/csfe/ZmCsfeException";
-import {BasicEvent} from "../events/BasicEvent";
-import {ChatEvent} from "../events/ChatEvent";
+import {IBasicEvent} from "../events/IBasicEvent";
+import {IChatEvent} from "../events/IChatEvent";
 import {IConnectionEventParser} from "../events/parsers/IConnectionEventParser";
-import {CommandFactory} from "./CommandFactory";
+import {ISessionInfoProvider} from "../ISessionInfoProvider";
+import {ICommandFactory} from "./ICommandFactory";
 import {IConnection} from "./IConnection";
 import {IConnectionManager} from "./IConnectionManager";
 
@@ -40,23 +41,25 @@ export class ChatConnectionManager implements IConnectionManager {
 
   private Log = LogEngine.getLogger(LogEngine.CHAT);
   private mConnection: IConnection;
-  private mCommandFactory: CommandFactory;
-  private mOnEventCbk: Callback;
-  private mOnErrorCbk: Callback;
-  private mOnEndProcessResponsesCbk: Callback;
-  private mOnNoSuchChatSessionCbk: Callback;
-  private mOnBadGatewayErrorCbk: Callback;
-  private mOnHttpErrorCbk: Callback;
-  private mOnNetworkErrorCbk: Callback;
+  private mCommandFactory: ICommandFactory;
+  private mSessionInfoProvider: ISessionInfoProvider;
+  private mOnEventCbk: (event: IBasicEvent) => void;
+  private mOnEndProcessResponsesCbk: () => void;
+  private mOnNoSuchChatSessionCbk: (err: Error) => void;
+  private mOnBadGatewayErrorCbk: (err: Error) => void;
+  private mOnHttpErrorCbk: (err: Error) => void;
+  private mOnNetworkErrorCbk: (err: Error) => void;
 
   constructor(
     connection: IConnection,
-    commandFactory: CommandFactory,
+    commandFactory: ICommandFactory,
     eventParser: IConnectionEventParser,
+    sessionInfoProvider: ISessionInfoProvider,
   ) {
     this.mConnection = connection;
     this.mCommandFactory = commandFactory;
     this.mEventParser = eventParser;
+    this.mSessionInfoProvider = sessionInfoProvider;
 
     this.mConnection.onStreamEvent(new Callback(this, this.handleStreamEvent));
     this.mConnection.onStreamError(new Callback(this, this.handleStreamError));
@@ -64,10 +67,14 @@ export class ChatConnectionManager implements IConnectionManager {
   }
 
   public sendEvent(
-    event: BasicEvent,
+    event: IChatEvent,
     callback: Callback = new Callback(this, this.returnTrueFcn),
     errorCallback?: Callback,
   ): void {
+    this.Log.debug(event, "Send event");
+    if (event.getSender() == null) {
+      event.setSender(this.mSessionInfoProvider.getUsername());
+    }
     callback = Callback.standardize(callback);
     if (typeof errorCallback === "undefined") {
       errorCallback = new Callback(
@@ -83,23 +90,23 @@ export class ChatConnectionManager implements IConnectionManager {
     let error: ZxError = void 0;
 
     try {
-      eventObject = this.mEventParser.encodeEvent(event as ChatEvent);
+      eventObject = this.mEventParser.encodeEvent(event as IChatEvent);
     } catch (err) {
       error = new ZxError(ZxErrorCode.UNABLE_TO_ENCODE_EVENT_OBJECT, err);
-      error.setDetail("object", JSON3.stringify(event as ChatEvent, null, 2));
+      error.setDetail("object", JSON.stringify(event as IChatEvent, null, 2));
     }
 
     if (typeof eventObject !== "undefined") {
       try {
         this.mConnection.sendObject(
-          this.mCommandFactory.getCommand(event as ChatEvent),
+          this.mCommandFactory.getCommand(event as IChatEvent),
           eventObject,
-          new Callback(this, this.processResponse, event as ChatEvent, callback, errorCallback),
-          new Callback(this, this.processError, event as ChatEvent, errorCallback),
+          new Callback(this, this.processResponse, event as IChatEvent, callback, errorCallback),
+          new Callback(this, this.processError, event as IChatEvent, errorCallback),
         );
       } catch (err) {
         error = new ZxError(ZxErrorCode.UNABLE_TO_SEND_EVENT_OBJECT, err);
-        error.setDetail("object", JSON3.stringify(eventObject, null, 2));
+        error.setDetail("object", JSON.stringify(eventObject, null, 2));
       }
     }
 
@@ -108,31 +115,31 @@ export class ChatConnectionManager implements IConnectionManager {
     }
   }
 
-  public onEvent(callback: Callback): void {
+  public onEvent(callback: (event: IChatEvent) => void): void {
     this.mOnEventCbk = callback;
   }
 
-  public onError(callback: Callback): void {
-    this.mOnErrorCbk = callback;
-  }
+  // public onError(callback: Callback): void {
+  //   this.mOnErrorCbk = callback;
+  // }
 
-  public onEndProcessResponses(callback: Callback): void {
+  public onEndProcessResponses(callback: () => void): void {
     this.mOnEndProcessResponsesCbk = callback;
   }
 
-  public onBadGatewayError(callback: Callback): void {
+  public onBadGatewayError(callback: (err: Error) => void): void {
     this.mOnBadGatewayErrorCbk = callback;
   }
 
-  public onNoSuchChatSession(callback: Callback): void {
+  public onNoSuchChatSession(callback: (err: Error) => void): void {
     this.mOnNoSuchChatSessionCbk = callback;
   }
 
-  public onHTTPError(callback: Callback): void {
+  public onHTTPError(callback: (err: Error) => void): void {
     this.mOnHttpErrorCbk = callback;
   }
 
-  public onNetworkError(callback: Callback): void {
+  public onNetworkError(callback: (err: Error) => void): void {
     this.mOnNetworkErrorCbk = callback;
   }
 
@@ -144,27 +151,23 @@ export class ChatConnectionManager implements IConnectionManager {
     this.mConnection.closeStream();
   }
 
-  public getEventParser(): IConnectionEventParser {
-    return this.mEventParser;
-  }
-
   private processResponse(
-    originEvent: BasicEvent,
+    originEvent: IBasicEvent,
     callback: Callback,
     errorCallback: Callback,
-    responses: BasicEvent | BasicEvent[] | any,
+    responses: IBasicEvent | IBasicEvent[] | any,
   ): void {
     if (!ArrayUtils.isArray(responses)) { // TODO: Investigate about it
-      responses = [responses as BasicEvent];
+      responses = [responses as IBasicEvent];
     }
     for (const response of responses) {
-      let event: BasicEvent = void 0;
+      let event: IBasicEvent = void 0;
       try {
         event = this.mEventParser.decodeEvent(originEvent, response);
       } catch (err) {
         const error = new ZxError(ZxErrorCode.UNABLE_TO_DECODE_EVENT_OBJECT, err);
-        error.setDetail("object", JSON3.stringify(event, null, 2));
-        error.setDetail("originEvent", JSON3.stringify(originEvent, null, 2));
+        error.setDetail("object", JSON.stringify(event, null, 2));
+        error.setDetail("originEvent", JSON.stringify(originEvent, null, 2));
         if (typeof errorCallback !== "undefined") {
           errorCallback.run(error);
         }
@@ -176,7 +179,7 @@ export class ChatConnectionManager implements IConnectionManager {
         }
       } catch (err) {
         const error = new ZxError(ZxErrorCode.UNABLE_TO_HANDLE_EVENT_ERROR, err);
-        error.setDetail("event", JSON3.stringify(event, null, 2));
+        error.setDetail("event", JSON.stringify(event, null, 2));
         if (typeof errorCallback !== "undefined") {
           errorCallback.run(error);
         }
@@ -184,7 +187,7 @@ export class ChatConnectionManager implements IConnectionManager {
     }
   }
 
-  private processError(event: BasicEvent, callback: Callback, error: ZxError): boolean {
+  private processError(event: IBasicEvent, callback: Callback, error: ZxError): boolean {
     if (typeof callback !== "undefined") {
       try {
         return callback.run(error);
@@ -195,44 +198,44 @@ export class ChatConnectionManager implements IConnectionManager {
     return false;
   }
 
-  private handleStreamEvent(event: BasicEvent): void {
-    const decodedEvent = this.mEventParser.decodeEvent(void 0, event);
-    this.Log.debug(decodedEvent, "Received and event on stream");
-    if (typeof this.mOnEventCbk !== "undefined") {
-      this.mOnEventCbk.run(decodedEvent);
+  private handleStreamEvent(event: IBasicEvent): void {
+    try {
+      const decodedEvent = this.mEventParser.decodeEvent(void 0, event);
+      this.Log.debug(decodedEvent, "Received and event on stream");
+      if (typeof this.mOnEventCbk !== "undefined") {
+        this.mOnEventCbk(decodedEvent);
+      }
+    } catch (err) {
+      this.Log.warn(err, "Unable to decode event");
     }
   }
 
   private handleStreamError(error: ZxError): void  {
     if (error.getCode() === ZxErrorCode.NO_SUCH_CHAT_SESSION
         && typeof this.mOnNoSuchChatSessionCbk !== "undefined") {
-      this.mOnNoSuchChatSessionCbk.run(error);
+      this.mOnNoSuchChatSessionCbk(error);
 
     } else if (error.getCode() === ZxErrorCode.DETECTED_502
                && typeof this.mOnBadGatewayErrorCbk !== "undefined") { // Bad Gateway, probably a misconfiguration
-      this.mOnBadGatewayErrorCbk.run(error);
+      this.mOnBadGatewayErrorCbk(error);
 
     } else if (error.getCode() === ZxErrorCode.ZM_CSFE_EXCEPTION
                && typeof this.mOnHttpErrorCbk !== "undefined") {
-      this.mOnHttpErrorCbk.run(error);
+      this.mOnHttpErrorCbk(error);
 
     } else if ((error.getCode() === ZxErrorCode.AJX_EXCEPTION
                 || error.getCode() === ZmCsfeException.EMPTY_RESPONSE)
                && typeof this.mOnNetworkErrorCbk !== "undefined") {
-      this.mOnNetworkErrorCbk.run(error);
+      this.mOnNetworkErrorCbk(error);
 
     } else {
-      if (typeof this.mOnErrorCbk !== "undefined") {
-        this.mOnErrorCbk.run(error);
-      } else {
-        this.Log.err(error, "ChatConnectionManager.handleStreamError");
-      }
+      this.Log.err(error, "ChatConnectionManager.handleStreamError");
     }
   }
 
   private handleEndProcessResponses(): void {
     if (typeof this.mOnEndProcessResponsesCbk !== "undefined") {
-      this.mOnEndProcessResponsesCbk.run();
+      this.mOnEndProcessResponsesCbk();
     }
   }
 

@@ -15,140 +15,131 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
+
+import {IMessageUiFactory} from "./app/messageFactory/IMessageUiFactory";
+
+import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
+
+import "./images/emojione.sprites_16.scss";
+import "./images/emojione.sprites_32.scss";
+
+// tslint:disable:ordered-imports
+import "./app/fontawesome/fa-solid.scss";
+import "./app/fontawesome/fontawesome.scss";
+// tslint:enable:ordered-imports
+import "./app/opensans/OpenSans.scss";
+
+import "./images/com_zextras_chat_open_sprite.scss";
+
+import "./com_zextras_chat_open.scss";
+
+import {MessageUiFactory} from "./app/messageFactory/MessageUiFactory";
 import {ChatZimletBase} from "./ChatZimletBase";
 import {ChatConnectionManager} from "./client/connection/ChatConnectionManager";
 import {CommandFactory} from "./client/connection/CommandFactory";
+import {SessionRegisteredEventDecoder} from "./client/connection/soap/chat/decoders/SessionRegisteredEventDecoder";
+import {RegisterSessionEventEncoder} from "./client/connection/soap/chat/encoders/RegisterSessionEventEncoder";
 import {SoapEventParser} from "./client/connection/soap/chat/SoapEventParser";
-import {SoapEventParserUtils} from "./client/connection/soap/chat/SoapEventParserUtils";
+import {Command} from "./client/connection/soap/Command";
 import {DosFilter} from "./client/connection/soap/dos/DosFilter";
 import {PingManager} from "./client/connection/soap/PingManager";
-import {SoapCommands} from "./client/connection/soap/SoapCommands";
 import {SoapConnection} from "./client/connection/soap/SoapConnection";
 import {SoapRequestFactory} from "./client/connection/soap/SoapRequestFactory";
+import {EventSessionRegistered} from "./client/events/chat/EventSessionRegistered";
+import {IOpenChatUserCapabilities} from "./client/events/chat/IOpenChatUserCapabilities";
+import {OpenChatEventCode} from "./client/events/chat/OpenChatEventCode";
+import {RegisterSessionEvent} from "./client/events/chat/RegisterSessionEvent";
 import {EventManager} from "./client/events/EventManager";
-import {HandlerRegister} from "./client/events/HandlerRegister";
+import {IEventManager} from "./client/events/IEventManager";
 import {SessionInfoProvider} from "./client/SessionInfoProvider";
+import {IZimletBootStrategy} from "./IZimletBootStrategy";
+import {Callback} from "./lib/callbacks/Callback";
 import {TimedCallbackFactory} from "./lib/callbacks/TimedCallbackFactory";
 import {DateProvider} from "./lib/DateProvider";
 import {LogEngine} from "./lib/log/LogEngine";
 import {ChatPluginManager} from "./lib/plugin/ChatPluginManager";
 import {SidebarUtils} from "./lib/SidebarUtils";
 import {StringUtils} from "./lib/StringUtils";
-import {HistoryPlugin} from "./plugins/HistoryPlugin";
-import {SendMailPlugin} from "./plugins/SendMailPlugin";
+import {OpenChatBootStrategy} from "./OpenChatBootStrategy";
+import {IOpenChatState} from "./redux/IOpenChatState";
+import {IOpenChatUIState} from "./redux/IOpenChatUIState";
 import {SettingsManager} from "./settings/SettingsManager";
-import {appCtxt} from "./zimbra/zimbraMail/appCtxt";
+import {ZimletVersion} from "./ZimletVersion";
 
 declare const com_zextras_chat_open: {[label: string]: string};
 
-export class OpenChatZimlet extends ChatZimletBase {
+export class OpenChatZimlet extends ChatZimletBase<IOpenChatState> {
 
-  /**
-   * @deprecated
-   */
-  public static getInstance(): OpenChatZimlet {
-    return ChatZimletBase.INSTANCE as OpenChatZimlet;
-  }
+  private mAlreadyInit: boolean;
+  private mMessageUIFactory: IMessageUiFactory<IOpenChatState>;
+  private mUIStore: Store<IOpenChatUIState>;
 
   constructor() {
     try {
       super();
       this.Log = LogEngine.getLogger(LogEngine.CHAT);
+      this.mAlreadyInit = false;
     } catch (err) {
       this.Log = LogEngine.getLogger(LogEngine.CHAT);
-      this.Log.err(err, "Error on OpenChatZimlet Construction");
+      this.Log.err(err, "Error on OpenChat Construction");
     }
   }
 
   public init(): void {
-    this.Log.debug("OpenChat Mode", "OpenChatZimlet");
-
     if (ChatZimletBase.alreadyInit) {
       return;
     }
 
     try {
       ChatZimletBase.alreadyInit = true;
-      const timedCallbackFactory: TimedCallbackFactory = new TimedCallbackFactory();
-      const dateProvider: DateProvider = new DateProvider();
-      const sessionInfoProvider: SessionInfoProvider = new SessionInfoProvider(
+
+      this.mTimedCallbackFactory = new TimedCallbackFactory();
+      this.mDateProvider = new DateProvider();
+      this.mSessionInfoProvider = new SessionInfoProvider(
         appCtxt.getUsername(),
         appCtxt.getActiveAccount().getDisplayName(),
-        ChatZimletBase.getVersion(),
       );
 
-      const settingsManager = new SettingsManager(
-        this,
-        appCtxt.getSettings(),
-        timedCallbackFactory,
-      );
+      this.mEventParser = new SoapEventParser();
+      this.mEventParser.addEncoder(new RegisterSessionEventEncoder());
+      this.mEventParser.addDecoder(new SessionRegisteredEventDecoder<IOpenChatUserCapabilities>(this.mDateProvider));
 
-      const newParser: SoapEventParser = new SoapEventParser();
-      SoapEventParserUtils.PopulateChatSoapEventParser(newParser, dateProvider);
+      this.mSoapCommandFactory = new CommandFactory();
+      this.mSoapCommandFactory.addCommand(OpenChatEventCode.REGISTER_SESSION,   Command.REGISTER_SESSION);
 
-      const soapCommandFactory: CommandFactory = new CommandFactory();
-      SoapCommands.registerCommands(soapCommandFactory);
-
-      const connectionManager: ChatConnectionManager = new ChatConnectionManager(
+      this.mConnectionManager = new ChatConnectionManager(
         new SoapConnection(
           new SoapRequestFactory(
             appCtxt.getAppController(),
-            sessionInfoProvider,
+            this.mSessionInfoProvider,
           ),
-          sessionInfoProvider,
+          this.mSessionInfoProvider,
           new DosFilter(
-            dateProvider,
-            timedCallbackFactory,
+            this.mDateProvider,
+            this.mTimedCallbackFactory,
           ),
           new PingManager(
-            timedCallbackFactory,
-            sessionInfoProvider,
+            this.mTimedCallbackFactory,
+            this.mSessionInfoProvider,
           ),
         ),
-        soapCommandFactory,
-        newParser,
+        this.mSoapCommandFactory,
+        this.mEventParser,
+        this.mSessionInfoProvider,
       );
 
-      const eventManager: EventManager = new EventManager();
-      HandlerRegister.registerHandlers(eventManager, this);
-
-      const chatClientPluginManager = new ChatPluginManager();
-      const roomManagerPluginManager = new ChatPluginManager();
-      const mainWindowPluginManager = new ChatPluginManager();
-      const roomWindowManagerPluginManager = new ChatPluginManager();
-
-      // Open Plugins
-      // SendMail Plugin
-      SendMailPlugin.plugin(
-        roomManagerPluginManager,
-        mainWindowPluginManager,
-        roomWindowManagerPluginManager,
-      );
-      // History Plugin
-      HistoryPlugin.plugin(
-        eventManager,
-        mainWindowPluginManager,
-        roomWindowManagerPluginManager,
-      );
-
-      StringUtils.setTranslationMap(com_zextras_chat_open);
-
-      super.initChatZimlet(
-        timedCallbackFactory,
-        dateProvider,
-        settingsManager,
-        sessionInfoProvider,
-        connectionManager,
-        eventManager,
-        roomManagerPluginManager,
-        chatClientPluginManager,
-        mainWindowPluginManager,
-        roomWindowManagerPluginManager,
-        new SidebarUtils(),
+      this.mConnectionManager.sendEvent(
+        new RegisterSessionEvent(
+          ZimletVersion.getVersion(),
+          this.mDateProvider.getNow(),
+        ),
+        new Callback(this, this.onSessionRegistered),
+        new Callback(this, this.onSessionRegistrationFail),
       );
     } catch (err) {
       ChatZimletBase.alreadyInit = false;
-      this.Log.err(err, "Error on ZxChatZimlet Initialization");
+      this.Log.err(err, "Error on OpenChat Initialization");
     }
   }
 
@@ -157,6 +148,85 @@ export class OpenChatZimlet extends ChatZimletBase {
    */
   public exportClientErrors(): string {
     return LogEngine.getLogger(LogEngine.CHAT).exportLog();
+
+  }
+
+  private onSessionRegistered(ev: EventSessionRegistered<IOpenChatUserCapabilities>) {
+    const settingsManager = new SettingsManager(
+      this,
+      appCtxt.getSettings(),
+      this.mTimedCallbackFactory,
+    );
+
+    this.mMessageUIFactory = new MessageUiFactory();
+
+    const chatClientPluginManager = new ChatPluginManager();
+    const mainWindowPluginManager = new ChatPluginManager();
+    const roomManagerPluginManager = new ChatPluginManager();
+    const roomWindowManagerPluginManager = new ChatPluginManager();
+
+    this.Log.debug("OpenChat", "Chat Mode");
+    const zStrategy: IZimletBootStrategy = new OpenChatBootStrategy(
+      ev.getCapabilities(),
+      this.mDateProvider,
+      this.mConnectionManager,
+      this.mSessionInfoProvider,
+      settingsManager,
+      mainWindowPluginManager,
+      roomManagerPluginManager,
+      roomWindowManagerPluginManager,
+    );
+    zStrategy.configureCommandFactory(this.mSoapCommandFactory);
+    zStrategy.configureEventParser(this.mEventParser);
+    zStrategy.configureMessageUiFactory(this.mMessageUIFactory);
+
+    // Init stores
+    this.mStore = zStrategy.getStore();
+
+    const eventManager: IEventManager = new EventManager();
+    zStrategy.configureEventManager(eventManager, this.mStore, this.mUIStore);
+    // HandlerRegister.registerHandlers(eventManager, this);
+
+    zStrategy.initStore(
+      this.mStore,
+      {
+        away: StringUtils.getMessage("st_away"),
+        busy: StringUtils.getMessage("st_busy"),
+        invisible: StringUtils.getMessage("st_invisible"),
+        online: StringUtils.getMessage("st_available"),
+      },
+    );
+
+    zStrategy.installLegacyPlugins(
+      this.mStore,
+      this.mUIStore,
+    );
+
+    super.initChatZimlet(
+      this.mTimedCallbackFactory,
+      this.mDateProvider,
+      settingsManager,
+      this.mSessionInfoProvider,
+      this.mConnectionManager,
+      eventManager,
+      roomManagerPluginManager,
+      chatClientPluginManager,
+      mainWindowPluginManager,
+      roomWindowManagerPluginManager,
+      new SidebarUtils(),
+      this.mStore,
+      zStrategy.getRoomWindowFactory(),
+      this.mMessageUIFactory,
+    );
+
+    zStrategy.configureClientInMiddlewares(this.getClient());
+    eventManager.handleEvent(ev, this.getClient());
+
+    // this.pAppName = this.createApp("OpenChat", "zimbraIcon", "OpenChat from ZeXtras");
+  }
+
+  private onSessionRegistrationFail(...args: any[]) {
+    this.Log.err(args, "Error on OpenChat Initialization");
   }
 
 }
@@ -170,4 +240,5 @@ if (
   && typeof (window as IOpenChatZimletWindow).com_zextras_chat_open_hdlr === "undefined"
 ) {
   (window as IOpenChatZimletWindow).com_zextras_chat_open_hdlr = OpenChatZimlet;
+  StringUtils.setTranslationMap(com_zextras_chat_open);
 }

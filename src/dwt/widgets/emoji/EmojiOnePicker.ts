@@ -28,6 +28,8 @@ import {DwtToolBar, DwtToolBarButton} from "../../../zimbra/ajax/dwt/widgets/Dwt
 import {AjxListener} from "../../../zimbra/ajax/events/AjxListener";
 import {EmojiTemplate, IEmojiData} from "./EmojiTemplate";
 
+import "./EmojiOnePicker.scss";
+
 export class EmojiOnePicker extends DwtMenu {
 
   public static KEY_EMOJI_DATA: string = "emoji";
@@ -87,7 +89,7 @@ export class EmojiOnePicker extends DwtMenu {
         parent: dwtToolBar,
         style: "width: 30px",
       });
-      button.setText(emojiData.data.replace(/>.*</, "><"));
+      button.setText(emojiData.data.replace(/emojione/g, "emojione_16"));
       button.setData(EmojiOnePicker.KEY_EMOJI_DATA, emojiData);
       button.setToolTipContent(emojiData.name, false);
       button.addSelectionListener(selectionListner);
@@ -130,7 +132,7 @@ export class EmojiOnePicker extends DwtMenu {
       //   )
       // );
       emojiTabView.addTab(
-        EmojiTemplate.NAMES_DATA_SPRITE[pageIdx].replace(/>.*</, "><"),
+        EmojiTemplate.NAMES_DATA_SPRITE[pageIdx].replace(/emojione/g, "emojione_16"),
         EmojiOnePicker.createEmojiTabPage(
           emojiTabView,
           EmojiTemplate.DATA_SPRITES[pageIdx],

@@ -17,20 +17,18 @@
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {RenameGroupEvent} from "../../../../events/chat/RenameGroupEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class RenameGroupEventEncoder extends SoapEventEncoder {
+export class RenameGroupEventEncoder extends SoapEventEncoder<RenameGroupEvent> {
 
   constructor() {
     super(OpenChatEventCode.RENAME_GROUP);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: RenameGroupEvent = event as RenameGroupEvent;
+  protected getEventDetails(ev: RenameGroupEvent): {} {
     return {
       new_group: ev.getNewGroupName(),
-      target_address: event.getDestination(),
+      target_address: ev.getDestination(),
       target_group: ev.getGroupName(),
     };
   }

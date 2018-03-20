@@ -17,27 +17,30 @@
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {SecretTestEvent} from "../../../../events/chat/SecretTestEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class SecretTestEventDecoder extends SoapEventDecoder {
+export class SecretTestEventDecoder extends SoapEventDecoder<SecretTestEvent> {
 
   constructor() {
     super(OpenChatEventCode.SECRET_TEST);
   }
 
   public decodeEvent(
-    eventObj: {
-      from: string,
-      to: string,
-      timestampSent: number,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: ISecretTestEventObj,
+    originEvent?: IChatEvent,
+  ): SecretTestEvent {
     return new SecretTestEvent(
       eventObj.from,
       eventObj.to,
       new Date(eventObj.timestampSent),
     );
   }
+}
+
+export interface ISecretTestEventObj extends ISoapEventObject {
+  from: string;
+  to: string;
+  timestampSent: number;
 }

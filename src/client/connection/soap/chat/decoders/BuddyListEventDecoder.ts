@@ -15,35 +15,29 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {Buddy} from "../../../../Buddy";
-import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {BuddyStatus} from "../../../../BuddyStatus";
 import {BuddyListEvent} from "../../../../events/chat/BuddyListEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
 import {Group} from "../../../../Group";
 import {IBuddy} from "../../../../IBuddy";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class BuddyListEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class BuddyListEventDecoder extends SoapEventDecoder<BuddyListEvent> {
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.BUDDY_LIST);
     this.mDateProvider = dateProvider;
   }
 
   public decodeEvent(
-    eventObj: {
-      buddy_list: Array<{
-        group: string,
-        id: string,
-        nickname: string,
-        statusType: number,
-      }>,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: IBuddyListEventObj,
+    originEvent?: IChatEvent,
+  ): BuddyListEvent {
     const event: BuddyListEvent = new BuddyListEvent(this.mDateProvider.getNow());
     const groups: Group[] = [];
 
@@ -63,7 +57,7 @@ export class BuddyListEventDecoder extends SoapEventDecoder {
         buddyData.nickname,
       );
       buddy.setStatus(
-        new BuddyStatusImp(BuddyStatusImp.GetTypeFromNumber(buddyData.statusType)),
+        new BuddyStatus(BuddyStatus.GetTypeFromNumber(buddyData.statusType)),
       );
       buddy.addGroup(tmpGroup);
       tmpGroup.addBuddy(buddy, false);
@@ -73,4 +67,13 @@ export class BuddyListEventDecoder extends SoapEventDecoder {
     return event;
   }
 
+}
+
+interface IBuddyListEventObj extends ISoapEventObject {
+  buddy_list: Array<{
+    group: string,
+    id: string,
+    nickname: string,
+    statusType: number,
+  }>;
 }

@@ -16,7 +16,7 @@
  */
 
 import {DwtPoint} from "../../../zimbra/ajax/dwt/graphics/DwtPoint";
-import {RoomWindow} from "../RoomWindow";
+import {RoomWindowType} from "../RoomWindow";
 
 export class WindowDragTask {
   private static THRESHOLD: number = 5;
@@ -25,7 +25,7 @@ export class WindowDragTask {
   private startLocation: DwtPoint;
   private originalZIndex: number;
 
-  constructor(window: RoomWindow) {
+  constructor(window: RoomWindowType) {
     this.windowId = window.getId();
     this.originalZIndex = window.getOriginalZIndex();
     this.startLocation = window.getLocation();

@@ -19,7 +19,7 @@ import {Callback} from "../../../lib/callbacks/Callback";
 import {Condition} from "../../../lib/Condition";
 import {ZxError} from "../../../lib/error/ZxError";
 import {LogEngine} from "../../../lib/log/LogEngine";
-import {BasicEvent} from "../../events/BasicEvent";
+import {IBasicEvent} from "../../events/IBasicEvent";
 import {IConnection} from "../IConnection";
 import {IRequest} from "../IRequest";
 import {IRequestFactory} from "../IRequestFactory";
@@ -103,7 +103,7 @@ export class DummyConnection implements IConnection {
     this.mOnEndProcessResponsesCbk = callback;
   }
 
-  public pushStreamEvent(event: BasicEvent): void {
+  public pushStreamEvent(event: IBasicEvent): void {
     if (typeof this.mOnStreamEventCbk !== "undefined") {
       this.mOnStreamEventCbk.run(event);
     }

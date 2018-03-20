@@ -17,9 +17,10 @@
 
 import {LogEngine} from "../../../../../lib/log/LogEngine";
 import {Logger} from "../../../../../lib/log/Logger";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 
-export abstract class SoapEventDecoder {
+export abstract class SoapEventDecoder<T extends IChatEvent> {
 
   public Log: Logger;
   private mEventCode: number;
@@ -33,5 +34,5 @@ export abstract class SoapEventDecoder {
     return this.mEventCode;
   }
 
-  public abstract decodeEvent(eventObj: {[key: string]: any}, originEvent?: ChatEvent): ChatEvent;
+  public abstract decodeEvent(eventObj: ISoapEventObject, originEvent?: IChatEvent): T;
 }

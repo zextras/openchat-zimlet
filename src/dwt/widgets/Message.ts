@@ -16,7 +16,7 @@
  */
 
 import {Message as MessageObj} from "../../client/Message";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {StringUtils} from "../../lib/StringUtils";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
 import {Bowser} from "../../libext/bowser";
@@ -27,11 +27,13 @@ import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {ZmObjectManager} from "../../zimbra/zimbraMail/share/model/ZmObjectManager";
 import {Conversation} from "./Conversation";
 
+import "./Message.scss";
+
 export class Message extends DwtComposite {
 
   public static TEMPLATE: string = "com_zextras_chat_open.Widgets#Message";
 
-  public mDateProvider: DateProvider;
+  public mDateProvider: IDateProvider;
   protected mMessage: MessageObj;
   protected dateFormatter: AjxDateFormat;
   protected senderEl: HTMLElement;
@@ -44,7 +46,7 @@ export class Message extends DwtComposite {
   constructor(
     parent: Conversation,
     message: MessageObj,
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
     template: string = Message.TEMPLATE,
   ) {
     super({
@@ -59,8 +61,8 @@ export class Message extends DwtComposite {
       this._createHtml();
     }
     // TODO: Move to TimedCallback Factory
-    setTimeout( // Lazy creation of the object manager
-      this._delayedCreationFunction,
+    window.setTimeout( // Lazy creation of the object manager
+      () => this._delayedCreationFunction(),
       100,
     );
     this._setAllowSelection();
@@ -77,7 +79,7 @@ export class Message extends DwtComposite {
     return this.objectManager;
   }
 
-  protected _createHtml(data: IMessageCreateHtmlData = {}): void {
+  protected _createHtml(data: IMessageCreateHtmlData = {}, index?: number): void {
     data.id = this._htmlElId;
     data.date = StringUtils.localizeHour(this.mMessage.getDate(), this.mDateProvider.getNow());
     data.dateTooltip = this.formatDate(this.mMessage.getDate());
@@ -91,10 +93,26 @@ export class Message extends DwtComposite {
     if (Bowser.msie && this.contentEl.offsetWidth > 141) {
       this.contentEl.style.width = "141px";
     }
+    // if (typeof index !== "undefined") {
+    //   let notTextMessageHtmlElementCount: number = 0;
+    //   let countIndex: number = index;
+    //   while (countIndex < index) {
+    //     const item: Element = this.getHtmlElement().children.item(countIndex + notTextMessageHtmlElementCount);
+    //     if (typeof item !== "undefined") {
+    //       if (item.className)
+    //     } else {
+    //       // tslint:disable-next-line
+    //       console.log("Something goes wrong in count");
+    //       break;
+    //     }
+    //   }
+    //   for (let countdown = index; )
+    //   this.reparent(this.mConversation, index);
+    // }
   }
 
   // tslint:disable-next-line:variable-name
-  private _delayedCreationFunction = () => {
+  private _delayedCreationFunction = (index?: number) => {
     const manager = this.getObjectManager();
     try {
       manager.__hasSmileysHandler = true;

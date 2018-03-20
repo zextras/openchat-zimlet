@@ -15,21 +15,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports"
-  ],
-  function (
-    require,
-    exports
-  ) {
-    if (typeof $ !== "undefined") {
-      var jquery_textcomplete_1 = require("jquery-textcomplete");
-      exports.JQueryTextComplete = jquery_textcomplete_1.fn.textcomplete;
-    }
-    else {
-      exports.JQueryTextComplete = void 0;
-    }
-  }
-);
+if (typeof $ !== "undefined") {
+  var jquery_textcomplete = require("jquery-textcomplete");
+  module.exports = {
+    jquery_textcomplete: jquery_textcomplete.fn.textcomplete
+  };
+}
+else {
+  module.exports = {
+    jquery_textcomplete: void 0
+  };
+}

@@ -18,26 +18,35 @@
 import {FriendshipInvitationEvent} from "../../events/chat/friendship/FriendshipInvitationEvent";
 import {OpenChatEventCode} from "../../events/chat/OpenChatEventCode";
 import {SetStatusEvent} from "../../events/chat/SetStatusEvent";
-import {CommandFactory} from "../CommandFactory";
+import {ICommandFactory} from "../ICommandFactory";
 import {Command} from "./Command";
 
+/**
+ * @deprecated
+ */
 export class SoapCommands {
 
-  public static registerCommands(commandFactory: CommandFactory): void {
+  /**
+   * @deprecated
+   * @param {ICommandFactory} commandFactory
+   */
+  public static registerCommands(commandFactory: ICommandFactory): void {
     commandFactory.addCommand(OpenChatEventCode.MESSAGE, Command.SEND_MESSAGE);
     commandFactory.addSpecialCommand(
       OpenChatEventCode.FRIENDSHIP,
       FriendshipInvitationEvent.getCommandFromFriendshipEvent,
     );
-    commandFactory.addCommand(OpenChatEventCode.WRITING_STATUS, Command.NOTIFY_WRITING);
-    commandFactory.addCommand(OpenChatEventCode.MESSAGE_ACK, Command.NOTIFY_MSG_RECEIVED);
-    commandFactory.addCommand(OpenChatEventCode.PING, Command.PING);
-    commandFactory.addCommand(OpenChatEventCode.REGISTER_SESSION, Command.REGISTER_SESSION);
+    commandFactory.addCommand(OpenChatEventCode.WRITING_STATUS,     Command.NOTIFY_WRITING);
+    commandFactory.addCommand(OpenChatEventCode.ROOM_ACK,           Command.NOTIFY_MSG_RECEIVED);
+    commandFactory.addCommand(OpenChatEventCode.PING,               Command.PING);
+    commandFactory.addCommand(OpenChatEventCode.REGISTER_SESSION,   Command.REGISTER_SESSION);
     commandFactory.addCommand(OpenChatEventCode.UNREGISTER_SESSION, Command.UNREGISTER_SESSION);
-    commandFactory.addCommand(OpenChatEventCode.ACCEPT_FRIENDSHIP, Command.ACCEPT_FRIEND);
-    commandFactory.addCommand(OpenChatEventCode.REMOVE_FRIENDSHIP, Command.REMOVE_FRIEND);
-    commandFactory.addCommand(OpenChatEventCode.RENAME_FRIENDSHIP, Command.RENAME_FRIEND);
-    commandFactory.addCommand(OpenChatEventCode.RENAME_GROUP, Command.RENAME_GROUP);
+    commandFactory.addCommand(OpenChatEventCode.ACCEPT_FRIENDSHIP,  Command.ACCEPT_FRIEND);
+    commandFactory.addCommand(OpenChatEventCode.REMOVE_FRIENDSHIP,  Command.REMOVE_FRIEND);
+    commandFactory.addCommand(OpenChatEventCode.RENAME_FRIENDSHIP,  Command.RENAME_FRIEND);
+    commandFactory.addCommand(OpenChatEventCode.RENAME_GROUP,       Command.RENAME_GROUP);
+    commandFactory.addCommand(OpenChatEventCode.QUERY_ARCHIVE,      Command.QUERY_ARCHIVE);
+
     commandFactory.addSpecialCommand(OpenChatEventCode.SET_STATUS, SetStatusEvent.getCommandFromSetStatusEvent);
   }
 }

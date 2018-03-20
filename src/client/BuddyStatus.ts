@@ -20,10 +20,22 @@ import {ZimbraUtils} from "../lib/ZimbraUtils";
 import {BuddyStatusType} from "./BuddyStatusType";
 import {IBuddyStatus} from "./IBuddyStatus";
 
-export class BuddyStatusImp implements IBuddyStatus {
+export class BuddyStatus implements IBuddyStatus {
 
-  public static GetTypeFromNumber(type: number): BuddyStatusType {
-    switch (type) {
+  /**
+   * Get the CSS style associated to a status type.
+   * @return {string} CSS Style
+   */
+  public static getCSS(type: BuddyStatusType): string {
+    if (ZimbraUtils.isUniversalUI()) {
+      return BuddyStatus.getCssForUniversalUI(type);
+    } else {
+      return BuddyStatus.getLegacyCss(type);
+    }
+  }
+
+  public static GetTypeFromNumber(id: number): BuddyStatusType {
+    switch (id) {
       case 0: return BuddyStatusType.OFFLINE;
       case 1: return BuddyStatusType.ONLINE;
       case 2: return BuddyStatusType.BUSY;
@@ -32,6 +44,22 @@ export class BuddyStatusImp implements IBuddyStatus {
       case 5: return BuddyStatusType.NEED_RESPONSE;
       case 6: return BuddyStatusType.INVITED;
       case 7: return BuddyStatusType.UNREACHABLE;
+      case 8: return BuddyStatusType.UNSUBSCRIBED;
+      default: return BuddyStatusType.ONLINE;
+    }
+  }
+
+  public static GetNumberFromType(type: BuddyStatusType): number {
+    switch (type) {
+      case BuddyStatusType.OFFLINE: return 0;
+      case BuddyStatusType.ONLINE: return 1;
+      case BuddyStatusType.BUSY: return 2;
+      case BuddyStatusType.AWAY: return 3;
+      case BuddyStatusType.INVISIBLE: return 4;
+      case BuddyStatusType.NEED_RESPONSE: return 5;
+      case BuddyStatusType.INVITED: return 6;
+      case BuddyStatusType.UNREACHABLE: return 7;
+      case BuddyStatusType.UNSUBSCRIBED: return 8;
       default: return BuddyStatusType.ONLINE;
     }
   }
@@ -45,7 +73,55 @@ export class BuddyStatusImp implements IBuddyStatus {
     BuddyStatusType.OFFLINE,
     BuddyStatusType.INVISIBLE,
     BuddyStatusType.UNREACHABLE,
+    BuddyStatusType.UNSUBSCRIBED,
   ];
+
+  private static getCssForUniversalUI(type: BuddyStatusType): string {
+    switch (type) {
+      case BuddyStatusType.ONLINE:
+        return "_ImSmallAvailable";
+      case BuddyStatusType.BUSY:
+        return "_ImSmallDnD";
+      case BuddyStatusType.AWAY:
+        return "_ImSmallAway";
+      case BuddyStatusType.NEED_RESPONSE:
+      case BuddyStatusType.INVITED:
+        return "_ImSmallUnavailable"; // TODO: We need an invited|need_response icon
+      case BuddyStatusType.INVISIBLE:
+        return "_ImSmallInvisble"; // Todo: There is a typo, notify to synacor
+      case BuddyStatusType.UNREACHABLE:
+      case BuddyStatusType.OFFLINE:
+      case BuddyStatusType.UNSUBSCRIBED:
+      default:
+        return "_ImSmallInvisble"; // _ImSmallUnavailable
+    }
+  }
+
+  private static getLegacyCss(type: BuddyStatusType): string {
+    switch (type) {
+      case BuddyStatusType.ONLINE:
+        return "ZxChat_online";
+      case BuddyStatusType.BUSY:
+        return "ZxChat_busy";
+      case BuddyStatusType.AWAY:
+        return "ZxChat_away";
+      case BuddyStatusType.NEED_RESPONSE:
+        return "ZxChat_need_response";
+      case BuddyStatusType.INVITED:
+        return "ZxChat_invited";
+      case BuddyStatusType.UNREACHABLE:
+        return "ZxChat_unreachable";
+      case BuddyStatusType.OFFLINE:
+        return "ZxChat_offline";
+      case BuddyStatusType.INVISIBLE:
+        return "ZxChat_offline";
+      case BuddyStatusType.UNSUBSCRIBED:
+        return "ZxChat_offline";
+      default:
+        return "";
+    }
+  }
+
   private mType: BuddyStatusType;
   private mMessage: string;
   private mId: number;
@@ -67,7 +143,7 @@ export class BuddyStatusImp implements IBuddyStatus {
 
   /**
    * Compare the types between the status instance and another status.
-   * @param {BuddyStatusImp} other
+   * @param {BuddyStatus} other
    * @return {boolean}
    */
   public sameType(other: IBuddyStatus): boolean {
@@ -84,7 +160,7 @@ export class BuddyStatusImp implements IBuddyStatus {
 
   /**
    * Compare the equality between the status instance and another status.
-   * @param {BuddyStatusImp} other
+   * @param {BuddyStatus} other
    * @return {boolean}
    */
   public equals(other: IBuddyStatus): boolean {
@@ -96,7 +172,7 @@ export class BuddyStatusImp implements IBuddyStatus {
   /**
    * Compare the status priority between another status.
    * Lowest priority is considered more important.
-   * @param {BuddyStatusImp} other
+   * @param {BuddyStatus} other
    * @return {boolean}
    */
   public isMoreAvailableThan(other: IBuddyStatus): boolean {
@@ -125,6 +201,8 @@ export class BuddyStatusImp implements IBuddyStatus {
         return 6;
       case BuddyStatusType.INVISIBLE:
         return 7;
+      case BuddyStatusType.UNSUBSCRIBED:
+        return 8;
       default:
         return 10;
     }
@@ -157,6 +235,8 @@ export class BuddyStatusImp implements IBuddyStatus {
         } else {
           return "st_offline";
         }
+      case BuddyStatusType.UNSUBSCRIBED:
+        return "st_offline";
       default:
         return this.mMessage;
     }
@@ -228,6 +308,7 @@ export class BuddyStatusImp implements IBuddyStatus {
       case BuddyStatusType.UNREACHABLE:
       case BuddyStatusType.OFFLINE:
       case BuddyStatusType.INVISIBLE:
+      case BuddyStatusType.UNSUBSCRIBED:
         return true;
       default:
         return false;
@@ -272,61 +353,6 @@ export class BuddyStatusImp implements IBuddyStatus {
    */
   public isWaitingForResponse(): boolean {
     return this.mType === BuddyStatusType.NEED_RESPONSE;
-  }
-
-  /**
-   * Get the CSS style associated to a status type.
-   * @return {string} CSS Style
-   */
-  public getCSS(): string {
-    if (ZimbraUtils.isUniversalUI()) {
-      return this.getCssForUniversalUI();
-    } else {
-      return this.getLegacyCss();
-    }
-  }
-
-  private getCssForUniversalUI(): string {
-    switch (this.mType) {
-      case BuddyStatusType.ONLINE:
-        return "_ImSmallAvailable";
-      case BuddyStatusType.BUSY:
-        return "_ImSmallDnD";
-      case BuddyStatusType.AWAY:
-        return "_ImSmallAway";
-      case BuddyStatusType.NEED_RESPONSE:
-      case BuddyStatusType.INVITED:
-        return "_ImSmallUnavailable"; // TODO: We need an invited|need_response icon
-      case BuddyStatusType.INVISIBLE:
-        return "_ImSmallInvisble"; // Todo: There is a typo, notify to synacor
-      case BuddyStatusType.UNREACHABLE:
-      case BuddyStatusType.OFFLINE:
-      default:
-        return "_ImSmallInvisble"; // _ImSmallUnavailable
-    }
-  }
-
-  private getLegacyCss(): string {
-    switch (this.mType) {
-      case BuddyStatusType.ONLINE:
-        return "ZxChat_online";
-      case BuddyStatusType.BUSY:
-        return "ZxChat_busy";
-      case BuddyStatusType.AWAY:
-        return "ZxChat_away";
-      case BuddyStatusType.NEED_RESPONSE:
-        return "ZxChat_need_response";
-      case BuddyStatusType.INVITED:
-        return "ZxChat_invited";
-      case BuddyStatusType.UNREACHABLE:
-        return "ZxChat_unreachable";
-      case BuddyStatusType.OFFLINE:
-        return "ZxChat_offline";
-      case BuddyStatusType.INVISIBLE:
-        return "ZxChat_offline";
-      default:
-        return "";
-    }
   }
 
 }

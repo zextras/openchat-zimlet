@@ -15,44 +15,51 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
-import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
+import {BuddyStatus} from "../../../../BuddyStatus";
 import {ContactInformationEvent} from "../../../../events/chat/ContactInformationEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class ContactInformationEventDecoder extends SoapEventDecoder {
+export class ContactInformationEventDecoder extends SoapEventDecoder<ContactInformationEvent> {
 
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.CONTACT_INFORMATION);
     this.mDateProvider = dateProvider;
   }
 
   public decodeEvent(
-    eventObj: {
-      from: string,
-      timestampSent: number,
-      statusType: number,
-      message: string,
-      id: number,
-      isGroupChat: boolean,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: IContactInformationEventObj,
+    originEvent?: IChatEvent,
+  ): ContactInformationEvent {
     return new ContactInformationEvent(
       eventObj.from,
       this.mDateProvider.getDate(eventObj.timestampSent),
       this.mDateProvider.getNow(),
-      new BuddyStatusImp(
-        BuddyStatusImp.GetTypeFromNumber(eventObj.statusType),
+      new BuddyStatus(
+        BuddyStatus.GetTypeFromNumber(eventObj.statusType),
         eventObj.message,
         eventObj.id,
       ),
-      eventObj.isGroupChat,
+      eventObj.group,
+      eventObj.meetings,
+      this.mDateProvider.getDate(eventObj.validSince),
     );
   }
 
+}
+
+interface IContactInformationEventObj extends ISoapEventObject {
+  from: string;
+  group: string;
+  id: number;
+  meetings: string[];
+  message: string;
+  statusType: number;
+  timestampSent: number;
+  validSince: number;
 }

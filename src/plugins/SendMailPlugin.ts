@@ -15,32 +15,35 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {RoomManager} from "../client/RoomManager";
+import {Store} from "redux";
+
 import {BuddyTreeItemActionMenuFactory} from "../dwt/widgets/BuddyTreeItemActionMenuFactory";
 import {RoomWindowManager} from "../dwt/windows/RoomWindowManager";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
+import {IOpenChatState} from "../redux/IOpenChatState";
 import {MainWindowCreateNewMailMenuItemPlugin} from "./sendMail/MainWindowCreateNewMailMenuItemPlugin";
-import {RoomManagerHistoryPlugin} from "./sendMail/RoomManagerHistoryPlugin";
 import {RoomWindowManagerSendMailPlugin} from "./sendMail/RoomWindowManagerSendMailPlugin";
 
+/**
+ * @deprecated
+ */
 export class SendMailPlugin {
-
-  public static plugin(
+  /**
+   * @deprecated
+   */
+  public static install(
     roomManagerPluginManager: ChatPluginManager,
     mainWindowPluginManager: ChatPluginManager,
     roomWindowManagerPluginManager: ChatPluginManager,
+    store?: Store<IOpenChatState>,
   ): void {
-    roomManagerPluginManager.registerPlugin(
-      RoomManager.CreateRoomPluginManager,
-      new RoomManagerHistoryPlugin(),
-    );
     mainWindowPluginManager.registerPlugin(
       BuddyTreeItemActionMenuFactory.AddMenuItemPlugin,
       new MainWindowCreateNewMailMenuItemPlugin(),
     );
     roomWindowManagerPluginManager.registerPlugin(
       RoomWindowManager.CreateRoomWindowPluginManager,
-      new RoomWindowManagerSendMailPlugin(),
+      new RoomWindowManagerSendMailPlugin(store),
     );
   }
 

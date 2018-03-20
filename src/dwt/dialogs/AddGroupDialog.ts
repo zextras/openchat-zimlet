@@ -27,6 +27,7 @@ import {DwtMessageDialog} from "../../zimbra/ajax/dwt/widgets/DwtMessageDialog";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {ZmAppCtxt} from "../../zimbra/zimbraMail/core/ZmAppCtxt";
 import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
+import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {IdGenerator} from "../IdGenerator";
 
 export class AddGroupDialog extends ZmDialog {
@@ -36,7 +37,7 @@ export class AddGroupDialog extends ZmDialog {
   private groupNameEl: HTMLInputElement;
 
   constructor(params: ZmDialogParams, client: IChatClient, appCtxt: ZmAppCtxt) {
-    params.title = StringUtils.getMessage("create_group_title");
+    params.title = ZmMsg.newFolder;
     params.standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];
     params.id = IdGenerator.generateId("ZxChat_AddGroupDialog");
     super(params);

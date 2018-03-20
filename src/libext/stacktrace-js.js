@@ -15,17 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports",
-    "stacktrace-js-legacy"
-  ],
-  function (
-    require,
-    exports,
-    printStackTrace_1
-  ) {
-    exports.printStackTrace = printStackTrace_1;
-  }
-);
+var printStackTrace = require("stacktrace-js-legacy");
+module.exports = {
+  printStackTrace: printStackTrace
+};

@@ -1,0 +1,112 @@
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+
+.ReactDwtConversation {
+  display: flex;
+  flex-direction: column;
+}
+
+.ReactDwtConversation > .Conversation {
+  font-size: (12/14)*1em;
+}
+
+.ReactDwtConversation > .Conversation > .Conversation-messages {
+  padding: 0 (4/8)*1em;
+}
+
+.ReactDwtConversation .MessageSent {
+  padding-left: 4em;
+}
+
+.ReactDwtConversation .MessageReceived {
+  padding-right: 4em;
+}
+
+.ReactDwtConversation .MessageReceived-content-container,
+.ReactDwtConversation .MessageSent-content-container {
+  padding: (8/14)*1em (12/14)*1em;
+}
+
+/** IE 9 and IE 10 support*/
+.ReactDwtConversation-ie {
+}
+
+.ReactDwtConversation-ie > .Conversation {
+  font-size: (12/14)*1em;
+  height: 100%;
+}
+
+.ReactDwtConversation-ie > .Conversation > .Conversation-messages {
+  height: 100%;
+  padding: 0 (4/8)*1em;
+}
+
+.ReactDwtConversation-ie .MessageSent {
+  padding-left: 4em;
+}
+
+.ReactDwtConversation-ie .MessageReceived {
+  padding-right: 4em;
+}
+
+.ReactDwtConversation-ie .MessageReceived-content-container,
+.ReactDwtConversation-ie .MessageSent-content-container {
+  padding: (8/14)*1em (12/14)*1em;
+}
+
+.ReactDwtConversation-ie .MessageReceived-info,
+.ReactDwtConversation-ie .MessageReceived .AMessage-info-date,
+.ReactDwtConversation-ie .MessageReceived-info-sender,
+.ReactDwtConversation-ie .MessageReceived-content,
+.ReactDwtConversation-ie .MessageReceived .AMessage-status,
+.ReactDwtConversation-ie .MessageReceived .AMessage-status-icon {
+  float: left;
+}
+
+.ReactDwtConversation-ie .MessageReceived-content {
+  margin-left: 1em;
+}
+
+.ReactDwtConversation-ie .MessageSent-info,
+.ReactDwtConversation-ie .MessageSent .AMessage-info-date,
+.ReactDwtConversation-ie .MessageSent-info-sender,
+.ReactDwtConversation-ie .MessageSent-content,
+.ReactDwtConversation-ie .MessageSent .AMessage-status,
+.ReactDwtConversation-ie .MessageSent .AMessage-status-icon {
+  float: right;
+}
+
+.ReactDwtConversation-ie .MessageSent-content {
+  margin-right: 1em;
+}
+
+.ReactDwtConversation-ie .MessageReceived-info,
+.ReactDwtConversation-ie .MessageSent-info {
+  width: 14em;
+}
+
+.ReactDwtConversation-ie .MessageReceived .AMessage-status,
+.ReactDwtConversation-ie .MessageSent .AMessage-status {
+  width: 20em;
+}
+
+.ReactDwtConversation-ie .MessageReceived-content-triangle-left,
+.ReactDwtConversation-ie .MessageSent-content-triangle-right {
+  display: none;
+}
+
+.ReactDwtConversation-ie .fa-stack {
+  padding-bottom: 8px;
+}

@@ -18,18 +18,16 @@
 import {IChatClient} from "../../IChatClient";
 import {ErrorEvent} from "../chat/ErrorEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
-import {ChatEvent} from "../ChatEvent";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class ErrorEventHandler implements IChatEventHandler {
+export class ErrorEventHandler implements IChatEventHandler<ErrorEvent> {
 
   public getEventCode(): number {
     return OpenChatEventCode.ERROR;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const errorEvent: ErrorEvent = chatEvent as ErrorEvent;
-    client.Log.err(errorEvent.getError(), "Client error");
+  public handleEvent(ev: ErrorEvent, client: IChatClient): boolean {
+    client.Log.err(ev.getError(), "Client error");
     return true;
   }
 }

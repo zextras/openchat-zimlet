@@ -16,7 +16,7 @@
  */
 
 import {Callback} from "../../../lib/callbacks/Callback";
-import {SessionInfoProvider} from "../../SessionInfoProvider";
+import {ISessionInfoProvider} from "../../ISessionInfoProvider";
 import {IConnection} from "../IConnection";
 import {IRequestFactory} from "../IRequestFactory";
 import {Command} from "./Command";
@@ -31,13 +31,13 @@ export class SoapConnection implements IConnection {
 
   private mRequestCount: number = 0;
   private mRequestFactory: IRequestFactory;
-  private mSessionInfoProvider: SessionInfoProvider;
+  private mSessionInfoProvider: ISessionInfoProvider;
   private mDosFilter: IDosFilter;
   private mPingManager: IPingManager;
 
   constructor(
     requestFactory: IRequestFactory,
-    sessionInfoProvider: SessionInfoProvider,
+    sessionInfoProvider: ISessionInfoProvider,
     dosFilter: IDosFilter,
     pingManager: IPingManager,
   ) {

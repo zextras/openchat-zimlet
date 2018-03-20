@@ -15,18 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports",
-    "bowser"
-  ],
-  function (
-    require,
-    exports,
-    Bowser_1
-  ) {
-    window.debugBowser = Bowser_1;
-    exports.Bowser = Bowser_1;
-  }
-);
+var Bowser = require("bowser");
+module.exports = {
+  Bowser: Bowser
+};

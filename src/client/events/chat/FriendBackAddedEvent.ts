@@ -15,20 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IUserCapabilities} from "../../connection/soap/chat/decoders/SessionRegisteredEventDecoder";
 import {IBuddy} from "../../IBuddy";
 import {ChatEvent} from "../ChatEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
-export class FriendBackAddedEvent extends ChatEvent {
+export class FriendBackAddedEvent<T extends IUserCapabilities> extends ChatEvent {
 
   private mBuddy: IBuddy;
+  private mCapabilities: T;
 
-  constructor(buddy: IBuddy, creationDate: Date) {
+  constructor(buddy: IBuddy, capabilities: T, creationDate: Date) {
     super(OpenChatEventCode.FRIEND_BACK_ADDED, creationDate, false);
     this.mBuddy = buddy;
+    this.mCapabilities = capabilities;
   }
 
   public getBuddy(): IBuddy {
     return this.mBuddy;
+  }
+
+  public getCapabilities(): T {
+    return this.mCapabilities;
   }
 }

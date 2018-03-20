@@ -15,21 +15,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {ShutdownEvent} from "../../../../events/chat/ShutdownEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class ShutdownEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class ShutdownEventDecoder extends SoapEventDecoder<ShutdownEvent> {
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.SHUTDOWN);
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {
+  public decodeEvent(eventObj: ISoapEventObject, originEvent?: IChatEvent): ShutdownEvent {
     return new ShutdownEvent(this.mDateProvider.getNow());
   }
 

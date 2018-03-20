@@ -76,7 +76,7 @@
                                 </b>
                             </td>
                             <td align="right" valign="middle">
-                                <$= AjxImg.getImageHtml(data.buddy.getStatus().getCSS()) $>
+                                <$= AjxImg.getImageHtml(data.cssStatus) $>
                             </td>
                         </tr>
                     </table>

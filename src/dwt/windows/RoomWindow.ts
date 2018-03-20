@@ -15,20 +15,21 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store, Unsubscribe} from "redux";
+import {BuddyStatusUtils} from "../../app/conversation/BuddyStatusUtils";
+import {IMessageUiFactory} from "../../app/messageFactory/IMessageUiFactory";
+import {BuddyStatus} from "../../client/BuddyStatus";
+import {BuddyStatusType} from "../../client/BuddyStatusType";
 import {WritingStatusEvent} from "../../client/events/chat/WritingStatusEvent";
-import {IBuddy} from "../../client/IBuddy";
-import {IBuddyStatus} from "../../client/IBuddyStatus";
-import {IRoom} from "../../client/IRoom";
+import {ISessionInfoProvider} from "../../client/ISessionInfoProvider";
 import {MessageReceived} from "../../client/MessageReceived";
 import {MessageSent} from "../../client/MessageSent";
-import {MessageWritingStatus} from "../../client/MessageWritingStatus";
-import {SessionInfoProvider} from "../../client/SessionInfoProvider";
 import {TextCompletePlugin} from "../../jquery/TextCompletePlugin";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {TimedCallback} from "../../lib/callbacks/TimedCallback";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {LearningClipUtils} from "../../lib/LearningClipUtils";
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
@@ -36,7 +37,13 @@ import {NotificationManager} from "../../lib/notifications/NotificationManager";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {StringUtils} from "../../lib/StringUtils";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
-import {Bowser} from "../../libext/bowser";
+import {IAddMessageToRoomAction} from "../../redux/action/IAddMessageToRoomAction";
+import {IRoomAction} from "../../redux/action/IRoomAction";
+import {ISendRoomAckAction} from "../../redux/action/ISendRoomAckAction";
+import {
+  IOpenChatBuddyStatus, IOpenChatMessage, IOpenChatRoom, IOpenChatState,
+  IOpenChatTextMessage,
+} from "../../redux/IOpenChatState";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {DwtDraggable} from "../../zimbra/ajax/dwt/core/DwtDraggable";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
@@ -50,17 +57,21 @@ import {DwtLabel} from "../../zimbra/ajax/dwt/widgets/DwtLabel";
 import {DwtShell} from "../../zimbra/ajax/dwt/widgets/DwtShell";
 import {DwtToolBar, DwtToolBarButton} from "../../zimbra/ajax/dwt/widgets/DwtToolBar";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
-import {Conversation} from "../widgets/Conversation";
 import {EmojiOnePickerButton} from "../widgets/emoji/EmojiOnePickerButton";
 import {IEmojiData} from "../widgets/emoji/EmojiTemplate";
 import {LoadingDots} from "../widgets/LoadingDots";
+import {ReactDwtConversation} from "../widgets/ReactDwtConversation";
 import {RoomWindowMenuButton} from "./RoomWindowMenuButton";
 import {WindowBase} from "./WindowBase";
 
-export class RoomWindow extends WindowBase {
+import "./RoomWindow.scss";
+
+export type RoomWindowType = RoomWindow<IOpenChatState>;
+
+export class RoomWindow<S extends IOpenChatState>
+  extends WindowBase {
 
   public static PluginName: string = "Room Window";
-  public static AddButtonPlugin: string = "Room Window Add Button";
   public static BuddyStatusChangedPlugin: string = "Room Window Buddy Status Changed";
   public static DEFAULT_ICON: string = "ImgZxChat_personalized_brand";
   public static WIDTH: number  = ZimbraUtils.isUniversalUI() ? 315 : 228;
@@ -83,12 +94,17 @@ export class RoomWindow extends WindowBase {
     return false;
   }
 
+  protected mStore: Store<S>;
+  protected mInputField: DwtInputField;
+  protected mUnsubscribe: Unsubscribe;
+  protected mMessages: IOpenChatMessage[];
   private Log: Logger;
   private mTimedCallbackFactory: TimedCallbackFactory;
-  private mSessionInfoProvider: SessionInfoProvider;
-  private mRoom: IRoom;
+  private mSessionInfoProvider: ISessionInfoProvider;
+  private mRoomJid: string;
+  private mPopupLocked: boolean;
   private mNotificationManager: NotificationManager;
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mRoomWindowPluginManager: ChatPluginManager;
   private mOnMessageReceivedCallbacks: CallbackManager;
   private mOnWindowOpenedCallbacks: CallbackManager;
@@ -97,36 +113,39 @@ export class RoomWindow extends WindowBase {
   private mOnDuringDragCallbacks: CallbackManager;
   private mOnDragEndCallbacks: CallbackManager;
   private mWritingTimerCallback: TimedCallback;
-  private mBuddyWritingStatuses: {[buddyId: string]: MessageWritingStatus};
+  private mBuddyWritingStatuses: {[buddyId: string]: number};
   private mContainerView: DwtComposite;
   private mTitleDragBar: DwtToolBar;
   private mTitleButtonBar: DwtToolBar;
   private mTitleLbl: DwtLabel;
   private mMainMenuButton: RoomWindowMenuButton;
   private mCloseButton: DwtToolBarButton;
-  private mConversation: Conversation;
+  private mConversation: ReactDwtConversation;
   private mWritingStatusDots: LoadingDots;
   private mLastPopup: number;
-  private mInputField: DwtInputField;
   private mEmoticonBtn: EmojiOnePickerButton;
   private mTimeoutWrittenStatus: number;
   private mRestartTimerCallbackOnTimeout: boolean = false;
   private mDefaultConversationHeight: string;
   private mTitlebar: DwtToolBar;
+  private mRoomWindowStatusType: BuddyStatusType;
 
   constructor(
     shell: DwtShell,
     timedCallbackFactory: TimedCallbackFactory,
-    room: IRoom,
+    roomJid: string,
     notificationManager: NotificationManager,
-    dateProvider: DateProvider,
-    sessionInfoProvider: SessionInfoProvider,
+    dateProvider: IDateProvider,
+    sessionInfoProvider: ISessionInfoProvider,
     roomWindowPluginManager: ChatPluginManager,
+    popupLocked: boolean,
+    store: Store<S>,
+    messageUiFactory: IMessageUiFactory<IOpenChatState>,
   ) {
     super(
       shell,
       "ZxChat_RoomWindow",
-      room.getRoomStatus().getCSS(),
+      BuddyStatus.getCSS(BuddyStatusType.OFFLINE),
       "Chat",
       [],
       undefined,
@@ -135,10 +154,12 @@ export class RoomWindow extends WindowBase {
     this.Log = LogEngine.getLogger(LogEngine.CHAT);
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mSessionInfoProvider = sessionInfoProvider;
-    this.mRoom = room;
+    this.mRoomJid = roomJid;
+    this.mPopupLocked = popupLocked;
     this.mNotificationManager = notificationManager;
     this.mDateProvider = dateProvider;
     this.mRoomWindowPluginManager = roomWindowPluginManager;
+    this.mStore = store;
     this.mRoomWindowPluginManager.switchOn(this);
     this.mOnMessageReceivedCallbacks = new CallbackManager();
     this.mOnWindowOpenedCallbacks = new CallbackManager();
@@ -185,8 +206,6 @@ export class RoomWindow extends WindowBase {
     document.getElementById(this.mTitleLbl.getHTMLElId() + "_title").className +=
       ` RoomWindowTitleBar-TitleLabel${ZimbraUtils.isUniversalUI() ? "" : "-legacy-ui" }`;
     this._initializeDragging(this.mTitleDragBar.getHTMLElId());
-    this.setTitle(room.getTitle());
-    this.setIcon(room.getRoomStatus().getCSS());
     this.mTitleDragBar.addFiller();
     this.mTitleButtonBar = new DwtToolBar({parent: this.mTitlebar, className: "ZxChat_TitleBar_Toolbar_Child"});
     this.mMainMenuButton = new RoomWindowMenuButton(this, this.mTitleButtonBar, this.mRoomWindowPluginManager);
@@ -201,18 +220,26 @@ export class RoomWindow extends WindowBase {
     }
     this.mCloseButton.addSelectionListener(new AjxListener(this, this.closeCallback));
     // this._initializeDragging(this.mTitleDragBar.getHTMLElId());
-    this.mConversation = new Conversation(this.mContainerView, this.mDateProvider, this.mTimedCallbackFactory);
+    this.mConversation = new ReactDwtConversation({
+      parent: this.mContainerView,
+      props: {
+        dataStore: store,
+        emojiSize: "16",
+        messageUIFactory: messageUiFactory,
+        roomJid: roomJid,
+      },
+    });
     this.mWritingStatusDots = new LoadingDots(this.mContainerView, { dots: 5 });
-    this.mRoom.onAddMessageReceived(new Callback(this, this.onAddMessageReceived));
-    this.mRoom.onBuddyWritingStatus(new Callback(this, this.onBuddyWritingStatus));
-    this.mRoom.onRoomStatusChange(new Callback(this, this.onRoomStatusChange));
-    this.mRoom.onAddMessageSent(new Callback(this, this.onAddMessageSent));
-    this.mRoom.onAddMessageSentFromAnotherSession(new Callback(this, this.onAddMessageSentFromAnotherSession));
-    this.mRoom.onBuddyStatusChange(new Callback(this, this.onBuddyStatusChange));
-    this.mRoom.onMemberRemoved(new Callback(this, this.onMemberRemoved));
-    this.mRoom.onTitleChange(new Callback(this, this.setTitle));
-    this.mRoom.onTriggeredPopup(() => this.popup(undefined, true));
-    this.mRoom.onTriggeredInputFocus(() => this.inputfieldFocus());
+    // this.mRoom.onAddMessageReceived(new Callback(this, this.onAddMessageReceived));
+    // this.mRoom.onBuddyWritingStatus(new Callback(this, this.onBuddyWritingStatus));
+    // this.mRoom.onRoomStatusChange(new Callback(this, this.onRoomStatusChange));
+    // this.mRoom.onAddMessageSent(new Callback(this, this.onAddMessageSent));
+    // this.mRoom.onAddMessageSentFromAnotherSession(new Callback(this, this.onAddMessageSentFromAnotherSession));
+    // this.mRoom.onBuddyStatusChange(new Callback(this, this.onBuddyStatusChange));
+    // this.mRoom.onMemberRemoved(new Callback(this, this.onMemberRemoved));
+    // this.mRoom.onTitleChange(new Callback(this, this.setTitle));
+    // this.mRoom.onTriggeredPopup(() => this.popup(undefined, true));
+    // this.mRoom.onTriggeredInputFocus(() => this.inputfieldFocus());
     this.mLastPopup = 0;
     const inputToolbar: DwtToolBar = new DwtToolBar({parent: this.mContainerView, className: "ZxChat_RoomToolbar"});
 
@@ -241,10 +268,10 @@ export class RoomWindow extends WindowBase {
     );
     if (typeof this.mDefaultConversationHeight === "undefined" && this.mDefaultConversationHeight !== null) {
       // tslint:disable-next-line:max-line-length
-      this.mDefaultConversationHeight = `${RoomWindow.HEIGHT - inputToolbar.getSize().y - this.mTitleDragBar.getSize().y - this.mWritingStatusDots.getSize().y - 10}px`;
+      this.mDefaultConversationHeight = `${RoomWindow.HEIGHT - inputToolbar.getSize().y - this.mTitleDragBar.getSize().y - this.mWritingStatusDots.getSize().y}px`;
     }
     this.mConversation.setSize(
-      Dwt.DEFAULT,
+      `${RoomWindow.WIDTH - 8}px`,
       this.mDefaultConversationHeight,
     );
     this.mInputField.setSize(
@@ -259,14 +286,20 @@ export class RoomWindow extends WindowBase {
     this.mTimeoutWrittenStatus = 5000;
     this.setZIndex(499);
     this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.PluginName);
-
   }
 
-  public getRoom(): IRoom {
-    return this.mRoom;
+  public init(): void {
+    this.mInputField.addListener(
+      DwtEvent.ONFOCUS,
+      new AjxListener(this, this.onFocus),
+    );
   }
 
-  public getDateProvider(): DateProvider {
+  public getType(): "chat" | string {
+    return this.mStore.getState().rooms[this.mRoomJid].roomType;
+  }
+
+  public getDateProvider(): IDateProvider {
     return this.mDateProvider;
   }
 
@@ -275,20 +308,20 @@ export class RoomWindow extends WindowBase {
   }
 
   public getId(): string {
-    return this.mRoom.getId();
+    return this.mRoomJid;
   }
 
   public getConversationContainer(): DwtComposite {
     return this.mContainerView;
   }
 
-  public getConversation(): Conversation {
-    return this.mConversation;
-  }
+  // public getConversation(): Conversation {
+  //   return this.mConversation;
+  // }
 
-  public getDefaultConversationHeight(): string {
-    return this.mDefaultConversationHeight;
-  }
+  // public getDefaultConversationHeight(): string {
+  //   return this.mDefaultConversationHeight;
+  // }
 
   public setTitle(title: string): void {
     if (title.length > (ZimbraUtils.isUniversalUI() ? 25 : 18)) {
@@ -296,6 +329,18 @@ export class RoomWindow extends WindowBase {
       title = LearningClipUtils.clip(title, WindowBase.MAX_TITLE_LENGTH, "DwtDialogTitle ZxChatWindowTitle");
     }
     this.mTitleLbl.setText(title);
+  }
+
+  public getTitle(): string {
+    return this.mTitleLbl.getText();
+  }
+
+  public setRoomWindowStatusType(type: BuddyStatusType): void {
+    this.mRoomWindowStatusType = type;
+  }
+
+  public getRoomWindowStatusType(): BuddyStatusType {
+    return this.mRoomWindowStatusType;
   }
 
   public setIcon(icon: string): void {
@@ -327,6 +372,12 @@ export class RoomWindow extends WindowBase {
   }
 
   public popup(point?: DwtPoint, setExpand?: boolean): void {
+    if (this.mPopupLocked) {
+      return;
+    }
+    this.mConversation.mountComponent();
+    this.mUnsubscribe = this.mStore.subscribe(() => this.checkState());
+    this.checkState();
     if (
       this.getConversationContainer().parent.getHTMLElId() === this.getHTMLElId()
     ) {
@@ -346,6 +397,7 @@ export class RoomWindow extends WindowBase {
   }
 
   public popdown(): void {
+    this.mUnsubscribe();
     super.popdown();
     this.mOnWindowClosedCallbacks.run(this);
   }
@@ -413,15 +465,55 @@ export class RoomWindow extends WindowBase {
     return RoomWindow.recursiveFocus(this);
   }
 
-  public getLastRoomActivity(): number {
-    return (this.mLastPopup > this.mRoom.getLastActivity()) ? this.mLastPopup : this.mRoom.getLastActivity();
-  }
-
   public getOriginalZIndex(): number {
     return WindowBase.Z_INDEX;
   }
 
-  private keyboardListener(ev: Event): boolean {
+  public lockPopup(): void {
+    this.mPopupLocked = true;
+  }
+
+  public unlockPopup(): void {
+    this.mPopupLocked = false;
+  }
+
+  protected checkState(): void {
+    if (typeof this.mStore.getState().buddyList[this.getId()] !== "undefined") {
+      const buddyNickname: string = this.mStore.getState().buddyList[this.getId()].nickname;
+      if (buddyNickname !== this.mTitleLbl.getText()) {
+        this.setTitle(buddyNickname);
+      }
+      const buddyStatus: IOpenChatBuddyStatus =
+        BuddyStatusUtils.getBestStatus(this.mStore.getState().buddyList[this.getId()]);
+      if (this.mRoomWindowStatusType !== buddyStatus.type) {
+        this.mRoomWindowStatusType = buddyStatus.type;
+        this.setIcon(BuddyStatus.getCSS(this.mRoomWindowStatusType));
+      }
+      if (typeof this.mStore.getState().rooms[this.getId()] !== "undefined") {
+        const receivedWritingStatus: "reset" | "isWriting" | "hasWritten" =
+          this.mStore.getState().rooms[this.getId()].writingStatus;
+        const currentBuddyWritingStatus: number = this.mBuddyWritingStatuses[this.getId()];
+        if (currentBuddyWritingStatus !== WritingStatusEvent.fromStringToType(receivedWritingStatus)) {
+          this.onBuddyWritingStatus(WritingStatusEvent.fromStringToType(receivedWritingStatus));
+        }
+        const room: IOpenChatRoom = this.mStore.getState().rooms[this.getId()];
+        if (
+          this.mMessages !== room.messages
+          && !room.loadingHistory
+        ) {
+          this.mMessages = room.messages;
+          if (this.isFocused()) {
+            this.checkAndSendRoomAck();
+          }
+        }
+      }
+    } else {
+      this.popdown();
+      this.mUnsubscribe();
+    }
+  }
+
+  protected keyboardListener(ev: Event): boolean {
     this.stopBlink();
     const event: DwtKeyEvent = new DwtKeyEvent();
     event.setFromDhtmlEvent(DwtUiEvent.getEvent(ev));
@@ -444,7 +536,22 @@ export class RoomWindow extends WindowBase {
       message = StringUtils.trim(message);
       this.mInputField.clear();
       if (message.length > 0) {
-        this.mRoom.sendMessage(message);
+        const tempMessageId: string = Math.random().toString(36).substring(2, 10);
+        const roomType: "chat" | string = this.mStore.getState().rooms[this.getId()].roomType;
+        this.mStore.dispatch<IAddMessageToRoomAction<IOpenChatTextMessage>>({
+          jid: this.getId(),
+          message: {
+            content: message,
+            date: this.mDateProvider.getNow(),
+            destination: this.getId(),
+            id: tempMessageId,
+            roomType: this.mStore.getState().rooms[this.getId()].roomType,
+            sender: `${roomType === "chat" ? "" : `${this.getId()}/`}${this.mStore.getState().sessionInfo.username}`,
+            type: "message",
+          },
+          type: "SEND_MESSAGE_TO_ROOM",
+        });
+        // this.mRoom.sendMessage(message);
         if (typeof this.mWritingTimerCallback !== "undefined" && this.mWritingTimerCallback !== null) {
           this.mWritingTimerCallback.stop();
           this.mWritingTimerCallback = null;
@@ -453,7 +560,7 @@ export class RoomWindow extends WindowBase {
     } else if (StringUtils.trim(this.mInputField.getValue()).length > 0) {
       writingValue = WritingStatusEvent.WRITING;
       if (typeof this.mWritingTimerCallback === "undefined" || this.mWritingTimerCallback === null) {
-        this.mRoom.sendWritingStatus(writingValue);
+        this.sendWritingStatus(writingValue);
         this.mWritingTimerCallback = this.mTimedCallbackFactory.createTimedCallback(
           new Callback(
             this,
@@ -468,9 +575,29 @@ export class RoomWindow extends WindowBase {
       (typeof this.mWritingTimerCallback === "undefined" || this.mWritingTimerCallback === null) &&
       (DwtKeyEvent.KEY_DELETE || DwtKeyEvent.KEY_BACKSPACE)
     ) {
-      this.mRoom.sendWritingStatus(writingValue);
+      this.sendWritingStatus(writingValue);
     }
     return false;
+  }
+
+  protected onFocus(): void {
+    this.checkAndSendRoomAck();
+  }
+
+  protected checkAndSendRoomAck(): void {
+    const room: IOpenChatRoom = this.mStore.getState().rooms[this.mRoomJid];
+    if (typeof room !== "undefined" && room.messages.length > 0) {
+      const message: IOpenChatMessage = room.messages[room.messages.length - 1];
+      const username: string = this.mStore.getState().sessionInfo.username;
+      if (message.sender !== username) {
+        this.mStore.dispatch<ISendRoomAckAction>({
+          jid: this.mRoomJid,
+          message_id: message.id,
+          message_time: message.date,
+          type: "SEND_ROOM_ACK",
+        });
+      }
+    }
   }
 
   private onWritingStatusTimeout(): void {
@@ -480,30 +607,38 @@ export class RoomWindow extends WindowBase {
       this.mRestartTimerCallbackOnTimeout = false;
     } else {
       if (StringUtils.trim(this.mInputField.getValue()).length > 0) {
-        this.mRoom.sendWritingStatus(WritingStatusEvent.WRITTEN);
+        this.sendWritingStatus(WritingStatusEvent.WRITTEN);
       } else {
-        this.mRoom.sendWritingStatus(WritingStatusEvent.RESET);
+        this.sendWritingStatus(WritingStatusEvent.RESET);
       }
       this.mWritingTimerCallback = null;
     }
   }
 
+  private sendWritingStatus(writingValue: number): void {
+    this.mStore.dispatch<IRoomAction>({
+      jid: this.getId(),
+      type: "SEND_WRITING_STATUS",
+      writingStatus: WritingStatusEvent.fromTypeToString(writingValue),
+    });
+  }
+
   private onAddMessageSent(message: MessageSent): void {
-    this.mConversation.addMessageSent(message);
+    // this.mConversation.addMessageSent(message);
   }
 
   private onAddMessageSentFromAnotherSession(message: MessageSent): void {
-    this.mConversation.addMessageSent(message);
+    // this.mConversation.addMessageSent(message);
   }
 
   private onAddMessageReceived(message: MessageReceived): void {
     this.mOnMessageReceivedCallbacks.run(this, message);
-    this.mConversation.addMessageReceived(message);
+    // this.mConversation.addMessageReceived(message);
   }
 
-  private onBuddyWritingStatus(writingStatus: MessageWritingStatus): void {
-    this.mBuddyWritingStatuses[writingStatus.getSender().getId()] = writingStatus;
-    this.updateWritingDots(writingStatus.getValue());
+  private onBuddyWritingStatus(writingStatusValue: number): void {
+    this.mBuddyWritingStatuses[this.getId()] = writingStatusValue;
+    this.updateWritingDots(writingStatusValue);
   }
 
   private dragStart(position: DwtPoint): void {
@@ -547,22 +682,22 @@ export class RoomWindow extends WindowBase {
     return caretOffset;
   }
 
-  private onMemberRemoved(buddy: IBuddy): void {
-    // Commented: while doing a register session the reset of the buddy list results in closing all the room windows
-    // if (this.mRoom.getMembers().length < 1) {
-    //   this.popdown();
-    // }
-  }
+  // private onMemberRemoved(buddy: IBuddy): void {
+  //   // Commented: while doing a register session the reset of the buddy list results in closing all the room windows
+  //   // if (this.mRoom.getMembers().length < 1) {
+  //   //   this.popdown();
+  //   // }
+  // }
 
-  private onBuddyStatusChange(buddy: IBuddy, status: IBuddyStatus): void {
-    this.mConversation.addMessageStatus(buddy, status);
-    this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.BuddyStatusChangedPlugin, status);
-  }
+  // private onBuddyStatusChange(buddy: IBuddy, status: IBuddyStatus): void {
+  //   // this.mConversation.addMessageStatus(buddy, status);
+  //   this.mRoomWindowPluginManager.triggerPlugins(RoomWindow.BuddyStatusChangedPlugin, status);
+  // }
 
-  private onRoomStatusChange(status: IBuddyStatus): void {
-    const css: string = status.getCSS();
-    this.setIcon(css);
-  }
+  // private onRoomStatusChange(status: IBuddyStatus): void {
+  //   const css: string = BuddyStatus.getCSS(status.getType());
+  //   this.setIcon(css);
+  // }
 
   private onEmojiSelected(ev: Event, emoji: IEmojiData): void {
     this.addTextToInput(emoji.name);

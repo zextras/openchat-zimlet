@@ -15,10 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
 import {BuddyList} from "../../client/BuddyList";
 import {Group} from "../../client/Group";
 import {IBuddy} from "../../client/IBuddy";
-import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {Constants} from "../../Constants";
 import {Callback} from "../../lib/callbacks/Callback";
 import {LogEngine} from "../../lib/log/LogEngine";
@@ -26,6 +26,7 @@ import {Logger} from "../../lib/log/Logger";
 import {IChatFieldPlugin} from "../../lib/plugin/ChatFieldPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
 import {ZimbraUtils} from "../../lib/ZimbraUtils";
+import {IOpenChatState} from "../../redux/IOpenChatState";
 import {Setting} from "../../settings/Setting";
 import {IGroupData, SettingsManager} from "../../settings/SettingsManager";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
@@ -51,10 +52,11 @@ import {StatusSelector} from "../widgets/StatusSelector";
 import {SmoothRoomWindowMover} from "./SmoothRoomWindowMover";
 import {WindowBase} from "./WindowBase";
 
+import "./MainWindow.scss";
+
 export class MainWindow extends WindowBase {
 
   public static ChatImageFieldPlugin = "Main Window Chat Image";
-  public static StatusChangedPlugin = "Main Window Status Changed";
   public static SetSortMethodPlugin = "Main Window Set Sort Method";
   public static BrandPlugin = "Main Window Brand";
 
@@ -76,7 +78,6 @@ export class MainWindow extends WindowBase {
   private mBuddyListTree: BuddyListTree;
 
   private mMainWindowPluginManager: ChatPluginManager;
-  private mOnStatusSelectedCallbacks: Array<(status: IBuddyStatus) => void>;
   private mOnAddFriendSelectionCallbacks: Array<() => void>;
   private mOnAddGroupSelectionCallbacks: Array<() => void>;
   private mOnSettingsSelectionCallbacks: Array<() => void>;
@@ -101,12 +102,14 @@ export class MainWindow extends WindowBase {
   private mSearchButton: DwtButton;
   private mSearchToolBar: DwtToolBar;
   private mTitleExpandBar: DwtToolBar;
+  private mStore: Store<IOpenChatState>;
 
   constructor(
     appCtxt: ZmAppCtxt,
     settingsManager: SettingsManager,
     buddyList: BuddyList,
     mainWindowPluginManager: ChatPluginManager,
+    store: Store<IOpenChatState>,
   ) {
 
     super(
@@ -124,10 +127,10 @@ export class MainWindow extends WindowBase {
     this.mMainWindowPluginManager.switchOn(this);
     this.mMainWindowPluginManager.registerFieldPlugin(MainWindowSortFunction.FieldName, new MainWindowSortFunction());
     this.mMainWindowPluginManager.setFieldPlugin(MainWindowSortFunction.FieldName, new SortFcns());
+    this.mStore = store;
     this.mBrandIcon  = MainWindow.DEBRAND_ICON;
     this.mBrandName = "Chat";
     this.Log = LogEngine.getLogger(LogEngine.CHAT);
-    this.mOnStatusSelectedCallbacks = [];
     this.mOnAddFriendSelectionCallbacks = [];
     this.mOnAddGroupSelectionCallbacks = [];
     this.mOnSettingsSelectionCallbacks = [];
@@ -185,8 +188,7 @@ export class MainWindow extends WindowBase {
     //     "45px"
     //   );
     // }
-    this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar);
-    this.mStatusSelector.onStatusSelected(new Callback(this, this.statusSelected));
+    this.mStatusSelector = new StatusSelector(this.mStatusSelectorToolbar, this.mStore);
     this.mStatusSelector.setSize(
       `${MainWindow.WIDTH}px`,
       (ZimbraUtils.isUniversalUI()) ? Dwt.DEFAULT : "32px",
@@ -255,16 +257,6 @@ export class MainWindow extends WindowBase {
 
   public enableDisableMainMenuButton(enable: boolean): void {
     this.mMainMenuButton.setEnabled(enable);
-  }
-
-  public setUserStatuses(userStatuses: IBuddyStatus[]): void {
-    this.mStatusSelector.clear();
-    this.mStatusSelector.setOptionStatuses(userStatuses);
-  }
-
-  public setCurrentStatus(userStatus: IBuddyStatus): void {
-    this.mMainWindowPluginManager.triggerPlugins(MainWindow.StatusChangedPlugin, userStatus);
-    this.mStatusSelector.setCurrentStatus(userStatus);
   }
 
   public setSortMethod(sortMethod: string): void {
@@ -336,10 +328,6 @@ export class MainWindow extends WindowBase {
     this.setVisible(true);
     super.popup(this.getDefaultPosition());
     this.mBuddyListTree.setExpanded(true, false);
-  }
-
-  public onStatusSelected(cbk: (status: IBuddyStatus) => void): void {
-    this.mOnStatusSelectedCallbacks.push(cbk);
   }
 
   public onAddFriendOptionSelected(cbk: () => void): void {
@@ -418,6 +406,10 @@ export class MainWindow extends WindowBase {
     this.mBuddyListTree.triggerSortGroups();
   }
 
+  public isOnDock(): boolean {
+    return this.mOnDock;
+  }
+
   // Don't drag me! >:(
   public _initializeDragging(): void { return; }
 
@@ -482,10 +474,6 @@ export class MainWindow extends WindowBase {
     }
   }
 
-  private statusSelected(status: IBuddyStatus): void {
-    for (const cbk of this.mOnStatusSelectedCallbacks) { cbk(status); }
-  }
-
   private addFriendOptionSelected(): void {
     for (const cbk of this.mOnAddFriendSelectionCallbacks) { cbk(); }
   }
@@ -542,7 +530,8 @@ export class MainWindow extends WindowBase {
     for (const cbk of this.mOnContactDroppedInGroupCallbacks) { cbk(contact, group); }
   }
 
-  private moveToDock(): void {
+  // tslint:disable-next-line:member-ordering
+  public moveToDock(): void {
     if (this.mOnDock) { return; }
     this.mOnDock = true;
     this.handleSidebarResize();
@@ -575,7 +564,8 @@ export class MainWindow extends WindowBase {
     this.popup();
   }
 
-  private moveToSidebar(): void {
+  // tslint:disable-next-line:member-ordering
+  public moveToSidebar(): void {
     if (!this.mOnDock) { return; }
     this.mOnDock = false;
     this.handleSidebarResize();

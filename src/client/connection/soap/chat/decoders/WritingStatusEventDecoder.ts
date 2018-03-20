@@ -15,31 +15,27 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {LeftConversationEvent} from "../../../../events/chat/LeftConversationEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {WritingStatusEvent} from "../../../../events/chat/WritingStatusEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class WritingStatusEventDecoder extends SoapEventDecoder {
+export class WritingStatusEventDecoder extends SoapEventDecoder<WritingStatusEvent|LeftConversationEvent> {
 
-  public mDateProvider: DateProvider;
+  public mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.WRITING_STATUS);
     this.mDateProvider = dateProvider;
   }
 
   public decodeEvent(
-    eventObj: {
-      writingValue: number,
-      from: string,
-      to: string,
-      timestampSent: number,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: IWritingStatusEventObj,
+    originEvent?: IChatEvent,
+  ): WritingStatusEvent|LeftConversationEvent {
     if (eventObj.writingValue === LeftConversationEvent.LEFT_CONVERSATION) {
       return new LeftConversationEvent(
         eventObj.from,
@@ -58,4 +54,11 @@ export class WritingStatusEventDecoder extends SoapEventDecoder {
     }
   }
 
+}
+
+interface IWritingStatusEventObj extends ISoapEventObject {
+  writingValue: number;
+  from: string;
+  to: string;
+  timestampSent: number;
 }

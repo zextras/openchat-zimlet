@@ -1,0 +1,128 @@
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+
+@import "../OpenChatCommonClasses";
+@import "../Variables";
+
+$amessage-bg-color: white;
+
+@mixin AMessage($direction) {
+  margin: (12/8)*1em 0;
+  min-height: (40/8)*1em;
+  font-size: 1em;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-shrink: 0;
+
+  &-info {
+    font-size: (12/8)*1em;
+    @include default-font-family();
+    display: flex;
+    flex-direction: $direction;
+  }
+
+  &-info-sender {
+    @include oc-e-text;
+    @include default-font-family-bold();
+    font-size: 1em;
+  }
+
+  &-content {
+    font-size: 1em;
+    display: flex;
+    flex-direction: $direction;
+  }
+
+  &-content-container {
+    background-color: $amessage-bg-color;
+    padding: (16/14)*1em (24/14)*1em;
+    white-space: pre-wrap;
+    word-break: break-all;
+    word-wrap: break-word;
+    font-size: (14/8)*1em;
+    @include default-font-family();
+  }
+
+  //@media (min-width: 576px) {
+  //  .&-content-container {
+  //    max-width: 75%;
+  //  }
+  //}
+
+}
+
+.AMessage-info-date {
+  margin-left: (8/12)*1em;
+  margin-right: (8/12)*1em;
+  opacity: 0.7;
+  font-size: 1em;
+}
+
+.AMessage-status {
+  font-size: 1em;
+  display: flex;
+  flex-direction: column;
+  margin: (4/8)*1em (16/8)*1em;
+}
+
+.AMessage-status-icon {
+  font-size: 2em;
+  display: flex;
+  flex-direction: row;
+}
+
+.AMessage-status-icon > i {
+  cursor: pointer;
+}
+
+.AMessage-status-icon> i.fa-circle-notch {
+}
+
+.AMessage-status-icon > i.fa-exclamation-circle {
+  color: #CE2C2C;
+}
+
+.AMessage-status-icon > i.fa-stack {
+  font-size: .5em;
+}
+
+.AMessage-status-icon > i.fa-stack > i.fa-square {
+  color: $amessage-bg-color;
+}
+
+.AMessage-status-icon-first-check {
+  font-size: (44/32)*1em;
+  text-align: left;
+  color: $text-color;
+}
+
+.AMessage-status-icon-first-check-shadow {
+  font-size: (44/32)*1em;
+  text-align: left;
+  padding-left: (3/44)*1em;
+}
+
+.AMessage-status-icon-second-check {
+  font-size: (44/32)*1em;
+  color: $text-color;
+  text-align: left;
+  padding-left: (16/44)*1em;
+}
+
+.AMessage-status-icon-read-color {
+  color: #2B9FD9;
+}

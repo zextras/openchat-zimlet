@@ -16,21 +16,19 @@
  */
 
 import {Callback} from "../../lib/callbacks/Callback";
-import {BasicEvent} from "../events/BasicEvent";
-import {IConnectionEventParser} from "../events/parsers/IConnectionEventParser";
+import {IBasicEvent} from "../events/IBasicEvent";
 
 export interface IConnectionManager {
 
-  sendEvent(event: BasicEvent, callback: Callback, errorCallback: Callback): void;
-  onEvent(callback: Callback): void;
-  onError(callback: Callback): void;
-  onEndProcessResponses(callback: Callback): void;
-  onBadGatewayError(callback: Callback): void;
-  onNoSuchChatSession(callback: Callback): void;
-  onHTTPError(callback: Callback): void;
-  onNetworkError(callback: Callback): void;
+  sendEvent(event: IBasicEvent, callback: Callback, errorCallback?: Callback): void;
+  onEvent(callback: (event: IBasicEvent) => void): void;
+  // onError(callback: Callback): void;
+  onEndProcessResponses(callback: () => void): void;
+  onBadGatewayError(callback: (err: Error) => void): void;
+  onNoSuchChatSession(callback: (err: Error) => void): void;
+  onHTTPError(callback: (err: Error) => void): void;
+  onNetworkError(callback: (err: Error) => void): void;
   openStream(): void;
   closeStream(): void;
-  getEventParser(): IConnectionEventParser;
 
 }

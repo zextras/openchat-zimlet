@@ -17,6 +17,8 @@
 
 import {IJQueryPlugin} from "./JQueryPlugin";
 
+import "./JQueryPlugins.scss";
+
 declare let $: any;
 
 export class JQueryPlugins {

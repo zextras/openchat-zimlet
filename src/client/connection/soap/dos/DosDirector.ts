@@ -16,11 +16,11 @@
  */
 
 import {Callback} from "../../../../lib/callbacks/Callback";
-import {DateProvider} from "../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../lib/IDateProvider";
 
 export class DosDirector {
 
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mLimit: number;
   private mTimeSpan: number;
   private mOnAccept: Callback;
@@ -29,7 +29,7 @@ export class DosDirector {
   private mCount: number = 0;
 
   constructor(
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
     timeSpan: number,
     limit: number,
     onAccept: Callback,

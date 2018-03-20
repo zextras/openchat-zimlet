@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JSON3} from "../../../libext/json3";
+import {JSON3 as JSON} from "../../../libext/json3";
 
 import {Callback} from "../../../lib/callbacks/Callback";
 import {AjxCallback} from "../../../zimbra/ajax/boot/AjxCallback";
@@ -96,7 +96,7 @@ export class SoapRequest implements IRequest {
       this.mObject[key] = value;
       this.mSoapDocParams.soapDoc.set(key, value);
     } else if (value instanceof Object) {
-      const val: string = JSON3.stringify(value);
+      const val: string = JSON.stringify(value);
       this.mObject[key] = val;
       this.mSoapDocParams.soapDoc.set(key, val);
     } else if (typeof value === "boolean") {
@@ -138,7 +138,7 @@ export class SoapRequest implements IRequest {
 
     } else if (typeof resp !== "undefined" && typeof resp.responses !== "undefined") {
       try {
-        const responses = JSON3.parse(resp.responses);
+        const responses = JSON.parse(resp.responses);
         if (typeof this.mCallback !== "undefined") {
           this.mCallback.run(responses);
         }

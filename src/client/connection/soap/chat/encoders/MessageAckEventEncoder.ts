@@ -15,30 +15,29 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {MessageAckEvent} from "../../../../events/chat/MessageAckEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {RoomAckEvent} from "../../../../events/chat/RoomAckEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class MessageAckEventEncoder extends SoapEventEncoder {
+export class MessageAckEventEncoder extends SoapEventEncoder<RoomAckEvent> {
 
   constructor() {
-    super(OpenChatEventCode.MESSAGE_ACK);
+    super(OpenChatEventCode.ROOM_ACK);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: MessageAckEvent = event as MessageAckEvent;
-    const tmpIds: string[] = ev.getMessageIds();
-    const ids: string[] = [];
-
-    for (const tmpId of tmpIds) {
-      ids.push(tmpId);
-    }
-
-    return {
-      message_ids: ids,
+  protected getEventDetails(ev: RoomAckEvent): {} {
+    const evObj: {
+      message_date: number;
+      message_id?: string;
+      target_address: string;
+    } = {
+      message_date: ev.getCreationDate().getTime(),
       target_address: ev.getDestination(),
     };
+    if (ev.getMessageId() !== null) {
+      evObj.message_id = ev.getMessageId();
+    }
+    return evObj;
   }
 
 }

@@ -15,30 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IBuddy} from "../../IBuddy";
 import {IChatClient} from "../../IChatClient";
-import {MessageReceived} from "../../MessageReceived";
 import {SuperSecretEvent} from "../chat/SuperSecretEvent";
-import {ChatEvent} from "../ChatEvent";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class SuperSecretEventHandler implements IChatEventHandler {
+export class SuperSecretEventHandler implements IChatEventHandler<SuperSecretEvent> {
 
   public getEventCode(): number {
     return SuperSecretEvent.ID;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const superSecretEvent: SuperSecretEvent = chatEvent as SuperSecretEvent;
-    const origin: string = superSecretEvent.getSender();
-    const originBuddy: IBuddy = client.getBuddyList().getBuddyById(origin);
-    const messageReceived: MessageReceived = new MessageReceived(
-      superSecretEvent.getMessageId(),
-      originBuddy,
-      superSecretEvent.getDate(),
-      superSecretEvent.getMessage(),
-    );
-    client.notifyMessageReceived(messageReceived);
+  public handleEvent(ev: SuperSecretEvent, client: IChatClient): boolean {
     client.Log.debug(event, "Received SecretTestEvent");
     return true;
   }

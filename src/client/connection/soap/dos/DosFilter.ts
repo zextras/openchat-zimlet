@@ -17,7 +17,7 @@
 
 import {Callback} from "../../../../lib/callbacks/Callback";
 import {TimedCallbackFactory} from "../../../../lib/callbacks/TimedCallbackFactory";
-import {DateProvider} from "../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../lib/IDateProvider";
 import {IRequest} from "../../IRequest";
 import {DosDirector} from "./DosDirector";
 import {DosFilterAccumulator} from "./DosFilterAccumulator";
@@ -29,14 +29,14 @@ export class DosFilter implements IDosFilter {
   public static LIMIT: number = 10;
 
   private mTimedCallbackFactory: TimedCallbackFactory;
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mDosDirector: DosDirector;
   private mAccumulator: DosFilterAccumulator;
 
   private mEnabled: boolean = true;
 
   constructor(
-    dateProvider: DateProvider,
+    dateProvider: IDateProvider,
     timedCallbackFactory: TimedCallbackFactory,
   ) {
     this.mDateProvider = dateProvider;

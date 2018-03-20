@@ -17,20 +17,17 @@
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {SetStatusEvent} from "../../../../events/chat/SetStatusEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class SetStatusEventEncoder extends SoapEventEncoder {
+export class SetStatusEventEncoder extends SoapEventEncoder<SetStatusEvent> {
 
   constructor() {
     super(OpenChatEventCode.SET_STATUS);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: SetStatusEvent = event as SetStatusEvent;
+  protected getEventDetails(ev: SetStatusEvent): {} {
     return {
-      status_id: ev.getStatusId(), // ,
-      // rooms: ev.getRooms()
+      status_id: ev.getStatusId(),
     };
   }
 

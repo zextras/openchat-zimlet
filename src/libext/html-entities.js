@@ -15,17 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports",
-    "html-entities"
-  ],
-  function (
-    require,
-    exports,
-    html_entities_1
-  ) {
-    exports.AllHtmlEntities = html_entities_1.AllHtmlEntities;
-  }
-);
+var html_entities = require("html-entities");
+module.exports = {
+  AllHtmlEntities: html_entities.AllHtmlEntities
+};

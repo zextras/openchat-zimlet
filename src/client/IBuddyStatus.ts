@@ -36,9 +36,6 @@ export interface IBuddyStatus {
   /** Get the priority of the status */
   getStatusPriority(): number;
 
-  /** Get the CSS style associated to a status type */
-  getCSS(): string;
-
   /** Get status message label, this tag is used to be translated */
   getMessageLabel(returnReal?: boolean): string;
 

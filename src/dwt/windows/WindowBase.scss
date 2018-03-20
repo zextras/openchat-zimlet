@@ -1,0 +1,112 @@
+//
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+//
+
+@import "../../images/com_zextras_chat_open_sprite";
+@import "../../com_zextras_chat_open";
+
+.ZxChatWindowIcon {
+  padding: 6px;
+  width: 18px;
+  height: 18px;
+}
+
+.ZxChatWindowTitle {
+  padding-left: 0;
+  padding-right: 0;
+  vertical-align: middle;
+}
+
+.ImgZxChat_close-legacy {
+  @extend .Img16;
+  @include sprite($close);
+}
+
+.ImgZxChat_minimize {
+  @extend .Img16;
+  @include sprite($resize-in);
+}
+
+.ImgZxChat_expand {
+  @extend .Img16;
+  @include sprite($resize-out);
+}
+
+.ZxChatWindowInnerContainer {
+  padding: 2px 0 0 0;
+}
+
+.FixBordersForZ7 {
+  padding: 0;
+}
+
+.ZxChat_TitleBar {
+  background-color: #007dc3;
+  height: 42px;
+}
+
+.ZxChat_TitleBar_legacy {
+  background-color: #007dc3;
+  height: 26px;
+}
+
+.WindowBaseTitleBar {
+  color: #ffffff;
+  padding: 7px 0 11px 14px;
+}
+
+.WindowBaseTitleBar > table {
+  color: #ffffff;
+}
+
+.WindowBaseTitleBar-legacy-ui {
+  @extend .WindowBaseTitleBar;
+  padding: 12px 0 11px 14px;
+}
+
+.WindowBaseTitleBar-legacy-ui > table > tbody > tr > .ZLeftIcon DIV {
+  margin: 0;
+}
+
+.ZxChat_TitleBar_Button,
+.ZxChat_TitleBar_Button_legacy {
+  background: none;
+  border: none;
+}
+
+.ZxChat_TitleBar_Button > .ZToolbarButtonBorder {
+  border-radius: 0;
+  border-collapse: separate;
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.ZxChat_TitleBar_Button_legacy > .ZToolbarButtonBorder {
+  border-radius: 0;
+  border-collapse: separate;
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.WindowOuterContainer *:focus {
+  outline: none;
+}

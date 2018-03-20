@@ -15,11 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {BasicEvent} from "../BasicEvent";
+import {IBasicEvent} from "../IBasicEvent";
 
 export interface IConnectionEventParser {
 
-  encodeEvent(connectionEvent: BasicEvent): {};
-  decodeEvent(originEvent: BasicEvent, object: {}): BasicEvent;
+  encodeEvent(connectionEvent: IBasicEvent): {};
+  decodeEvent(originEvent: IBasicEvent, object: {}): IBasicEvent;
 
 }

@@ -15,55 +15,44 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define([
-  "require",
-  "exports",
-  "../zimbra/ajax/boot/AjxEnv",
-  "emojione"
-  ],
-  function (
-    require,
-    exports,
-    AjxEnv_1,
-    emojione_1
-  ) {
-    var AjxEnv = AjxEnv_1.AjxEnv;
+var emojione = require("emojione");
 
-    function setAscii(enable) {
-      emojione_1.ascii = enable;
-    }
-    function setSprites(enable) {
-      emojione_1.sprites = enable;
-    }
-    function setUnicodeAlt(enable) {
-      emojione_1.unicodeAlt = enable;
-    }
-    function setCacheBustParams(params) {
-      emojione_1.cacheBustParam = params;
-    }
-    function setImagePath(path) {
-      emojione_1.imagePathPNG = path + "images/emojione/png/";
-      emojione_1.imagePathSVG = path + "images/emojione/svg/";
-      emojione_1.imagePathSVGSprites = path + "images/emojione/emojione.sprites.svg";
-    }
-    function toImage(emoji) {
-      return emojione_1.toImage(emoji);
-    }
+function setAscii(enable) {
+  emojione.ascii = enable;
+}
+function setSprites(enable) {
+  emojione.sprites = enable;
+}
+function setUnicodeAlt(enable) {
+  emojione.unicodeAlt = enable;
+}
+function setCacheBustParams(params) {
+  emojione.cacheBustParam = params;
+}
+function setImagePath(path) {
+  emojione.imagePathPNG = path + "images/emojione/png/";
+  emojione.imagePathSVG = path + "images/emojione/svg/";
+  emojione.imagePathSVGSprites = path + "images/emojione/emojione.sprites.svg";
+}
+function toImage(emoji) {
+  return emojione.toImage(emoji);
+}
 
-    exports.emojione = {
-      setAscii: setAscii,
-      setSprites: setSprites,
-      setUnicodeAlt: setUnicodeAlt,
-      setCacheBustParams: setCacheBustParams,
-      setImagePath: setImagePath,
-      asciiRegexp: new RegExp(emojione_1.asciiRegexp, "g"),
-      unicodeRegexp: new RegExp(emojione_1.unicodeRegexp, "g"),
-      shortnamesRegexp: new RegExp(emojione_1.shortnames, "g"),
-      emojioneList: emojione_1.emojioneList,
-      asciiList: emojione_1.asciiList,
-      jsEscapeMap: emojione_1.jsEscapeMap
-    };
-    exports.toImage = toImage;
-    exports.emojioneList = emojione_1.emojioneList;
-  }
-);
+var exports = {};
+exports.emojione = {
+  setAscii: setAscii,
+  setSprites: setSprites,
+  setUnicodeAlt: setUnicodeAlt,
+  setCacheBustParams: setCacheBustParams,
+  setImagePath: setImagePath,
+  asciiRegexp: new RegExp(emojione.asciiRegexp, "g"),
+  unicodeRegexp: new RegExp(emojione.unicodeRegexp, "g"),
+  shortnamesRegexp: new RegExp(emojione.shortnames, "g"),
+  emojioneList: emojione.emojioneList,
+  asciiList: emojione.asciiList,
+  jsEscapeMap: emojione.jsEscapeMap
+};
+exports.toImage = toImage;
+exports.emojioneList = emojione.emojioneList;
+
+module.exports = exports;

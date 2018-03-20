@@ -17,18 +17,16 @@
 
 import {IChatClient} from "../../../IChatClient";
 import {FriendshipBlockedEvent} from "../../chat/friendship/FriendshipBlockedEvent";
-import {ChatEvent} from "../../ChatEvent";
 import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipBlockedHandler implements IChatEventHandler {
+export class FriendshipBlockedHandler implements IChatEventHandler<FriendshipBlockedEvent> {
 
   public getEventCode(): number {
     return FriendshipBlockedEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const friendshipEvent = chatEvent as FriendshipBlockedEvent;
-    client.Log.warn(event, "Event deprecated");
+  public handleEvent(ev: FriendshipBlockedEvent, client: IChatClient): boolean {
+    client.Log.warn(ev, "Event deprecated");
     return true;
   }
 }

@@ -16,14 +16,13 @@
  */
 
 import {Map} from "../../../lib/Map";
+import {RoomWindowType} from "../RoomWindow";
 
-import {RoomWindow} from "../RoomWindow";
+export class WindowsMap extends Map<RoomWindowType> {
 
-export class WindowsMap extends Map {
-
-  public put(key: string|RoomWindow, value?: any): any;
+  public put(key: string|RoomWindowType, value?: any): any;
   public put(key: any, value?: any): any {
-    const wnd: RoomWindow = key;
+    const wnd: RoomWindowType = key;
     return super.put(wnd.getId(), wnd);
   }
 

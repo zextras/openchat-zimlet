@@ -15,7 +15,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export class BasicEvent {
+import {IBasicEvent} from "./IBasicEvent";
+
+export class BasicEvent implements IBasicEvent {
 
   private mData: any = undefined;
   private mHasResponse: boolean;

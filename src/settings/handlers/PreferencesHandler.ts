@@ -112,7 +112,7 @@ export class PreferencesHandler implements ISettingsHandlerInterface {
     });
     settings.registerSetting(Setting.IM_PREF_IDLE_TIMEOUT, {
       dataType: Setting.D_INT,
-      defaultValue: 10,
+      defaultValue: 20,
       name: "zimbraPrefIMIdleTimeout",
       type: Setting.T_PREF,
     });

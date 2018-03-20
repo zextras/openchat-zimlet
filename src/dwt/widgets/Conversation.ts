@@ -20,20 +20,22 @@ import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {MessageReceived as MessageReceivedObj} from "../../client/MessageReceived";
 import {MessageSent as MessageSentObj} from "../../client/MessageSent";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {MessageReceived} from "./MessageReceived";
 import {MessageSent} from "./MessageSent";
 import {MessageStatus} from "./MessageStatus";
 
+import "./Conversation.scss";
+
 export class Conversation extends DwtComposite {
 
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mTimedCallbackFactory: TimedCallbackFactory;
   private mLastBuddyStatusMessages: {[name: string]: MessageStatus};
 
-  constructor(parent: DwtComposite, dateProvider: DateProvider, timedCallbackFactory: TimedCallbackFactory) {
+  constructor(parent: DwtComposite, dateProvider: IDateProvider, timedCallbackFactory: TimedCallbackFactory) {
     super({
       className: "ZxChat_Conversation",
       parent: parent,

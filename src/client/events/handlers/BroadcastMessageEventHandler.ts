@@ -23,18 +23,16 @@ import {appCtxt} from "../../../zimbra/zimbraMail/appCtxt";
 import {IChatClient} from "../../IChatClient";
 import {BroadcastMessageEvent} from "../chat/BroadcastMessageEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
-import {ChatEvent} from "../ChatEvent";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class BroadcastMessageEventHandler implements IChatEventHandler {
+export class BroadcastMessageEventHandler implements IChatEventHandler<BroadcastMessageEvent> {
 
   public getEventCode(): number {
     return OpenChatEventCode.BROADCAST_MESSAGE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const broadcastMessageEvent: BroadcastMessageEvent = chatEvent as BroadcastMessageEvent;
-    client.Log.warn(broadcastMessageEvent, "Received broadcast message.");
+  public handleEvent(ev: BroadcastMessageEvent, client: IChatClient): boolean {
+    client.Log.warn(ev, "Received broadcast message.");
     const msgDialog: DwtMessageDialog = new DwtMessageDialog({
       buttons: [DwtDialog.DISMISS_BUTTON],
       id: IdGenerator.generateId("ZxChat_BroadcastMessageDialog"),
@@ -42,8 +40,8 @@ export class BroadcastMessageEventHandler implements IChatEventHandler {
     });
     msgDialog.setMessage(
       StringUtils.getMessage("bmsg_from", [
-        broadcastMessageEvent.getSender(),
-        broadcastMessageEvent.getMessage(),
+        ev.getSender(),
+        ev.getMessage(),
       ]),
     );
     msgDialog.popup();

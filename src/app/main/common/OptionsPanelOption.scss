@@ -1,0 +1,54 @@
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+
+@import "../../Variables";
+@import "../../../../../src/app/main/common/OptionsPanelContainer";
+
+.OptionsPanelOption {
+  overflow: hidden;
+  font-size: 1.75em;
+  margin-left: (16/14)*1em;
+  margin-right: (16/14)*1em;
+  padding: (8/14)*1em;
+}
+
+.OptionsPanelOption-selected {
+  @include default-selected-item();
+}
+
+.OptionsPanelOption-selected > .OptionsPanelOption-label {
+  @include default-font-family-semi-bold();
+}
+
+.OptionsPanelOption:hover {
+  @include default-selected-item();
+}
+
+.OptionsPanelOption-label {
+  font-size: 1em;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.OptionsPanelOption-label i {
+  margin-right: (8/14)*1em;
+}
+
+.OptionsPanelOption-panel {
+  font-size: 1em;
+  overflow: hidden;
+}

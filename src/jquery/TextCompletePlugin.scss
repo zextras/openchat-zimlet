@@ -1,0 +1,96 @@
+//
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+//
+
+.textcomplete-dropdown {
+  z-index: 999 !important
+}
+
+.dropdown-menu {
+  color: #333333;
+  border-radius: 2px;
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.5);
+  list-style: none;
+  padding: .3em 0 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: inherit;
+  letter-spacing: .025em;
+}
+
+.dropdown-menu a:hover {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dropdown-menu li {
+  letter-spacing: 0;
+  display: block;
+  float: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.dropdown-menu li:before {
+  display: none;
+}
+
+.dropdown-menu .textcomplete-footer {
+  margin-top: .3em;
+  background: #e6e6e6;
+}
+
+.dropdown-menu .textcomplete-footer a {
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  line-height: 2.1818em;
+  padding-left: 1.8181em;
+  font-size: .84em;
+}
+
+.dropdown-menu .textcomplete-footer .arrow {
+  margin-left: .8em;
+  font-size: 1.3em;
+}
+
+.dropdown-menu li .emojione {
+  vertical-align: middle;
+  font-size: 1.23em;
+  width: 1em;
+  height: 1em;
+  top: -1px;
+  margin: 0 .3em 0 0;
+}
+
+.dropdown-menu li a {
+  display: block;
+  height: 100%;
+  line-height: 1.8em;
+  padding: 0 1.54em 0 .615em;
+}
+
+.dropdown-menu .active,
+.dropdown-menu li:hover {
+  background: #EEEEEE;
+}
+
+.dropdown-menu .active a,
+.dropdown-menu li:hover a {
+  color: inherit;
+}

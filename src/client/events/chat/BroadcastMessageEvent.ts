@@ -18,6 +18,9 @@
 import {ChatEvent} from "../ChatEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
+/**
+ * @deprecated
+ */
 export class BroadcastMessageEvent extends ChatEvent {
 
   private mMessage: string;

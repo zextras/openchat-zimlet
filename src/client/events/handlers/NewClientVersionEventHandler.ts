@@ -15,7 +15,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatZimletBase} from "../../../ChatZimletBase";
 import {IdGenerator} from "../../../dwt/IdGenerator";
 import {Version} from "../../../lib/Version";
 import {DwtDialog} from "../../../zimbra/ajax/dwt/widgets/DwtDialog";
@@ -27,10 +26,9 @@ import {ZimletVersion} from "../../../ZimletVersion";
 import {IChatClient} from "../../IChatClient";
 import {NewClientVersionEvent} from "../chat/NewClientVersionEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
-import {ChatEvent} from "../ChatEvent";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class NewClientVersionEventHandler implements IChatEventHandler {
+export class NewClientVersionEventHandler implements IChatEventHandler<NewClientVersionEvent> {
 
   private mUpdateNotified: boolean;
 
@@ -38,13 +36,12 @@ export class NewClientVersionEventHandler implements IChatEventHandler {
     return OpenChatEventCode.NEW_CLIENT_VERSION;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const newClientVersionEvent: NewClientVersionEvent = chatEvent as NewClientVersionEvent;
-    const version: Version = newClientVersionEvent.getNewClientVersion();
+  public handleEvent(ev: NewClientVersionEvent, client: IChatClient): boolean {
+    const version: Version = ev.getNewClientVersion();
     if (ZimletVersion.TESTING) {
       return true;
     }
-    if (!ChatZimletBase.getVersion().equals(version) && !this.mUpdateNotified) {
+    if (!ZimletVersion.getVersion().equals(version) && !this.mUpdateNotified) {
       this.mUpdateNotified = true;
       const dialog: DwtMessageDialog = new DwtMessageDialog({
         buttons: [DwtDialog.YES_BUTTON, DwtDialog.DISMISS_BUTTON],

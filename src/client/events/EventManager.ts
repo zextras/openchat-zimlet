@@ -18,12 +18,14 @@
 import {LogEngine} from "../../lib/log/LogEngine";
 import {Logger} from "../../lib/log/Logger";
 import {IChatClient} from "../IChatClient";
-import {ChatEvent} from "./ChatEvent";
 import {IChatEventHandler} from "./handlers/IChatEventHandler";
+import {IBasicEvent} from "./IBasicEvent";
+import {IChatEvent} from "./IChatEvent";
+import {IEventManager} from "./IEventManager";
 
-export class EventManager {
+export class EventManager implements IEventManager {
 
-  protected mHandlersMap: {[eventType: number]: IChatEventHandler[]};
+  protected mHandlersMap: {[eventType: number]: Array<IChatEventHandler<IBasicEvent>>};
   private Log: Logger;
 
   constructor() {
@@ -31,20 +33,20 @@ export class EventManager {
     this.Log = LogEngine.getLogger(LogEngine.CHAT);
   }
 
-  public addEventHandler(handler: IChatEventHandler): void {
+  public addEventHandler(handler: IChatEventHandler<IBasicEvent>): void {
     if (!this.mHandlersMap.hasOwnProperty(handler.getEventCode().toString())) {
       this.mHandlersMap[handler.getEventCode()] = [];
     }
     this.mHandlersMap[handler.getEventCode()].push(handler);
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
+  public handleEvent(chatEvent: IBasicEvent, client: IChatClient): boolean {
     let handled: boolean = false;
     // chatEvent can be disposed on page reload
     if (typeof chatEvent !== "undefined" && this.mHandlersMap.hasOwnProperty(chatEvent.getCode().toString())) {
       for (const handler of this.mHandlersMap[chatEvent.getCode()]) {
         try {
-          handled = handler.handleEvent(chatEvent, client);
+          handled = handler.handleEvent(chatEvent as IChatEvent, client);
         } catch (error) {
           this.Log.debug(error, "EventManager.handleEvent");
         }

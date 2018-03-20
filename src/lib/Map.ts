@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-export class Map {
-  private map: {[key: string]: any};
+export class Map<T> {
+  private map: {[key: string]: T};
 
   constructor() {
     this.map = {};
@@ -47,23 +47,23 @@ export class Map {
 
   // containsValue not implemented
 
-  public get(key: string): any {
+  public get(key: string): T {
     return this.map[key];
   }
 
-  public put(key: string, value: any): any {
+  public put(key: string, value: T): T {
     const prevValue = this.map[key];
     this.map[key] = value;
     return prevValue;
   }
 
-  public remove(key: string): any {
+  public remove(key: string): T {
     const prevValue = this.map[key];
     delete this.map[key];
     return prevValue;
   }
 
-  public putAll(map: Map): void {
+  public putAll(map: Map<T>): void {
     let i: string;
     for (i in map) {
       if (!map.hasOwnProperty(i)) { continue; }
@@ -83,9 +83,9 @@ export class Map {
     return this.getKeys();
   }
 
-  public values(): any[] {
+  public values(): T[] {
     let i: string;
-    const values: any[] = [];
+    const values: T[] = [];
     for (i in this.map) {
       if (!this.map.hasOwnProperty(i)) { continue; }
       values.push(this.map[i]);

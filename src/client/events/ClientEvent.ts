@@ -16,8 +16,9 @@
  */
 
 import {BasicEvent} from "./BasicEvent";
+import {IClientEvent} from "./IClientEvent";
 
-export class ClientEvent extends BasicEvent {
+export class ClientEvent extends BasicEvent implements IClientEvent {
 
   private mCreationDate: Date;
 

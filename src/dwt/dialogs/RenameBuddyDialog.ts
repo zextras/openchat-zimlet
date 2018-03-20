@@ -29,13 +29,28 @@ import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 import {ZmDialog, ZmDialogParams} from "../../zimbra/zimbraMail/share/view/dialog/ZmDialog";
 import {IdGenerator} from "../IdGenerator";
 
+import {Store} from "redux";
+import {Group} from "../../client/Group";
+import {IBuddyAction} from "../../redux/action/IBuddyAction";
+import {IOpenChatState} from "../../redux/IOpenChatState";
+
 export class RenameBuddyDialog extends ZmDialog {
   private buddyNicknameEl: HTMLInputElement;
   private shell: DwtControl;
   private client: IChatClient;
   private buddy: IBuddy;
+  private mDataStore: Store<IOpenChatState>;
+  private mBuddyJid: string;
+  private mNickname: string;
 
-  constructor(params: ZmDialogParams, client: IChatClient, buddy: IBuddy) {
+  constructor(
+    params: ZmDialogParams,
+    client: IChatClient,
+    buddy: IBuddy,
+    dataStore?: Store<IOpenChatState>,
+    inAppBuddyJid?: string,
+    inAppNickname?: string,
+  ) {
     params.title = StringUtils.getMessage("friend_rename");
     params.standardButtons = [DwtDialog.OK_BUTTON, DwtDialog.CANCEL_BUTTON];
     params.id = IdGenerator.generateId("ZxChat_RenameBuddyDialog");
@@ -43,6 +58,12 @@ export class RenameBuddyDialog extends ZmDialog {
     this.client = client;
     this.buddy = buddy;
     this.shell = params.parent;
+    this.mBuddyJid = buddy.getId();
+    if (typeof dataStore !== "undefined") {
+      this.mDataStore = dataStore;
+      this.mBuddyJid = inAppBuddyJid;
+      this.mNickname = inAppNickname;
+    }
     this.setView(this._createDialogView());
     this.setButtonListener(DwtDialog.OK_BUTTON, new AjxListener(this, this._okBtnListener));
     this.addListener(DwtEvent.ENTER, new AjxListener(this, this._okBtnListener));
@@ -64,14 +85,28 @@ export class RenameBuddyDialog extends ZmDialog {
       view.getHtmlElement().innerHTML = AjxTemplate.expand("com_zextras_chat_open.Windows#RenameBuddyDialog", data);
     }
     this.buddyNicknameEl = document.getElementById(data.id + "_nickname") as HTMLInputElement;
-    this.buddyNicknameEl.value = AjxStringUtil.htmlDecode(this.buddy.getNickname());
+    if (typeof this.mNickname !== "undefined") {
+      this.buddyNicknameEl.value = AjxStringUtil.htmlDecode(this.mNickname);
+    } else {
+      this.buddyNicknameEl.value = AjxStringUtil.htmlDecode(this.buddy.getNickname());
+    }
     return view;
   }
 
   private _okBtnListener(): void {
     const newName = StringUtils.trim(this.buddyNicknameEl.value);
+    const groups: Group[] = this.client.getBuddyList().getBuddyById(this.mBuddyJid).getGroups();
     if (newName !== "") {
-      this.client.changeBuddyNickname(this.buddy, newName);
+      if (typeof this.mDataStore !== "undefined") {
+        this.mDataStore.dispatch({
+          buddyJid: this.mBuddyJid,
+          group: (groups.length === 0) ? "" : groups[0].getName(),
+          nickname: newName,
+          type: "SET_NICKNAME_SE",
+        } as IBuddyAction);
+      } else {
+        this.client.changeBuddyNickname(this.buddy, newName);
+      }
     }
     this.popdown();
   }

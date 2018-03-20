@@ -16,27 +16,26 @@
  */
 
 import {AllHtmlEntities} from "../libext/html-entities";
-import {MessageType} from "./events/chat/MessageEvent";
 
 export class Message {
 
   private mId: string;
   private mDate: Date;
   private mMessage: string;
-  private mType: MessageType;
+  private mType: "chat" | string;
 
   constructor(id: string = "", date: Date, message: string = "") {
     this.mId = id;
     this.mDate = date;
     this.mMessage = message;
-    this.mType = MessageType.CHAT;
+    this.mType = "chat";
   }
 
   public setId(id: string): void {
     this.mId = id;
   }
 
-  public setType(type: MessageType): void {
+  public setType(type: string): void {
     this.mType = type;
   }
 
@@ -61,7 +60,7 @@ export class Message {
     return this.mDate;
   }
 
-  public getType(): MessageType {
+  public getType(): string {
     return this.mType;
   }
 

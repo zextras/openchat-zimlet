@@ -25,6 +25,8 @@ import {ZmMsg} from "../../zimbra/zimbraMail/ZmMsg";
 import {IdGenerator} from "../IdGenerator";
 import {GroupTreeItem} from "./GroupTreeItem";
 
+import "./GroupTreeItemActionMenuFactory.scss";
+
 export class GroupTreeItemActionMenuFactory {
 
   public static AddMenuItemPlugin: string = "GroupTreeItem Action Menu Add Menu Entry";

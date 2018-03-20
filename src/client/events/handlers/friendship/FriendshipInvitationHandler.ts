@@ -15,39 +15,32 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatZimletBase} from "../../../../ChatZimletBase";
 import {Buddy} from "../../../Buddy";
-import {BuddyStatusImp} from "../../../BuddyStatus";
+import {BuddyStatus} from "../../../BuddyStatus";
 import {BuddyStatusType} from "../../../BuddyStatusType";
 import {IBuddy} from "../../../IBuddy";
 import {IChatClient} from "../../../IChatClient";
 import {FriendshipInvitationEvent} from "../../chat/friendship/FriendshipInvitationEvent";
-import {ChatEvent} from "../../ChatEvent";
 import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipInvitationHandler implements IChatEventHandler {
+export class FriendshipInvitationHandler implements IChatEventHandler<FriendshipInvitationEvent> {
 
-  private mZimletContext: ChatZimletBase;
-
-  constructor(zimletContext: ChatZimletBase) {
-    this.mZimletContext = zimletContext;
-  }
+  constructor() {}
 
   public getEventCode(): number {
     return FriendshipInvitationEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const friendshipEvent = chatEvent as FriendshipInvitationEvent;
+  public handleEvent(ev: FriendshipInvitationEvent, client: IChatClient): boolean {
     const buddyList = client.getBuddyList();
-    let buddy: IBuddy = buddyList.getBuddyById(friendshipEvent.getBuddyId());
+    let buddy: IBuddy = buddyList.getBuddyById(ev.getBuddyId());
     if (buddy == null) {
-      buddy = new Buddy(friendshipEvent.getBuddyId(), friendshipEvent.getNickname());
+      buddy = new Buddy(ev.getBuddyId(), ev.getNickname());
       const defaultGroup = buddyList.getDefaultGroup();
       buddy.addGroup(defaultGroup);
       defaultGroup.addBuddy(buddy);
     }
-    buddy.setStatus(new BuddyStatusImp(BuddyStatusType.NEED_RESPONSE));
+    buddy.setStatus(new BuddyStatus(BuddyStatusType.NEED_RESPONSE));
     client.friendshipInvitationReceived(buddy);
     return true;
   }

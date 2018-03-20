@@ -15,17 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports",
-    "json-prune"
-  ],
-  function (
-    require,
-    exports,
-    json_prune_1
-  ) {
-    exports.json_prune = json_prune_1;
-  }
-);
+var json_prune = require("json-prune");
+module.exports = {
+  json_prune: json_prune
+};

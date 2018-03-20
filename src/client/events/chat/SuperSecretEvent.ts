@@ -15,8 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JSON3} from "../../../libext/json3";
-import {MessageEvent, MessageType} from "./MessageEvent";
+import {JSON3 as JSON} from "../../../libext/json3";
+import {MessageEvent} from "./MessageEvent";
 
 export class SuperSecretEvent extends MessageEvent {
 
@@ -35,7 +35,7 @@ export class SuperSecretEvent extends MessageEvent {
       sender,
       destination,
       "{}",
-      MessageEvent.convertFromMessageType(MessageType.CHAT),
+      "chat",
       creationDate,
       creationDate,
     );
@@ -47,7 +47,7 @@ export class SuperSecretEvent extends MessageEvent {
     obj.from = this.getSender();
     obj.to = this.getDestination();
     obj.timestampSent = this.getDate().getTime();
-    this.mMessage = JSON3.stringify(obj, null, 2);
+    this.mMessage = JSON.stringify(obj, null, 2);
   }
 
 }

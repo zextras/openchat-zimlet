@@ -16,9 +16,9 @@
  */
 
 import {IChatClient} from "../../IChatClient";
-import {ChatEvent} from "../ChatEvent";
+import {IBasicEvent} from "../IBasicEvent";
 
-export interface IChatEventHandler {
+export interface IChatEventHandler<T extends IBasicEvent> {
   getEventCode(): number;
-  handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean;
+  handleEvent(ev: T, client: IChatClient): boolean;
 }

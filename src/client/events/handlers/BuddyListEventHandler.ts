@@ -18,18 +18,16 @@
 import {IChatClient} from "../../IChatClient";
 import {BuddyListEvent} from "../chat/BuddyListEvent";
 import {OpenChatEventCode} from "../chat/OpenChatEventCode";
-import {ChatEvent} from "../ChatEvent";
 import {IChatEventHandler} from "./IChatEventHandler";
 
-export class BuddyListEventHandler implements IChatEventHandler {
+export class BuddyListEventHandler implements IChatEventHandler<BuddyListEvent> {
 
   public getEventCode(): number {
     return OpenChatEventCode.BUDDY_LIST;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const buddyListEvent: BuddyListEvent = chatEvent as BuddyListEvent;
-    client.getBuddyList().handleBuddyListEvent(buddyListEvent);
+  public handleEvent(ev: BuddyListEvent, client: IChatClient): boolean {
+    client.getBuddyList().handleBuddyListEvent(ev);
     return true;
   }
 }

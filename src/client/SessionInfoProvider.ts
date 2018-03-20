@@ -15,90 +15,52 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Version} from "../lib/Version";
+import {ISessionInfoProvider} from "./ISessionInfoProvider";
 
-export class SessionInfoProvider {
-
-  public static DEFAULT_BRAND_CHAT_NAME: string = "Chat";
+/**
+ * @deprecated
+ */
+export class SessionInfoProvider implements ISessionInfoProvider {
 
   private mUsername: string;
-  private mSessionId: string = void 0;
-  private mServerVersion: Version = void 0;
-  private mChatName: string = SessionInfoProvider.DEFAULT_BRAND_CHAT_NAME;
-  private mZimletVerion: Version;
-  private mRoomServiceAddress: string;
+  private mSessionId: string = undefined;
   private mDisplayName: string;
   private mSessionResponsesReceivedInThisSession: number = 0;
-  private mProduct: string = "";
 
-  constructor(username: string, displayName: string, zimletVersion: Version) {
+  constructor(username: string, displayName: string) {
     this.mUsername = username;
     this.mDisplayName = displayName;
-    this.mZimletVerion = zimletVersion;
   }
 
   public getUsername(): string {
     return this.mUsername;
   }
 
-  public getUsernameWithResource(): string {
-    if (typeof this.mSessionId !== "undefined") {
-      return this.mUsername + "/" + this.mSessionId;
-    } else {
-      return this.mUsername;
-    }
+  public getDisplayName(): string {
+    return this.mDisplayName;
   }
 
+  /**
+   * @deprecated
+   * @param {string} sessionId
+   */
   public setSessionId(sessionId: string): void {
     this.mSessionId = sessionId;
   }
 
+  /**
+   * @deprecated
+   * @return {string}
+   */
   public getSessionId(): string {
     return this.mSessionId;
   }
 
+  /**
+   * @deprecated
+   */
   public resetSessionId(): void {
-    this.mSessionId = void 0;
-  }
-
-  public setServerVersion(version: Version): void {
-    this.mServerVersion = version;
-  }
-
-  public getServerVersion(): Version {
-    return this.mServerVersion;
-  }
-
-  public getZimletVersion(): Version {
-    return this.mZimletVerion;
-  }
-
-  public isGroupSupported(): boolean {
-    if (typeof this.mServerVersion !== "undefined") {
-      return (this.mServerVersion.moreThan(new Version(1, 1, 0)) || this.mServerVersion.equals(new Version(1, 1, 0)));
-    } else {
-      return false;
-    }
-  }
-
-  public setChatName(name: string): void {
-    this.mChatName = name;
-  }
-
-  public getChatName(): string {
-    return this.mChatName;
-  }
-
-  public setRoomServiceAddress(roomServiceAddress: string): void {
-    this.mRoomServiceAddress = roomServiceAddress;
-  }
-
-  public getRoomServiceAddress(): string {
-    return this.mRoomServiceAddress;
-  }
-
-  public getDisplayName(): string {
-    return this.mDisplayName;
+    this.mSessionId = undefined;
   }
 
   public addEventsReceived(responses: number): void {
@@ -113,11 +75,4 @@ export class SessionInfoProvider {
     this.mSessionResponsesReceivedInThisSession = 0;
   }
 
-  public setProduct(product: string): void {
-    this.mProduct = product;
-  }
-
-  public getProduct(): string {
-    return this.mProduct;
-  }
 }

@@ -15,10 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
 import {Callback} from "../lib/callbacks/Callback";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
-import {MessageType} from "./events/chat/MessageEvent";
-import {ChatEvent} from "./events/ChatEvent";
+import {IOpenChatState} from "../redux/IOpenChatState";
+import {IChatEvent} from "./events/IChatEvent";
 import {IBuddy} from "./IBuddy";
 import {IBuddyStatus} from "./IBuddyStatus";
 import {MessageReceived} from "./MessageReceived";
@@ -38,6 +39,8 @@ export interface IRoom {
    * Get the room title
    */
   getTitle(): string;
+
+  getStore(): Store<IOpenChatState>;
 
   /**
    * Set the room title
@@ -111,7 +114,7 @@ export interface IRoom {
    */
   onSendEvent(callback: Callback): void;
 
-  _sendEvent(event: ChatEvent, callback?: Callback, errorCallback?: Callback): void;
+  _sendEvent(event: IChatEvent, callback?: Callback, errorCallback?: Callback): void;
 
   /**
    * Set a callback invoked when a send message is requested
@@ -121,7 +124,7 @@ export interface IRoom {
   /**
    * Send a message to the room
    */
-  sendMessage(message: string, messageType?: MessageType): void;
+  sendMessage(message: string): void;
 
   /**
    * Send the writing status when one-to-one-chat

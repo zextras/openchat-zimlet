@@ -21,6 +21,7 @@ import {BuddyListEvent} from "./events/chat/BuddyListEvent";
 import {Group} from "./Group";
 import {GroupStats} from "./GroupStats";
 import {IBuddy} from "./IBuddy";
+import {IBuddyStatus} from "./IBuddyStatus";
 
 export class BuddyList {
 
@@ -265,8 +266,9 @@ export class BuddyList {
     } else {
       // Update the old buddy
       oldBuddy.setNickname(buddy.getNickname());
+      const buddyStatus: IBuddyStatus = buddy.getStatus();
       oldBuddy.clearStatuses();
-      oldBuddy.setStatus(buddy.getStatus());
+      oldBuddy.setStatus(buddyStatus);
       this.addBuddyToGroups(oldBuddy, buddyGroupsNames, false);
     }
   }

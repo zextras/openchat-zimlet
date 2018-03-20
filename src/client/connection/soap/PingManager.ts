@@ -15,14 +15,17 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
+
 import {Callback} from "../../../lib/callbacks/Callback";
 import {TimedCallbackFactory} from "../../../lib/callbacks/TimedCallbackFactory";
 import {ZxError} from "../../../lib/error/ZxError";
 import {ZxErrorCode} from "../../../lib/error/ZxErrorCode";
 import {LogEngine} from "../../../lib/log/LogEngine";
+import {IOpenChatState} from "../../../redux/IOpenChatState";
 import {ZmCsfeException} from "../../../zimbra/zimbra/csfe/ZmCsfeException";
 import {OpenChatEventCode} from "../../events/chat/OpenChatEventCode";
-import {SessionInfoProvider} from "../../SessionInfoProvider";
+import {ISessionInfoProvider} from "../../ISessionInfoProvider";
 import {IConnection} from "../IConnection";
 import {IRequest} from "../IRequest";
 import {Command} from "./Command";
@@ -47,11 +50,11 @@ export class PingManager implements IPingManager {
   private mHandlePingErrorCbk: Callback = new Callback(this, this.handlePingError);
   private mDoPingCallback: Callback = new Callback(this, this.doPing);
   private mOnEndProcessResponsesCbk: Callback;
-  private mSessionInfoProvider: SessionInfoProvider;
+  private mSessionInfoProvider: ISessionInfoProvider;
 
   constructor(
     timedCallbackFactory: TimedCallbackFactory,
-    sessionInfoProvider: SessionInfoProvider,
+    sessionInfoProvider: ISessionInfoProvider,
   ) {
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mSessionInfoProvider = sessionInfoProvider;
@@ -167,7 +170,7 @@ export class PingManager implements IPingManager {
       waitingTime = 1000; // Should never happen, however, 1 sec is enough
     }
 
-    if (!(error instanceof ZxError)) {
+    if (!error.hasOwnProperty("isZxError")) {
       error = ZxError.convertError(error);
     }
 
@@ -189,7 +192,7 @@ export class PingManager implements IPingManager {
 
     if (notify) {
       if (typeof this.mOnStreamErrorCbk !== "undefined") {
-        // this.mOnStreamErrorCbk.run(error);
+        this.mOnStreamErrorCbk.run(error);
       }
     }
 

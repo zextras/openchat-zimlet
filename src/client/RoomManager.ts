@@ -17,31 +17,39 @@
 
 import {Callback} from "../lib/callbacks/Callback";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
-import {DateProvider} from "../lib/DateProvider";
+import {IDateProvider} from "../lib/IDateProvider";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
-import {ChatEvent} from "./events/ChatEvent";
+import {IChatEvent} from "./events/IChatEvent";
 import {IBuddy} from "./IBuddy";
 import {IBuddyStatus} from "./IBuddyStatus";
 import {IRoom} from "./IRoom";
+import {IRoomManager} from "./IRoomManager";
 import {MessageSent} from "./MessageSent";
 import {Room} from "./Room";
 
-export class RoomManager {
+import {Store} from "redux";
+import {IOpenChatState} from "../redux/IOpenChatState";
+
+export class RoomManager implements IRoomManager {
 
   public static Plugin = "Room Manager";
   public static StatusSelectedPlugin = "Room Manager Status Selected";
-  public static StatusChangedPlugin = "Room Manager Status Changed";
   public static CreateRoomPluginManager = "Room Manager Create Room Plugin Manager";
 
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mRooms: IRoom[];
   private onNewRoomCallbacks: CallbackManager;
   private onSendEventCallbacks: CallbackManager;
   private onSendMessageCallbacks: CallbackManager;
   private mOnChangeStatusCallbacks: CallbackManager;
   private mRoomManagerPluginManager: ChatPluginManager;
+  private mStore: Store<IOpenChatState>;
 
-  constructor(dateProvider: DateProvider, chatPluginManager: ChatPluginManager) {
+  constructor(
+    dateProvider: IDateProvider,
+    chatPluginManager: ChatPluginManager,
+    store: Store<IOpenChatState>,
+  ) {
     this.mDateProvider = dateProvider;
     this.mRooms = [];
     this.onNewRoomCallbacks = new CallbackManager();
@@ -51,6 +59,7 @@ export class RoomManager {
     this.mRoomManagerPluginManager = chatPluginManager;
     this.mRoomManagerPluginManager.switchOn(this);
     this.mRoomManagerPluginManager.triggerPlugins(RoomManager.Plugin);
+    this.mStore = store;
   }
 
   public getPluginManager(): ChatPluginManager {
@@ -67,19 +76,12 @@ export class RoomManager {
       buddyNickname,
       this.mDateProvider,
       roomPluginManager,
+      this.mStore,
     );
     newRoom.onSendEvent(new Callback(this, this._onSendEvent));
     newRoom.onSendMessage(new Callback(this, this._onSendMessage));
     this.addRoom(newRoom);
     return newRoom;
-  }
-
-  /**
-   * Add a room to the room list
-   */
-  public addRoom(room: IRoom): void {
-    this.mRooms.push(room);
-    this.onNewRoomCallbacks.run(room);
   }
 
   /**
@@ -101,9 +103,6 @@ export class RoomManager {
     this.mRoomManagerPluginManager.triggerPlugins(RoomManager.StatusSelectedPlugin, status, callback);
   }
 
-  public statusChanged(status: IBuddyStatus) {
-    this.mRoomManagerPluginManager.triggerPlugins(RoomManager.StatusChangedPlugin, status);
-  }
   /**
    * Remove a room by Id
    */
@@ -160,9 +159,17 @@ export class RoomManager {
   }
 
   /**
+   * Add a room to the room list
+   */
+  private addRoom(room: IRoom): void {
+    this.mRooms.push(room);
+    this.onNewRoomCallbacks.run(room);
+  }
+
+  /**
    * Propagate to the callbacks to send an event
    */
-  private _onSendEvent(event: ChatEvent, callback: Callback, errorCallback: Callback): void {
+  private _onSendEvent(event: IChatEvent, callback: Callback, errorCallback: Callback): void {
     this.onSendEventCallbacks.run(event, callback, errorCallback);
   }
 

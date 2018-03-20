@@ -17,17 +17,15 @@
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {RenameFriendshipEvent} from "../../../../events/chat/RenameFriendshipEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class RenameFriendshipEventEncoder extends SoapEventEncoder {
+export class RenameFriendshipEventEncoder extends SoapEventEncoder<RenameFriendshipEvent> {
 
   constructor() {
     super(OpenChatEventCode.RENAME_FRIENDSHIP);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: RenameFriendshipEvent = event as RenameFriendshipEvent;
+  protected getEventDetails(ev: RenameFriendshipEvent): {} {
     return {
       target_address: ev.getDestination(),
       target_group: ev.getGroup(),

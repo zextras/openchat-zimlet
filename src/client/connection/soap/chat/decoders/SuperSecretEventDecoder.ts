@@ -15,24 +15,25 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
-import {JSON3} from "../../../../../libext/json3";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
+import {JSON3 as JSON} from "../../../../../libext/json3";
 import {SuperSecretEvent} from "../../../../events/chat/SuperSecretEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class SuperSecretEventDecoder extends SoapEventDecoder {
+export class SuperSecretEventDecoder extends SoapEventDecoder<IChatEvent> {
 
-  private mDateProvider: DateProvider;
-  private mDecoders: {[eventId: string]: SoapEventDecoder} = {};
+  private mDateProvider: IDateProvider;
+  private mDecoders: {[eventId: string]: SoapEventDecoder<IChatEvent>} = {};
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(SuperSecretEvent.ID);
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {[p: string]: any}, originEvent?: ChatEvent): ChatEvent {
-    const internalEvent = JSON3.parse(eventObj.message);
+  public decodeEvent(eventObj: ISuperSecretEventObj, originEvent?: IChatEvent): IChatEvent {
+    const internalEvent = JSON.parse(eventObj.message);
     let eventCode: number;
     if (typeof internalEvent.type === "number") {
       eventCode = internalEvent.type;
@@ -51,11 +52,16 @@ export class SuperSecretEventDecoder extends SoapEventDecoder {
     return decoded;
   }
 
-  public addDecoder(decoder: SoapEventDecoder): void {
+  public addDecoder(decoder: SoapEventDecoder<IChatEvent>): void {
     if (this.mDecoders.hasOwnProperty(`${decoder.getEventCode()}`)) {
       throw new Error("Decoder for event '" + decoder.getEventCode() + "' already registered.");
     }
     this.mDecoders[`${decoder.getEventCode()}`] = decoder;
   }
 
+}
+
+interface ISuperSecretEventObj extends ISoapEventObject {
+  message: string;
+  ID: string;
 }

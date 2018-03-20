@@ -15,17 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(
-  [
-    "require",
-    "exports",
-    "xregexp"
-  ],
-  function (
-    require,
-    exports,
-    xregexp_1
-  ) {
-    exports.XRegExp = xregexp_1;
-  }
-);
+var XRegExp = require("xregexp");
+module.exports = {
+  XRegExp: XRegExp
+};

@@ -166,7 +166,7 @@ export class Group {
    * Set a callback which will be invoked when a buddy is removed to the group.
    * @param {Callback} callback
    */
-  public onDelete(callback: Callback) {
+  public onDelete(callback: Callback): void {
     this.mOnDeleteCallbacks.addCallback(Callback.standardize(callback));
   }
 

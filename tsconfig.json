@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
+    "sourceMap": true,
     "noImplicitAny": true,
-    "removeComments": true
+    "removeComments": true,
+    "module": "commonjs",
+    "target": "es3",
+    "jsx": "react",
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",

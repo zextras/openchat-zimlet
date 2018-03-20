@@ -17,28 +17,38 @@
 
 'use strict';
 
-var util = require('util');
-
 module.exports = [{
   src: './src/images/16/**/*.{png,gif,jpg}',
   destImage: './src/images/com_zextras_chat_open_sprite.png',
-  destCSS: './src/images/com_zextras_chat_open_sprite.sass',
+  destCSS: './src/images/com_zextras_chat_open_sprite.scss',
   imgPath: 'images/com_zextras_chat_open_sprite.png',
   padding: 0,
   algorithm: 'top-down',
   algorithmOpts: { sort: false },
   engine: 'pixelsmith',
-  cssTemplate: "./src/images/com_zextras_chat_open_sprite.template.sass",
+  cssTemplate: "./src/images/com_zextras_chat_open_sprite.template.scss",
   cssOpts: {}
 },{
-  src: './build/images/emojione/png/*.{png,gif,jpg}',
-  destImage: './src/images/emojione.sprites.png',
-  destCSS: './src/emojione.sprites.css',
-  imgPath: 'images/emojione.sprites.png',
+  src: './build/images/emojione/16/png/*.png',
+  destImage: './src/images/emojione.sprites_16.png',
+  destCSS: './src/images/emojione.sprites_16.scss',
+  imgPath: 'images/emojione.sprites_16.png',
   padding: 0,
   algorithm: 'top-down',
   algorithmOpts: { sort: false },
   engine: 'pixelsmith',
-  cssTemplate: "./src/emojione.sprites.template.css",
+  cssTemplate: "./src/images/emojione.sprites.template_16.scss",
+  cssOpts: {}
+},
+{
+  src: './build/images/emojione/32/png/*.png',
+  destImage: './src/images/emojione.sprites_32.png',
+  destCSS: './src/images/emojione.sprites_32.scss',
+  imgPath: 'images/emojione.sprites_32.png',
+  padding: 0,
+  algorithm: 'top-down',
+  algorithmOpts: { sort: false },
+  engine: 'pixelsmith',
+  cssTemplate: "./src/images/emojione.sprites.template_32.scss",
   cssOpts: {}
 }];

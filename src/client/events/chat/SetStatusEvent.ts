@@ -30,15 +30,12 @@ export class SetStatusEvent extends ChatEvent {
   }
 
   private mStatusId: string;
-  // private mRooms: string[];
   private mAuto: boolean;
 
-  // constructor(statusId: string, rooms: string[], creationDate: Date, auto: boolean = false) {
-  constructor(statusId: string, creationDate: Date, auto: boolean = false) {
+  constructor(statusId: string, creationDate: Date) {
     super(OpenChatEventCode.SET_STATUS, creationDate, false);
     this.mStatusId = statusId;
-    // this.mRooms = rooms;
-    this.mAuto = auto;
+    this.mAuto = false;
   }
 
   public getStatusId(): string {
@@ -49,11 +46,4 @@ export class SetStatusEvent extends ChatEvent {
     return this.mAuto;
   }
 
-  // public getRooms(): string[] {
-  //   return this.mRooms;
-  // }
-
-  // public setDestinationRoom(address: string): void {
-  //   this.setDestination(address);
-  // }
 }

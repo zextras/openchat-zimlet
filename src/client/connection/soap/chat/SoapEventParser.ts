@@ -15,38 +15,38 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../../../events/ChatEvent";
+import {IChatEvent} from "../../../events/IChatEvent";
 import {IChatEventParser} from "../../../events/parsers/IChatEventParser";
 import {SoapEventDecoder} from "./decoders/SoapEventDecoder";
 import {SoapEventEncoder} from "./encoders/SoapEventEncoder";
 
-export class SoapEventParser implements IChatEventParser {
+export class SoapEventParser implements IChatEventParser<IChatEvent> {
 
-  private mEncoders: {[id: string]: SoapEventEncoder} = {};
-  private mDecoders: {[id: string]: SoapEventDecoder} = {};
+  private mEncoders: {[id: string]: SoapEventEncoder<IChatEvent>} = {};
+  private mDecoders: {[id: string]: SoapEventDecoder<IChatEvent>} = {};
 
-  public addEncoder(encoder: SoapEventEncoder): void {
+  public addEncoder(encoder: SoapEventEncoder<IChatEvent>): void {
     if (this.mEncoders.hasOwnProperty(`${encoder.getEventCode()}`)) {
       throw new Error("Encoder for event '" + encoder.getEventCode() + "' already registered.");
     }
     this.mEncoders[`${encoder.getEventCode()}`] = encoder;
   }
 
-  public addDecoder(decoder: SoapEventDecoder): void {
+  public addDecoder(decoder: SoapEventDecoder<IChatEvent>): void {
     if (this.mDecoders.hasOwnProperty(`${decoder.getEventCode()}`)) {
       throw new Error("Decoder for event '" + decoder.getEventCode() + "' already registered.");
     }
     this.mDecoders[`${decoder.getEventCode()}`] = decoder;
   }
 
-  public encodeEvent(chatEvent: ChatEvent): {} {
+  public encodeEvent(chatEvent: IChatEvent): {} {
     if (!this.mEncoders.hasOwnProperty(`${chatEvent.getCode()}`)) {
       throw new Error("Unable to find encoder for event " + chatEvent.getCode() + ".");
     }
     return this.mEncoders[`${chatEvent.getCode()}`].encodeEvent(chatEvent);
   }
 
-  public decodeEvent(originEvent: ChatEvent, object: {type: number|string}): ChatEvent {
+  public decodeEvent(originEvent: IChatEvent, object: ISoapEventObject): IChatEvent {
     let eventCode: number;
     if (typeof object !== "undefined" && typeof object.type !== "undefined") {
       if (typeof object.type === "number") {
@@ -62,4 +62,8 @@ export class SoapEventParser implements IChatEventParser {
     }
     return this.mDecoders[`${eventCode}`].decodeEvent(object, originEvent);
   }
+}
+
+export interface ISoapEventObject {
+  type: number|string;
 }

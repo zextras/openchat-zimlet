@@ -16,18 +16,19 @@
  */
 
 import {BasicEvent} from "../BasicEvent";
+import {IBasicEvent} from "../IBasicEvent";
 import {IConnectionEventParser} from "./IConnectionEventParser";
 
 export class BasicEventParser implements IConnectionEventParser {
 
-  public encodeEvent(connectionEvent: BasicEvent): {} {
+  public encodeEvent(connectionEvent: IBasicEvent): {} {
     return {
       code: connectionEvent.getCode(),
       data: connectionEvent.getData(),
     };
   }
 
-  public decodeEvent(originEvent: BasicEvent, object: {code?: number}): BasicEvent {
+  public decodeEvent(originEvent: IBasicEvent, object: {code?: number}): IBasicEvent {
     const code = (typeof object.code !== "undefined") ? object.code : -1;
     const event = new BasicEvent(code, false);
     event.setData(object);

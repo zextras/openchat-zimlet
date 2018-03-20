@@ -19,6 +19,8 @@ import {emojioneList, toImage} from "../libext/emojione";
 import {JQueryTextComplete} from "../libext/jquery-textcomplete";
 import {IJQueryPlugin} from "./JQueryPlugin";
 
+import "./TextCompletePlugin.scss";
+
 declare let $: any;
 
 const sorFcn = (a: string, b: string) => a.length - b.length;

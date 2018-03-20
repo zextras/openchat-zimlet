@@ -15,17 +15,28 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Store} from "redux";
 import {RoomWindowManager} from "../../dwt/windows/RoomWindowManager";
 import {RoomWindowMenuButton} from "../../dwt/windows/RoomWindowMenuButton";
 import {IChatPlugin} from "../../lib/plugin/ChatPlugin";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
+import {IOpenChatState} from "../../redux/IOpenChatState";
 import {RoomWindowSendHistoryMenuItemPlugin} from "./RoomWindowSendHistoryMenuItemPlugin";
 
 export class RoomWindowManagerSendMailPlugin implements IChatPlugin {
+
+  private mStore: Store<IOpenChatState>;
+
+  constructor(
+    store: Store<IOpenChatState>,
+  ) {
+    this.mStore = store;
+  }
+
   public trigger(roomWindowManager: RoomWindowManager, roomWindowPluginManager: ChatPluginManager): void {
     roomWindowPluginManager.registerPlugin(
       RoomWindowMenuButton.AddMenuItemPlugin,
-      new RoomWindowSendHistoryMenuItemPlugin(),
+      new RoomWindowSendHistoryMenuItemPlugin(this.mStore),
     );
   }
 }

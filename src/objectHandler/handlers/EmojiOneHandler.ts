@@ -15,9 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {emojione} from "../../libext/emojione";
+import {emojione, toImage} from "../../libext/emojione";
 import {ZmObjectHandler} from "../../zimbra/zimbraMail/share/model/ZmObjectHandler";
-import {ZimletVersion} from "../../ZimletVersion";
 
 export class EmojiOneHandler extends ZmObjectHandler {
 
@@ -64,64 +63,8 @@ export class EmojiOneHandler extends ZmObjectHandler {
     }
   }
 
-  private mEmojiPositionMap: {[code: string]: number};
-
   constructor() {
     super("EmojiOne");
-    this.mEmojiPositionMap = {};
-    let emojiStyleSheet: CSSStyleSheet;
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < document.styleSheets.length; i++) {
-      if (
-        typeof document.styleSheets[i].href !== "undefined"
-        && document.styleSheets[i].href !== null
-        && (
-          document.styleSheets[i].href.indexOf("Zimlets-nodev") !== -1
-          || document.styleSheets[i].href.indexOf("emojione.sprites.css") !== -1
-        )
-      ) {
-        emojiStyleSheet = document.styleSheets[i] as CSSStyleSheet;
-        break;
-      }
-    }
-    // populate map
-    if (typeof emojiStyleSheet === "undefined") { return; }
-    if (typeof emojiStyleSheet.cssRules !== "undefined") {
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < emojiStyleSheet.cssRules.length; i++) {
-        const cssText: string = emojiStyleSheet.cssRules[i].cssText;
-        if ((cssText.indexOf("emojione.sprites.png") !== -1)) {
-          // example
-          // cssText: ".emojione-0030-20e3 { background-image: url("images/emojione.sprites.png");
-          // background-position: 0px -32px; width: 16px; height: 16px; }"
-          // 26 = "background-position: 0px -".length; 10 = ".emojione-".length
-          const startingIndex: number = cssText.indexOf("background-position") + 25;
-          this.mEmojiPositionMap[cssText.substring(10, cssText.indexOf(" "))] = parseInt(
-            cssText.substring(startingIndex, startingIndex + cssText.substring(startingIndex).indexOf("px")),
-            10,
-          );
-        }
-      }
-    } else if (typeof emojiStyleSheet.rules !== "undefined") {
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < emojiStyleSheet.rules.length; i++) {
-        const selectorText: string = (emojiStyleSheet.rules[i] as ICSSRuleWithStyle).selectorText;
-        const cssText: string = (emojiStyleSheet.rules[i] as ICSSRuleWithStyle).style.cssText;
-        if ((cssText.indexOf("emojione.sprites.png") !== -1)) {
-          // example
-          // selectorText: ".emojione-0035-20e3"
-          // cssText: "HEIGHT: 16px; WIDTH: 16px; BACKGROUND-IMAGE: url(images/emojione.sprites.png);
-          // BACKGROUND-POSITION: 0px 0px";
-          // 26 = "background-position: 0px -".length; 10 = ".emojione-".length
-          const startingIndex: number = cssText.indexOf("BACKGROUND-POSITION") + 25;
-          this.mEmojiPositionMap[selectorText.substring(10)] = parseInt(
-            cssText.substring(startingIndex, startingIndex + cssText.substring(startingIndex).indexOf("px")),
-            10,
-          );
-        }
-      }
-    }
-
   }
 
   public match(content: string, startIndex: number): RegExpExecArray {
@@ -156,31 +99,9 @@ export class EmojiOneHandler extends ZmObjectHandler {
     context?: string,
     options?: {},
   ): number {
-    const converted: string = emojione.asciiList[obj]
-      || emojione.jsEscapeMap[obj]
-      || emojione.emojioneList[obj].unicode[emojione.emojioneList[obj].unicode.length - 1];
-
-    let calculatedStyle: string = `height: 16px;` +
-       `width: 16px;` +
-       `min-height: 16px;` +
-       `min-width: 16px;` +
-       `display: inline-block;` +
-       `position: relative;` +
-       `vertical-align: middle;` +
-       `line-height: normal;` +
-       `font-size: inherit;` +
-       `background-image: url("/service/zimlet/${ZimletVersion.PACKAGE_NAME}/images/emojione.sprites.png");` +
-       `background-position: 0px ${this.mEmojiPositionMap[converted]}px;` +
-       `background-repeat: no-repeat;`;
-
-    emojione.asciiRegexp.lastIndex = 0;
-    let removeEmoji: string = "";
-    const match: string = emojione.asciiList[obj];
-    if (typeof match !== "undefined" && match !== null) {
-      calculatedStyle += "cursor: pointer;";
-      removeEmoji = `id='${spanId}'`;
-    }
-    html[idx++] = `<span style='${calculatedStyle}' ${removeEmoji} title='${obj}'></span>`;
+    html[idx++] = toImage(obj)
+      .replace(/emojione /g, "emojione_16 ")
+      .replace(/$<span /, `<span id="${spanId}" `);
     return idx;
   }
 
@@ -202,19 +123,6 @@ export class EmojiOneHandler extends ZmObjectHandler {
   public getActiveClassName(object: string, context: string, id: string): string {
     const spanEl: HTMLElement = document.getElementById(id);
     return (typeof spanEl !== "undefined" && spanEl !== null) ? spanEl.className : "";
-  }
-
-  private addLinkToFrame(document: Document): void {
-    // check if already added
-    // tslint:disable-next-line:prefer-for-of
-    for (let i: number = 0; i < document.styleSheets.length; i++) {
-      if (document.styleSheets[i].href.indexOf("emojione.sprites.css") !== -1) { return; }
-    }
-    const linkEl: HTMLLinkElement = document.createElement("link");
-    linkEl.type = "text/css";
-    linkEl.type = "stylesheet";
-    linkEl.href = `/service/zimlet/${ZimletVersion.PACKAGE_NAME}/emojione.sprites.css`;
-    document.head.appendChild(linkEl);
   }
 }
 
@@ -247,11 +155,4 @@ class MatchResult {
     return this.mPriority;
   }
 
-}
-
-interface ICSSRuleWithStyle extends CSSRule {
-  selectorText: string;
-  style: {
-    cssText: string,
-  };
 }

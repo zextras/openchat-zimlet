@@ -18,12 +18,14 @@
 import {IBuddy} from "../../client/IBuddy";
 import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {MessageReceived} from "../../client/MessageReceived";
-import {DateProvider} from "../../lib/DateProvider";
+import {IDateProvider} from "../../lib/IDateProvider";
 import {LearningClipUtils} from "../../lib/LearningClipUtils";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
 import {Conversation} from "./Conversation";
 import {IMessageCreateHtmlData, Message} from "./Message";
+
+import "./MessageStatus.scss";
 
 export class MessageStatus extends Message {
 
@@ -31,7 +33,7 @@ export class MessageStatus extends Message {
   private mBuddy: IBuddy;
   private mStatus: IBuddyStatus;
 
-  constructor(parent: Conversation, buddy: IBuddy, status: IBuddyStatus, dateProvider: DateProvider) {
+  constructor(parent: Conversation, buddy: IBuddy, status: IBuddyStatus, dateProvider: IDateProvider) {
     super(
       parent,
       new MessageReceived("", buddy, dateProvider.getNow(), status.getMessage()),

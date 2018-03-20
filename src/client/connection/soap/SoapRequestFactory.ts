@@ -17,7 +17,7 @@
 
 import {Callback} from "../../../lib/callbacks/Callback";
 import {ZmController} from "../../../zimbra/zimbraMail/share/controller/ZmController";
-import {SessionInfoProvider} from "../../SessionInfoProvider";
+import {ISessionInfoProvider} from "../../ISessionInfoProvider";
 import {DummyRequestBehavior} from "../dummy/DummyRequest";
 import {IRequest} from "../IRequest";
 import {IRequestFactory} from "../IRequestFactory";
@@ -26,11 +26,11 @@ import {SoapRequest} from "./SoapRequest";
 export class SoapRequestFactory implements IRequestFactory {
 
   private mAppController: ZmController;
-  private mSessionInfoProvider: SessionInfoProvider;
+  private mSessionInfoProvider: ISessionInfoProvider;
 
   constructor(
     appController: ZmController,
-    sessionInfoProvider: SessionInfoProvider,
+    sessionInfoProvider: ISessionInfoProvider,
   ) {
     this.mAppController = appController;
     this.mSessionInfoProvider = sessionInfoProvider;

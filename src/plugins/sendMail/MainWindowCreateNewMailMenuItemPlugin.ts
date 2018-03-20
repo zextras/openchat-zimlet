@@ -44,6 +44,7 @@ export class MainWindowCreateNewMailMenuItemPlugin implements IChatPlugin {
       style: DwtMenuItem.IMAGE_LEFT,
     });
     newMailMenuItem.setText(ZmMsg.newEmail);
+    newMailMenuItem.setImage("fa fas fal fa-envelope");
     newMailMenuItem.addSelectionListener(
       new AjxListener(
         null,

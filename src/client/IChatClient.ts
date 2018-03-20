@@ -16,21 +16,20 @@
  */
 
 import {Callback} from "../lib/callbacks/Callback";
-import {DateProvider} from "../lib/DateProvider";
 import {ZxError} from "../lib/error/ZxError";
+import {IDateProvider} from "../lib/IDateProvider";
 import {Logger} from "../lib/log/Logger";
 import {ChatPluginManager} from "../lib/plugin/ChatPluginManager";
 import {BuddyList} from "./BuddyList";
+import {IConnectionManager} from "./connection/IConnectionManager";
+import {IUserCapabilities} from "./connection/soap/chat/decoders/SessionRegisteredEventDecoder";
 import {EventSessionRegistered} from "./events/chat/EventSessionRegistered";
-import {ChatEvent} from "./events/ChatEvent";
+import {RemoveFriendshipEvent} from "./events/chat/RemoveFriendshipEvent";
+import {IChatEvent} from "./events/IChatEvent";
 import {Group} from "./Group";
 import {IBuddy} from "./IBuddy";
-import {IBuddyStatus} from "./IBuddyStatus";
-import {IUserStatusManager} from "./IUserStatusManager";
-import {MessageAckWaiter} from "./MessageAckWaiter";
-import {MessageReceived} from "./MessageReceived";
-import {RoomManager} from "./RoomManager";
-import {SessionInfoProvider} from "./SessionInfoProvider";
+import {IRoomManager} from "./IRoomManager";
+import {ISessionInfoProvider} from "./ISessionInfoProvider";
 
 export interface IChatClient {
 
@@ -40,8 +39,8 @@ export interface IChatClient {
   /**
    * Register the session
    */
-  registerSession(): void;
-  getSessionInfoProvider(): SessionInfoProvider;
+  // registerSession(): void;
+  // getSessionInfoProvider(): ISessionInfoProvider;
   /**
    * Unregister the session and reset the session id.
    */
@@ -61,24 +60,16 @@ export interface IChatClient {
   /**
    * Get the room manager
    */
-  getRoomManager(): RoomManager;
-  /**
-   * Get the message acknowledge waiter
-   */
-  getMessageAckWaiter(): MessageAckWaiter;
+  getRoomManager(): IRoomManager;
   /**
    * Get the Date Provider
    */
-  getDateProvider(): DateProvider;
+  getDateProvider(): IDateProvider;
   /**
    * Send an event using the connection manager.
    * No one should use the connection manager directly.
    */
-  sendEvent(event: ChatEvent, callback: Callback, errorCallback?: Callback): void;
-  /**
-   * Notify to the server that a message is correctly received by the client.
-   */
-  notifyMessageReceived(messageEvent: MessageReceived, callback?: Callback, errorCallback?: Callback): void;
+  sendEvent(event: IChatEvent, callback: Callback, errorCallback?: Callback): void;
   /**
    * Send a friendship event
    */
@@ -91,7 +82,7 @@ export interface IChatClient {
    * Delete a friendship.
    * Will remove a buddy from the user buddy list.
    */
-  deleteFriendship(buddy: IBuddy, callback: Callback, errorCallback?: Callback): void;
+  deleteFriendship(buddy: IBuddy, callback: (ev: RemoveFriendshipEvent) => void, errorCallback?: () => void): void;
   /**
    * Change the nickname of a buddy.
    */
@@ -104,16 +95,7 @@ export interface IChatClient {
    * Rename a group
    */
   renameGroup(oldName: string, newName: string, callback?: Callback, errorCallback?: Callback): void;
-  /**
-   * Notify that status changed for the user.
-   */
-  setUserStatus(userStatus: IBuddyStatus, callback?: Callback, errorCallback?: Callback): void;
 
-  statusChanged(statusChanged: IBuddyStatus): void;
-  /**
-   * Get the current user status manager.
-   */
-  getUserStatusManager(): IUserStatusManager;
   /**
    * Reset all informations about the user.
    * This command is useful for testing purpose or in case to clean
@@ -125,10 +107,6 @@ export interface IChatClient {
    * Close the event stream and unregister the session.
    */
   shutdown(): void;
-  /**
-   * Set the callback that will be invoked when a user change message from another session.
-   */
-  onStatusChange(callback: Callback): void;
   onRegistrationError(callback: Callback): void;
   registrationError(error: ZxError): void;
   /**
@@ -140,7 +118,7 @@ export interface IChatClient {
    * passing to it the server information.
    */
   onServerOnline(callback: Callback): void;
-  serverOnline(eventSessionRegistered: EventSessionRegistered): void;
+  serverOnline(eventSessionRegistered: EventSessionRegistered<IUserCapabilities>): void;
   /**
    * Set the callback called when the server is offline.
    */
@@ -151,5 +129,18 @@ export interface IChatClient {
   onFriendshipInvitation(callback: Callback): void;
   friendshipInvitationReceived(buddy: IBuddy): void;
   onEndProcessResponses(callback: Callback): void;
+  getConnectionManager(): IConnectionManager;
+  onMessageReceived(
+    callback: (
+      roomId: string,
+      messageSenderId: string,
+      messageContent: string,
+    ) => void,
+  ): void;
+  receivedMessage(
+    roomWindowId: string,
+    messageSenderId: string,
+    messageContent: string,
+  ): void;
 
 }

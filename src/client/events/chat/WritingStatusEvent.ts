@@ -26,6 +26,32 @@ export class WritingStatusEvent extends ChatEvent {
   public static WRITTEN: number = 0;
   public static WRITING: number = 1;
 
+  public static fromTypeToString(type: number): "reset" | "isWriting" | "hasWritten" {
+    switch (type) {
+      case WritingStatusEvent.RESET:
+        return "reset";
+      case WritingStatusEvent.WRITING:
+        return "isWriting";
+      case WritingStatusEvent.WRITTEN:
+        return "hasWritten";
+      default:
+        return "reset";
+    }
+  }
+
+  public static fromStringToType(type: "reset" | "isWriting" | "hasWritten"): number {
+    switch (type) {
+      case "reset":
+        return WritingStatusEvent.RESET;
+      case "isWriting":
+        return WritingStatusEvent.WRITING;
+      case "hasWritten":
+        return WritingStatusEvent.WRITTEN;
+      default:
+        return WritingStatusEvent.RESET;
+    }
+  }
+
   private mDate: Date;
   private mValue: number;
 

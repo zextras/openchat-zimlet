@@ -17,21 +17,32 @@
 
 import {IBuddyStatus} from "../../IBuddyStatus";
 import {ChatEvent} from "../ChatEvent";
-import {MessageType} from "./MessageEvent";
 import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class ContactInformationEvent extends ChatEvent {
 
   private mEventDate: Date;
   private mStatus: IBuddyStatus;
-  private mIsGroupChat: boolean;
+  private mContactType: string;
+  private mMeetings: string[];
+  private mValidSince: Date;
 
-  constructor(from: string, eventDate: Date, creationDate: Date, status: IBuddyStatus, isGroupChat: boolean = false) {
+  constructor(
+    from: string,
+    eventDate: Date,
+    creationDate: Date,
+    status: IBuddyStatus,
+    contactType: string,
+    meetings?: string[],
+    validSince?: Date,
+  ) {
     super(OpenChatEventCode.CONTACT_INFORMATION, creationDate, true);
     this.setSender(from);
     this.mEventDate = eventDate;
     this.mStatus = status;
-    this.mIsGroupChat = isGroupChat;
+    this.mContactType = contactType;
+    this.mMeetings = meetings;
+    this.mValidSince = validSince;
   }
 
   public getDate(): Date {
@@ -42,11 +53,15 @@ export class ContactInformationEvent extends ChatEvent {
     return this.mStatus;
   }
 
-  public getContactType(): MessageType {
-    let contactType = MessageType.CHAT;
-    if (this.mIsGroupChat) {
-      contactType = MessageType.GROUPCHAT;
-    }
-    return contactType;
+  public getContactType(): string {
+    return this.mContactType;
+  }
+
+  public getMeetings(): string[] {
+    return this.mMeetings;
+  }
+
+  public getValidSince(): Date {
+    return this.mValidSince;
   }
 }

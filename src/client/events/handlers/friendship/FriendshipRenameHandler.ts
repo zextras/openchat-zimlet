@@ -19,32 +19,30 @@ import {Group} from "../../../Group";
 import {IBuddy} from "../../../IBuddy";
 import {IChatClient} from "../../../IChatClient";
 import {FriendshipRenameEvent} from "../../chat/friendship/FriendshipRenameEvent";
-import {ChatEvent} from "../../ChatEvent";
 import {IChatEventHandler} from "../IChatEventHandler";
 
-export class FriendshipRenameHandler implements IChatEventHandler {
+export class FriendshipRenameHandler implements IChatEventHandler<FriendshipRenameEvent> {
 
   public getEventCode(): number {
     return FriendshipRenameEvent.TYPE;
   }
 
-  public handleEvent(chatEvent: ChatEvent, client: IChatClient): boolean {
-    const friendshipEvent = chatEvent as FriendshipRenameEvent;
+  public handleEvent(ev: FriendshipRenameEvent, client: IChatClient): boolean {
     const buddyList = client.getBuddyList();
-    const buddy: IBuddy = buddyList.getBuddyById(friendshipEvent.getSender());
+    const buddy: IBuddy = buddyList.getBuddyById(ev.getSender());
     if (buddy != null) {
-      if (buddy.getNickname() !== friendshipEvent.getNickname()) {
-        buddy.setNickname(friendshipEvent.getNickname());
+      if (buddy.getNickname() !== ev.getNickname()) {
+        buddy.setNickname(ev.getNickname());
       }
-      let group = buddyList.getGroup(friendshipEvent.getGroup());
+      let group = buddyList.getGroup(ev.getGroup());
       if (group == null) {
-        group = new Group(friendshipEvent.getGroup());
+        group = new Group(ev.getGroup());
         buddyList.addGroup(group);
       }
       let needToBeAdded = true;
       const removeFrom = [];
       for (const buddyGroup of buddy.getGroups()) {
-        if (buddyGroup.getName() === friendshipEvent.getGroup()) {
+        if (buddyGroup.getName() === ev.getGroup()) {
           needToBeAdded = false;
         } else {
           removeFrom.push(buddyGroup);

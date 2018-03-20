@@ -7,7 +7,12 @@
 # Generated files:
 /src/dwt/widgets/emoji/EmojiTemplate.ts
 /src/images/com_zextras_chat_open_sprite.sass
+/src/images/com_zextras_chat_open_sprite.scss
 /src/images/com_zextras_chat_open_sprite.png
-/src/images/emojione.sprites.png
+/src/images/emojione.sprites_16.png
+/src/images/emojione.sprites_16.scss
+/src/images/emojione.sprites_32.png
+/src/images/emojione.sprites_32.scss
 /src/emojione.sprites.css
+/images/emojione.sprites.scss
 /src/ZimletVersion.ts

@@ -24,7 +24,7 @@ export class LearningClipUtils {
     if (!LearningClipUtils.alreadyInit) {
       LearningClipUtils.alreadyInit = LearningClipUtils.init();
     }
-    let currentMap: Map = this.sMapContainer.get(styleClass);
+    let currentMap: Map<number> = this.sMapContainer.get(styleClass);
     if (currentMap == null) {
       currentMap = new Map();
       currentMap.put(LearningClipUtils.sEllipsis, LearningClipUtils.getStringWidth("…", styleClass));
@@ -58,7 +58,7 @@ export class LearningClipUtils {
   }
 
   private static sClipUtilsDiv: HTMLDivElement;
-  private static sMapContainer: Map = new Map();
+  private static sMapContainer: Map<Map<number>> = new Map();
   private static sEllipsis: string = "ellipsis";
 
   private static alreadyInit: boolean = LearningClipUtils.init();

@@ -15,26 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../lib/DateProvider";
-import {SoapEventParser} from "./SoapEventParser";
+import {IDateProvider} from "../../../../lib/IDateProvider";
 
-import {AcceptFriendshipEventDecoder} from "./decoders/AcceptFriendshipEventDecoder";
 import {BuddyListEventDecoder} from "./decoders/BuddyListEventDecoder";
 import {ContactInformationEventDecoder} from "./decoders/ContactInformationEventDecoder";
+import {DummyEventDecoder} from "./decoders/DummyEventDecoder";
 import {ErrorEventDecoder} from "./decoders/ErrorEventDecoder";
 import {FriendBackAddedEventDecoder} from "./decoders/FriendBackAddedEventDecoder";
 import {FriendshipEventDecoder} from "./decoders/FriendshipEventDecoder";
-import {MessageAckReceivedEventDecoder} from "./decoders/MessageAckReceivedEventDecoder";
 import {MessageEventDecoder} from "./decoders/MessageEventDecoder";
 import {NewClientVersionEventDecoder} from "./decoders/NewClientVersionEventDecoder";
-import {RemoveFriendshipEventDecoder} from "./decoders/RemoveFriendshipEventDecoder";
-import {RenameFriendshipEventDecoder} from "./decoders/RenameFriendshipEventDecoder";
-import {RenameGroupEventDecoder} from "./decoders/RenameGroupEventDecoder";
 import {RequiredRegistrationEventDecoder} from "./decoders/RequiredRegistrationEventDecoder";
+import {RoomAckReceivedEventDecoder} from "./decoders/RoomAckReceivedEventDecoder";
 import {SecretTestEventDecoder} from "./decoders/SecretTestEventDecoder";
 import {SessionRegisteredEventDecoder} from "./decoders/SessionRegisteredEventDecoder";
-import {SessionUnregisteredEventDecoder} from "./decoders/SessionUnregisteredEventDecoder";
-import {SetStatusEventDecoder} from "./decoders/SetStatusEventDecoder";
 import {ShutdownEventDecoder} from "./decoders/ShutdownEventDecoder";
 import {SuperSecretEventDecoder} from "./decoders/SuperSecretEventDecoder";
 import {UserStatusesEventDecoder} from "./decoders/UserStatusesEventDecoder";
@@ -52,48 +46,72 @@ import {SetStatusEventEncoder} from "./encoders/SetStatusEventEncoder";
 import {UnregisterSessionEventEncoder} from "./encoders/UnregisterSessionEventEncoder";
 import {WritingStatusEventEncoder} from "./encoders/WritingStatusEventEncoder";
 
+import {AcceptFriendshipEvent} from "../../../events/chat/AcceptFriendshipEvent";
+import {OpenChatEventCode} from "../../../events/chat/OpenChatEventCode";
+import {QueryArchiveEvent} from "../../../events/chat/QueryArchiveEvent";
+import {RemoveFriendshipEvent} from "../../../events/chat/RemoveFriendshipEvent";
+import {RenameFriendshipEvent} from "../../../events/chat/RenameFriendshipEvent";
+import {RenameGroupEvent} from "../../../events/chat/RenameGroupEvent";
+import {SetStatusEvent} from "../../../events/chat/SetStatusEvent";
+import {UnregisterSessionEvent} from "../../../events/chat/UnregisterSessionEvent";
+import {IChatEvent} from "../../../events/IChatEvent";
+import {IChatEventParser} from "../../../events/parsers/IChatEventParser";
+import {ArchiveResultEventDecoder} from "./decoders/ArchiveResultEventDecoder";
+import {ArchiveResultFinEventDecoder} from "./decoders/ArchiveResultFinEventDecoder";
+import {QueryArchiveEventEncoder} from "./encoders/QueryArchiveEventEncoder";
+
+/**
+ * @deprecated
+ */
 export class SoapEventParserUtils {
 
+  /**
+   * @deprecated
+   * @param {IChatEventParser<IChatEvent>} parser
+   * @param {IDateProvider} dateProvider
+   */
   public static PopulateChatSoapEventParser(
-    newParser: SoapEventParser,
-    dateProvider: DateProvider,
+    parser: IChatEventParser<IChatEvent>,
+    dateProvider: IDateProvider,
   ): void {
     const secretDecoder = new SuperSecretEventDecoder(dateProvider);
     // Add Decoders
-    newParser.addDecoder(new AcceptFriendshipEventDecoder());
-    newParser.addDecoder(new BuddyListEventDecoder(dateProvider));
-    newParser.addDecoder(new ContactInformationEventDecoder(dateProvider));
-    newParser.addDecoder(new ErrorEventDecoder(dateProvider));
-    newParser.addDecoder(new FriendBackAddedEventDecoder(dateProvider));
-    newParser.addDecoder(new FriendshipEventDecoder(dateProvider));
-    newParser.addDecoder(new MessageAckReceivedEventDecoder(dateProvider));
-    newParser.addDecoder(new MessageEventDecoder(dateProvider, secretDecoder));
-    newParser.addDecoder(new NewClientVersionEventDecoder(dateProvider));
-    newParser.addDecoder(new RemoveFriendshipEventDecoder(dateProvider));
-    newParser.addDecoder(new RenameFriendshipEventDecoder());
-    newParser.addDecoder(new RenameGroupEventDecoder());
-    newParser.addDecoder(new RequiredRegistrationEventDecoder(dateProvider));
-    newParser.addDecoder(new SessionRegisteredEventDecoder(dateProvider));
-    newParser.addDecoder(new SessionUnregisteredEventDecoder());
-    newParser.addDecoder(new SetStatusEventDecoder());
-    newParser.addDecoder(new ShutdownEventDecoder(dateProvider));
-    newParser.addDecoder(new UserStatusesEventDecoder(dateProvider));
-    newParser.addDecoder(new WritingStatusEventDecoder(dateProvider));
+    parser.addDecoder(new DummyEventDecoder<AcceptFriendshipEvent>(OpenChatEventCode.ACCEPT_FRIENDSHIP));
+    parser.addDecoder(new BuddyListEventDecoder(dateProvider));
+    parser.addDecoder(new ContactInformationEventDecoder(dateProvider));
+    parser.addDecoder(new ErrorEventDecoder(dateProvider));
+    parser.addDecoder(new FriendBackAddedEventDecoder(dateProvider));
+    parser.addDecoder(new FriendshipEventDecoder(dateProvider));
+    parser.addDecoder(new RoomAckReceivedEventDecoder(dateProvider));
+    parser.addDecoder(new MessageEventDecoder(dateProvider, secretDecoder));
+    parser.addDecoder(new NewClientVersionEventDecoder(dateProvider));
+    parser.addDecoder(new DummyEventDecoder<RemoveFriendshipEvent>(OpenChatEventCode.REMOVE_FRIENDSHIP));
+    parser.addDecoder(new DummyEventDecoder<RenameFriendshipEvent>(OpenChatEventCode.RENAME_FRIENDSHIP));
+    parser.addDecoder(new DummyEventDecoder<RenameGroupEvent>(OpenChatEventCode.RENAME_GROUP));
+    parser.addDecoder(new RequiredRegistrationEventDecoder(dateProvider));
+    parser.addDecoder(new DummyEventDecoder<UnregisterSessionEvent>(OpenChatEventCode.UNREGISTER_SESSION));
+    parser.addDecoder(new DummyEventDecoder<SetStatusEvent>(OpenChatEventCode.SET_STATUS));
+    parser.addDecoder(new ShutdownEventDecoder(dateProvider));
+    parser.addDecoder(new UserStatusesEventDecoder(dateProvider));
+    parser.addDecoder(new WritingStatusEventDecoder(dateProvider));
+    parser.addDecoder(new DummyEventDecoder<QueryArchiveEvent>(OpenChatEventCode.QUERY_ARCHIVE));
+    parser.addDecoder(new ArchiveResultEventDecoder(dateProvider, parser));
+    parser.addDecoder(new ArchiveResultFinEventDecoder(dateProvider));
     // Secret event, not ready for production
     secretDecoder.addDecoder(new SecretTestEventDecoder());
     // Add Encoders
-    newParser.addEncoder(new AcceptFriendshipEventEncoder());
-    newParser.addEncoder(new FriendshipEventEncoder());
-    newParser.addEncoder(new MessageAckEventEncoder());
-    newParser.addEncoder(new PingEventEncoder());
-    newParser.addEncoder(new RegisterSessionEventEncoder());
-    newParser.addEncoder(new RemoveFriendshipEventEncoder());
-    newParser.addEncoder(new RenameFriendshipEventEncoder());
-    newParser.addEncoder(new RenameGroupEventEncoder());
-    newParser.addEncoder(new SendMessageEventEncoder());
-    newParser.addEncoder(new SetStatusEventEncoder());
-    newParser.addEncoder(new WritingStatusEventEncoder());
-    newParser.addEncoder(new UnregisterSessionEventEncoder());
+    parser.addEncoder(new AcceptFriendshipEventEncoder());
+    parser.addEncoder(new FriendshipEventEncoder());
+    parser.addEncoder(new MessageAckEventEncoder());
+    parser.addEncoder(new PingEventEncoder());
+    parser.addEncoder(new RemoveFriendshipEventEncoder());
+    parser.addEncoder(new RenameFriendshipEventEncoder());
+    parser.addEncoder(new RenameGroupEventEncoder());
+    parser.addEncoder(new SendMessageEventEncoder());
+    parser.addEncoder(new SetStatusEventEncoder());
+    parser.addEncoder(new WritingStatusEventEncoder());
+    parser.addEncoder(new UnregisterSessionEventEncoder());
+    parser.addEncoder(new QueryArchiveEventEncoder());
   }
 
 }

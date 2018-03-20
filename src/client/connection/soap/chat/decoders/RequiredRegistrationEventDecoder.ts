@@ -15,21 +15,22 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {RequiredRegistrationEvent} from "../../../../events/chat/RequiredRegistrationEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class RequiredRegistrationEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class RequiredRegistrationEventDecoder extends SoapEventDecoder<RequiredRegistrationEvent> {
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.REQUIRED_REGISTRATION);
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {}, originEvent?: ChatEvent): ChatEvent {
+  public decodeEvent(eventObj: ISoapEventObject, originEvent?: IChatEvent): RequiredRegistrationEvent {
     return new RequiredRegistrationEvent(this.mDateProvider.getNow());
   }
 

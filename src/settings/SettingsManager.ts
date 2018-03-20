@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {JSON3} from "../libext/json3";
+import {JSON3 as JSON} from "../libext/json3";
 import {XRegExp} from "../libext/xregexp";
 
 import {ChatZimletBase} from "../ChatZimletBase";
@@ -26,6 +26,7 @@ import {TimedCallbackFactory} from "../lib/callbacks/TimedCallbackFactory";
 import {LogEngine} from "../lib/log/LogEngine";
 import {Logger} from "../lib/log/Logger";
 import {Version} from "../lib/Version";
+import {IOpenChatState} from "../redux/IOpenChatState";
 import {AjxCallback} from "../zimbra/ajax/boot/AjxCallback";
 import {ZmApp} from "../zimbra/zimbraMail/core/ZmApp";
 import {ZmSettings} from "../zimbra/zimbraMail/share/model/ZmSettings";
@@ -35,13 +36,14 @@ import {ConfigHandler} from "./handlers/ConfigHandler";
 import {PreferencesHandler} from "./handlers/PreferencesHandler";
 import {PropertiesHandler} from "./handlers/PropertiesHandler";
 import {ISettingsHandlerInterface} from "./handlers/SettingsHandlerInterface";
+import {ISettingsManager} from "./ISettingsManager";
 import {Setting} from "./Setting";
 
-export class SettingsManager {
+export class SettingsManager implements ISettingsManager {
 
   public DELEGATED_ACCESS: boolean;
 
-  private zimletContext: ChatZimletBase;
+  private zimletContext: ChatZimletBase<IOpenChatState>;
   private settingsHandlers: ISettingsHandlerInterface[];
   private onChangeCallbacks: {[name: string]: CallbackManager};
   private defaultSettingsHandler: ISettingsHandlerInterface;
@@ -49,7 +51,7 @@ export class SettingsManager {
   // TODO: Remove me...
 
   constructor(
-    zimletContext: ChatZimletBase,
+    zimletContext: ChatZimletBase<IOpenChatState>,
     settings: ZmSettings,
     timedCallbackFactory: TimedCallbackFactory,
   ) {
@@ -153,7 +155,7 @@ export class SettingsManager {
     if ((ZmApp.ENABLED_APPS[ZmApp.PREFERENCES] == null) || !ZmApp.ENABLED_APPS[ZmApp.PREFERENCES]) {
       return;
     }
-    let propValue = JSON3.stringify(data);
+    let propValue = JSON.stringify(data);
     const chunkSize = Setting._DATA_CHUNK_SIZE - Setting._DATA_CHUNK_PREFIX;
     const totSlices = Math.ceil((propValue.length + 2) / chunkSize);
     propValue = totSlices < 10 ? "0" + totSlices + propValue : "" + totSlices + propValue;
@@ -176,12 +178,12 @@ export class SettingsManager {
    * Search for the properties labeled as Setting.IM_USR_PREF_GROUP_DATA and reset all of them.
    * Unfortunately we cannot remove user properties. Opted to set to "" to limit the size saved on account.
    */
-  public resetGroupsData() {
+  public resetGroupsData(): void {
     if ((ZmApp.ENABLED_APPS[ZmApp.PREFERENCES] == null) || !ZmApp.ENABLED_APPS[ZmApp.PREFERENCES]) {
       return;
     }
     const reg = new XRegExp(Setting.IM_USR_PREF_GROUP_DATA);
-    const emptyValue = `01${JSON3.stringify([])}`;
+    const emptyValue = `01${JSON.stringify([])}`;
     const properties: UserProperty[] = (this.zimletContext.xmlObj() as ZmZimletContext).userProperties;
     let propertyFound: boolean = false;
     for (const property of properties) {
@@ -238,7 +240,7 @@ export class SettingsManager {
     }
     if (!reset) {
       try {
-        const data = JSON3.parse(buffer.join("")) as IGroupData[];
+        const data = JSON.parse(buffer.join("")) as IGroupData[];
         // ZT-149, check the consistence of the saved/loaded groups data.
         for (const g of data) {
           if (typeof g.name === "undefined" || typeof g.expanded === "undefined") {

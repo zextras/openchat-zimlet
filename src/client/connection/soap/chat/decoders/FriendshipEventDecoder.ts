@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {ObjectUtils} from "../../../../../lib/ObjectUtils";
 import {FriendshipAcceptedEvent} from "../../../../events/chat/friendship/FriendshipAcceptedEvent";
 import {FriendshipBlockedEvent} from "../../../../events/chat/friendship/FriendshipBlockedEvent";
@@ -23,30 +23,26 @@ import {FriendshipDeniedEvent} from "../../../../events/chat/friendship/Friendsh
 import {FriendshipInvitationEvent} from "../../../../events/chat/friendship/FriendshipInvitationEvent";
 import {FriendshipRemovedEvent} from "../../../../events/chat/friendship/FriendshipRemovedEvent";
 import {FriendshipRenameEvent} from "../../../../events/chat/friendship/FriendshipRenameEvent";
+import {FriendshipEvent} from "../../../../events/chat/FriendshipEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class FriendshipEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class FriendshipEventDecoder extends SoapEventDecoder<FriendshipEvent> {
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.FRIENDSHIP);
     this.mDateProvider = dateProvider;
   }
 
   public decodeEvent(
-    eventObj: {
-      statusType: number,
-      buddyAddress: string,
-      buddyNickname: string,
-      buddyGroup: string,
-      from: string,
-    },
-    originEvent?: ChatEvent,
-  ): ChatEvent {
+    eventObj: IFriendshipEventObj,
+    originEvent?: IChatEvent,
+  ): FriendshipEvent {
     if (ObjectUtils.isEmpty(eventObj) && typeof originEvent !== "undefined") {
-      return originEvent;
+      return originEvent as FriendshipEvent;
     }
 
     const statusType: number = eventObj.statusType;
@@ -79,4 +75,12 @@ export class FriendshipEventDecoder extends SoapEventDecoder {
     }
   }
 
+}
+
+interface IFriendshipEventObj extends ISoapEventObject {
+  statusType: number;
+  buddyAddress: string;
+  buddyNickname: string;
+  buddyGroup: string;
+  from: string;
 }

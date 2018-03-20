@@ -15,6 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {BuddyStatus} from "../../client/BuddyStatus";
 import {IBuddy} from "../../client/IBuddy";
 import {IBuddyStatus} from "../../client/IBuddyStatus";
 import {Callback} from "../../lib/callbacks/Callback";
@@ -39,6 +40,8 @@ import {BuddyTreeItemActionMenuFactory} from "./BuddyTreeItemActionMenuFactory";
 import {IDwtChatTreeItem} from "./DwtChatTreeItem";
 import {GroupTreeItem} from "./GroupTreeItem";
 
+import "./BuddyTreeItem.scss";
+
 export class BuddyTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
 
   public static MAX_LENGTH: number = ZimbraUtils.isUniversalUI() ? 200 : 133;
@@ -52,6 +55,7 @@ export class BuddyTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
   private onRenameBuddyCallbacks: CallbackManager;
   private onSendInvitationCallbacks: CallbackManager;
   private onAcceptInvitationCallbacks: CallbackManager;
+  private refBuddyId: string;
 
   constructor(parent: GroupTreeItem, buddy: IBuddy, appCtxt: ZmAppCtxt, mainWindowPluginManager: ChatPluginManager) {
     super({
@@ -67,13 +71,14 @@ export class BuddyTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
       treeText = LearningClipUtils.clip(buddy.getNickname(), BuddyTreeItem.MAX_LENGTH, "DwtTreeItem-Text");
     }
     this.refBuddy = buddy;
+    this.refBuddyId = buddy.getId();
     this.appCtxt = appCtxt;
     this.mainWindowPluginManager = mainWindowPluginManager;
     this.hideIfOffline = false;
     this.historyEnabled = false;
 
     this._treeItemExtraImgClass = "ZxChat_BuddyTreeItem-ExtraImg";
-    this.setImage(this.refBuddy.getStatus().getCSS());
+    this.setImage(BuddyStatus.getCSS(this.refBuddy.getStatus().getType()));
     this.setText(treeText);
     const dragSource = new DwtDragSource(Dwt.DND_DROP_MOVE);
     dragSource.addDragListener(new AjxListener(this, this._dragListener));
@@ -97,6 +102,10 @@ export class BuddyTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
 
   public getBuddy(): IBuddy {
     return this.refBuddy;
+  }
+
+  public getId(): string {
+    return this.refBuddyId;
   }
 
   public showHideOffline(hide: boolean): void {
@@ -202,7 +211,7 @@ export class BuddyTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
   }
 
   private _onStatusChange(buddy: IBuddy, status: IBuddyStatus): void {
-    this.setImage(status.getCSS());
+    this.setImage(BuddyStatus.getCSS(status.getType()));
     this._updateVisibility();
   }
 
@@ -224,6 +233,7 @@ export class BuddyTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
     const expanded = AjxTemplate.expand("com_zextras_chat_open.Widgets#BuddyTreeItemTooltip", {
       buddy: this.getBuddy(),
       contact: this.getContact(),
+      cssStatus: BuddyStatus.getCSS(this.getBuddy().getStatus().getType()),
     });
     callback.run(expanded);
   }

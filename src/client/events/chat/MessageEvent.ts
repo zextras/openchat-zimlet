@@ -20,50 +20,19 @@ import {OpenChatEventCode} from "./OpenChatEventCode";
 
 export class MessageEvent extends ChatEvent {
 
-  /**
-   * Xmpp compliant
-   * @param type
-   * @returns {MessageType}
-   */
-  public static convertToMessageType(type: string): MessageType {
-    switch (type) {
-      case "chat":
-        return MessageType.CHAT;
-      case "groupchat":
-        return MessageType.GROUPCHAT;
-      default:
-        return MessageType.CHAT;
-    }
-  }
-
-  /**
-   * @param messageType
-   * @returns {string}
-   */
-  public static convertFromMessageType(messageType: MessageType): string {
-    switch (messageType) {
-      case MessageType.CHAT:
-        return "chat";
-      case MessageType.GROUPCHAT:
-        return "groupchat";
-      default:
-        return "chat";
-    }
-  }
-
   public mMessage: string;
 
   private mMsgId: string;
   private mDate: Date;
   private mDelivered: boolean;
-  private mType: MessageType;
+  private mType: "chat" | string;
 
   constructor(
     msgId: string,
     sender: string,
     destination: string,
     message: string,
-    type: string,
+    type: "chat" | string,
     eventDate: Date,
     creationDate: Date,
   ) {
@@ -76,7 +45,7 @@ export class MessageEvent extends ChatEvent {
       this.setDestination(destination);
     }
     this.mMessage = message;
-    this.mType = MessageEvent.convertToMessageType(type);
+    this.mType = type;
     this.mDate = eventDate;
     this.mDelivered = false;
   }
@@ -97,18 +66,8 @@ export class MessageEvent extends ChatEvent {
     return this.mDate;
   }
 
-  public getType(): MessageType {
+  public getType(): string {
     return this.mType;
   }
 
-}
-
-  /**
-   * Xmpp compliant
-   * @param type
-   * @returns {MessageType}
-   */
-export enum MessageType {
-  CHAT,
-  GROUPCHAT,
 }

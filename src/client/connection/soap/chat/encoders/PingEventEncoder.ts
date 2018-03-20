@@ -16,16 +16,16 @@
  */
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {PingEvent} from "../../../../events/chat/PingEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class PingEventEncoder extends SoapEventEncoder {
+export class PingEventEncoder extends SoapEventEncoder<PingEvent> {
 
   constructor() {
     super(OpenChatEventCode.PING);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
+  protected getEventDetails(event: PingEvent): {} {
     return {};
   }
 

@@ -1,0 +1,141 @@
+//
+// Copyright (C) 2017 ZeXtras S.r.l.
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, version 2 of
+// the License.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License.
+// If not, see <http://www.gnu.org/licenses/>.
+//
+
+@import "./images/com_zextras_chat_open_sprite";
+
+.Imgfa {
+  font-size: 14px;
+  padding-top: 2px;
+}
+
+.Img16 {
+  //@extend .ZxChat-16;
+  background-repeat: no-repeat;
+  display: block;
+  overflow: hidden;
+  height: 16px;
+  width: 16px;
+}
+
+.ZxEmojiPickerButton {
+  margin: 0;
+}
+
+.ZxEmojiPickerButton > .ZLeftIcon {
+  padding: 0;
+}
+
+.ZxEmojiPickerButton > .ZRightIcon {
+  padding: 0;
+}
+
+.ZxEmojiPickerButton > .ZDropDown {
+  padding: 0;
+  width: 0;
+  height: 0;
+}
+
+.ImgZxChat_close {
+  @extend .Img16;
+  @include sprite($icon-close);
+}
+
+.ImgZxChat_preferences {
+  @extend .Img16;
+  @include sprite($icon-menu);
+}
+
+.ImgZxChat_preferences-gray {
+  @extend .Img16;
+  @include sprite($icon-menu-gray);
+}
+
+.ImgZxChat_online {
+  @extend .Img16;
+  @include sprite($available);
+}
+
+.ImgZxChat_away {
+  @extend .Img16;
+  @include sprite($away);
+}
+
+.ImgZxChat_busy {
+  @extend .Img16;
+  @include sprite($busy);
+}
+
+.ImgZxChat_offline {
+  @extend .Img16;
+  @include sprite($offline);
+}
+
+.ImgZxChat_invisible {
+  @extend .Img16;
+  @include sprite($invisible);
+}
+
+.ImgZxChat_unreachable {
+  @extend .Img16;
+  @include sprite($deleted);
+}
+
+.ImgZxChat_need_response {
+  @extend .Img16;
+  @include sprite($pending-request);
+}
+
+.ImgZxChat_invited {
+  @extend .Img16;
+  @include sprite($pending);
+}
+
+.ImgChatFolder {
+  @extend .Img16;
+  @include sprite($chat-folder);
+}
+
+// Override button borders and settings for the emoji picker button
+.ZxEmojiPickerButton > .ZToolbarButtonBorder {
+  border-radius: 0;
+  border-collapse: separate;
+  border: none;
+  background-image: none;
+  box-shadow: none;
+}
+
+.ZxChat_Button > .ZToolbarButtonBorder {
+  background-image: none;
+  box-shadow: none;
+  border: none;
+}
+
+.ZxChat_Button.ZHover > .ZToolbarButtonBorder,
+.ZxChat_Button.ZActive > .ZToolbarButtonBorder,
+.ZxChat_Button.ZSelected > .ZToolbarButtonBorder {
+  box-shadow: none;
+  border: none;
+  background: #007cc3 none;
+}
+
+.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZHover > .ZToolbarButtonBorder,
+.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZActive > .ZToolbarButtonBorder,
+.MainWindowStatusToolbar > table > tbody > tr > td > .ZxChat_Button.ZSelected > .ZToolbarButtonBorder {
+  box-shadow: none;
+  border: none;
+  background: #D6D6D6 none;
+}

@@ -15,12 +15,16 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatEvent} from "../ChatEvent";
+import {SoapEventDecoder} from "../../connection/soap/chat/decoders/SoapEventDecoder";
+import {SoapEventEncoder} from "../../connection/soap/chat/encoders/SoapEventEncoder";
+import {IChatEvent} from "../IChatEvent";
 import {IConnectionEventParser} from "./IConnectionEventParser";
 
-export interface IChatEventParser extends IConnectionEventParser {
+export interface IChatEventParser<T extends IChatEvent> extends IConnectionEventParser {
 
-  encodeEvent(chatEvent: ChatEvent): {};
-  decodeEvent(originEvent: ChatEvent, object: {}): ChatEvent;
+  addEncoder(encoder: SoapEventEncoder<T>): void;
+  addDecoder(decoder: SoapEventDecoder<T>): void;
+  encodeEvent(chatEvent: T): {};
+  decodeEvent(originEvent: T, object: {}): T;
 
 }

@@ -15,26 +15,31 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
 import {Version} from "../../../../../lib/Version";
 import {NewClientVersionEvent} from "../../../../events/chat/NewClientVersionEvent";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class NewClientVersionEventDecoder extends SoapEventDecoder {
-  private mDateProvider: DateProvider;
+export class NewClientVersionEventDecoder extends SoapEventDecoder<NewClientVersionEvent> {
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.NEW_CLIENT_VERSION);
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {currentZimletVersion: string}, originEvent?: ChatEvent): ChatEvent {
+  public decodeEvent(eventObj: INewClientVersionEventObj, originEvent?: IChatEvent): NewClientVersionEvent {
     return new NewClientVersionEvent(
       new Version(eventObj.currentZimletVersion),
       this.mDateProvider.getNow(),
     );
   }
 
+}
+
+interface INewClientVersionEventObj extends ISoapEventObject {
+  currentZimletVersion: string;
 }

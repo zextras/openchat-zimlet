@@ -34,6 +34,8 @@ import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 import {ZmPopupMenu} from "../../zimbra/zimbraMail/share/view/ZmPopupMenu";
 import {IdGenerator} from "../IdGenerator";
 
+import "./WindowBase.scss";
+
 export class WindowBase extends DwtBaseDialog {
   public static BTN_CLOSE: string = "close";
   public static BTN_MINIMIZE: string = "minimize";

@@ -26,7 +26,7 @@ export enum OpenChatEventCode {
   BUDDY_LIST            = 7,
   TIMEOUT               = 8,
   WRITING_STATUS        = 9,
-  MESSAGE_ACK           = 10, // Used also for MessageAckReceived
+  ROOM_ACK              = 10, // Used also for MessageAckReceived
   FRIEND_BACK_ADDED     = 11,
   NEW_CLIENT_VERSION    = 12,
   SHUTDOWN              = 13,
@@ -41,5 +41,12 @@ export enum OpenChatEventCode {
   RENAME_GROUP          = 24,
   SET_STATUS            = 26,
   SECRET_TEST           = 30,
+  // History related events
+  ARCHIVE_RESULT        = 49,
+  ARCHIVE_RESULT_FIN    = 50,
+  QUERY_ARCHIVE         = 51,
+  ARCHIVE_COUNTER       = 52,
+  // Capabilities
+  USER_CAPABILITIES     = 54,
 
 }

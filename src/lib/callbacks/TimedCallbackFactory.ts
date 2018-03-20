@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../DateProvider";
+import {IDateProvider} from "../IDateProvider";
 import {Callback} from "./Callback";
 import {TimedCallback} from "./TimedCallback";
 
@@ -37,9 +37,9 @@ export class TimedCallbackFactory {
 }
 
 export class FakeTimedCallbackFactory {
-    private mDateProvider: DateProvider;
+    private mDateProvider: IDateProvider;
 
-  constructor(dateProvider?: DateProvider) {
+  constructor(dateProvider?: IDateProvider) {
     this.mDateProvider = dateProvider;
   }
 
@@ -58,10 +58,10 @@ export class FakeTimedCallbackFactory {
 }
 
 export class FakeTimedCallback extends TimedCallback {
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
   private mStartingTime: number;
 
-  constructor(callback: Callback, timeout: number, repeat: boolean = false, dateProvider: DateProvider) {
+  constructor(callback: Callback, timeout: number, repeat: boolean = false, dateProvider: IDateProvider) {
     super(callback, timeout, repeat);
     if (typeof dateProvider !== "undefined") {
       this.mDateProvider = dateProvider;

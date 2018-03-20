@@ -17,17 +17,15 @@
 
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {RegisterSessionEvent} from "../../../../events/chat/RegisterSessionEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
 import {SoapEventEncoder} from "./SoapEventEncoder";
 
-export class RegisterSessionEventEncoder extends SoapEventEncoder {
+export class RegisterSessionEventEncoder extends SoapEventEncoder<RegisterSessionEvent> {
 
   constructor() {
     super(OpenChatEventCode.REGISTER_SESSION);
   }
 
-  protected getEventDetails(event: ChatEvent): {} {
-    const ev: RegisterSessionEvent = event as RegisterSessionEvent;
+  protected getEventDetails(ev: RegisterSessionEvent): {} {
     return {
       clientVersion: ev.getClientVersion().toString(),
     };

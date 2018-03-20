@@ -26,6 +26,8 @@ import {ZmActionMenu} from "../../zimbra/zimbraMail/share/view/ZmActionMenu";
 import {IdGenerator} from "../IdGenerator";
 import {BuddyTreeItem} from "./BuddyTreeItem";
 
+import "./BuddyTreeItemActionMenuFactory.scss";
+
 export class BuddyTreeItemActionMenuFactory {
 
   public static AddMenuItemPlugin: string = "BuddyTreeItem Action Menu Add Menu Entry";
@@ -50,6 +52,7 @@ export class BuddyTreeItemActionMenuFactory {
       style: DwtMenuItem.IMAGE_LEFT,
     });
     menu.optRename.setText(StringUtils.getMessage("friend_rename"));
+    menu.optRename.setImage("fa fas fal fa-pencil-alt fa-pencil");
     menu.optRename.addSelectionListener(new AjxListener(treeItem, treeItem._onRenameBuddy));
     menu.optRename.setEnabled(true);
     if (buddy.getStatus().getType() === BuddyStatusType.INVITED) {
@@ -59,7 +62,7 @@ export class BuddyTreeItemActionMenuFactory {
         style: DwtMenuItem.IMAGE_LEFT,
       });
       menu.optSendInvitation.setText(StringUtils.getMessage("resend_invite"));
-      menu.optSendInvitation.setImage("ZxChat_addBuddy");
+      menu.optSendInvitation.setImage("fa fas fal fa-plus-circle");
       menu.optSendInvitation.addSelectionListener(new AjxListener(treeItem, treeItem._onSendInvitation));
       menu.optSendInvitation.setEnabled(buddy.getStatus().getType() === BuddyStatusType.INVITED);
       menu.optSendInvitation.setVisible(buddy.getStatus().getType() === BuddyStatusType.INVITED);
@@ -71,7 +74,7 @@ export class BuddyTreeItemActionMenuFactory {
         style: DwtMenuItem.IMAGE_LEFT,
       });
       menu.optAcceptInvitation.setText(StringUtils.getMessage("accept_invitation"));
-      menu.optAcceptInvitation.setImage("ZxChat_addBuddy");
+      menu.optAcceptInvitation.setImage("fa fas fal fa-plus-circle");
       menu.optAcceptInvitation.addSelectionListener(new AjxListener(treeItem, treeItem._onAcceptInvitation));
       menu.optAcceptInvitation.setEnabled(buddy.getStatus().getType() === BuddyStatusType.NEED_RESPONSE);
       menu.optAcceptInvitation.setVisible(buddy.getStatus().getType() === BuddyStatusType.NEED_RESPONSE);
@@ -82,6 +85,7 @@ export class BuddyTreeItemActionMenuFactory {
       style: DwtMenuItem.IMAGE_LEFT,
     });
     menu.optDelete.setText(StringUtils.getMessage("friend_delete"));
+    menu.optDelete.setImage("fa fas fal fa-trash-alt");
     menu.optDelete.addSelectionListener(new AjxListener(treeItem, treeItem._onDeleteBuddy));
     menu.optDelete.setEnabled(true);
     mainWindowPluginManager.triggerPlugins(BuddyTreeItemActionMenuFactory.AddMenuItemPlugin, menu, treeItem);

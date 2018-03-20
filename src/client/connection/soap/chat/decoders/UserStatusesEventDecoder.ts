@@ -15,31 +15,32 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {DateProvider} from "../../../../../lib/DateProvider";
-import {BuddyStatusImp} from "../../../../BuddyStatus";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
+import {BuddyStatus} from "../../../../BuddyStatus";
 import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
 import {UserStatusesEvent} from "../../../../events/chat/UserStatusesEvent";
-import {ChatEvent} from "../../../../events/ChatEvent";
+import {IChatEvent} from "../../../../events/IChatEvent";
 import {IBuddyStatus} from "../../../../IBuddyStatus";
+import {ISoapEventObject} from "../SoapEventParser";
 import {SoapEventDecoder} from "./SoapEventDecoder";
 
-export class UserStatusesEventDecoder extends SoapEventDecoder {
+export class UserStatusesEventDecoder extends SoapEventDecoder<UserStatusesEvent> {
   private static decodeBuddyStatus(status: IUserStatusObj): IBuddyStatus {
-    return new BuddyStatusImp(
-      BuddyStatusImp.GetTypeFromNumber(status.type),
+    return new BuddyStatus(
+      BuddyStatus.GetTypeFromNumber(status.type),
       status.message,
       status.id,
     );
   }
 
-  private mDateProvider: DateProvider;
+  private mDateProvider: IDateProvider;
 
-  constructor(dateProvider: DateProvider) {
+  constructor(dateProvider: IDateProvider) {
     super(OpenChatEventCode.USER_STATUSES);
     this.mDateProvider = dateProvider;
   }
 
-  public decodeEvent(eventObj: {user_statuses: IUserStatusObj[]}, originEvent?: ChatEvent): ChatEvent {
+  public decodeEvent(eventObj: IUserStatusesEventObj, originEvent?: IChatEvent): UserStatusesEvent {
     const event: UserStatusesEvent = new UserStatusesEvent(this.mDateProvider.getNow());
     const statuses: IUserStatusObj[] = eventObj.user_statuses;
     for (const status of statuses) {
@@ -47,6 +48,10 @@ export class UserStatusesEventDecoder extends SoapEventDecoder {
     }
     return event;
   }
+}
+
+interface IUserStatusesEventObj extends ISoapEventObject {
+  user_statuses: IUserStatusObj[];
 }
 
 interface IUserStatusObj {

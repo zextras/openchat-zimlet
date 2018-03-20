@@ -1,32 +1,20 @@
 #!/usr/bin/env bash
 
-patch -p0 -N --dry-run --silent < patches/emojione-2.2.7.patch 2>/dev/null;
-if [ $? -eq 0 ];
-then
-    patch -p0 -N < patches/emojione-2.2.7.patch;
-fi
-patch -p0 -N --dry-run --silent < patches/jquery-textcomplete.patch 2>/dev/null;
-if [ $? -eq 0 ];
-then
-    patch -p0 -N < patches/jquery-textcomplete.patch;
-fi
-patch -p0 -N --dry-run --silent < patches/json-prune.patch 2>/dev/null; \
-if [ $? -eq 0 ]; \
-then \
-    patch -p0 -N < patches/json-prune.patch; \
-fi
-patch -p0 -N --dry-run --silent < patches/json3.patch 2>/dev/null; \
-if [ $? -eq 0 ]; \
-then \
-    patch -p0 -N < patches/json3.patch; \
-fi
-patch -p0 -N --dry-run --silent --binary < patches/webpack.patch 2>/dev/null; \
-if [ $? -eq 0 ]; \
-then \
-    patch -p0 -N --binary < patches/webpack.patch; \
-fi
-patch -p0 -N --dry-run --silent --binary < patches/xregexp.patch 2>/dev/null; \
-if [ $? -eq 0 ]; \
-then \
-    patch -p0 -N --binary < patches/xregexp.patch; \
-fi
+declare -a patches=(\
+"emojione-2.2.7" \
+"jquery-textcomplete" \
+"json-prune" \
+"json3" \
+"webpack" \
+"xregexp" \
+)
+
+for i in "${patches[@]}"
+do
+    echo "Processing patch for ${i}"
+    patch -p0 -N --dry-run --silent < "patches/${i}.patch" 2>/dev/null; \
+    if [ $? -eq 0 ]; \
+    then \
+        patch -p0 -N < "patches/${i}.patch"; \
+    fi
+done

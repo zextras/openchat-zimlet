@@ -17,22 +17,23 @@
 
 import {ZxError} from "../../lib/error/ZxError";
 import {ZxErrorCode} from "../../lib/error/ZxErrorCode";
-import {ChatEvent} from "../events/ChatEvent";
+import {IChatEvent} from "../events/IChatEvent";
+import {ICommandFactory} from "./ICommandFactory";
 
-export class CommandFactory {
+export class CommandFactory implements ICommandFactory {
 
   public mCommandsMap: {[eventId: number]: string} = {};
-  public mSpecialCommandsMap: {[eventId: number]: (event: ChatEvent) => string} = {};
+  public mSpecialCommandsMap: {[eventId: number]: (event: IChatEvent) => string} = {};
 
   public addCommand(eventId: number, command: string): void {
     this.mCommandsMap[eventId] = command;
   }
 
-  public addSpecialCommand(eventId: number, controlFunction: (event: ChatEvent) => string): void {
+  public addSpecialCommand(eventId: number, controlFunction: (event: IChatEvent) => string): void {
     this.mSpecialCommandsMap[eventId] = controlFunction;
   }
 
-  public getCommand(event: ChatEvent): string {
+  public getCommand(event: IChatEvent): string {
     if (typeof event.getCode() !== "undefined" && event.getCode() !== null) {
       if (this.mCommandsMap.hasOwnProperty(event.getCode().toString())) {
         return this.mCommandsMap[event.getCode()];

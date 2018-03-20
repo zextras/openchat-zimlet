@@ -35,6 +35,10 @@ export class BrowserUtils {
     return Bowser.safari;
   }
 
+  public static isEdge(): boolean {
+    return Bowser.msedge;
+  }
+
   public static getMajorVersion(): number {
     return parseInt(Bowser.version.substring(0, Bowser.version.indexOf(".")), 10);
   }
