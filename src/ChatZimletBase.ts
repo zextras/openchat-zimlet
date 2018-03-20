@@ -538,7 +538,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
         },
       );
       updateMessage.setMessage(
-        StringUtils.getMessage("need_update_zimlet") +
+        StringUtils.getMessage("need_update_zimlet", [ZimletVersion.ZIMLET_NAME]) +
         "<br/>Current <b>Chat Zimlet</b> version: " +
         ZimletVersion.getVersion().toString() +
         "<br/> Needed <b>Chat Zimlet</b> version: " +
@@ -554,7 +554,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
         parent: appCtxt.getShell(),
       });
       updateMessage.setMessage(
-        StringUtils.getMessage("need_update_core") +
+        StringUtils.getMessage("need_update_core", [ZimletVersion.ZIMLET_NAME]) +
         "<br/>Current <b>Chat Server</b> version: " +
         coreVersionDeclared +
         "<br/> Needed <b>Chat Server</b> version: " +
