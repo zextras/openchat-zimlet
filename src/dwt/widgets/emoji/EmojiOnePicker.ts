@@ -66,14 +66,12 @@ export class EmojiOnePicker extends DwtMenu {
         selectionListner,
       );
     }
-    emojiTab.setSize(
-      `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow + 15}px`, // 15 is the scrollbar
-      `${EmojiOnePicker.hEmojiToolBarBtn * 5}px`,
-    );
-    emojiTab.showMe = ((tabPage: DwtTabViewPage) => () => {
-      tabPage._contentEl.style.height = tabPage.parent.getHtmlElement().style.height;
-      tabPage._contentEl.style.width = tabPage.parent.getHtmlElement().style.width;
-    })(emojiTab);
+    emojiTab.showMe = () => {
+      emojiTab.setSize(
+        `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow + 15}px`, // 15 is the scrollbar
+        `${EmojiOnePicker.hEmojiToolBarBtn * 5}px`,
+      );
+    };
     return emojiTab;
   }
 
@@ -142,7 +140,7 @@ export class EmojiOnePicker extends DwtMenu {
     }
     emojiTabView.setSize(
       `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow + 15}px`, // 15 is the scrollbar
-      `${EmojiOnePicker.hEmojiToolBarBtn * 5}px`,
+      `${EmojiOnePicker.hEmojiToolBarBtn * 5 + 30}px`,
     );
     emojiTabView.switchToTab(1);
 
