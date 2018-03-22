@@ -257,7 +257,7 @@ export class BuddyListTree extends DwtTree {
   }
 
   public onAddBuddy(callback: Callback): void {
-    this.mOnAddBuddyCbkMgr.run(callback);
+    this.mOnAddBuddyCbkMgr.addCallback(callback);
   }
 
   public onBuddyStatusChange(callback: Callback): void {
