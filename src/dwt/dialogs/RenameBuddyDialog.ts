@@ -22,7 +22,6 @@ import {AjxTemplate} from "../../zimbra/ajax/boot/AjxTemplate";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
-import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
 import {DwtDialog} from "../../zimbra/ajax/dwt/widgets/DwtDialog";
 import {AjxListener} from "../../zimbra/ajax/events/AjxListener";
 import {AjxStringUtil} from "../../zimbra/ajax/util/AjxStringUtil";
@@ -36,7 +35,6 @@ import {IOpenChatState} from "../../redux/IOpenChatState";
 
 export class RenameBuddyDialog extends ZmDialog {
   private buddyNicknameEl: HTMLInputElement;
-  private shell: DwtControl;
   private client: IChatClient;
   private buddy: IBuddy;
   private mDataStore: Store<IOpenChatState>;
@@ -57,7 +55,6 @@ export class RenameBuddyDialog extends ZmDialog {
     super(params);
     this.client = client;
     this.buddy = buddy;
-    this.shell = params.parent;
     this.mBuddyJid = buddy.getId();
     if (typeof dataStore !== "undefined") {
       this.mDataStore = dataStore;
