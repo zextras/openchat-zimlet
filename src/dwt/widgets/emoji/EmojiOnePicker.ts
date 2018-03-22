@@ -140,7 +140,7 @@ export class EmojiOnePicker extends DwtMenu {
     }
     emojiTabView.setSize(
       `${EmojiOnePicker.wEmojiToolBarBtn * EmojiOnePicker.sEmojiPerRow + 15}px`, // 15 is the scrollbar
-      `${EmojiOnePicker.hEmojiToolBarBtn * 5 + 30}px`,
+      `${EmojiOnePicker.hEmojiToolBarBtn * 5 + 31}px`,
     );
     emojiTabView.switchToTab(1);
 
@@ -154,7 +154,7 @@ export class EmojiOnePicker extends DwtMenu {
   public getSize(getFromStyle?: boolean): DwtPoint {
     return new DwtPoint(
       (EmojiTemplate.NAMES.length * 48) + 30,
-      (EmojiOnePicker.hEmojiToolBarBtn * 5) + 30,
+      (EmojiOnePicker.hEmojiToolBarBtn * 5) + 31,
     );
   }
 
