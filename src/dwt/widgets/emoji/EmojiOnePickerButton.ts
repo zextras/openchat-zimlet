@@ -16,7 +16,6 @@
  */
 
 import {Callback} from "../../../lib/callbacks/Callback";
-import {FocusKeeper} from "../../../lib/FocusKeeper";
 import {ZimbraUtils} from "../../../lib/ZimbraUtils";
 import {DwtSelectionEvent} from "../../../zimbra/ajax/dwt/events/DwtSelectionEvent";
 import {DwtMenu} from "../../../zimbra/ajax/dwt/widgets/DwtMenu";
@@ -59,7 +58,6 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
   }
 
   public popup(menu: DwtMenu): void {
-    FocusKeeper.storeFocusElement();
     this.setEmojiPickerMenu();
     this.getMenu().parent = this; // Really dirty hack, it is necessary to move the menu over the button.
     super.popup();
@@ -115,7 +113,6 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
       }
       // this.setEmoji(tmpEmoji);
       this.getMenu().popdown();
-      FocusKeeper.loadFocusElement();
     }
   }
 

@@ -18,7 +18,6 @@
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
 import {TimedCallback} from "../../lib/callbacks/TimedCallback";
-import {FocusKeeper} from "../../lib/FocusKeeper";
 import {ColorFader} from "../../lib/graphic/ColorFader";
 import {ColorFaderColor} from "../../lib/graphic/ColorFaderColor";
 import {LearningClipUtils} from "../../lib/LearningClipUtils";
@@ -28,6 +27,7 @@ import {Dwt} from "../../zimbra/ajax/dwt/core/Dwt";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
 import {DwtKeyboardMgr} from "../../zimbra/ajax/dwt/keyboard/DwtKeyboardMgr";
+import {DwtTabGroup} from "../../zimbra/ajax/dwt/keyboard/DwtTabGroup";
 import {DwtBaseDialog} from "../../zimbra/ajax/dwt/widgets/DwtBaseDialog";
 import {DwtComposite} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {DwtControl} from "../../zimbra/ajax/dwt/widgets/DwtControl";
@@ -212,9 +212,9 @@ export class WindowBase extends DwtBaseDialog {
     // Avoid to catch Zimbra Keybindings
     if (this.isPoppedUp() && !this.mInterceptKeyboardMgr) {
       const kbMgr: DwtKeyboardMgr = this._shell.getKeyboardMgr();
-      FocusKeeper.storeFocusElement();
+      const tabGroup: DwtTabGroup = kbMgr.__tabGrpStack.pop();
+      tabGroup.removeFocusChangeListener(kbMgr.__tabGroupChangeListenerObj);
       kbMgr.popTabGroup(this._tabGroup);
-      FocusKeeper.loadFocusElement();
       kbMgr.popDefaultHandler();
     }
     // Avoid to catch the Zimbra Focus
