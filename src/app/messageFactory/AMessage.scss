@@ -51,7 +51,7 @@ $amessage-bg-color: white;
     background-color: $amessage-bg-color;
     padding: (16/14)*1em (24/14)*1em;
     white-space: pre-wrap;
-    word-break: break-all;
+    overflow-x: hidden;
     word-wrap: break-word;
     font-size: (14/8)*1em;
     @include default-font-family();
@@ -70,6 +70,7 @@ $amessage-bg-color: white;
   margin-right: (8/12)*1em;
   opacity: 0.7;
   font-size: 1em;
+  flex-shrink: 0;
 }
 
 .AMessage-status {
