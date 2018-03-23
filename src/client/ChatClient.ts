@@ -47,7 +47,6 @@ import {IEventManager} from "./events/IEventManager";
 import {Group} from "./Group";
 import {IBuddy} from "./IBuddy";
 import {IChatClient} from "./IChatClient";
-import {IRoomManager} from "./IRoomManager";
 import {MessageSent} from "./MessageSent";
 
 export class ChatClient implements IChatClient {
@@ -58,7 +57,6 @@ export class ChatClient implements IChatClient {
 
   private mDateProvider: IDateProvider;
   private mConnectionManager: IConnectionManager;
-  private mRoomManager: IRoomManager;
   private mBuddylist: BuddyList;
   private mOnRegistrationErrorCallbackManager: CallbackManager;
   private mOnServerOnlineCallbackManager: CallbackManager;
@@ -75,7 +73,6 @@ export class ChatClient implements IChatClient {
     dateProvider: IDateProvider,
     connectionManager: IConnectionManager,
     eventManager: IEventManager,
-    roomManager: IRoomManager,
     chatPluginManager: ChatPluginManager,
     store: Store<IOpenChatState>,
   ) {
@@ -89,17 +86,8 @@ export class ChatClient implements IChatClient {
     this.mConnectionManager.onHTTPError((err) => this._onHTTPError(err));
     this.mConnectionManager.onNetworkError((err) => this._onNetworkError(err));
     this.mEventManager = eventManager;
-    this.mRoomManager = roomManager;
     this.mBuddylist = new BuddyList();
-    this.mBuddylist.onRemoveBuddy(new Callback(this.mRoomManager, this.mRoomManager.removeBuddyFromAllRooms));
-    this.mBuddylist.onAddBuddy(new Callback(this.mRoomManager, this.mRoomManager.addBuddyToHisRooms));
-    this.mRoomManager.onSendEvent(new Callback(this, this.sendEvent));
     this.mStore = store;
-    if (typeof this.mStore === "undefined") {
-    //   this.mRoomManager.onSendMessage(new Callback(this, this._storeDispatchMessage));
-    // } else {
-      this.mRoomManager.onSendMessage(new Callback(this, this._sendMessage));
-    }
     this.mOnRegistrationErrorCallbackManager = new CallbackManager();
     this.mOnServerOnlineCallbackManager = new CallbackManager();
     this.mOnServerOfflineCallbackManager = new CallbackManager();
@@ -146,13 +134,6 @@ export class ChatClient implements IChatClient {
    */
   public getBuddyList(): BuddyList {
     return this.mBuddylist;
-  }
-
-  /**
-   * Get the room manager
-   */
-  public getRoomManager(): IRoomManager {
-    return this.mRoomManager;
   }
 
   /**

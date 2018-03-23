@@ -33,7 +33,6 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
 
   public static getDialog(
     shell: DwtShell,
-    // client: IChatClient,
     callback: (ev: RemoveFriendshipEvent) => void,
     dataStore?: Store<IOpenChatState>,
   ) {
@@ -50,7 +49,6 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
   }
 
   private static _DIALOG: DeleteBuddyDialog = null;
-  // private client: IChatClient;
   private buddy: IBuddy = null;
   private onDeletedCallback: (ev: RemoveFriendshipEvent) => void;
 
@@ -59,7 +57,6 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
 
   constructor(
     shell: DwtShell,
-    // client: IChatClient,
     callback: (ev: RemoveFriendshipEvent) => void,
     dataStore?: Store<IOpenChatState>,
     inAppBuddyJid?: string,
@@ -69,7 +66,6 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
       id: IdGenerator.generateId("ZxChat_DeleteBuddyDialog"),
       parent: shell,
     });
-    // this.client = client;
     this.onDeletedCallback = callback;
     if (typeof dataStore !== "undefined") {
       this.mDataStore = dataStore;
@@ -106,8 +102,6 @@ export class DeleteBuddyDialog extends DwtMessageDialog {
         callback: this.onDeletedCallback,
         type: "REMOVE_BUDDIES_FROM_BUDDY_LIST_SE",
       } as IBuddyListAction & {callback: (ev: RemoveFriendshipEvent) => void});
-    // } else if (typeof this.buddy !== "undefined" && this.buddy !== null) {
-    //   this.client.deleteFriendship(this.buddy, this.onDeletedCallback);
     }
     this.popdown();
   }

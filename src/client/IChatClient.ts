@@ -28,8 +28,6 @@ import {RemoveFriendshipEvent} from "./events/chat/RemoveFriendshipEvent";
 import {IChatEvent} from "./events/IChatEvent";
 import {Group} from "./Group";
 import {IBuddy} from "./IBuddy";
-import {IRoomManager} from "./IRoomManager";
-import {ISessionInfoProvider} from "./ISessionInfoProvider";
 
 export interface IChatClient {
 
@@ -57,10 +55,6 @@ export interface IChatClient {
    * Get the buddylist
    */
   getBuddyList(): BuddyList;
-  /**
-   * Get the room manager
-   */
-  getRoomManager(): IRoomManager;
   /**
    * Get the Date Provider
    */
