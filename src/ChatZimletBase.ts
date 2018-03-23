@@ -33,10 +33,7 @@ import {IChatEventParser} from "./client/events/parsers/IChatEventParser";
 import {Group} from "./client/Group";
 import {IBuddy} from "./client/IBuddy";
 import {IChatClient} from "./client/IChatClient";
-import {IRoom} from "./client/IRoom";
-import {IRoomManager} from "./client/IRoomManager";
 import {ISessionInfoProvider} from "./client/ISessionInfoProvider";
-import {RoomManager} from "./client/RoomManager";
 import {AcceptFriendshipDialog} from "./dwt/dialogs/AcceptFriendshipDialog";
 import {AddBuddyDialog} from "./dwt/dialogs/AddBuddyDialog";
 import {AddGroupDialog} from "./dwt/dialogs/AddGroupDialog";
@@ -113,7 +110,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
   protected mStore: Store<T>;
   private mSettingsManager: SettingsManager;
   private mEventManager: IEventManager;
-  private mRoomManager: IRoomManager;
   private mIdleTimer: IdleTimer;
   private mMainWindow: MainWindow;
   private mChatClient: IChatClient;
@@ -159,7 +155,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
     sessionInfoProvider: ISessionInfoProvider,
     connectionManager: IConnectionManager,
     eventManager: IEventManager,
-    roomManagerPluginManager: ChatPluginManager,
     chatClientPluginManager: ChatPluginManager,
     mainWindowPluginManager: ChatPluginManager,
     roomWindowManagerPluginManager: ChatPluginManager,
@@ -180,11 +175,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
     this.mConnectionManager = connectionManager;
     this.mEventManager = eventManager;
     this.mStore = store;
-    this.mRoomManager = new RoomManager(
-      this.mDateProvider,
-      roomManagerPluginManager,
-      store,
-    );
     emojione.setSprites(true);
     emojione.setAscii(true);
     emojione.setUnicodeAlt(false);
@@ -224,7 +214,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
       this.mDateProvider,
       this.mConnectionManager,
       this.mEventManager,
-      this.mRoomManager,
       chatClientPluginManager,
       store,
     );
@@ -335,7 +324,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
       this.mMainWindow,
       this.mSessionInfoProvider,
       this.mDateProvider,
-      this.mRoomManager,
       roomWindowManagerPluginManager,
       store,
       roomWindowFactory,
@@ -377,12 +365,9 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
   }
 
   public onBuddyDeleted(event: RemoveFriendshipEvent): void {
-    const room: IRoom = this.mChatClient.getRoomManager().getRoomById(event.getDestination());
-    if (typeof room !== "undefined" && room !== null) {
-      const roomWindow: RoomWindowType = this.mRoomWindowManager.getRoomWindowById(event.getDestination());
-      if (typeof roomWindow !== "undefined" && roomWindow !== null) {
-        roomWindow.popdown();
-      }
+    const roomWindow: RoomWindowType = this.mRoomWindowManager.getRoomWindowById(event.getDestination());
+    if (typeof roomWindow !== "undefined" && roomWindow !== null) {
+      roomWindow.popdown();
     }
   }
 
@@ -759,16 +744,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
     } else if (typeof buddy !== "undefined" && buddy.getStatus().getType() === BuddyStatusType.NEED_RESPONSE) {
       this.acceptInvitation(buddy);
     } else {
-      // let roomWindow: RoomWindowType = this.mRoomWindowManager.getRoomWindowById(buddyId);
-      // if (typeof roomWindow === "undefined" || roomWindow === null) {
-      //   const roomPluginManager = new ChatPluginManager();
-      //   const room: IRoom = this.mChatClient.getRoomManager().createRoom(
-      //     buddyId,
-      //     buddyId,
-      //     roomPluginManager,
-      //   );
-      //   room.addMember(buddy);
-      // }
       const roomWindow: RoomWindowType = this.mRoomWindowManager.getRoomWindowById(buddyId);
       roomWindow.popup(undefined, true);
       roomWindow.inputfieldFocus();

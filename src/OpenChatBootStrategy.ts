@@ -135,7 +135,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
   private mDateProvider: IDateProvider;
 
   private mMainWindowPluginManager: ChatPluginManager;
-  private mRoomManagerPluginManager: ChatPluginManager;
   private mRoomWindowManagerPluginManager: ChatPluginManager;
   private mConnectionManager: IConnectionManager;
   private mMiddlewareFactory: IMiddlewareFactory;
@@ -149,7 +148,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     sessionInfoProvider: ISessionInfoProvider,
     settingsManager: ISettingsManager,
     mainWindowPluginManager: ChatPluginManager,
-    roomManagerPluginManager: ChatPluginManager,
     roomWindowManagerPluginManager: ChatPluginManager,
   ) {
     this.mCapabilities = capabilities;
@@ -157,7 +155,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     this.mConnectionManager = connectionManager;
     this.mSessionInfoProvider = sessionInfoProvider;
     this.mMainWindowPluginManager = mainWindowPluginManager;
-    this.mRoomManagerPluginManager = roomManagerPluginManager;
     this.mRoomWindowManagerPluginManager = roomWindowManagerPluginManager;
     this.mMiddlewareFactory = new OpenChatMiddlewareFactory(
       connectionManager,
@@ -367,7 +364,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
   ): void {
     // Send Conversation by mail
     SendMailPlugin.install(
-      this.mRoomManagerPluginManager,
       this.mMainWindowPluginManager,
       this.mRoomWindowManagerPluginManager,
       store,
