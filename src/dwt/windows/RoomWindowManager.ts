@@ -19,8 +19,6 @@ import {Store} from "redux";
 import {IMessageUiFactory} from "../../app/messageFactory/IMessageUiFactory";
 import {ChatZimletBase} from "../../ChatZimletBase";
 import {BuddyStatusType} from "../../client/BuddyStatusType";
-import {QueryArchiveEvent} from "../../client/events/chat/QueryArchiveEvent";
-import {IRoomManager} from "../../client/IRoomManager";
 import {ISessionInfoProvider} from "../../client/ISessionInfoProvider";
 import {Callback} from "../../lib/callbacks/Callback";
 import {CallbackManager} from "../../lib/callbacks/CallbackManager";
@@ -31,7 +29,6 @@ import {IDateProvider} from "../../lib/IDateProvider";
 import {Map} from "../../lib/Map";
 import {NotificationManager} from "../../lib/notifications/NotificationManager";
 import {ChatPluginManager} from "../../lib/plugin/ChatPluginManager";
-import {IQueryArchiveAction} from "../../redux/action/IQueryArchiveAction";
 import {IOpenChatState} from "../../redux/IOpenChatState";
 import {DwtEvent} from "../../zimbra/ajax/dwt/events/DwtEvent";
 import {DwtPoint} from "../../zimbra/ajax/dwt/graphics/DwtPoint";
@@ -94,7 +91,6 @@ export class RoomWindowManager {
   private mZimletContext: ChatZimletBase<IOpenChatState>;
   private mSessionInfoProvider: ISessionInfoProvider;
   private mDateProvider: IDateProvider;
-  private mRoomManager: IRoomManager;
   private mWindowsMap: WindowsMap = new WindowsMap();
   private mOpenedWindowsMap: WindowsMap = new WindowsMap();
   private mMainWindow: MainWindow;
@@ -116,7 +112,6 @@ export class RoomWindowManager {
               mainWindow: MainWindow,
               sessionInfoProvider: ISessionInfoProvider,
               dateProvider: IDateProvider,
-              roomManager: IRoomManager,
               chatPluginManager: ChatPluginManager,
               store: Store<IOpenChatState>,
               roomWindowFactory: IRoomWindowFactory,
@@ -131,13 +126,11 @@ export class RoomWindowManager {
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mSessionInfoProvider = sessionInfoProvider;
     this.mDateProvider = dateProvider;
-    this.mRoomManager = roomManager;
     this.mRoomWindowManagerPluginManager = chatPluginManager;
     this.mStore = store;
     this.mRoomWindowFactory = roomWindowFactory;
     this.mMessageUiFactory = messageUIFactory;
     this.mRoomWindowManagerPluginManager.switchOn(this);
-    // this.mRoomManager.onRoomAdded(new Callback(this, this.onRoomAdded));
     this.mShell.addListener(DwtEvent.CONTROL, new AjxListener(this,  this.onShellResize));
   }
 
@@ -389,10 +382,6 @@ export class RoomWindowManager {
         this.getYWindowLocation(window),
       );
     }
-    // // if (this.mRoomManager.isStatusBusy()) {
-    // if (this.mZimletContext.getClient().getCurrentStatus().getType() === BuddyStatusType.BUSY) {
-    //   window.setMinimized();
-    // }
   }
 
   /**

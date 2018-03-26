@@ -162,7 +162,6 @@ export class OpenChatZimlet extends ChatZimletBase<IOpenChatState> {
 
     const chatClientPluginManager = new ChatPluginManager();
     const mainWindowPluginManager = new ChatPluginManager();
-    const roomManagerPluginManager = new ChatPluginManager();
     const roomWindowManagerPluginManager = new ChatPluginManager();
 
     this.Log.debug("OpenChat", "Chat Mode");
@@ -173,7 +172,6 @@ export class OpenChatZimlet extends ChatZimletBase<IOpenChatState> {
       this.mSessionInfoProvider,
       settingsManager,
       mainWindowPluginManager,
-      roomManagerPluginManager,
       roomWindowManagerPluginManager,
     );
     zStrategy.configureCommandFactory(this.mSoapCommandFactory);
@@ -209,7 +207,6 @@ export class OpenChatZimlet extends ChatZimletBase<IOpenChatState> {
       this.mSessionInfoProvider,
       this.mConnectionManager,
       eventManager,
-      roomManagerPluginManager,
       chatClientPluginManager,
       mainWindowPluginManager,
       roomWindowManagerPluginManager,

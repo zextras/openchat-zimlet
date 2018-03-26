@@ -32,7 +32,6 @@ export class SendMailPlugin {
    * @deprecated
    */
   public static install(
-    roomManagerPluginManager: ChatPluginManager,
     mainWindowPluginManager: ChatPluginManager,
     roomWindowManagerPluginManager: ChatPluginManager,
     store?: Store<IOpenChatState>,
