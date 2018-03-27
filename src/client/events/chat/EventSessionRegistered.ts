@@ -15,6 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Version} from "../../../lib/Version";
 import {
   ISessionRegisteredEventObj,
   IUserCapabilities,
@@ -41,6 +42,10 @@ export class EventSessionRegistered<T extends IUserCapabilities> extends ChatEve
     } else {
       return {} as T;
     }
+  }
+
+  public getServerVersion(): Version {
+    return new Version(this.getInfo<string>("server_version"));
   }
 
 }

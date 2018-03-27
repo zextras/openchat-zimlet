@@ -173,6 +173,7 @@ export class OpenChatZimlet extends ChatZimletBase<IOpenChatState> {
       settingsManager,
       mainWindowPluginManager,
       roomWindowManagerPluginManager,
+      ev.getServerVersion(),
     );
     zStrategy.configureCommandFactory(this.mSoapCommandFactory);
     zStrategy.configureEventParser(this.mEventParser);

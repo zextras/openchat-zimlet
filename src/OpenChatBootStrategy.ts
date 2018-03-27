@@ -30,9 +30,15 @@ import {RoomWindowFactory} from "./dwt/windows/RoomWindowFactory";
 import {IZimletBootStrategy} from "./IZimletBootStrategy";
 import {IDateProvider} from "./lib/IDateProvider";
 import {ChatPluginManager} from "./lib/plugin/ChatPluginManager";
+import {Version} from "./lib/Version";
 import {IUserStatusAction} from "./redux/action/IUserStatusAction";
 import {IOpenChatState} from "./redux/IOpenChatState";
 import {IOpenChatUIState} from "./redux/IOpenChatUIState";
+import {IStoreFactory} from "./redux/IStoreFactory";
+import {IMiddlewareFactory} from "./redux/middleware/IMiddlewareFactory";
+import {OpenChatMiddlewareFactory} from "./redux/middleware/OpenChatMiddlewareFactory";
+import {OpenChatStoreFactory} from "./redux/OpenChatStoreFactory";
+import {ISettingsManager} from "./settings/ISettingsManager";
 
 import {ICommandFactory} from "./client/connection/ICommandFactory";
 import {Command} from "./client/connection/soap/Command";
@@ -66,6 +72,9 @@ import {DummyEventDecoder} from "./client/connection/soap/chat/decoders/DummyEve
 import {ErrorEventDecoder} from "./client/connection/soap/chat/decoders/ErrorEventDecoder";
 import {FriendBackAddedEventDecoder} from "./client/connection/soap/chat/decoders/FriendBackAddedEventDecoder";
 import {FriendshipEventDecoder} from "./client/connection/soap/chat/decoders/FriendshipEventDecoder";
+import {
+  Legacy2ContactInformationEventDecoder,
+} from "./client/connection/soap/chat/decoders/legacy/2/Legacy2ContactInformationEventDecoder";
 import {MessageEventDecoder} from "./client/connection/soap/chat/decoders/MessageEventDecoder";
 import {NewClientVersionEventDecoder} from "./client/connection/soap/chat/decoders/NewClientVersionEventDecoder";
 import {
@@ -123,11 +132,6 @@ import {UserCapabilitiesReduxEventHandler} from "./redux/eventHandler/UserCapabi
 import {WritingStatusReduxEventHandler} from "./redux/eventHandler/WritingStatusReduxEventHandler";
 
 import {SendMailPlugin} from "./plugins/SendMailPlugin";
-import {IStoreFactory} from "./redux/IStoreFactory";
-import {IMiddlewareFactory} from "./redux/middleware/IMiddlewareFactory";
-import {OpenChatMiddlewareFactory} from "./redux/middleware/OpenChatMiddlewareFactory";
-import {OpenChatStoreFactory} from "./redux/OpenChatStoreFactory";
-import {ISettingsManager} from "./settings/ISettingsManager";
 
 export class OpenChatBootStrategy implements IZimletBootStrategy {
   private mCapabilities: IOpenChatUserCapabilities;
@@ -140,6 +144,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
   private mMiddlewareFactory: IMiddlewareFactory;
   private mStore: Store<IOpenChatState>;
   private mRoomWindowFactory: IRoomWindowFactory;
+  private mServerVersion: Version;
 
   constructor(
     capabilities: IOpenChatUserCapabilities,
@@ -149,6 +154,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     settingsManager: ISettingsManager,
     mainWindowPluginManager: ChatPluginManager,
     roomWindowManagerPluginManager: ChatPluginManager,
+    serverVersion: Version,
   ) {
     this.mCapabilities = capabilities;
     this.mDateProvider = dateProvider;
@@ -162,6 +168,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
       settingsManager,
       sessionInfoProvider,
     );
+    this.mServerVersion = serverVersion;
   }
 
   public configureCommandFactory(cf: ICommandFactory): void {
@@ -191,7 +198,11 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     // Add Decoders
     ep.addDecoder(new DummyEventDecoder<AcceptFriendshipEvent>(OpenChatEventCode.ACCEPT_FRIENDSHIP));
     ep.addDecoder(new BuddyListEventDecoder(this.mDateProvider));
-    ep.addDecoder(new ContactInformationEventDecoder(this.mDateProvider));
+    if (this.mServerVersion.lessThan(new Version (10))) {
+      ep.addDecoder(new Legacy2ContactInformationEventDecoder(this.mDateProvider));
+    } else {
+      ep.addDecoder(new ContactInformationEventDecoder(this.mDateProvider));
+    }
     ep.addDecoder(new ErrorEventDecoder(this.mDateProvider));
     ep.addDecoder(new FriendBackAddedEventDecoder<IOpenChatUserCapabilities>(this.mDateProvider));
     ep.addDecoder(new FriendshipEventDecoder(this.mDateProvider));
