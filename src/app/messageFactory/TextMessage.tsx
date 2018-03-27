@@ -18,7 +18,6 @@
 // tslint:disable:max-line-length
 
 import * as React from "react";
-import {BrowserUtils} from "../../lib/BrowserUtils";
 import {anchorme, AnchormeAttributeOption, IAnchormeUrl} from "../../libext/anchorme";
 
 import "./TextMessage.scss";
