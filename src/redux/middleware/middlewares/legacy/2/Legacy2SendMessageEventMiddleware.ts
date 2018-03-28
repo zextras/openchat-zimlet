@@ -17,24 +17,25 @@
 
 import {Action, Dispatch, MiddlewareAPI} from "redux";
 
-import {IConnectionManager} from "../../../client/connection/IConnectionManager";
-import {MessageEvent} from "../../../client/events/chat/MessageEvent";
-import {MessageSentEvent} from "../../../client/events/chat/MessageSentEvent";
-import {Callback} from "../../../lib/callbacks/Callback";
-import {IDateProvider} from "../../../lib/IDateProvider";
-import {IAddMessageToRoomAction} from "../../action/IAddMessageToRoomAction";
-import {ISetMessageIdAction} from "../../action/ISetMessageIdAction";
+import {IConnectionManager} from "../../../../../client/connection/IConnectionManager";
+import {MessageEvent} from "../../../../../client/events/chat/MessageEvent";
+import {MessageSentEvent} from "../../../../../client/events/chat/MessageSentEvent";
+import {Callback} from "../../../../../lib/callbacks/Callback";
+import {IDateProvider} from "../../../../../lib/IDateProvider";
+import {IAddMessageToRoomAction} from "../../../../action/IAddMessageToRoomAction";
+import {ISetMessageIdAction} from "../../../../action/ISetMessageIdAction";
 import {
   IOpenChatMessage,
   IOpenChatState,
   IOpenChatTextMessage,
-} from "../../IOpenChatState";
-import {ChatMiddlewareBase} from "../ChatMiddlewareBase";
+} from "../../../../IOpenChatState";
+import {ChatMiddlewareBase} from "../../../ChatMiddlewareBase";
 
-export class SendMessageEventMiddleware extends ChatMiddlewareBase<IOpenChatState> {
+export class Legacy2SendMessageEventMiddleware extends ChatMiddlewareBase<IOpenChatState> {
 
   private mConnectionManager: IConnectionManager;
   private mDateProvider: IDateProvider;
+  private mMessageDates: {[id: string]: Date} = {};
 
   constructor(connectionManager: IConnectionManager, dateProvider: IDateProvider) {
     super();
@@ -48,6 +49,9 @@ export class SendMessageEventMiddleware extends ChatMiddlewareBase<IOpenChatStat
         const act: IAddMessageToRoomAction<IOpenChatMessage> =
           action as Action as IAddMessageToRoomAction<IOpenChatMessage>;
         const state: IOpenChatState = store.getState();
+        const date: Date = this.mDateProvider.getNow();
+
+        this.mMessageDates[act.message.id] = date;
 
         this.mConnectionManager.sendEvent(
           new MessageEvent(
@@ -57,7 +61,7 @@ export class SendMessageEventMiddleware extends ChatMiddlewareBase<IOpenChatStat
             (act.message as IOpenChatTextMessage).content,
             state.rooms[act.jid].roomType,
             act.message.date,
-            this.mDateProvider.getNow(),
+            date,
           ),
           new Callback(null, this.onMessageIdReceived(act, store)),
           Callback.NOOP,
@@ -75,7 +79,7 @@ export class SendMessageEventMiddleware extends ChatMiddlewareBase<IOpenChatStat
   ) => {
     return (respEvent: MessageSentEvent) => {
       store.dispatch<ISetMessageIdAction>({
-        newDate: respEvent.getCreationDate(),
+        newDate: this.mMessageDates[act.message.id],
         newId: respEvent.getMessageId(),
         oldId: act.message.id,
         roomJid: act.message.destination,

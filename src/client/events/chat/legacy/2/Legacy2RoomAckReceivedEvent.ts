@@ -15,12 +15,26 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Store} from "redux";
+import {ChatEvent} from "../../../ChatEvent";
+import {OpenChatEventCode} from "../../OpenChatEventCode";
 
-import {IMiddlewareFactory} from "./middleware/IMiddlewareFactory";
+export class Legacy2RoomAckReceivedEvent extends ChatEvent {
 
-export interface IStoreFactory<T> {
+  private mMessageId: string;
 
-  createStore(middlewareFactory: IMiddlewareFactory): Store<T>;
+  constructor(
+    sender: string,
+    destination: string,
+    messageId: string,
+  ) {
+    super(OpenChatEventCode.ROOM_ACK, null, false);
+    this.mMessageId = messageId;
+    this.setSender(sender);
+    this.setDestination(destination);
+  }
+
+  public getMessageId(): string {
+    return this.mMessageId;
+  }
 
 }

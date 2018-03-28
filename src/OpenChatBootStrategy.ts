@@ -107,7 +107,17 @@ import {NewClientVersionEventHandler} from "./client/events/handlers/NewClientVe
 import {ShutdownEventHandler} from "./client/events/handlers/ShutdownEventHandler";
 import {SuperSecretEventHandler} from "./client/events/handlers/SuperSecretEventHandler";
 import {TimeoutEventHandler} from "./client/events/handlers/TimeoutEventHandler";
+import {
+  Legacy2RoomAckReceivedReduxEventHandler,
+} from "./redux/eventHandler/legacy/2/Legacy2RoomAckReceivedReduxEventHandler";
 
+import {Legacy2MessageEventDecoder} from "./client/connection/soap/chat/decoders/legacy/2/Legacy2MessageEventDecoder";
+import {
+  Legacy2RoomAckReceivedEventDecoder,
+} from "./client/connection/soap/chat/decoders/legacy/2/Legacy2RoomAckReceivedEventDecoder";
+import {
+  Legacy2MessageAckEventEncoder,
+} from "./client/connection/soap/chat/encoders/legacy/2/Legacy2MessageAckEventEncoder";
 import {ArchiveResultFinEventHandler} from "./client/events/handlers/ArchiveResultFinEventHandler";
 import {ArchiveCountReduxEventHandler} from "./redux/eventHandler/ArchiveCountReduxEventHandler";
 import {BroadcastMessageReduxEventHandler} from "./redux/eventHandler/BroadcastMessageReduxEventHandler";
@@ -167,6 +177,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
       dateProvider,
       settingsManager,
       sessionInfoProvider,
+      serverVersion,
     );
     this.mServerVersion = serverVersion;
   }
@@ -200,14 +211,18 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     ep.addDecoder(new BuddyListEventDecoder(this.mDateProvider));
     if (this.mServerVersion.lessThan(new Version (10))) {
       ep.addDecoder(new Legacy2ContactInformationEventDecoder(this.mDateProvider));
+      ep.addDecoder(new Legacy2MessageEventDecoder(this.mDateProvider, secretDecoder));
+      ep.addDecoder(new Legacy2RoomAckReceivedEventDecoder(this.mDateProvider));
+      ep.addEncoder(new Legacy2MessageAckEventEncoder());
     } else {
       ep.addDecoder(new ContactInformationEventDecoder(this.mDateProvider));
+      ep.addDecoder(new MessageEventDecoder(this.mDateProvider, secretDecoder));
+      ep.addDecoder(new RoomAckReceivedEventDecoder(this.mDateProvider));
+      ep.addEncoder(new MessageAckEventEncoder());
     }
     ep.addDecoder(new ErrorEventDecoder(this.mDateProvider));
     ep.addDecoder(new FriendBackAddedEventDecoder<IOpenChatUserCapabilities>(this.mDateProvider));
     ep.addDecoder(new FriendshipEventDecoder(this.mDateProvider));
-    ep.addDecoder(new RoomAckReceivedEventDecoder(this.mDateProvider));
-    ep.addDecoder(new MessageEventDecoder(this.mDateProvider, secretDecoder));
     ep.addDecoder(new NewClientVersionEventDecoder(this.mDateProvider));
     ep.addDecoder(new DummyEventDecoder<RemoveFriendshipEvent>(OpenChatEventCode.REMOVE_FRIENDSHIP));
     ep.addDecoder(new DummyEventDecoder<RenameFriendshipEvent>(OpenChatEventCode.RENAME_FRIENDSHIP));
@@ -226,7 +241,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     // Add Encoders
     ep.addEncoder(new AcceptFriendshipEventEncoder());
     ep.addEncoder(new FriendshipEventEncoder());
-    ep.addEncoder(new MessageAckEventEncoder());
     ep.addEncoder(new PingEventEncoder());
     ep.addEncoder(new RemoveFriendshipEventEncoder());
     ep.addEncoder(new RenameFriendshipEventEncoder());
@@ -244,6 +258,12 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     store: Store<IOpenChatState>,
     uiStore: Store<IOpenChatUIState>,
   ): void {
+    if (this.mServerVersion.lessThan(new Version(2, 2))) {
+      em.addEventHandler(new Legacy2RoomAckReceivedReduxEventHandler(store));
+    } else {
+      em.addEventHandler(new RoomAckReceivedReduxEventHandler(store));
+    }
+
     em.addEventHandler(new MessageEventHandler(store));
     em.addEventHandler(new FriendshipEventHandler(
       new FriendshipAcceptedHandler(),
@@ -273,7 +293,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     em.addEventHandler(new ErrorReduxEventHandler(store));
     em.addEventHandler(new FriendBackAddedReduxEventHandler(store));
     em.addEventHandler(new FriendshipReduxEventHandler(store));
-    em.addEventHandler(new RoomAckReceivedReduxEventHandler(store));
     em.addEventHandler(new MessageReduxEventHandler(store));
     em.addEventHandler(new NewClientVersionReduxEventHandler(store));
     em.addEventHandler(new RequiredRegistrationReduxEventHandler(
