@@ -46,6 +46,7 @@ export class Conversation extends React.Component<IConversationProps, IConversat
   private mUnsubscribeDataStore: Unsubscribe;
   private mUnsubscribeUIStore: Unsubscribe;
   private mIgnoreScrollEvents: boolean = false;
+  private mFirstRequestHistoryDone: boolean = false;
 
   constructor(props: IConversationProps) {
     super(props);
@@ -168,9 +169,11 @@ export class Conversation extends React.Component<IConversationProps, IConversat
     }
     if (
       // autoload messages until scrollbar is visible or history is full loaded
-      typeof this.mElement !== "undefined" && this.mElement !== null
-      && this.mElement.scrollHeight < this.mElement.parentElement.offsetHeight
+      typeof this.mElement !== "undefined" && this.mElement !== null &&
+      (this.mElement.scrollHeight < this.mElement.parentElement.offsetHeight
+      || !this.mFirstRequestHistoryDone)
     ) {
+      this.mFirstRequestHistoryDone = true;
       this.requestHistory();
     }
   }
