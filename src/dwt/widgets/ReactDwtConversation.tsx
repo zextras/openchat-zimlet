@@ -20,6 +20,7 @@ import {Conversation, IConversationProps} from "../../app/conversation/Conversat
 
 import "./ReactDwtConversation.scss";
 
+import {Bowser} from "../../libext/bowser";
 import {DwtCompositeParams} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 import {ReactDwtComposite} from "./ReactDwtComposite";
 
@@ -32,7 +33,7 @@ export class ReactDwtConversation extends ReactDwtComposite<IConversationProps, 
   constructor(params: IReactDwtConversationParams) {
     super({
       ...params,
-      className: `ReactDwtConversation${navigator.userAgent.toLowerCase().indexOf("msie") !== -1 ? "-ie" : ""}`,
+      className: `ReactDwtConversation${Bowser.msie ? "-ie" : ""}`,
     });
   }
 
