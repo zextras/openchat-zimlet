@@ -30,9 +30,15 @@ import {RoomWindowFactory} from "./dwt/windows/RoomWindowFactory";
 import {IZimletBootStrategy} from "./IZimletBootStrategy";
 import {IDateProvider} from "./lib/IDateProvider";
 import {ChatPluginManager} from "./lib/plugin/ChatPluginManager";
+import {Version} from "./lib/Version";
 import {IUserStatusAction} from "./redux/action/IUserStatusAction";
 import {IOpenChatState} from "./redux/IOpenChatState";
 import {IOpenChatUIState} from "./redux/IOpenChatUIState";
+import {IStoreFactory} from "./redux/IStoreFactory";
+import {IMiddlewareFactory} from "./redux/middleware/IMiddlewareFactory";
+import {OpenChatMiddlewareFactory} from "./redux/middleware/OpenChatMiddlewareFactory";
+import {OpenChatStoreFactory} from "./redux/OpenChatStoreFactory";
+import {ISettingsManager} from "./settings/ISettingsManager";
 
 import {ICommandFactory} from "./client/connection/ICommandFactory";
 import {Command} from "./client/connection/soap/Command";
@@ -66,6 +72,9 @@ import {DummyEventDecoder} from "./client/connection/soap/chat/decoders/DummyEve
 import {ErrorEventDecoder} from "./client/connection/soap/chat/decoders/ErrorEventDecoder";
 import {FriendBackAddedEventDecoder} from "./client/connection/soap/chat/decoders/FriendBackAddedEventDecoder";
 import {FriendshipEventDecoder} from "./client/connection/soap/chat/decoders/FriendshipEventDecoder";
+import {
+  Legacy2ContactInformationEventDecoder,
+} from "./client/connection/soap/chat/decoders/legacy/2/Legacy2ContactInformationEventDecoder";
 import {MessageEventDecoder} from "./client/connection/soap/chat/decoders/MessageEventDecoder";
 import {NewClientVersionEventDecoder} from "./client/connection/soap/chat/decoders/NewClientVersionEventDecoder";
 import {
@@ -98,7 +107,17 @@ import {NewClientVersionEventHandler} from "./client/events/handlers/NewClientVe
 import {ShutdownEventHandler} from "./client/events/handlers/ShutdownEventHandler";
 import {SuperSecretEventHandler} from "./client/events/handlers/SuperSecretEventHandler";
 import {TimeoutEventHandler} from "./client/events/handlers/TimeoutEventHandler";
+import {
+  Legacy2RoomAckReceivedReduxEventHandler,
+} from "./redux/eventHandler/legacy/2/Legacy2RoomAckReceivedReduxEventHandler";
 
+import {Legacy2MessageEventDecoder} from "./client/connection/soap/chat/decoders/legacy/2/Legacy2MessageEventDecoder";
+import {
+  Legacy2RoomAckReceivedEventDecoder,
+} from "./client/connection/soap/chat/decoders/legacy/2/Legacy2RoomAckReceivedEventDecoder";
+import {
+  Legacy2MessageAckEventEncoder,
+} from "./client/connection/soap/chat/encoders/legacy/2/Legacy2MessageAckEventEncoder";
 import {ArchiveResultFinEventHandler} from "./client/events/handlers/ArchiveResultFinEventHandler";
 import {ArchiveCountReduxEventHandler} from "./redux/eventHandler/ArchiveCountReduxEventHandler";
 import {BroadcastMessageReduxEventHandler} from "./redux/eventHandler/BroadcastMessageReduxEventHandler";
@@ -123,11 +142,6 @@ import {UserCapabilitiesReduxEventHandler} from "./redux/eventHandler/UserCapabi
 import {WritingStatusReduxEventHandler} from "./redux/eventHandler/WritingStatusReduxEventHandler";
 
 import {SendMailPlugin} from "./plugins/SendMailPlugin";
-import {IStoreFactory} from "./redux/IStoreFactory";
-import {IMiddlewareFactory} from "./redux/middleware/IMiddlewareFactory";
-import {OpenChatMiddlewareFactory} from "./redux/middleware/OpenChatMiddlewareFactory";
-import {OpenChatStoreFactory} from "./redux/OpenChatStoreFactory";
-import {ISettingsManager} from "./settings/ISettingsManager";
 
 export class OpenChatBootStrategy implements IZimletBootStrategy {
   private mCapabilities: IOpenChatUserCapabilities;
@@ -140,6 +154,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
   private mMiddlewareFactory: IMiddlewareFactory;
   private mStore: Store<IOpenChatState>;
   private mRoomWindowFactory: IRoomWindowFactory;
+  private mServerVersion: Version;
 
   constructor(
     capabilities: IOpenChatUserCapabilities,
@@ -149,6 +164,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     settingsManager: ISettingsManager,
     mainWindowPluginManager: ChatPluginManager,
     roomWindowManagerPluginManager: ChatPluginManager,
+    serverVersion: Version,
   ) {
     this.mCapabilities = capabilities;
     this.mDateProvider = dateProvider;
@@ -161,7 +177,9 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
       dateProvider,
       settingsManager,
       sessionInfoProvider,
+      serverVersion,
     );
+    this.mServerVersion = serverVersion;
   }
 
   public configureCommandFactory(cf: ICommandFactory): void {
@@ -191,12 +209,20 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     // Add Decoders
     ep.addDecoder(new DummyEventDecoder<AcceptFriendshipEvent>(OpenChatEventCode.ACCEPT_FRIENDSHIP));
     ep.addDecoder(new BuddyListEventDecoder(this.mDateProvider));
-    ep.addDecoder(new ContactInformationEventDecoder(this.mDateProvider));
+    if (this.mServerVersion.lessThan(new Version (10))) {
+      ep.addDecoder(new Legacy2ContactInformationEventDecoder(this.mDateProvider));
+      ep.addDecoder(new Legacy2MessageEventDecoder(this.mDateProvider, secretDecoder));
+      ep.addDecoder(new Legacy2RoomAckReceivedEventDecoder(this.mDateProvider));
+      ep.addEncoder(new Legacy2MessageAckEventEncoder());
+    } else {
+      ep.addDecoder(new ContactInformationEventDecoder(this.mDateProvider));
+      ep.addDecoder(new MessageEventDecoder(this.mDateProvider, secretDecoder));
+      ep.addDecoder(new RoomAckReceivedEventDecoder(this.mDateProvider));
+      ep.addEncoder(new MessageAckEventEncoder());
+    }
     ep.addDecoder(new ErrorEventDecoder(this.mDateProvider));
     ep.addDecoder(new FriendBackAddedEventDecoder<IOpenChatUserCapabilities>(this.mDateProvider));
     ep.addDecoder(new FriendshipEventDecoder(this.mDateProvider));
-    ep.addDecoder(new RoomAckReceivedEventDecoder(this.mDateProvider));
-    ep.addDecoder(new MessageEventDecoder(this.mDateProvider, secretDecoder));
     ep.addDecoder(new NewClientVersionEventDecoder(this.mDateProvider));
     ep.addDecoder(new DummyEventDecoder<RemoveFriendshipEvent>(OpenChatEventCode.REMOVE_FRIENDSHIP));
     ep.addDecoder(new DummyEventDecoder<RenameFriendshipEvent>(OpenChatEventCode.RENAME_FRIENDSHIP));
@@ -215,7 +241,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     // Add Encoders
     ep.addEncoder(new AcceptFriendshipEventEncoder());
     ep.addEncoder(new FriendshipEventEncoder());
-    ep.addEncoder(new MessageAckEventEncoder());
     ep.addEncoder(new PingEventEncoder());
     ep.addEncoder(new RemoveFriendshipEventEncoder());
     ep.addEncoder(new RenameFriendshipEventEncoder());
@@ -233,6 +258,12 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     store: Store<IOpenChatState>,
     uiStore: Store<IOpenChatUIState>,
   ): void {
+    if (this.mServerVersion.lessThan(new Version(2, 2))) {
+      em.addEventHandler(new Legacy2RoomAckReceivedReduxEventHandler(store));
+    } else {
+      em.addEventHandler(new RoomAckReceivedReduxEventHandler(store));
+    }
+
     em.addEventHandler(new MessageEventHandler(store));
     em.addEventHandler(new FriendshipEventHandler(
       new FriendshipAcceptedHandler(),
@@ -262,7 +293,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     em.addEventHandler(new ErrorReduxEventHandler(store));
     em.addEventHandler(new FriendBackAddedReduxEventHandler(store));
     em.addEventHandler(new FriendshipReduxEventHandler(store));
-    em.addEventHandler(new RoomAckReceivedReduxEventHandler(store));
     em.addEventHandler(new MessageReduxEventHandler(store));
     em.addEventHandler(new NewClientVersionReduxEventHandler(store));
     em.addEventHandler(new RequiredRegistrationReduxEventHandler(

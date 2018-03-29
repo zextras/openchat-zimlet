@@ -15,6 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {Version} from "../../../lib/Version";
 import {
   ISessionRegisteredEventObj,
   IUserCapabilities,
@@ -36,11 +37,24 @@ export class EventSessionRegistered<T extends IUserCapabilities> extends ChatEve
   }
 
   public getCapabilities(): T {
-    if (this.mEventSessionInfo.hasOwnProperty("capabilities")) {
-      return this.mEventSessionInfo.capabilities;
+    if (
+      this.getServerVersion().lessThan(new Version(2, 2))
+      || (
+        this.getServerVersion().equals(new Version(2, 2))
+        && !this.mEventSessionInfo.hasOwnProperty("capabilities")
+      )
+    ) {
+      const capabilities: IUserCapabilities = {};
+      capabilities.history_enabled = this.getInfo<boolean>("history_enabled") || true;
+      capabilities.silent_error_reporting_enabled = this.getInfo<boolean>("silent_error_reporting_enabled") || false;
+      return capabilities as T;
     } else {
-      return {} as T;
+      return this.mEventSessionInfo.capabilities;
     }
+  }
+
+  public getServerVersion(): Version {
+    return new Version(this.getInfo<string>("server_version"));
   }
 
 }

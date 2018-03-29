@@ -75,12 +75,12 @@ export class MessageEventDecoder extends SoapEventDecoder<MessageEvent|MessageSe
   }
 }
 
-interface IMessageSentEventObj extends ISoapEventObject {
+export interface IMessageSentEventObj extends ISoapEventObject {
   message_id: string;
   message_date: number;
 }
 
-interface IMessageReceivedEventObj extends ISoapEventObject {
+export interface IMessageReceivedEventObj extends ISoapEventObject {
   message_type: string;
   ID: string;
   from: string;
