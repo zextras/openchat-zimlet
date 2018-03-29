@@ -77,7 +77,9 @@ export class TextMessage extends React.Component<ITextMessageProps, ITextMessage
     if (!TextMessage.constainsAnEmoji(str) && !TextMessage.constainsALink(str)) {
       return (
         <div className="TextMessage">
-          {str}
+          <span>
+            {str}
+          </span>
         </div>
       );
     } else {
@@ -85,20 +87,22 @@ export class TextMessage extends React.Component<ITextMessageProps, ITextMessage
       return (
         <div
           className="TextMessage"
-          dangerouslySetInnerHTML={{
-            __html: anchorme(
-              toImage(str)
-                .replace(/emojione emojione-/g, `emojione_${size} emojione_${size}-`),
-              {
-                attributes: [
-                  (urlObj: IAnchormeUrl) => this.openLinksToBlank(urlObj),
-                  (urlObj: IAnchormeUrl) => this.openMailtoLinks(urlObj),
-                ],
-                files: false,
-              },
-            ) as string,
-          }}
         >
+          <span
+            dangerouslySetInnerHTML={{
+              __html: anchorme(
+                toImage(str)
+                  .replace(/emojione emojione-/g, `emojione_${size} emojione_${size}-`),
+                {
+                  attributes: [
+                    (urlObj: IAnchormeUrl) => this.openLinksToBlank(urlObj),
+                    (urlObj: IAnchormeUrl) => this.openMailtoLinks(urlObj),
+                  ],
+                  files: false,
+                },
+              ) as string,
+            }}
+          />
         </div>
       );
     }
