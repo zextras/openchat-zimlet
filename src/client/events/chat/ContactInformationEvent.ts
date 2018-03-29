@@ -23,7 +23,7 @@ export class ContactInformationEvent extends ChatEvent {
 
   private mEventDate: Date;
   private mStatus: IBuddyStatus;
-  private mContactType: string;
+  private mContactType: ContactInformationEventType;
   private mMeetings: string[];
   private mValidSince: Date;
 
@@ -32,7 +32,7 @@ export class ContactInformationEvent extends ChatEvent {
     eventDate: Date,
     creationDate: Date,
     status: IBuddyStatus,
-    contactType: string,
+    contactType: ContactInformationEventType,
     meetings?: string[],
     validSince?: Date,
   ) {
@@ -53,7 +53,7 @@ export class ContactInformationEvent extends ChatEvent {
     return this.mStatus;
   }
 
-  public getContactType(): string {
+  public getContactType(): ContactInformationEventType {
     return this.mContactType;
   }
 
@@ -65,3 +65,5 @@ export class ContactInformationEvent extends ChatEvent {
     return this.mValidSince;
   }
 }
+
+export type ContactInformationEventType = "Chat" | "GroupChat" | "Channel" | "Space";

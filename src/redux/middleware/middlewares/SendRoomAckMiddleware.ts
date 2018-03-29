@@ -27,7 +27,7 @@ import {ChatMiddlewareBase} from "../ChatMiddlewareBase";
 
 export class SendRoomAckMiddleware extends ChatMiddlewareBase<IOpenChatState> {
 
-  private mConnectionManager: IConnectionManager;
+  protected mConnectionManager: IConnectionManager;
   private mLastAcks: {[jid: string]: string} = {};
 
   constructor(connectionManager: IConnectionManager) {

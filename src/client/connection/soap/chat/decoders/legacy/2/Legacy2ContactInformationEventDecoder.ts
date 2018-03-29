@@ -15,28 +15,20 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IDateProvider} from "../../../../../lib/IDateProvider";
-import {BuddyStatus} from "../../../../BuddyStatus";
-import {ContactInformationEvent, ContactInformationEventType} from "../../../../events/chat/ContactInformationEvent";
-import {OpenChatEventCode} from "../../../../events/chat/OpenChatEventCode";
-import {IChatEvent} from "../../../../events/IChatEvent";
-import {ISoapEventObject} from "../SoapEventParser";
-import {SoapEventDecoder} from "./SoapEventDecoder";
+import {BuddyStatus} from "../../../../../../BuddyStatus";
+import {ContactInformationEvent} from "../../../../../../events/chat/ContactInformationEvent";
+import {Legacy2ContactInformationEvent} from "../../../../../../events/chat/legacy/2/Legacy2ContactInformationEvent";
+import {IChatEvent} from "../../../../../../events/IChatEvent";
+import {ISoapEventObject} from "../../../SoapEventParser";
+import {ContactInformationEventDecoder} from "../../ContactInformationEventDecoder";
 
-export class ContactInformationEventDecoder extends SoapEventDecoder<ContactInformationEvent> {
-
-  protected mDateProvider: IDateProvider;
-
-  constructor(dateProvider: IDateProvider) {
-    super(OpenChatEventCode.CONTACT_INFORMATION);
-    this.mDateProvider = dateProvider;
-  }
+export class Legacy2ContactInformationEventDecoder extends ContactInformationEventDecoder {
 
   public decodeEvent(
     eventObj: IContactInformationEventObj,
     originEvent?: IChatEvent,
   ): ContactInformationEvent {
-    return new ContactInformationEvent(
+    return new Legacy2ContactInformationEvent(
       eventObj.from,
       this.mDateProvider.getDate(eventObj.timestampSent),
       this.mDateProvider.getNow(),
@@ -45,9 +37,6 @@ export class ContactInformationEventDecoder extends SoapEventDecoder<ContactInfo
         eventObj.message,
         eventObj.id,
       ),
-      eventObj.group,
-      eventObj.meetings,
-      this.mDateProvider.getDate(eventObj.validSince),
     );
   }
 
@@ -55,11 +44,9 @@ export class ContactInformationEventDecoder extends SoapEventDecoder<ContactInfo
 
 interface IContactInformationEventObj extends ISoapEventObject {
   from: string;
-  group: ContactInformationEventType;
   id: number;
   meetings: string[];
   message: string;
   statusType: number;
   timestampSent: number;
-  validSince: number;
 }

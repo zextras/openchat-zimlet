@@ -15,12 +15,26 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Store} from "redux";
+import {IBuddyStatus} from "../../../../IBuddyStatus";
+import {ContactInformationEvent, ContactInformationEventType} from "../../ContactInformationEvent";
 
-import {IMiddlewareFactory} from "./middleware/IMiddlewareFactory";
+export class Legacy2ContactInformationEvent extends ContactInformationEvent {
 
-export interface IStoreFactory<T> {
-
-  createStore(middlewareFactory: IMiddlewareFactory): Store<T>;
+  constructor(
+    from: string,
+    eventDate: Date,
+    creationDate: Date,
+    status: IBuddyStatus,
+  ) {
+    super(
+      from,
+      eventDate,
+      creationDate,
+      status,
+      "Chat",
+      [],
+      null,
+    );
+  }
 
 }
