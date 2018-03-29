@@ -108,11 +108,11 @@ export class EmojiOnePickerButton extends DwtToolBarButton {
       };
     }
     if (typeof tmpEmoji !== "undefined") {
+      this.getMenu().popdown();
       if (typeof callback !== "undefined") {
         callback.run(ev, tmpEmoji);
       }
       // this.setEmoji(tmpEmoji);
-      this.getMenu().popdown();
     }
   }
 

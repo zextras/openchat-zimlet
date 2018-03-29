@@ -701,6 +701,7 @@ export class RoomWindow<S extends IOpenChatState>
 
   private onEmojiSelected(ev: Event, emoji: IEmojiData): void {
     this.addTextToInput(emoji.name);
+    this.mInputField.focus();
   }
 
   private updateWritingDots(writingStatusValue: number): void {
