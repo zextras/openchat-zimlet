@@ -33,7 +33,7 @@ export class ReactDwtConversation extends ReactDwtComposite<IConversationProps, 
   constructor(params: IReactDwtConversationParams) {
     super({
       ...params,
-      className: `ReactDwtConversation${Bowser.msie ? "-ie" : ""}`,
+      className: `ReactDwtConversation${Bowser.isUnsupportedBrowser({msie: "11"}) ? "-ie" : ""}`,
     });
   }
 

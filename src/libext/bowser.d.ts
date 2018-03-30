@@ -24,4 +24,35 @@ export declare class Bowser {
   public static chromium: boolean;
   public static safari: boolean;
   public static version: string;
+
+  /**
+   * Check if browser is unsupported
+   *
+   * @example
+   *   bowser.isUnsupportedBrowser({
+   *     msie: "10",
+   *     firefox: "23",
+   *     chrome: "29",
+   *     safari: "5.1",
+   *     opera: "16",
+   *     phantom: "534"
+   *   });
+   *
+   * @param browsers {any}  minVersions map of minimal version to browser
+   * @param strictMode {Boolean} [strictMode = false] flag to return false if browser wasn't found in map
+   * @param userAgent {string} [ua] user agent string
+   * @return {Boolean}
+   */
+  public static isUnsupportedBrowser(
+    browsers: {
+      msie?: string,
+      firefox?: string,
+      chrome?: string,
+      safari?: string,
+      opera?: string,
+      phantom?: string,
+    },
+    strictMode: boolean = false,
+    userAgent: string = navigator.userAgent,
+  ): boolean;
 }
