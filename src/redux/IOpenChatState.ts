@@ -31,9 +31,9 @@ export interface IOpenChatBuddyStatusesMap {
 export interface IOpenChatBuddy {
   groups: string[];
   capabilities: IOpenChatUserCapabilities;
-  lastMessageSent: ILastMessageInfo;
-  lastMessageReceived: ILastMessageInfo;
   jid: string;
+  lastMessageReceived: ILastMessageInfo;
+  lastMessageSent: ILastMessageInfo;
   nickname: string;
   statuses: IOpenChatBuddyStatusesMap;
   type: "buddy";

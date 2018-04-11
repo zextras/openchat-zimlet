@@ -83,7 +83,7 @@ export class SendMessageEventMiddleware extends ChatMiddlewareBase<IOpenChatStat
         type: "SET_MESSAGE_ID",
       });
       store.dispatch<ISetLastUserMessageAction>({
-        buddyJid: act.message.destination,
+        jid: act.message.destination,
         received: {
           date: respEvent.getCreationDate(),
           id: respEvent.getMessageId(),

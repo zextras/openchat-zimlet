@@ -20,7 +20,7 @@ import {ILastMessageInfo} from "../IOpenChatState";
 
 export interface ISetLastUserMessageAction extends Action {
   type: "SET_LAST_USER_MESSAGES";
-  buddyJid: string;
+  jid: string;
   sent?: ILastMessageInfo;
   received?: ILastMessageInfo;
 }

@@ -39,7 +39,7 @@ export class LastMessageInfoReduxEventHandler extends ReduxEventHandler<LastMess
 
     if (ev.getLastIncomingMessageInfo() !== null || ev.getLastMessageSentInfo() !== null) {
       this.mStore.dispatch<ISetLastUserMessageAction>({
-        buddyJid: ev.getSender(),
+        jid: ev.getSender(),
         received: ev.getLastIncomingMessageInfo(),
         sent: ev.getLastMessageSentInfo(),
         type: "SET_LAST_USER_MESSAGES",

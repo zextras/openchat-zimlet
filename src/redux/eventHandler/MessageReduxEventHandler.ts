@@ -58,7 +58,7 @@ export class MessageReduxEventHandler extends ReduxEventHandler<MessageEvent> {
         type: "ADD_MESSAGE_TO_ROOM",
       });
       this.mStore.dispatch<ISetLastUserMessageAction>({
-        buddyJid: roomJid,
+        jid: roomJid,
         received: {
           date: ev.getDate(),
           id: ev.getMessageId(),

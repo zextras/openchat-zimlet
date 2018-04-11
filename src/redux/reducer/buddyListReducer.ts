@@ -84,15 +84,27 @@ export const buddyListReducer: Reducer<IOpenChatBuddyListMap> = (
     case "SET_NICKNAME":
     case "SET_USER_CAPABILITIES":
     case "RESET_USER_CAPABILITIES":
-    case "SET_LAST_USER_MESSAGES":
     {
       const buddyAction: IBuddyAction = action as IBuddyAction;
+      if (!state.hasOwnProperty(buddyAction.buddyJid)) { return state; }
       if (
         typeof buddyAction.buddyJid === "undefined" || buddyAction.buddyJid === null
         || typeof state[buddyAction.buddyJid] === "undefined" || state[buddyAction.buddyJid] === null
       ) { return state; }
       const newState: IOpenChatBuddyListMap = {...state};
       newState[buddyAction.buddyJid] = buddyReducer(state[buddyAction.buddyJid], action);
+      return newState;
+    }
+
+    case "SET_LAST_USER_MESSAGES":
+    {
+      if (!state.hasOwnProperty(action.jid)) { return state; }
+      if (
+        typeof action.jid === "undefined" || action.jid === null
+        || typeof state[action.jid] === "undefined" || state[action.jid] === null
+      ) { return state; }
+      const newState: IOpenChatBuddyListMap = {...state};
+      newState[action.jid] = buddyReducer(state[action.jid], action);
       return newState;
     }
 
