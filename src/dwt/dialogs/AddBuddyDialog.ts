@@ -140,6 +140,8 @@ export class AddBuddyDialog extends ZmDialog {
       capabilities: {},
       groups: [],
       jid: buddyId,
+      lastMessageReceived: null,
+      lastMessageSent: null,
       nickname: nickname,
       statuses: {},
       type: "buddy",

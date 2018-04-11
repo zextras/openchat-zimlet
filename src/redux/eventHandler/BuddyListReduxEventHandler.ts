@@ -40,6 +40,8 @@ export class BuddyListReduxEventHandler extends ReduxEventHandler<BuddyListEvent
         capabilities: {},
         groups: [],
         jid: buddy.getId(),
+        lastMessageReceived: null,
+        lastMessageSent: null,
         nickname: buddy.getNickname(),
         statuses: {
           default: {

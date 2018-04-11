@@ -69,6 +69,6 @@ export class ReduxHandlerRegister {
     eventManager.addEventHandler(new UnregisterSessionReduxEventHandler(store));
     eventManager.addEventHandler(new WritingStatusReduxEventHandler(store));
     eventManager.addEventHandler(new ArchiveResultFinEventHandler(store));
-    eventManager.addEventHandler(new ArchiveCountReduxEventHandler(store));
+    // eventManager.addEventHandler(new ArchiveCountReduxEventHandler(store));
   }
 }

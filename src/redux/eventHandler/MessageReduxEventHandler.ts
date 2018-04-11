@@ -20,6 +20,7 @@ import {OpenChatEventCode} from "../../client/events/chat/OpenChatEventCode";
 import {IChatClient} from "../../client/IChatClient";
 import {IAddMessageToRoomAction} from "../action/IAddMessageToRoomAction";
 import {IRoomAction} from "../action/IRoomAction";
+import {ISetLastUserMessageAction} from "../action/ISetLastUserMessageAction";
 import {IOpenChatTextMessage} from "../IOpenChatState";
 import {ReduxEventHandler} from "./ReduxEventHandler";
 
@@ -35,7 +36,6 @@ export class MessageReduxEventHandler extends ReduxEventHandler<MessageEvent> {
       if (ev.getSender() === this.mStore.getState().sessionInfo.username) {
         // add own message from another session
         roomJid = ev.getDestination();
-        // destRoom.addMessageSentFromAnotherSession(messageSent);
       } else {
         // TODO: Remove the SET_WRITING_STATUS from here, is not working properly.
         this.mStore.dispatch<IRoomAction>({
@@ -57,8 +57,15 @@ export class MessageReduxEventHandler extends ReduxEventHandler<MessageEvent> {
         },
         type: "ADD_MESSAGE_TO_ROOM",
       });
+      this.mStore.dispatch<ISetLastUserMessageAction>({
+        buddyJid: roomJid,
+        received: {
+          date: ev.getDate(),
+          id: ev.getMessageId(),
+        },
+        type: "SET_LAST_USER_MESSAGES",
+      });
     }
-    // client.messageReceived(messageReceived);
     return true;
   }
 }

@@ -21,14 +21,16 @@ import {IOpenChatUserCapabilities} from "../../client/events/chat/IOpenChatUserC
 import {IBuddyListAcceptFriendshipAction} from "../action/buddyList/IBuddyListAcceptFriendshipAction";
 import {IBuddyAction} from "../action/IBuddyAction";
 import {IBuddyListAction} from "../action/IBuddyListAction";
+import {ISetLastUserMessageAction} from "../action/ISetLastUserMessageAction";
 import {IUserCapabilitesAction} from "../action/IUserCapabilitesAction";
 import {IOpenChatBuddyListMap, IOpenChatBuddyStatusesMap} from "../IOpenChatState";
 import {BuddyInitialState, OpenChatBuddyListMapInitialState} from "../OpenChatInitialState";
+
 import {buddyReducer} from "./buddyReducer";
 
 export const buddyListReducer: Reducer<IOpenChatBuddyListMap> = (
   state: IOpenChatBuddyListMap = OpenChatBuddyListMapInitialState,
-  action: IBuddyListAction | IUserCapabilitesAction<IOpenChatUserCapabilities>,
+  action: IBuddyListAction | IUserCapabilitesAction<IOpenChatUserCapabilities> | ISetLastUserMessageAction,
 ) => {
 
   switch (action.type) {
@@ -82,6 +84,7 @@ export const buddyListReducer: Reducer<IOpenChatBuddyListMap> = (
     case "SET_NICKNAME":
     case "SET_USER_CAPABILITIES":
     case "RESET_USER_CAPABILITIES":
+    case "SET_LAST_USER_MESSAGES":
     {
       const buddyAction: IBuddyAction = action as IBuddyAction;
       if (

@@ -17,7 +17,6 @@
 
 import {BuddyStatusType} from "../client/BuddyStatusType";
 import {IOpenChatUserCapabilities} from "../client/events/chat/IOpenChatUserCapabilities";
-import {Version} from "../lib/Version";
 
 export interface IOpenChatBuddyStatus {
   message: string;
@@ -32,6 +31,8 @@ export interface IOpenChatBuddyStatusesMap {
 export interface IOpenChatBuddy {
   groups: string[];
   capabilities: IOpenChatUserCapabilities;
+  lastMessageSent: ILastMessageInfo;
+  lastMessageReceived: ILastMessageInfo;
   jid: string;
   nickname: string;
   statuses: IOpenChatBuddyStatusesMap;
@@ -104,4 +105,9 @@ export interface IOpenChatState {
   rooms: IOpenChatRoomsMap;
   sessionInfo: IOpenChatSessionInfo;
   userStatuses: IOpenChatUserStatus[];
+}
+
+export interface ILastMessageInfo {
+  id: string;
+  date: Date;
 }

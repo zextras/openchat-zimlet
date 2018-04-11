@@ -44,6 +44,8 @@ export class FriendBackAddedReduxEventHandler<T extends IUserCapabilities>
       capabilities: ev.getCapabilities(),
       groups: [],
       jid: buddy.getId(),
+      lastMessageReceived: null,
+      lastMessageSent: null,
       nickname: buddy.getNickname(),
       statuses: buddyStatuses,
       type: "buddy",
