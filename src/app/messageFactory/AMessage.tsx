@@ -100,8 +100,7 @@ export abstract class AMessage<P extends IAMessageProps, S extends IAMessageStat
       }
       case MessageStatusType.SENT: {
         icon = (
-          <i key="5" className="fa-stack fa-2" title="Message sent">
-            <i className="fas fa-square fa-stack-2x"/>
+          <i key="5" className="fa-stack" title="Message sent">
             <i className="fas fa-check fa-stack-1x AMessage-status-icon-first-check"/>
           </i>
         );
@@ -109,8 +108,7 @@ export abstract class AMessage<P extends IAMessageProps, S extends IAMessageStat
       }
       case MessageStatusType.READ_BY_SOMEONE: {
         icon = (
-          <i key="6" className="fa-stack fa-2" title="Message was read by someone">
-            <i className="fas fa-square fa-stack-2x"/>
+          <i key="6" className="fa-stack" title="Message was read by someone">
             <i
               className="fas fa-check fa-stack-1x AMessage-status-icon-first-check AMessage-status-icon-read-color"/>
           </i>
@@ -119,8 +117,7 @@ export abstract class AMessage<P extends IAMessageProps, S extends IAMessageStat
       }
       case MessageStatusType.READ_BY_ALL: {
         icon = (
-          <i key="4" className="fa-stack fa-2" title="Message was read">
-            <i className="fas fa-square fa-stack-2x"/>
+          <i key="4" className="fa-stack" title="Message was read">
             <i
               className="fas fa-check fa-stack-1x AMessage-status-icon-second-check AMessage-status-icon-read-color"/>
             <i className="fas fa-check fa-stack-1x fa-inverse AMessage-status-icon-first-check-shadow"/>
