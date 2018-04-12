@@ -30,19 +30,19 @@ export class MessageReceived extends AMessage<IMessageReceivedProps, IMessageRec
   public render(): JSX.Element | false | null {
     return (
       <div className="MessageReceived">
-        <div className="MessageReceived-info">
-          {this.getDateEl()}
-          <div className="MessageReceived-info-sender">
-            {this.props.username}
+        <div className="MessageReceived-content-triangle-left"/>
+        <div className="MessageReceived-content-container">
+          <div className="MessageReceived-info">
+            <div className="MessageReceived-info-sender">
+              {this.props.username}
+            </div>
+            {this.getDateEl()}
           </div>
-        </div>
-        <div className="MessageReceived-content">
-          <div className="MessageReceived-content-triangle-left"/>
-          <div className="MessageReceived-content-container">
+          <div className="MessageReceived-content">
             {this.props.children}
           </div>
+          {this.getStatusIconEl()}
         </div>
-        {this.getStatusIconEl()}
       </div>
     );
   }

@@ -19,8 +19,12 @@
   @include AMessage(row-reverse);
 }
 
-.MessageSent > .AMessage-status > .AMessage-status-icon {
+.MessageSent-content-container > .AMessage-status > .AMessage-status-icon {
   justify-content: flex-end;
+}
+
+.MessageSent-info > .AMessage-info-date {
+  margin-right: (16/12)*1em;
 }
 
 .MessageSent-content-triangle-right {
