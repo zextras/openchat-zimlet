@@ -72,6 +72,7 @@ import {DummyEventDecoder} from "./client/connection/soap/chat/decoders/DummyEve
 import {ErrorEventDecoder} from "./client/connection/soap/chat/decoders/ErrorEventDecoder";
 import {FriendBackAddedEventDecoder} from "./client/connection/soap/chat/decoders/FriendBackAddedEventDecoder";
 import {FriendshipEventDecoder} from "./client/connection/soap/chat/decoders/FriendshipEventDecoder";
+import {LastMessageInfoEventDecoder} from "./client/connection/soap/chat/decoders/LastMessageInfoEventDecoder";
 import {
   Legacy2ContactInformationEventDecoder,
 } from "./client/connection/soap/chat/decoders/legacy/2/Legacy2ContactInformationEventDecoder";
@@ -142,6 +143,7 @@ import {UserCapabilitiesReduxEventHandler} from "./redux/eventHandler/UserCapabi
 import {WritingStatusReduxEventHandler} from "./redux/eventHandler/WritingStatusReduxEventHandler";
 
 import {SendMailPlugin} from "./plugins/SendMailPlugin";
+import {LastMessageInfoReduxEventHandler} from "./redux/eventHandler/LastMessageInfoReduxEventHandler";
 
 export class OpenChatBootStrategy implements IZimletBootStrategy {
   private mCapabilities: IOpenChatUserCapabilities;
@@ -236,6 +238,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     ep.addDecoder(new DummyEventDecoder<QueryArchiveEvent>(OpenChatEventCode.QUERY_ARCHIVE));
     ep.addDecoder(new ArchiveResultEventDecoder(this.mDateProvider, ep));
     ep.addDecoder(new ArchiveResultFinEventDecoder(this.mDateProvider));
+    ep.addDecoder(new LastMessageInfoEventDecoder(this.mDateProvider));
     // Secret event, not ready for production
     secretDecoder.addDecoder(new SecretTestEventDecoder());
     // Add Encoders
@@ -311,7 +314,8 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     em.addEventHandler(new UnregisterSessionReduxEventHandler(store));
     em.addEventHandler(new WritingStatusReduxEventHandler(store));
     em.addEventHandler(new ArchiveResultFinEventHandler(store));
-    em.addEventHandler(new ArchiveCountReduxEventHandler(store));
+    // em.addEventHandler(new ArchiveCountReduxEventHandler(store));
+    em.addEventHandler(new LastMessageInfoReduxEventHandler(store));
   }
 
   public configureMessageUiFactory(muif: IMessageUiFactory<IOpenChatState>): void {

@@ -23,6 +23,7 @@ import {MessageSentEvent} from "../../../client/events/chat/MessageSentEvent";
 import {Callback} from "../../../lib/callbacks/Callback";
 import {IDateProvider} from "../../../lib/IDateProvider";
 import {IAddMessageToRoomAction} from "../../action/IAddMessageToRoomAction";
+import {ISetLastUserMessageAction} from "../../action/ISetLastUserMessageAction";
 import {ISetMessageIdAction} from "../../action/ISetMessageIdAction";
 import {
   IOpenChatMessage,
@@ -80,6 +81,14 @@ export class SendMessageEventMiddleware extends ChatMiddlewareBase<IOpenChatStat
         oldId: act.message.id,
         roomJid: act.message.destination,
         type: "SET_MESSAGE_ID",
+      });
+      store.dispatch<ISetLastUserMessageAction>({
+        jid: act.message.destination,
+        received: {
+          date: respEvent.getCreationDate(),
+          id: respEvent.getMessageId(),
+        },
+        type: "SET_LAST_USER_MESSAGES",
       });
     };
   }

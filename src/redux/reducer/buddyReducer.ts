@@ -20,14 +20,16 @@ import {Reducer} from "redux";
 import {BuddyStatusUtils} from "../../app/conversation/BuddyStatusUtils";
 import {IOpenChatUserCapabilities} from "../../client/events/chat/IOpenChatUserCapabilities";
 import {IBuddyAction} from "../action/IBuddyAction";
+import {ISetLastUserMessageAction} from "../action/ISetLastUserMessageAction";
 import {IUserCapabilitesAction} from "../action/IUserCapabilitesAction";
 import {IOpenChatBuddy} from "../IOpenChatState";
 import {BuddyInitialState} from "../OpenChatInitialState";
+
 import {userCapabilitiesReducer} from "./userCapabilitiesReducer";
 
 export const buddyReducer: Reducer<IOpenChatBuddy> = (
   state: IOpenChatBuddy = {...BuddyInitialState},
-  action: IBuddyAction | IUserCapabilitesAction<IOpenChatUserCapabilities>,
+  action: IBuddyAction | IUserCapabilitesAction<IOpenChatUserCapabilities> | ISetLastUserMessageAction,
 ) => {
   switch (action.type) {
 
@@ -97,6 +99,17 @@ export const buddyReducer: Reducer<IOpenChatBuddy> = (
         ...state,
         capabilities: userCapabilitiesReducer(state.capabilities, action),
       };
+    }
+
+    case "SET_LAST_USER_MESSAGES": {
+      const newState = { ...state };
+      if (typeof action.received !== "undefined") {
+        newState.lastMessageReceived = action.received;
+      }
+      if (typeof action.sent !== "undefined") {
+        newState.lastMessageSent = action.sent;
+      }
+      return newState;
     }
 
     default: return state;

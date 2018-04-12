@@ -56,6 +56,8 @@ export class FriendshipReduxEventHandler extends ReduxEventHandler<FriendshipEve
           capabilities: {},
           groups: [],
           jid: (ev as FriendshipInvitationEvent).getBuddyId(),
+          lastMessageReceived: null,
+          lastMessageSent: null,
           nickname: (ev as FriendshipInvitationEvent).getNickname(),
           statuses: {
             default: {

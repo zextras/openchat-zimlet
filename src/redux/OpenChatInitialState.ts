@@ -18,6 +18,7 @@
 import {BuddyStatusType} from "../client/BuddyStatusType";
 import {IOpenChatUserCapabilities} from "../client/events/chat/IOpenChatUserCapabilities";
 import {
+  ILastMessageInfo,
   IOpenChatBuddy, IOpenChatBuddyListMap, IOpenChatBuddyStatus,
   IOpenChatMessage, IOpenChatRoom, IOpenChatRoomAcksMap, IOpenChatRoomsMap, IOpenChatSessionInfo,
   IOpenChatState, IOpenChatTextMessage, IOpenChatUserStatus,
@@ -35,6 +36,8 @@ export const BuddyInitialState: IOpenChatBuddy = {
   capabilities: {...UserCapabilitiesInitialState},
   groups: [],
   jid: "unknown_buddy",
+  lastMessageReceived: null,
+  lastMessageSent: null,
   nickname: "Unknown Buddy",
   statuses: {},
   type: "buddy",
@@ -99,4 +102,9 @@ export const OpenChatInitialState: IOpenChatState = {
   rooms: {...OpenChatRoomsMapInitialState},
   sessionInfo: {...OpenChatSessionInfoInitialState},
   userStatuses: [],
+};
+
+export const LastMessageInfo: ILastMessageInfo = {
+  date: new Date(0),
+  id: "aaaa",
 };

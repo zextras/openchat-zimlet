@@ -46,6 +46,7 @@ export enum OpenChatEventCode {
   ARCHIVE_RESULT_FIN    = 50,
   QUERY_ARCHIVE         = 51,
   ARCHIVE_COUNTER       = 52,
+  LAST_MESSAGE_INFO     = 55,
   // Capabilities
   USER_CAPABILITIES     = 54,
 
