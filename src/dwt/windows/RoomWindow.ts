@@ -666,7 +666,11 @@ export class RoomWindow<S extends IOpenChatState>
       } else {
         caretOffset = inputElement.selectionStart;
       }
-    } else if (typeof win.getSelection !== "undefined" && win.getSelection !== null) {
+    } else if (
+      typeof win.getSelection !== "undefined"
+      && win.getSelection !== null
+      && window.getSelection().rangeCount > 0
+    ) {
       const range: Range = win.getSelection().getRangeAt(0);
       const preCaretRange: Range = range.cloneRange();
       preCaretRange.selectNodeContents(inputElement);
