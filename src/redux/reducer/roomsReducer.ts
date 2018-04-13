@@ -21,6 +21,7 @@ import {IAddMessageToRoomAction} from "../action/IAddMessageToRoomAction";
 import {IModifyMessageAction} from "../action/IModifyMessageAction";
 import {IQueryArchiveAction} from "../action/IQueryArchiveAction";
 import {IQueryArchiveFinAction} from "../action/IQueryArchiveFinAction";
+import {IResetSessionInfoAction} from "../action/IResetSessionInfoAction";
 import {IRoomAction} from "../action/IRoomAction";
 import {IRoomNotificationsCounterAction} from "../action/IRoomNotificationsCounterAction";
 import {IRoomsAction} from "../action/IRoomsAction";
@@ -41,6 +42,7 @@ export const roomsReducer: Reducer<IOpenChatRoomsMap> = (
     | IQueryArchiveAction
     | IQueryArchiveFinAction
     | IRoomNotificationsCounterAction
+    | IResetSessionInfoAction
   ,
 ) => {
   switch (action.type) {
@@ -133,6 +135,10 @@ export const roomsReducer: Reducer<IOpenChatRoomsMap> = (
         return newState;
       }
       return state;
+    }
+
+    case "RESET_SESSION_INFO": {
+      return {...OpenChatRoomsMapInitialState};
     }
 
     default:

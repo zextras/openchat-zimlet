@@ -20,6 +20,7 @@ import {Reducer} from "redux";
 import {BuddyStatusUtils} from "../../app/conversation/BuddyStatusUtils";
 import {IOpenChatUserCapabilities} from "../../client/events/chat/IOpenChatUserCapabilities";
 import {IBuddyAction} from "../action/IBuddyAction";
+import {IResetSessionInfoAction} from "../action/IResetSessionInfoAction";
 import {ISetLastUserMessageAction} from "../action/ISetLastUserMessageAction";
 import {IUserCapabilitesAction} from "../action/IUserCapabilitesAction";
 import {IOpenChatBuddy} from "../IOpenChatState";
@@ -29,7 +30,10 @@ import {userCapabilitiesReducer} from "./userCapabilitiesReducer";
 
 export const buddyReducer: Reducer<IOpenChatBuddy> = (
   state: IOpenChatBuddy = {...BuddyInitialState},
-  action: IBuddyAction | IUserCapabilitesAction<IOpenChatUserCapabilities> | ISetLastUserMessageAction,
+  action: IBuddyAction
+    | IUserCapabilitesAction<IOpenChatUserCapabilities>
+    | ISetLastUserMessageAction
+    | IResetSessionInfoAction,
 ) => {
   switch (action.type) {
 

@@ -21,16 +21,23 @@ import {IOpenChatUserCapabilities} from "../../client/events/chat/IOpenChatUserC
 import {IBuddyListAcceptFriendshipAction} from "../action/buddyList/IBuddyListAcceptFriendshipAction";
 import {IBuddyAction} from "../action/IBuddyAction";
 import {IBuddyListAction} from "../action/IBuddyListAction";
+import {IResetSessionInfoAction} from "../action/IResetSessionInfoAction";
 import {ISetLastUserMessageAction} from "../action/ISetLastUserMessageAction";
 import {IUserCapabilitesAction} from "../action/IUserCapabilitesAction";
 import {IOpenChatBuddyListMap, IOpenChatBuddyStatusesMap} from "../IOpenChatState";
-import {BuddyInitialState, OpenChatBuddyListMapInitialState} from "../OpenChatInitialState";
+import {
+  BuddyInitialState,
+  OpenChatBuddyListMapInitialState,
+} from "../OpenChatInitialState";
 
 import {buddyReducer} from "./buddyReducer";
 
 export const buddyListReducer: Reducer<IOpenChatBuddyListMap> = (
   state: IOpenChatBuddyListMap = OpenChatBuddyListMapInitialState,
-  action: IBuddyListAction | IUserCapabilitesAction<IOpenChatUserCapabilities> | ISetLastUserMessageAction,
+  action: IBuddyListAction
+    | IUserCapabilitesAction<IOpenChatUserCapabilities>
+    | ISetLastUserMessageAction
+    | IResetSessionInfoAction,
 ) => {
 
   switch (action.type) {
@@ -106,6 +113,10 @@ export const buddyListReducer: Reducer<IOpenChatBuddyListMap> = (
       const newState: IOpenChatBuddyListMap = {...state};
       newState[action.jid] = buddyReducer(state[action.jid], action);
       return newState;
+    }
+
+    case "RESET_SESSION_INFO": {
+      return {...OpenChatBuddyListMapInitialState};
     }
 
     case "ADD_BUDDY_ONLY_SE":

@@ -17,13 +17,15 @@
 
 import {Reducer} from "redux";
 
+import {IResetSessionInfoAction} from "../action/IResetSessionInfoAction";
 import {ISetRoomAckAction} from "../action/ISetRoomAckAction";
 import {IOpenChatRoomAcksMap} from "../IOpenChatState";
 import {OpenChatRoomAcksMapInitialState} from "../OpenChatInitialState";
 
 export const roomAcksReducer: Reducer<IOpenChatRoomAcksMap> = (
   state: IOpenChatRoomAcksMap = OpenChatRoomAcksMapInitialState,
-  action: ISetRoomAckAction,
+  action: ISetRoomAckAction
+    | IResetSessionInfoAction,
 ) => {
   switch (action.type) {
 
@@ -36,6 +38,10 @@ export const roomAcksReducer: Reducer<IOpenChatRoomAcksMap> = (
         lastMessageId: action.message_id,
       };
       return newState;
+    }
+
+    case "RESET_SESSION_INFO": {
+      return {...OpenChatRoomAcksMapInitialState};
     }
 
     default:
