@@ -19,14 +19,6 @@
   @include AMessage(row);
 }
 
-.MessageReceived-content-container > .AMessage-status > .AMessage-status-icon {
-  justify-content: flex-start;
-}
-
-.MessageReceived-info > .AMessage-info-date {
-  margin-left: (16/12)*1em;
-}
-
 .MessageReceived-content-triangle-left {
   border-left: (16/8)*1em solid transparent;
   border-left: (16/8)*1em solid transparent;

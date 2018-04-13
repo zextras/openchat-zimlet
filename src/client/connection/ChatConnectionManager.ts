@@ -201,7 +201,7 @@ export class ChatConnectionManager implements IConnectionManager {
   private handleStreamEvent(event: IBasicEvent): void {
     try {
       const decodedEvent = this.mEventParser.decodeEvent(void 0, event);
-      this.Log.debug(decodedEvent, "Received and event on stream");
+      this.Log.debug(decodedEvent, "Received an event on stream");
       if (typeof this.mOnEventCbk !== "undefined") {
         this.mOnEventCbk(decodedEvent);
       }

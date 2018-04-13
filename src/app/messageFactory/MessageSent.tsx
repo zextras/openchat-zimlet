@@ -30,19 +30,19 @@ export class MessageSent extends AMessage<IMessageSentProps, IMessageSentState> 
   public render(): JSX.Element | false | null {
     return (
       <div className="MessageSent">
-        <div className="MessageSent-content-triangle-right"/>
-        <div className="MessageSent-content-container">
-          <div className="MessageSent-info">
-            <div className="MessageSent-info-sender">
-              {this.props.username}
-            </div>
-            {this.getDateEl()}
+        <div className="MessageSent-info">
+          {this.getDateEl()}
+          <div className="MessageSent-info-sender">
+            {this.props.username}
           </div>
-          <div className="MessageSent-content">
+        </div>
+        <div className="MessageSent-content">
+          <div className="MessageSent-content-triangle-right"/>
+          <div className="MessageSent-content-container">
             {this.props.children}
           </div>
-          {this.getStatusIconEl()}
         </div>
+        {this.getStatusIconEl()}
       </div>
     );
   }
