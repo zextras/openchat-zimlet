@@ -211,7 +211,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     // Add Decoders
     ep.addDecoder(new DummyEventDecoder<AcceptFriendshipEvent>(OpenChatEventCode.ACCEPT_FRIENDSHIP));
     ep.addDecoder(new BuddyListEventDecoder(this.mDateProvider));
-    if (this.mServerVersion.lessThan(new Version (10))) {
+    if (this.mServerVersion.lessThan(new Version (2, 2))) {
       ep.addDecoder(new Legacy2ContactInformationEventDecoder(this.mDateProvider));
       ep.addDecoder(new Legacy2MessageEventDecoder(this.mDateProvider, secretDecoder));
       ep.addDecoder(new Legacy2RoomAckReceivedEventDecoder(this.mDateProvider));
