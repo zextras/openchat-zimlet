@@ -326,7 +326,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
     if (typeof this.mStore === "undefined") {
       const storeFactory: IStoreFactory<IOpenChatState> = new OpenChatStoreFactory(false);
       this.mStore = storeFactory.createStore(this.mMiddlewareFactory);
-      (window as IWindowWithStore).debugStore = this.mStore;
+      // (window as IWindowWithStore).debugStore = this.mStore;
     }
     return this.mStore;
   }
@@ -405,6 +405,6 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
   }
 }
 
-interface IWindowWithStore extends Window {
-  debugStore: Store<IOpenChatState>;
-}
+// interface IWindowWithStore extends Window {
+//   debugStore: Store<IOpenChatState>;
+// }

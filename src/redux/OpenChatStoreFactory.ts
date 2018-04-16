@@ -17,7 +17,7 @@
 
 import {JSON3 as JSON} from "../libext/json3";
 
-import {applyMiddleware, combineReducers, createStore, Reducer, Store} from "redux";
+import {applyMiddleware, combineReducers, compose, createStore, Reducer, Store} from "redux";
 
 import {IOpenChatState} from "./IOpenChatState";
 import {IStoreFactory} from "./IStoreFactory";
@@ -64,6 +64,19 @@ export class OpenChatStoreFactory implements IStoreFactory<IOpenChatState> {
   }
 
   public createStore(middlewareFactory: IMiddlewareFactory): Store<IOpenChatState> {
+    const composeEnhancers =
+      typeof window === "object" &&
+      (window as IReduxInstrumentedWindow).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+        (window as IReduxInstrumentedWindow).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+          name: "OpenChat Store",
+        }) : compose;
+
+    const enhancer = composeEnhancers(
+      applyMiddleware(
+        ...middlewareFactory.getMiddlewares(),
+      ),
+    );
+
     const openChatStore: Store<IOpenChatState> = createStore<IOpenChatState>(
       combineReducers({
         buddyList: buddyListReducer,
@@ -73,9 +86,7 @@ export class OpenChatStoreFactory implements IStoreFactory<IOpenChatState> {
         userStatuses: userStatusesReducer,
       }) as Reducer<IOpenChatState>,
       (this.mUseLocalStorage) ? OpenChatStoreFactory.LoadFromLocalStorage() : OpenChatInitialState,
-      applyMiddleware(
-        ...middlewareFactory.getMiddlewares(),
-      ),
+      enhancer,
     );
 
     if (this.mUseLocalStorage) {
@@ -89,4 +100,10 @@ export class OpenChatStoreFactory implements IStoreFactory<IOpenChatState> {
     return openChatStore;
   }
 
+}
+
+export interface IReduxInstrumentedWindow extends Window {
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: (opts: {
+    name: string;
+  }) => typeof compose;
 }
