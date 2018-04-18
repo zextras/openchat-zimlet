@@ -129,6 +129,7 @@ export class RoomWindow<S extends IOpenChatState>
   private mDefaultConversationHeight: string;
   private mTitlebar: DwtToolBar;
   private mRoomWindowStatusType: BuddyStatusType;
+  private mRoomType: "chat" | string;
 
   constructor(
     shell: DwtShell,
@@ -160,6 +161,7 @@ export class RoomWindow<S extends IOpenChatState>
     this.mDateProvider = dateProvider;
     this.mRoomWindowPluginManager = roomWindowPluginManager;
     this.mStore = store;
+    this.mRoomType = store.getState().rooms[this.mRoomJid].roomType;
     this.mRoomWindowPluginManager.switchOn(this);
     this.mOnMessageReceivedCallbacks = new CallbackManager();
     this.mOnWindowOpenedCallbacks = new CallbackManager();
@@ -296,7 +298,7 @@ export class RoomWindow<S extends IOpenChatState>
   }
 
   public getType(): "chat" | string {
-    return this.mStore.getState().rooms[this.mRoomJid].roomType;
+    return this.mRoomType;
   }
 
   public getDateProvider(): IDateProvider {
