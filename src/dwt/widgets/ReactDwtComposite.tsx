@@ -22,7 +22,12 @@ import "./ReactDwtComposite.scss";
 
 import {DwtComposite, DwtCompositeParams} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 
-export abstract class ReactDwtComposite<P, S extends React.ComponentState> extends DwtComposite {
+import {IReactDwtComposite} from "./IReactDwtComposite";
+
+export abstract class ReactDwtComposite<P, S extends React.ComponentState>
+  extends DwtComposite
+  implements IReactDwtComposite {
+
   protected props: P;
   protected mComponent: React.Component<P>;
 
