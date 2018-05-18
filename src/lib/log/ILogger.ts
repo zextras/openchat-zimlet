@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {IObservable} from "../../../../src/lib/observer/IObservable";
+import {IObservable} from "../observer/IObservable";
 import {FeedbackReporter} from "./FeedbackReporter";
 import {LogLevel} from "./LogLevel";
 
