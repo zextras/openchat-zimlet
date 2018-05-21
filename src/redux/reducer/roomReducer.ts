@@ -133,39 +133,20 @@ export const addMessageToRoom = (
 
   // Insert into the array, but in the correct position.
   let messageIdx: number = 0;
-  let i: number = 0;
-  for (const msg of room.messages) {
+  for (const roomMessage of room.messages) {
     // But if the message was already received we can avoid to add it again.
-    if (msg.id === message.id) { return room; }
-    if (message.date.getTime() >= msg.date.getTime()) {
-      messageIdx = i;
-    } else {
+    if (roomMessage.id === message.id) { return room; }
+    if (message.date.getTime() < roomMessage.date.getTime()) {
       break;
     }
-    i++;
-  }
-
-  // Insert at fist
-  if (room.messages[0].date.getTime() > message.date.getTime()) {
-    return {
-      ...room,
-      messages: [].concat(message).concat(room.messages),
-    };
-  }
-
-  // Insert at last
-  if (room.messages[room.messages.length - 1].date.getTime() < message.date.getTime()) {
-    return {
-      ...room,
-      messages: [].concat(room.messages).concat(message),
-    };
+    ++messageIdx;
   }
 
   return {
     ...room,
-    messages: room.messages.slice(0, messageIdx + 1)
+    messages: room.messages.slice(0, messageIdx)
       .concat(message)
-      .concat(room.messages.slice(messageIdx + 1)),
+      .concat(room.messages.slice(messageIdx)),
   };
 };
 
