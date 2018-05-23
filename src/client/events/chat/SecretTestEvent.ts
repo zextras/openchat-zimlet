@@ -20,10 +20,9 @@ import {SuperSecretEvent} from "./SuperSecretEvent";
 
 export class SecretTestEvent extends SuperSecretEvent {
 
-  constructor(sender: string,
-              destination: string,
+  constructor(destination: string,
               creationDate: Date) {
-    super(OpenChatEventCode.SECRET_TEST, sender, destination, creationDate);
+    super(OpenChatEventCode.SECRET_TEST, destination, creationDate);
 
     this.setMessageData({hello: `world`});
   }
