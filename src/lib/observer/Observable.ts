@@ -15,7 +15,7 @@ export class Observable implements IObservable {
 
   private mSubscriptions: {[action: string]: Array<IObserver<any>>} = {};
 
-  public emit<T>(action: string, data?: T): void {
+  public emit<T>(action: "*"|string, data?: T): void {
     if (this.mSubscriptions.hasOwnProperty(action)) {
       for (const observer of this.mSubscriptions[action]) {
         try {
@@ -23,9 +23,16 @@ export class Observable implements IObservable {
         } catch (err) {}
       }
     }
+    if (this.mSubscriptions.hasOwnProperty("*")) {
+      for (const observer of this.mSubscriptions["*"]) {
+        try {
+          observer(action, data);
+        } catch (err) {}
+      }
+    }
   }
 
-  public subscribe<T>(action: string, observer: IObserver<T>): IUnsubscribe {
+  public subscribe<T>(action: "*"|string, observer: IObserver<T>): IUnsubscribe {
     if (!this.mSubscriptions.hasOwnProperty(action)) {
       this.mSubscriptions[action] = [];
     }
@@ -33,7 +40,7 @@ export class Observable implements IObservable {
     return () => this.unsubscribe(action, observer);
   }
 
-  public unsubscribe(action: string, observer: IObserver<any>): void {
+  public unsubscribe(action: "*"|string, observer: IObserver<any>): void {
     if (this.mSubscriptions.hasOwnProperty(action)) {
       for (let i: number = 0; i < this.mSubscriptions[action].length; i++) {
         if (this.mSubscriptions[action][i] === observer) {

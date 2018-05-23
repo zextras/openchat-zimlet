@@ -11,11 +11,11 @@
 
 export interface IObservable {
 
-  subscribe<T>(action: string, observer: IObserver<T>): IUnsubscribe;
-  unsubscribe(action: string, observer: IObserver<any>): void;
-  emit<T>(action: string, data?: T): void;
+  subscribe<T>(action: "*"|string, observer: IObserver<T>): IUnsubscribe;
+  unsubscribe(action: "*"|string, observer: IObserver<any>): void;
+  emit<T>(action: "*"|string, data?: T): void;
 
 }
 
-export type IObserver<T> = (action: string, data: T) => void;
+export type IObserver<T> = (action: "*"|string, data: T) => void;
 export type IUnsubscribe = () => void;
