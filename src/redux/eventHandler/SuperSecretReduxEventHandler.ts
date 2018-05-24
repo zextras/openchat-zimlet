@@ -22,6 +22,9 @@ import {IOpenChatTextMessage} from "../IOpenChatState";
 import {OpenChatTextMessageInitialState} from "../OpenChatInitialState";
 import {ReduxEventHandler} from "./ReduxEventHandler";
 
+/**
+ * @deprecated
+ */
 export class SuperSecretReduxEventHandler extends ReduxEventHandler<SuperSecretEvent> {
   public getEventCode(): number {
     return SuperSecretEvent.ID;

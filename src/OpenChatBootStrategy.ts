@@ -309,7 +309,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
       this.mSessionInfoProvider,
     ));
     em.addEventHandler(new ShutdownReduxEventHandler(store));
-    em.addEventHandler(new SuperSecretReduxEventHandler(store));
+    // em.addEventHandler(new SuperSecretReduxEventHandler(store));
     em.addEventHandler(new TimeoutReduxEventHandler(store));
     em.addEventHandler(new UnregisterSessionReduxEventHandler(store));
     em.addEventHandler(new WritingStatusReduxEventHandler(store));
