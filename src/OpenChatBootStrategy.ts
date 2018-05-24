@@ -136,7 +136,6 @@ import {
 } from "./redux/eventHandler/SessionRegisteredHistoryEnabledReduxEventHandler";
 import {SessionRegisteredReduxEventHandler} from "./redux/eventHandler/SessionRegisteredReduxEventHandler";
 import {ShutdownReduxEventHandler} from "./redux/eventHandler/ShutdownReduxEventHandler";
-import {SuperSecretReduxEventHandler} from "./redux/eventHandler/SuperSecretReduxEventHandler";
 import {TimeoutReduxEventHandler} from "./redux/eventHandler/TimeoutReduxEventHandler";
 import {UnregisterSessionReduxEventHandler} from "./redux/eventHandler/UnregisterSessionReduxEventHandler";
 import {UserCapabilitiesReduxEventHandler} from "./redux/eventHandler/UserCapabilitiesReduxEventHandler";
