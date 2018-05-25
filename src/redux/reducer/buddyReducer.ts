@@ -107,10 +107,20 @@ export const buddyReducer: Reducer<IOpenChatBuddy> = (
 
     case "SET_LAST_USER_MESSAGES": {
       const newState = { ...state };
-      if (typeof action.received !== "undefined") {
+      if (typeof action.received !== "undefined"
+          && (
+              newState.lastMessageReceived == null
+              || action.received.date.getTime() > newState.lastMessageReceived.date.getTime()
+              )
+          ) {
         newState.lastMessageReceived = action.received;
       }
-      if (typeof action.sent !== "undefined") {
+      if (typeof action.sent !== "undefined"
+          && (
+              newState.lastMessageSent == null
+              || action.sent.date.getTime() > newState.lastMessageSent.date.getTime()
+            )
+          ) {
         newState.lastMessageSent = action.sent;
       }
       return newState;
