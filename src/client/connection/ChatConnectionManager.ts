@@ -73,7 +73,7 @@ export class ChatConnectionManager implements IConnectionManager {
   ): void {
     this.Log.debug(event, "Send event");
     if (event.getSender() == null) {
-      event.setSender(this.mSessionInfoProvider.getUsername());
+      event.setSender(this.mSessionInfoProvider.getUsername() + "/" + this.mSessionInfoProvider.getSessionId());
     }
     callback = Callback.standardize(callback);
     if (typeof errorCallback === "undefined") {
