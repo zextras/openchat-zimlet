@@ -18,21 +18,38 @@
 
 $amessage-bg-color: white;
 
-@mixin AMessage($direction) {
-  margin: (12/8)*1em 0;
-  min-height: (40/8)*1em;
+@mixin AMessage() {
   font-size: 1em;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   overflow-y: auto;
   flex-shrink: 0;
+  background-color: $amessage-bg-color;
+  border-radius: 1em;
+  max-width: 70%;
+  //min-width: 25%;
+  padding: 1em;
+  margin-top: (4/8)*1em;
+  margin-bottom: (4/8)*1em;
+
+  &-align-wrapper {
+    font-size: 1em;
+    display: flex;
+    flex-direction: row;
+  }
 
   &-info {
-    font-size: (12/8)*1em;
     @include default-font-family();
+    font-size: (12/8)*1em;
     display: flex;
-    flex-direction: $direction;
+  }
+
+  &-info-bottom {
+    font-size: (12/8)*1em;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 
   &-info-sender {
@@ -42,20 +59,10 @@ $amessage-bg-color: white;
   }
 
   &-content {
-    font-size: 1em;
-    display: flex;
-    flex-direction: $direction;
-    margin-top: (8/14)*1em;
-    margin-bottom: (4/14)*1em;
-  }
-
-  &-content-container {
-    background-color: $amessage-bg-color;
-    padding: (16/14)*1em (24/14)*1em;
+    font-size: (12/8)*1em;
     white-space: pre-wrap;
     overflow-x: hidden;
     word-wrap: break-word;
-    font-size: (14/8)*1em;
     @include default-font-family();
   }
 
@@ -68,28 +75,31 @@ $amessage-bg-color: white;
 }
 
 .AMessage-info-date {
-  margin-left: (8/12)*1em;
-  margin-right: (8/12)*1em;
   opacity: 0.7;
   font-size: 1em;
-  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .AMessage-status {
   font-size: 1em;
   display: flex;
   flex-direction: column;
-  margin: (4/8)*1em (16/8)*1em;
 }
 
 .AMessage-status-icon {
-  font-size: 2em;
+  font-size: 1em;
   display: flex;
   flex-direction: row;
 }
 
 .AMessage-status-icon > i {
   cursor: pointer;
+}
+
+.AMessage-status-icon > .fa-stack {
+  height: (16/12)*1em;
+  line-height: (16/12)*1em;
+  width: (16/12)*1em;
 }
 
 .AMessage-status-icon> i.fa-circle-notch {
@@ -99,28 +109,17 @@ $amessage-bg-color: white;
   color: #CE2C2C;
 }
 
-.AMessage-status-icon > i.fa-stack {
-  font-size: .5em;
-}
-
-.AMessage-status-icon > i.fa-stack > i.fa-square {
-  color: $amessage-bg-color;
-}
-
 .AMessage-status-icon-first-check {
-  font-size: (44/32)*1em;
   text-align: left;
   color: $text-color;
 }
 
 .AMessage-status-icon-first-check-shadow {
-  font-size: (44/32)*1em;
   text-align: left;
   padding-left: (3/44)*1em;
 }
 
 .AMessage-status-icon-second-check {
-  font-size: (44/32)*1em;
   color: $text-color;
   text-align: left;
   padding-left: (16/44)*1em;

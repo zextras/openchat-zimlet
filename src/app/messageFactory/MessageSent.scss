@@ -16,17 +16,27 @@
 @import "AMessage";
 
 .MessageSent {
-  @include AMessage(row-reverse);
-}
-
-.MessageSent > .AMessage-status > .AMessage-status-icon {
+  @include AMessage();
+  border-top-right-radius: 0;
   justify-content: flex-end;
-}
 
-.MessageSent-content-triangle-right {
-  border-top: (16/8)*1em solid white;
-  border-right: (16/8)*1em solid transparent;
-  height: 0;
-  width: 0;
-  font-size: 1em;
+  &-content {
+    padding-bottom: (4/8)*1em;
+  }
+
+  &-content > * {
+    text-align: right;
+  }
+
+  &-info-bottom {
+    justify-content: flex-end;
+  }
+
+  &-info-bottom > .AMessage-info-date {
+    margin-right: (8/12)*1em;
+  }
+
+  &-align-wrapper {
+    justify-content: flex-end;
+  }
 }
