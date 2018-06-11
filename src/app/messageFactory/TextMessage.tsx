@@ -74,11 +74,14 @@ export class TextMessage extends React.Component<ITextMessageProps, ITextMessage
 
   public emojify(str: string, emojiSize: "16" | "32"): JSX.Element {
     // TODO: Make an heavy review of this slice of code
+    const escapedStr: string = str
+      .replace("<", "&lt;")
+      .replace(">", "&gt;");
     if (!TextMessage.constainsAnEmoji(str) && !TextMessage.constainsALink(str)) {
       return (
         <div className="TextMessage">
           <span>
-            {str}
+            {escapedStr}
           </span>
         </div>
       );
@@ -91,7 +94,7 @@ export class TextMessage extends React.Component<ITextMessageProps, ITextMessage
           <span
             dangerouslySetInnerHTML={{
               __html: anchorme(
-                toImage(str)
+                toImage(escapedStr)
                   .replace(/emojione emojione-/g, `emojione_${size} emojione_${size}-`),
                 {
                   attributes: [
