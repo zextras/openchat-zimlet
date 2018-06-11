@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 ZeXtras S.r.l.
+ * Copyright (C) 2018 ZeXtras S.r.l.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,16 +15,10 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {OpenChatEventCode} from "./OpenChatEventCode";
-import {SuperSecretEvent} from "./SuperSecretEvent";
+export interface IReactDwtComposite {
 
-export class SecretTestEvent extends SuperSecretEvent {
-
-  constructor(destination: string,
-              creationDate: Date) {
-    super(OpenChatEventCode.SECRET_TEST, destination, creationDate);
-
-    this.setMessageData({hello: `world`});
-  }
+  render(): JSX.Element | false | null;
+  mountComponent(): void;
+  unmountComponent(): void;
 
 }

@@ -16,14 +16,27 @@
 @import "AMessage";
 
 .MessageReceived {
-  @include AMessage(row);
-}
+  @include AMessage();
+  border-top-left-radius: 0;
+  justify-content: flex-start;
 
-.MessageReceived-content-triangle-left {
-  border-left: (16/8)*1em solid transparent;
-  border-left: (16/8)*1em solid transparent;
-  border-top: (16/8)*1em solid white;
-  height: 0;
-  width: 0;
-  font-size: 1em;
+  &-content {
+    padding-top: (4/8)*1em;
+  }
+
+  &-info {
+    justify-content: flex-start;
+  }
+
+  &-info > .AMessage-info-date {
+    margin-left: (8/12)*1em;
+  }
+
+  &-info-bottom {
+    justify-content: flex-start;
+  }
+
+  &-align-wrapper {
+    justify-content: flex-start;
+  }
 }

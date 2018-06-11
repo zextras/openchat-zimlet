@@ -22,17 +22,17 @@ export class SuperSecretEvent extends MessageEvent {
 
   public static ID: number = -1;
   private mTypeSecret: number;
+  private mObjData: {[key: string]: any};
 
   constructor(
     type: number,
-    sender: string,
     destination: string,
     creationDate: Date,
   ) {
     // noinspection TypeScriptValidateTypes
     super(
       "",
-      sender,
+      undefined,
       destination,
       "{}",
       "chat",
@@ -40,14 +40,23 @@ export class SuperSecretEvent extends MessageEvent {
       creationDate,
     );
     this.mTypeSecret = type;
+    this.mObjData = {};
   }
 
-  public setMessageData(obj: any) {
-    obj.type = this.mTypeSecret;
-    obj.from = this.getSender();
-    obj.to = this.getDestination();
-    obj.timestampSent = this.getDate().getTime();
-    this.mMessage = JSON.stringify(obj, null, 2);
+  public setMessageData(obj: {[key: string]: any}) {
+    this.mObjData = obj;
+  }
+
+  public getMessageData(): {[key: string]: any} {
+    return this.mObjData;
+  }
+
+  public getMessage(): string {
+    this.mObjData.type = this.mTypeSecret;
+    this.mObjData.from = this.getSenderWithResource();
+    this.mObjData.to = this.getDestinationWithResource();
+    this.mObjData.timestampSent = this.getDate().getTime();
+    return JSON.stringify(this.mObjData, null, 2);
   }
 
 }

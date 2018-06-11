@@ -15,10 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {IObservable} from "../observer/IObservable";
 import {FeedbackReporter} from "./FeedbackReporter";
 import {LogLevel} from "./LogLevel";
 
-export interface ILogger {
+export interface ILogger extends IObservable {
 
   getName(): string;
 

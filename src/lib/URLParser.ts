@@ -38,6 +38,10 @@ export class URLParser {
     return (new URLParser(location)).getParameter(key);
   }
 
+  public static isDevMode(): boolean {
+    return (new URLParser(window.location)).isDevMode();
+  }
+
   private mParameters: {[key: string]: string};
 
   constructor(location: Location) {

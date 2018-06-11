@@ -32,7 +32,6 @@ export class SecretTestEventDecoder extends SoapEventDecoder<SecretTestEvent> {
     originEvent?: IChatEvent,
   ): SecretTestEvent {
     return new SecretTestEvent(
-      eventObj.from,
       eventObj.to,
       new Date(eventObj.timestampSent),
     );

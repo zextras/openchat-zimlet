@@ -18,6 +18,8 @@
 import {Callback} from "../callbacks/Callback";
 import {TimedCallbackFactory} from "../callbacks/TimedCallbackFactory";
 import {IDateProvider} from "../IDateProvider";
+import {IObservable, IObserver, IUnsubscribe} from "../observer/IObservable";
+import {Observable} from "../observer/Observable";
 import {FeedbackReporter} from "./FeedbackReporter";
 import {ILogger} from "./ILogger";
 import {LogLevel} from "./LogLevel";
@@ -29,10 +31,13 @@ export class Logger implements ILogger {
   public static DEFAULT_LEVEL: LogLevel = LogLevel.info;
   public static MAX_LOG_LINES: number = 128;
 
+  public static ACT_LOG_CHANGED = "LOG_CHANGED";
+
   private mName: string;
   private mLog: string[];
   private mDateProvider: IDateProvider;
   private mTimedCallbackFactory: TimedCallbackFactory;
+  private mObservable: IObservable;
 
   private mLogLevel: LogLevel;
   private mReporters: {[name: string]: FeedbackReporter} = {};
@@ -50,6 +55,7 @@ export class Logger implements ILogger {
     this.mName = name;
     this.mLog = [];
     this.mLogLevel = Logger.DEFAULT_LEVEL;
+    this.mObservable = new Observable();
   }
 
   public getName(): string {
@@ -84,7 +90,7 @@ export class Logger implements ILogger {
   }
 
   public getLog(): string[] {
-    return this.mLog;
+    return [].concat(this.mLog);
   }
 
   public debug(obj: any, title: string): void {
@@ -141,6 +147,18 @@ export class Logger implements ILogger {
     ));
   }
 
+  public emit<T>(action: string, data?: T): void {
+    this.mObservable.emit(action, data);
+  }
+
+  public subscribe<T>(action: string, observer: IObserver<T>): IUnsubscribe {
+    return this.mObservable.subscribe(action, observer);
+  }
+
+  public unsubscribe(action: string, observer: IObserver<any>): void {
+    this.mObservable.unsubscribe(action, observer);
+  }
+
   private logLine(line: LogLine): void {
 
     if (line.getLevel() >= this.mLogLevel) {
@@ -185,6 +203,7 @@ export class Logger implements ILogger {
       const howToRemove: number = this.mLog.length - Logger.MAX_LOG_LINES;
       this.mLog.splice(0, howToRemove);
     }
+    this.mObservable.emit<string[]>(Logger.ACT_LOG_CHANGED, this.getLog());
   }
 
 }

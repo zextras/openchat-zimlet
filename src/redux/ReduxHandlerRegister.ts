@@ -64,7 +64,7 @@ export class ReduxHandlerRegister {
     // eventManager.addEventHandler(new SessionRegisteredHistoryEnabledReduxEventHandler(store));
     // eventManager.addEventHandler(new SessionRegisteredReduxEventHandler(store, sessionInfoProvider));
     eventManager.addEventHandler(new ShutdownReduxEventHandler(store));
-    eventManager.addEventHandler(new SuperSecretReduxEventHandler(store));
+    // eventManager.addEventHandler(new SuperSecretReduxEventHandler(store));
     eventManager.addEventHandler(new TimeoutReduxEventHandler(store));
     eventManager.addEventHandler(new UnregisterSessionReduxEventHandler(store));
     eventManager.addEventHandler(new WritingStatusReduxEventHandler(store));

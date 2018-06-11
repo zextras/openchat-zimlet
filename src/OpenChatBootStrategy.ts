@@ -136,7 +136,6 @@ import {
 } from "./redux/eventHandler/SessionRegisteredHistoryEnabledReduxEventHandler";
 import {SessionRegisteredReduxEventHandler} from "./redux/eventHandler/SessionRegisteredReduxEventHandler";
 import {ShutdownReduxEventHandler} from "./redux/eventHandler/ShutdownReduxEventHandler";
-import {SuperSecretReduxEventHandler} from "./redux/eventHandler/SuperSecretReduxEventHandler";
 import {TimeoutReduxEventHandler} from "./redux/eventHandler/TimeoutReduxEventHandler";
 import {UnregisterSessionReduxEventHandler} from "./redux/eventHandler/UnregisterSessionReduxEventHandler";
 import {UserCapabilitiesReduxEventHandler} from "./redux/eventHandler/UserCapabilitiesReduxEventHandler";
@@ -309,7 +308,7 @@ export class OpenChatBootStrategy implements IZimletBootStrategy {
       this.mSessionInfoProvider,
     ));
     em.addEventHandler(new ShutdownReduxEventHandler(store));
-    em.addEventHandler(new SuperSecretReduxEventHandler(store));
+    // em.addEventHandler(new SuperSecretReduxEventHandler(store));
     em.addEventHandler(new TimeoutReduxEventHandler(store));
     em.addEventHandler(new UnregisterSessionReduxEventHandler(store));
     em.addEventHandler(new WritingStatusReduxEventHandler(store));
