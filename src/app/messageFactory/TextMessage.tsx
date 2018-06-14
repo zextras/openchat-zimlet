@@ -73,40 +73,37 @@ export class TextMessage extends React.Component<ITextMessageProps, ITextMessage
   }
 
   public emojify(str: string, emojiSize: "16" | "32"): JSX.Element {
-    // TODO: Make an heavy review of this slice of code
     const escapedStr: string = str
-      .replace("<", "&lt;")
-      .replace(">", "&gt;");
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
     if (!TextMessage.constainsAnEmoji(str) && !TextMessage.constainsALink(str)) {
       return (
-        <div className="TextMessage">
-          <span>
-            {escapedStr}
-          </span>
-        </div>
+        <div
+          className="TextMessage"
+          dangerouslySetInnerHTML={{
+            __html: escapedStr,
+          }}
+        />
       );
     } else {
       const size: "16" | "32" = TextMessage.isOnlyEmojiRegExp.test(str) ? "32" : emojiSize;
       return (
         <div
           className="TextMessage"
-        >
-          <span
-            dangerouslySetInnerHTML={{
-              __html: anchorme(
-                toImage(escapedStr)
-                  .replace(/emojione emojione-/g, `emojione_${size} emojione_${size}-`),
-                {
-                  attributes: [
-                    (urlObj: IAnchormeUrl) => this.openLinksToBlank(urlObj),
-                    (urlObj: IAnchormeUrl) => this.openMailtoLinks(urlObj),
-                  ],
-                  files: false,
-                },
-              ) as string,
-            }}
-          />
-        </div>
+          dangerouslySetInnerHTML={{
+            __html: anchorme(
+              toImage(escapedStr)
+                .replace(/emojione emojione-/g, `emojione_${size} emojione_${size}-`),
+              {
+                attributes: [
+                  (urlObj: IAnchormeUrl) => this.openLinksToBlank(urlObj),
+                  (urlObj: IAnchormeUrl) => this.openMailtoLinks(urlObj),
+                ],
+                files: false,
+              },
+            ) as string,
+          }}
+        />
       );
     }
   }
