@@ -536,9 +536,6 @@ export class RoomWindow<S extends IOpenChatState>
           `${realMessage.substring(0, currentInputPosition - 1)}${realMessage.substring(currentInputPosition)}`;
       } else { return; } // It isn't a send DwtKeyEvent.KEY_ENTER
       message = StringUtils.trim(message);
-      message = message
-        .replace("<", "&lt;")
-        .replace(">", "&gt;");
       this.mInputField.clear();
       if (message.length > 0) {
         const tempMessageId: string = Math.random().toString(36).substring(2, 10);

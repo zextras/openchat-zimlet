@@ -66,6 +66,11 @@ $amessage-bg-color: white;
     @include default-font-family();
   }
 
+  & [class*=emojione_16-],
+  & [class*=emojione_32-] {
+    text-align: left;
+  }
+
   //@media (min-width: 576px) {
   //  .&-content-container {
   //    max-width: 75%;
