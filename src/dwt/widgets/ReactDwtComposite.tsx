@@ -69,6 +69,7 @@ export abstract class ReactDwtComposite<P, S extends React.ComponentState>
 
   public unmountComponent(): void {
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this.getHtmlElement()));
+    this.mComponent = undefined;
   }
 
   protected setState<K extends keyof S>(state: Pick<S, K>): void {

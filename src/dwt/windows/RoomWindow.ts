@@ -17,6 +17,7 @@
 
 import {Store, Unsubscribe} from "redux";
 import {BuddyStatusUtils} from "../../app/conversation/BuddyStatusUtils";
+import {Conversation} from "../../app/conversation/Conversation";
 import {IMessageUiFactory} from "../../app/messageFactory/IMessageUiFactory";
 import {BuddyStatus} from "../../client/BuddyStatus";
 import {BuddyStatusType} from "../../client/BuddyStatusType";
@@ -377,7 +378,6 @@ export class RoomWindow<S extends IOpenChatState>
     if (this.mPopupLocked) {
       return;
     }
-    this.mConversation.mountComponent();
     this.mUnsubscribe = this.mStore.subscribe(() => this.checkState());
     this.checkState();
     if (
@@ -396,10 +396,12 @@ export class RoomWindow<S extends IOpenChatState>
         this.setExpanded();
       }
     }
+    this.mConversation.mountComponent();
   }
 
   public popdown(): void {
     this.mUnsubscribe();
+    this.mConversation.unmountComponent();
     super.popdown();
     this.mOnWindowClosedCallbacks.run(this);
   }

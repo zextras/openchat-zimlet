@@ -121,6 +121,7 @@ export class Conversation extends React.Component<IConversationProps, IConversat
   public componentDidMount(): void {
     this.nextState();
     this.mUnsubscribeDataStore = this.props.dataStore.subscribe(this.nextState);
+    this.moveToBottom();
   }
 
   public componentWillUnmount(): void {
@@ -133,49 +134,54 @@ export class Conversation extends React.Component<IConversationProps, IConversat
   }
 
   public componentDidUpdate(prevProps: IConversationProps, prevState: IConversationState): void {
-    if (
-      typeof this.mElement !== "undefined" && this.mElement !== null
-      && prevState.messages !== this.state.messages
-    ) {
+
+    if ( typeof this.mElement !== "undefined" && this.mElement !== null) {
       if (
-        // check if is at bottom
-        this.state.isAtBottom
-      ) {
-        this.scrollToPosition(this.mElement.scrollHeight, 0);
-      } else if (
-        // check if is a new message or an history message
-        !this.props.dataStore.getState().rooms[this.props.roomJid].loadingHistory
-        && this.state.messages.length !== 0
+        prevState.messages !== this.state.messages
       ) {
         if (
-          // check if I'm the sender
-          this.props.messageUIFactory.isSentByMe(
-            this.props.dataStore,
-            this.state.messages[this.state.messages.length - 1],
-          )
+          // check if is at bottom
+          this.state.isAtBottom
         ) {
-          this.scrollToPosition(this.mElement.scrollHeight, 0);
-          if (!this.state.isAtBottom) {
-            this.setState({
-              isAtBottom: true,
-            });
+          this.moveToBottom();
+        } else if (
+          // check if is a new message or an history message
+          !this.props.dataStore.getState().rooms[this.props.roomJid].loadingHistory
+          && this.state.messages.length !== 0
+        ) {
+          if (
+            // check if I'm the sender
+            this.props.messageUIFactory.isSentByMe(
+              this.props.dataStore,
+              this.state.messages[this.state.messages.length - 1],
+            )
+          ) {
+            this.moveToBottom();
+          } else {
+            this.scrollToPosition(this.state.prevScrollHeight, this.state.scrollPosition);
           }
         } else {
-          this.scrollToPosition(this.state.prevScrollHeight, this.state.scrollPosition);
+          this.scrollToPosition(this.mElement.scrollHeight, this.state.scrollPosition);
         }
-      } else {
-        this.scrollToPosition(this.mElement.scrollHeight, this.state.scrollPosition);
+      }
+      if (
+        // autoload messages until scrollbar is visible or history is full loaded
+        this.mElement.scrollHeight < this.mElement.parentElement.offsetHeight
+          || !this.mFirstRequestHistoryDone
+      ) {
+        this.mFirstRequestHistoryDone = true;
+        this.requestHistory();
       }
     }
-    if (
-      // autoload messages until scrollbar is visible or history is full loaded
-      typeof this.mElement !== "undefined" && this.mElement !== null &&
-      (this.mElement.scrollHeight < this.mElement.parentElement.offsetHeight
-      || !this.mFirstRequestHistoryDone)
-    ) {
-      this.mFirstRequestHistoryDone = true;
-      this.requestHistory();
+  }
+
+  private moveToBottom(): void {
+    if ( typeof this.mElement !== "undefined" && this.mElement !== null) {
+      this.scrollToPosition(this.mElement.scrollHeight, 0);
     }
+    this.setState({
+      isAtBottom: true,
+    });
   }
 
   private scrollToPosition = (scrollHeight: number, scrollPosition: number) => {
