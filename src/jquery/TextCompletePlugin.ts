@@ -29,6 +29,9 @@ export class TextCompletePlugin implements IJQueryPlugin {
 
   public static installOnTextField(el: string|HTMLElement): void {
     if (!TextCompletePlugin.sInstalled) { return; }
+    if (typeof $(el).textcomplete === "undefined") {
+      return;
+    }
     $(el).textcomplete(
       [
         {
@@ -53,7 +56,7 @@ export class TextCompletePlugin implements IJQueryPlugin {
             callback(returnResult);
           },
           template: (shortname: string) => {
-            return `${toImage(shortname)} ${shortname}`;
+            return `${toImage(shortname).replace(/emojione emojione-/g, `emojione_16 emojione_16-`)} ${shortname}`;
           },
         },
       ],
