@@ -18,11 +18,11 @@
 if (typeof $ !== "undefined") {
   var jquery_textcomplete = require("jquery-textcomplete");
   module.exports = {
-    jquery_textcomplete: jquery_textcomplete.fn.textcomplete
+    JQueryTextComplete: jquery_textcomplete.fn.textcomplete
   };
 }
 else {
   module.exports = {
-    jquery_textcomplete: void 0
+    JQueryTextComplete: void 0
   };
 }
