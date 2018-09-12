@@ -16,7 +16,7 @@ import {Ii18n} from "./Ii18n";
 import {ISetLocaleAction} from "./ISetLocaleAction";
 import {ISetTranslationsAction} from "./ISetTranslationsAction";
 
-export const i18nReducer: Reducer<Ii18n, ISetTranslationsAction|ISetLocaleAction> = (
+export const i18nReducer: Reducer<Ii18n> = (
   state: Ii18n | undefined = {
     __locale: "",
   },
