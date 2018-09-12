@@ -53,6 +53,9 @@ import {RegisterSessionEvent} from "./client/events/chat/RegisterSessionEvent";
 import {EventManager} from "./client/events/EventManager";
 import {IEventManager} from "./client/events/IEventManager";
 import {SessionInfoProvider} from "./client/SessionInfoProvider";
+import {IRoomWindowFactory} from "./dwt/windows/IRoomWindowFactory";
+import {RoomWindowFactory} from "./dwt/windows/RoomWindowFactory";
+import {I18nStoreFactory} from "./i18n/zimlet/I18nStoreFactory";
 import {IZimletBootStrategy} from "./IZimletBootStrategy";
 import {Callback} from "./lib/callbacks/Callback";
 import {TimedCallbackFactory} from "./lib/callbacks/TimedCallbackFactory";
@@ -65,6 +68,7 @@ import {OpenChatBootStrategy} from "./OpenChatBootStrategy";
 import {IOpenChatState} from "./redux/IOpenChatState";
 import {IOpenChatUIState} from "./redux/IOpenChatUIState";
 import {SettingsManager} from "./settings/SettingsManager";
+import {ZmSetting} from "./zimbra/zimbraMail/share/model/ZmSetting";
 import {ZimletVersion} from "./ZimletVersion";
 
 declare const com_zextras_chat_open: {[label: string]: string};
@@ -202,6 +206,10 @@ export class OpenChatZimlet extends ChatZimletBase<IOpenChatState> {
     );
 
     super.initChatZimlet(
+      (new I18nStoreFactory(
+        com_zextras_chat_open,
+        appCtxt.get(ZmSetting.LOCALE_NAME),
+      )).createStore(),
       this.mTimedCallbackFactory,
       this.mDateProvider,
       settingsManager,

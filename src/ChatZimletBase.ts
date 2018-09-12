@@ -48,6 +48,7 @@ import {IRoomWindowFactory} from "./dwt/windows/IRoomWindowFactory";
 import {MainWindow} from "./dwt/windows/MainWindow";
 import {RoomWindowType} from "./dwt/windows/RoomWindow";
 import {RoomWindowManager} from "./dwt/windows/RoomWindowManager";
+import {Ii18n} from "./i18n/Ii18n";
 import {JQueryPlugins} from "./jquery/JQueryPlugins";
 import {LoadingDotsPlugin} from "./jquery/LoadingDotsPlugin";
 import {TextCompletePlugin} from "./jquery/TextCompletePlugin";
@@ -108,6 +109,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
   protected mConnectionManager: IConnectionManager;
   protected mSoapCommandFactory: ICommandFactory;
   protected mStore: Store<T>;
+  protected mI18n: Store<Ii18n>;
   private mSettingsManager: SettingsManager;
   private mEventManager: IEventManager;
   private mIdleTimer: IdleTimer;
@@ -149,6 +151,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
   }
 
   public initChatZimlet(
+    i18n: Store<Ii18n>,
     timedCallbackFactory: TimedCallbackFactory,
     dateProvider: IDateProvider,
     settingsManager: SettingsManager,
@@ -168,6 +171,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
     this.Log.debug("Zimbra patched", "ChatZimletBase");
     this.mJQueryPlugins.installPlugins();
     this.Log.debug("JQuery", "Added plugins");
+    this.mI18n = i18n;
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mDateProvider = dateProvider;
     this.mSettingsManager = settingsManager;
