@@ -20,9 +20,8 @@ import {Action, Dispatch, MiddlewareAPI} from "redux";
 import {IConnectionManager} from "../../../client/connection/IConnectionManager";
 import {RoomAckEvent} from "../../../client/events/chat/RoomAckEvent";
 import {Callback} from "../../../lib/callbacks/Callback";
-import {IQueryArchiveFinAction} from "../../action/IQueryArchiveFinAction";
 import {ISendRoomAckAction} from "../../action/ISendRoomAckAction";
-import {IOpenChatMessage, IOpenChatRoom, IOpenChatState} from "../../IOpenChatState";
+import {IOpenChatState} from "../../IOpenChatState";
 import {ChatMiddlewareBase} from "../ChatMiddlewareBase";
 
 export class SendRoomAckMiddleware extends ChatMiddlewareBase<IOpenChatState> {
@@ -55,20 +54,6 @@ export class SendRoomAckMiddleware extends ChatMiddlewareBase<IOpenChatState> {
           this.mLastAcks[act.jid] = act.message_id;
         }
         break;
-      }
-
-      case "QUERY_ARCHIVE_FIN_RECEIVED": {
-        const jid = (action as Action as IQueryArchiveFinAction).roomJid;
-        const room: IOpenChatRoom = store.getState().rooms[jid];
-        if (room.messages.length > 0) {
-          const lastMessage: IOpenChatMessage = room.messages[room.messages.length - 1];
-          store.dispatch<ISendRoomAckAction>({
-            jid: jid,
-            message_id: lastMessage.id,
-            message_time: lastMessage.date,
-            type: "SEND_ROOM_ACK",
-          });
-        }
       }
     }
     return next(action);
