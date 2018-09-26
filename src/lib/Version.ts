@@ -101,6 +101,7 @@ export class Version {
   }
 
   private mParts: number[];
+  private mVersionString: string;
   private mCommit: string;
 
   constructor(parts: string);
@@ -112,16 +113,18 @@ export class Version {
     if (parts.length === 0) {
       throw new Error("Invalid parameter");
     } else if (parts.length === 1 && typeof parts[0] === "string") {
+      this.mVersionString = parts[0];
       this.mParts = [];
       const splitted: string[] = parts[0].split(".");
-      let i: number;
-      for (i = 0; i < splitted.length; i++) {
-        this.mParts.push(parseInt(splitted[i], 10));
+      for (const part of splitted) {
+        this.mParts.push(parseInt(part, 10));
       }
     } else if (parts.length === 1 && ArrayUtils.isArray(parts[0])) {
       this.mParts = parts[0] as number[];
+      this.mVersionString = this.mParts.join(".");
     } else {
       this.mParts = parts as number[];
+      this.mVersionString = this.mParts.join(".");
     }
     this.mCommit = "";
   }
@@ -177,7 +180,7 @@ export class Version {
   }
 
   public toString(): string {
-    return this.mParts.join(".");
+    return this.mVersionString;
   }
 
   public truncate(maxParts: number): Version {
