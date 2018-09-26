@@ -1,6 +1,6 @@
 {
   "name": "com_zextras_chat_open",
-  "version": "11.05.0",
+  "version": "11.06.0",
   "description": "OpenChat Zimlet for Zimbra",
   "private": true,
   "license": "SEE LICENSE IN LICENSE",
