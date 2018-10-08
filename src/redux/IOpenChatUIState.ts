@@ -23,6 +23,7 @@ export interface IInputToolbarButtons {
 }
 
 export interface IOpenChatSelectableItem {
+  hasFocus: boolean;
   id: string;
   type: IOpenChatSelectableItemType;
 }
