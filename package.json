@@ -24,6 +24,8 @@
     "jquery-textcomplete": "1.8.1",
     "json-prune": "1.0.1",
     "json3": "3.3.2",
+    "preact": "8.3.1",
+    "preact-compat": "3.18.4",
     "react": "15.6.2",
     "react-dom": "15.6.2",
     "react-redux": "5.0.6",
