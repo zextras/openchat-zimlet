@@ -7,6 +7,8 @@ declare -a patches=(\
 "json3" \
 "webpack" \
 "xregexp" \
+"preact-compat" \
+"prop-types" \
 )
 
 for i in "${patches[@]}"

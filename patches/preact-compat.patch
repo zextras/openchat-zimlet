@@ -1,0 +1,30 @@
+--- node_modules/preact-compat/dist/preact-compat.es.js
++++ node_modules/preact-compat/dist/preact-compat.es.js
+@@ -8,7 +8,7 @@
+
+ var REACT_ELEMENT_TYPE = (typeof Symbol!=='undefined' && Symbol['for'] && Symbol['for']('react.element')) || 0xeac7;
+
+-var COMPONENT_WRAPPER_KEY = (typeof Symbol!=='undefined' && Symbol.for) ? Symbol.for('__preactCompatWrapper') : '__preactCompatWrapper';
++var COMPONENT_WRAPPER_KEY = (typeof Symbol!=='undefined' && Symbol['for']) ? Symbol['for']('__preactCompatWrapper') : '__preactCompatWrapper';
+
+ // don't autobind these methods since they already have guaranteed context.
+ var AUTOBIND_BLACKLIST = {
+@@ -384,15 +384,15 @@
+ function applyClassName(vnode) {
+ 	var a = vnode.attributes || (vnode.attributes = {});
+ 	classNameDescriptor.enumerable = 'className' in a;
+-	if (a.className) { a.class = a.className; }
++	if (a.className) { a['class'] = a.className; }
+ 	Object.defineProperty(a, 'className', classNameDescriptor);
+ }
+
+
+ var classNameDescriptor = {
+ 	configurable: true,
+-	get: function() { return this.class; },
+-	set: function(v) { this.class = v; }
++	get: function() { return this['class']; },
++	set: function(v) { this['class'] = v; }
+ };
+
+ function extend(base, props) {
