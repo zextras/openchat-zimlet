@@ -27,13 +27,13 @@ interface IMessageReceivedState extends IAMessageState {}
 
 export class MessageReceived extends AMessage<IMessageReceivedProps, IMessageReceivedState> {
 
-  public render() {
+  public render(props: IMessageReceivedProps, state: IMessageReceivedState) {
     return (
       <div className="MessageReceived-align-wrapper">
         <div className="MessageReceived">
           <div className="MessageReceived-info">
             <div className="MessageReceived-info-sender">
-              {this.props.username}
+              {props.username}
             </div>
             {this.getDateEl()}
           </div>

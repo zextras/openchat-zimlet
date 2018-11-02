@@ -35,7 +35,7 @@ export interface IAMessageState {}
 
 export abstract class AMessage<P extends IAMessageProps, S extends IAMessageState> extends Component<P, S> {
 
-  public abstract render(): any;
+  public abstract render(props: IAMessageProps, state: IAMessageState): any;
 
   protected getDateEl() {
     const midnight = new Date();

@@ -59,17 +59,17 @@ export class Conversation extends Component<IConversationProps, IConversationSta
     };
   }
 
-  public render() {
-    const listMessages: JSX.Element[] = this.state.messages.map((message) => {
-        return this.props.messageUIFactory.getMessage(
-          this.props.dataStore,
+  public render(props: IConversationProps, state: IConversationState) {
+    const listMessages: JSX.Element[] = state.messages.map((message) => {
+        return props.messageUIFactory.getMessage(
+          props.dataStore,
           message,
-          this.props.emojiSize,
+          props.emojiSize,
         );
       },
     );
 
-    if (this.props.roomJid !== "") {
+    if (props.roomJid !== "") {
       return (
         <div className="Conversation">
           <div

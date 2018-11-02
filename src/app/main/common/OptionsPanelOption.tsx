@@ -43,25 +43,25 @@ export class OptionsPanelOption extends Component<IOptionsPanelOption, IOptionsP
     };
   }
 
-  public render() {
+  public render(props: IOptionsPanelOption, state: IOptionsPanelOptionState) {
     return (
       <div
-        className={`OptionsPanelOption${this.state.expanded ? " OptionsPanelOption-selected" : ""}`}
+        className={`OptionsPanelOption${state.expanded ? " OptionsPanelOption-selected" : ""}`}
       >
         <div
           className="OptionsPanelOption-label"
           onClick={this.expandCollapsePanel}
         >
           <i
-            className={`fas fal fa-fw ${this.props.icon || ""}`}
+            className={`fas fal fa-fw ${props.icon || ""}`}
           />
-          {this.props.label}
+          {props.label}
         </div>
-        {this.state.expanded && <div className="OptionsPanelOption-panel">
-          {h(this.props.panel, {
-            ...this.props.panelProps,
+        {state.expanded && <div className="OptionsPanelOption-panel">
+          {h(props.panel, {
+            ...props.panelProps,
             closePanel: this.expandCollapsePanel,
-            selectedItem: this.props.selectedItem,
+            selectedItem: props.selectedItem,
           })}
         </div>}
       </div>
