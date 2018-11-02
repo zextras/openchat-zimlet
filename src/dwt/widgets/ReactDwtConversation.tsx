@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
+import {h} from "preact";
 import {Conversation, IConversationProps} from "../../app/conversation/Conversation";
 
 import "./ReactDwtConversation.scss";
@@ -37,7 +37,7 @@ export class ReactDwtConversation extends ReactDwtComposite<IConversationProps, 
     });
   }
 
-  public render(): JSX.Element | false | null {
+  public render() {
     return (
       <Conversation
         dataStore={this.props.dataStore}

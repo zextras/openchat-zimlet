@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
+import {h} from "preact";
 import {Store} from "redux";
 import {IMessageUiFactoryPlugin} from "./IMessageUiFactoryPlugin";
 

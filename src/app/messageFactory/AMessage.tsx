@@ -17,7 +17,7 @@
 
 // tslint:disable:max-line-length
 
-import * as React from "react";
+import {Component, h} from "preact";
 
 import "./AMessage.scss";
 
@@ -33,11 +33,11 @@ export interface IAMessageProps {
 
 export interface IAMessageState {}
 
-export abstract class AMessage<P extends IAMessageProps, S extends IAMessageState> extends React.Component<P, S> {
+export abstract class AMessage<P extends IAMessageProps, S extends IAMessageState> extends Component<P, S> {
 
-  public abstract render(): JSX.Element | false | null;
+  public abstract render(): any;
 
-  protected getDateEl(): JSX.Element {
+  protected getDateEl() {
     const midnight = new Date();
     midnight.setHours(0, 0, 0, 0);
     const weekAgo: Date = new Date(midnight.getTime() - (5 * 24 * 3600 * 1000));

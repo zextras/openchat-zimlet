@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
+import {h, render} from "preact";
 
 import "./MessageSent.scss";
 
@@ -27,7 +27,7 @@ interface IMessageSentState extends IAMessageState {}
 
 export class MessageSent extends AMessage<IMessageSentProps, IMessageSentState> {
 
-  public render(): JSX.Element | false | null {
+  public render() {
     return (
       <div className="MessageSent-align-wrapper">
         <div className="MessageSent">

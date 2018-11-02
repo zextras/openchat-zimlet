@@ -396,12 +396,13 @@ export class RoomWindow<S extends IOpenChatState>
         this.setExpanded();
       }
     }
-    this.mConversation.mountComponent();
+    if (this.mConversation) {
+      this.mConversation.mountComponent();
+    }
   }
 
   public popdown(): void {
     this.mUnsubscribe();
-    this.mConversation.unmountComponent();
     super.popdown();
     this.mOnWindowClosedCallbacks.run(this);
   }
