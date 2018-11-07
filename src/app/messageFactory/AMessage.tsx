@@ -17,7 +17,7 @@
 
 // tslint:disable:max-line-length
 
-import {Component, h} from "preact";
+import {Component, ComponentChild, h} from "preact";
 
 import "./AMessage.scss";
 
@@ -35,7 +35,7 @@ export interface IAMessageState {}
 
 export abstract class AMessage<P extends IAMessageProps, S extends IAMessageState> extends Component<P, S> {
 
-  public abstract render(props: IAMessageProps, state: IAMessageState): any;
+  public abstract render(props: IAMessageProps, state: IAMessageState): ComponentChild;
 
   protected getDateEl() {
     const midnight = new Date();

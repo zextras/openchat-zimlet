@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, h} from "preact";
+import {Component, ComponentChild, h} from "preact";
 
 import "./OptionsPanelOption.scss";
 
@@ -43,7 +43,7 @@ export class OptionsPanelOption extends Component<IOptionsPanelOption, IOptionsP
     };
   }
 
-  public render(props: IOptionsPanelOption, state: IOptionsPanelOptionState) {
+  public render(props: IOptionsPanelOption, state: IOptionsPanelOptionState): ComponentChild {
     return (
       <div
         className={`OptionsPanelOption${state.expanded ? " OptionsPanelOption-selected" : ""}`}

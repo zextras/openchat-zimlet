@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {h, render} from "preact";
+import {ComponentChild, h, render} from "preact";
 
 import "./MessageSent.scss";
 
@@ -27,7 +27,7 @@ interface IMessageSentState extends IAMessageState {}
 
 export class MessageSent extends AMessage<IMessageSentProps, IMessageSentState> {
 
-  public render() {
+  public render(): ComponentChild {
     return (
       <div className="MessageSent-align-wrapper">
         <div className="MessageSent">

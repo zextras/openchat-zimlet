@@ -17,7 +17,7 @@
 
 // tslint:disable:max-line-length
 
-import {Component, h} from "preact";
+import {Component, ComponentChild, h} from "preact";
 import {anchorme, AnchormeAttributeOption, IAnchormeUrl} from "../../libext/anchorme";
 
 import "./TextMessage.scss";
@@ -57,7 +57,7 @@ export class TextMessage extends Component<ITextMessageProps, ITextMessageState>
 
   private static isOnlyEmojiRegExp: RegExp = /(^:[^\s]+:$)/;
 
-  public render() {
+  public render(): ComponentChild {
     return this.emojify(this.props.content, this.props.emojiSize);
   }
 

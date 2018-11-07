@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {h} from "preact";
+import {Component, ComponentChild, h} from "preact";
 
 import "./MessageReceived.scss";
 
@@ -27,7 +27,7 @@ interface IMessageReceivedState extends IAMessageState {}
 
 export class MessageReceived extends AMessage<IMessageReceivedProps, IMessageReceivedState> {
 
-  public render(props: IMessageReceivedProps, state: IMessageReceivedState) {
+  public render(props: IMessageReceivedProps, state: IMessageReceivedState): ComponentChild {
     return (
       <div className="MessageReceived-align-wrapper">
         <div className="MessageReceived">

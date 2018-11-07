@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, h} from "preact";
+import {Component, ComponentChild, h} from "preact";
 import {Store, Unsubscribe} from "redux";
 
 import "./Conversation.scss";
@@ -59,7 +59,7 @@ export class Conversation extends Component<IConversationProps, IConversationSta
     };
   }
 
-  public render(props: IConversationProps, state: IConversationState) {
+  public render(props: IConversationProps, state: IConversationState): ComponentChild {
     const listMessages: JSX.Element[] = state.messages.map((message) => {
         return props.messageUIFactory.getMessage(
           props.dataStore,

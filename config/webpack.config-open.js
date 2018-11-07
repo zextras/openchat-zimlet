@@ -52,11 +52,7 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    extensions: [".js", ".json", ".tsx", ".ts"],
-    alias: {
-      'react': 'preact-compat',
-      'react-dom': 'preact-compat',
-    },
+    extensions: [".js", ".json", ".tsx", ".ts"]
   },
   devtool: "source-map", // TODO: Remove source maps from production?
   module: {
