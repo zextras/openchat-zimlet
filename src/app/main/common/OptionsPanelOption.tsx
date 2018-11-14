@@ -92,7 +92,7 @@ export interface IOptionsPanelOptionChildPanelState {
 // tslint:disable-next-line:max-line-length
 export class OptionsPanelOptionChildPanel<P extends IOptionsPanelOptionChildPanelProps, S extends IOptionsPanelOptionChildPanelState>
   extends Component<P, S> {
-  public render() {
-    return <div></div>;
+  public render(): ComponentChild {
+    return <div/>;
   }
 }
