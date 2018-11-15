@@ -37,7 +37,7 @@ export abstract class AMessage<P extends IAMessageProps, S extends IAMessageStat
 
   public abstract render(props: IAMessageProps, state: IAMessageState): ComponentChild;
 
-  protected getDateEl() {
+  protected getDateEl(): JSX.Element {
     const midnight = new Date();
     midnight.setHours(0, 0, 0, 0);
     const weekAgo: Date = new Date(midnight.getTime() - (5 * 24 * 3600 * 1000));

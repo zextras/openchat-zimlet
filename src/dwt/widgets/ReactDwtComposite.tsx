@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {Component, h, render} from "preact";
+import {Component, ComponentChild, h, render} from "preact";
 
 import "./ReactDwtComposite.scss";
 
@@ -53,7 +53,7 @@ export abstract class ReactDwtComposite<P, S>
     // }
   }
 
-  public abstract render(): any;
+  public abstract render(): ComponentChild;
 
   public mountComponent(): void {
     if (typeof this.mComponent === "undefined" || this.mComponent === null) {
@@ -66,19 +66,14 @@ export abstract class ReactDwtComposite<P, S>
   }
 
   public unmountComponent(): void {
-    render(null, this.getHtmlElement(), this.render());
+    render(null, this.getHtmlElement(), this.getHtmlElement().firstElementChild);
 
     this.mComponent = undefined;
   }
 
-  protected setState<K extends keyof S>(state: Pick<S, K>): void {
+  protected setState<K extends keyof S>(fn: (prevState: S, props: P) => Pick<S, K>, callback?: () => void): void {
     if (typeof this.mComponent !== "undefined" && this.mComponent !== null) {
-      (this.mComponent as Component).setState((prevState: any) => {
-        return {
-          ...prevState,
-          ...state as {},
-        };
-      });
+      (this.mComponent as Component).setState(fn, callback);
     }
   }
 

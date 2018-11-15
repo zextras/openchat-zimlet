@@ -15,7 +15,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {h} from "preact";
 import {Store} from "redux";
 import {IOpenChatMessage, IOpenChatState} from "../../redux/IOpenChatState";
 
