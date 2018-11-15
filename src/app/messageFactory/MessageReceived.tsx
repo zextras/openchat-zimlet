@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
+import {Component, ComponentChild, h} from "preact";
 
 import "./MessageReceived.scss";
 
@@ -27,13 +27,13 @@ interface IMessageReceivedState extends IAMessageState {}
 
 export class MessageReceived extends AMessage<IMessageReceivedProps, IMessageReceivedState> {
 
-  public render(): JSX.Element | false | null {
+  public render(props: IMessageReceivedProps, state: IMessageReceivedState): ComponentChild {
     return (
       <div className="MessageReceived-align-wrapper">
         <div className="MessageReceived">
           <div className="MessageReceived-info">
             <div className="MessageReceived-info-sender">
-              {this.props.username}
+              {props.username}
             </div>
             {this.getDateEl()}
           </div>

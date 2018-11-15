@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
+import {Component, h} from "preact";
 import {Store} from "redux";
 
 import {IOpenChatBuddyListMap, IOpenChatMessage, IOpenChatState} from "../../redux/IOpenChatState";

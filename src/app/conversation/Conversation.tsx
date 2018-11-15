@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
+import {Component, ComponentChild, h} from "preact";
 import {Store, Unsubscribe} from "redux";
 
 import "./Conversation.scss";
@@ -41,7 +41,7 @@ export interface IConversationState {
   scrollPosition: number;
 }
 
-export class Conversation extends React.Component<IConversationProps, IConversationState> {
+export class Conversation extends Component<IConversationProps, IConversationState> {
   private mElement: HTMLElement = null;
   private mUnsubscribeDataStore: Unsubscribe;
   private mUnsubscribeUIStore: Unsubscribe;
@@ -59,17 +59,17 @@ export class Conversation extends React.Component<IConversationProps, IConversat
     };
   }
 
-  public render(): JSX.Element | null | false {
-    const listMessages: JSX.Element[] = this.state.messages.map((message) => {
-        return this.props.messageUIFactory.getMessage(
-          this.props.dataStore,
+  public render(props: IConversationProps, state: IConversationState): ComponentChild {
+    const listMessages: JSX.Element[] = state.messages.map((message) => {
+        return props.messageUIFactory.getMessage(
+          props.dataStore,
           message,
-          this.props.emojiSize,
+          props.emojiSize,
         );
       },
     );
 
-    if (this.props.roomJid !== "") {
+    if (props.roomJid !== "") {
       return (
         <div className="Conversation">
           <div

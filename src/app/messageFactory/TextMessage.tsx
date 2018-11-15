@@ -17,7 +17,7 @@
 
 // tslint:disable:max-line-length
 
-import * as React from "react";
+import {Component, ComponentChild, h} from "preact";
 import {anchorme, AnchormeAttributeOption, IAnchormeUrl} from "../../libext/anchorme";
 
 import "./TextMessage.scss";
@@ -31,7 +31,7 @@ interface ITextMessageProps extends IOpenChatTextMessage {
 
 interface ITextMessageState {}
 
-export class TextMessage extends React.Component<ITextMessageProps, ITextMessageState> {
+export class TextMessage extends Component<ITextMessageProps, ITextMessageState> {
 
   public static constainsAnEmoji(str: string): boolean {
     emojione.asciiRegexp.lastIndex = 0;
@@ -57,7 +57,7 @@ export class TextMessage extends React.Component<ITextMessageProps, ITextMessage
 
   private static isOnlyEmojiRegExp: RegExp = /(^:[^\s]+:$)/;
 
-  public render(): JSX.Element | false | null {
+  public render(): ComponentChild {
     return this.emojify(this.props.content, this.props.emojiSize);
   }
 

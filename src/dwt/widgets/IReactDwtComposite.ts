@@ -15,9 +15,11 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+import {ComponentChild} from "preact";
+
 export interface IReactDwtComposite {
 
-  render(): JSX.Element | false | null;
+  render(): ComponentChild;
   mountComponent(): void;
   unmountComponent(): void;
 

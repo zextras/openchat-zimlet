@@ -15,9 +15,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
-import {ReactElement} from "react";
-import * as ReactDOM from "react-dom";
+import {h, render} from "preact";
+
 import {DwtComposite, DwtCompositeParams} from "../../zimbra/ajax/dwt/widgets/DwtComposite";
 
 export class DwtReactContainer extends DwtComposite {
@@ -25,7 +24,7 @@ export class DwtReactContainer extends DwtComposite {
   constructor(params: IDwtReactContainerParams) {
     super(params);
 
-    ReactDOM.render(
+    render(
       params.reactElement,
       this.getHtmlElement(),
     );
@@ -34,5 +33,5 @@ export class DwtReactContainer extends DwtComposite {
 }
 
 export interface IDwtReactContainerParams extends DwtCompositeParams {
-  reactElement: ReactElement<any>;
+  reactElement: any;
 }

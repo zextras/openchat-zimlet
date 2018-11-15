@@ -15,8 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import {Component, ComponentChild, h, render} from "preact";
 
 import "./ReactDwtComposite.scss";
 
@@ -24,12 +23,12 @@ import {DwtComposite, DwtCompositeParams} from "../../zimbra/ajax/dwt/widgets/Dw
 
 import {IReactDwtComposite} from "./IReactDwtComposite";
 
-export abstract class ReactDwtComposite<P, S extends React.ComponentState>
+export abstract class ReactDwtComposite<P, S>
   extends DwtComposite
   implements IReactDwtComposite {
 
   protected props: P;
-  protected mComponent: React.Component<P>;
+  protected mComponent: Component<P> | Element;
 
   constructor(
     params: DwtCompositeParams & { props?: P },
@@ -54,44 +53,39 @@ export abstract class ReactDwtComposite<P, S extends React.ComponentState>
     // }
   }
 
-  public abstract render(): JSX.Element | false | null;
+  public abstract render(): ComponentChild;
 
   public mountComponent(): void {
-    const component = ReactDOM.render(
-      this.render() as JSX.Element,
-      this.getHtmlElement(),
-      this.onElementRendered,
-    ) as React.Component<P>;
     if (typeof this.mComponent === "undefined" || this.mComponent === null) {
+      const component = render(
+        this.render() as JSX.Element,
+        this.getHtmlElement(),
+      ) as Element;
       this.mComponent = component;
     }
   }
 
   public unmountComponent(): void {
-    ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this.getHtmlElement()));
+    render(null, this.getHtmlElement(), this.getHtmlElement().firstElementChild);
+
     this.mComponent = undefined;
   }
 
-  protected setState<K extends keyof S>(state: Pick<S, K>): void {
+  protected setState<K extends keyof S>(fn: (prevState: S, props: P) => Pick<S, K>, callback?: () => void): void {
     if (typeof this.mComponent !== "undefined" && this.mComponent !== null) {
-      (this.mComponent as React.Component).setState((prevState) => {
-        return {
-          ...prevState,
-          ...state as {},
-        };
-      });
+      (this.mComponent as Component).setState(fn, callback);
     }
   }
 
   protected getState(): S {
     if (typeof this.mComponent !== "undefined" && this.mComponent !== null) {
-      return (this.mComponent as React.Component).state as S;
+      return (this.mComponent as Component).state as S;
     }
   }
 
-  private onElementRendered = (component: React.Component<any, React.ComponentState> | Element | void) => {
+  private onElementRendered = (component: Component<any, any> | Element | void) => {
     if (typeof this.mComponent === "undefined" || this.mComponent === null) {
-      this.mComponent = component as React.Component<P>;
+      this.mComponent = component as Component<P>;
     }
   }
 

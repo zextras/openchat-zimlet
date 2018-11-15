@@ -15,7 +15,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as React from "react";
+import {Component, ComponentChild, h} from "preact";
 
 import "./OptionsPanelOption.scss";
 
@@ -34,7 +34,7 @@ interface IOptionsPanelOptionState {
   expanded: boolean;
 }
 
-export class OptionsPanelOption extends React.Component<IOptionsPanelOption, IOptionsPanelOptionState> {
+export class OptionsPanelOption extends Component<IOptionsPanelOption, IOptionsPanelOptionState> {
 
   constructor(props: IOptionsPanelOption) {
     super(props);
@@ -43,25 +43,25 @@ export class OptionsPanelOption extends React.Component<IOptionsPanelOption, IOp
     };
   }
 
-  public render(): JSX.Element | false | null {
+  public render(props: IOptionsPanelOption, state: IOptionsPanelOptionState): ComponentChild {
     return (
       <div
-        className={`OptionsPanelOption${this.state.expanded ? " OptionsPanelOption-selected" : ""}`}
+        className={`OptionsPanelOption${state.expanded ? " OptionsPanelOption-selected" : ""}`}
       >
         <div
           className="OptionsPanelOption-label"
           onClick={this.expandCollapsePanel}
         >
           <i
-            className={`fas fal fa-fw ${this.props.icon || ""}`}
+            className={`fas fal fa-fw ${props.icon || ""}`}
           />
-          {this.props.label}
+          {props.label}
         </div>
-        {this.state.expanded && <div className="OptionsPanelOption-panel">
-          {React.createElement(this.props.panel, {
-            ...this.props.panelProps,
+        {state.expanded && <div className="OptionsPanelOption-panel">
+          {h(props.panel, {
+            ...props.panelProps,
             closePanel: this.expandCollapsePanel,
-            selectedItem: this.props.selectedItem,
+            selectedItem: props.selectedItem,
           })}
         </div>}
       </div>
@@ -91,4 +91,8 @@ export interface IOptionsPanelOptionChildPanelState {
 // tslint:disable-next-line:max-classes-per-file
 // tslint:disable-next-line:max-line-length
 export class OptionsPanelOptionChildPanel<P extends IOptionsPanelOptionChildPanelProps, S extends IOptionsPanelOptionChildPanelState>
-  extends React.Component<P, S> {}
+  extends Component<P, S> {
+  public render(): ComponentChild {
+    return <div/>;
+  }
+}

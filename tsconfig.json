@@ -6,6 +6,7 @@
     "module": "commonjs",
     "target": "es3",
     "jsx": "react",
+    "jsxFactory": "h",
     "skipLibCheck": true
   },
   "exclude": [
