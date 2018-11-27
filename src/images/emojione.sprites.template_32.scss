@@ -50,7 +50,7 @@ img.emojione_32 {
 
 {{#items}}
 .emojione_32-{{name}} {
-    background-image: url("{{{escaped_image}}}");
+    background-image: url({{{escaped_image}}});
     background-position: {{px.offset_x}} {{px.offset_y}};
     width: {{px.width}};
     height: {{px.height}};

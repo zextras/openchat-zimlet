@@ -24,8 +24,7 @@ export class LoadingDotsPlugin implements IJQueryPlugin {
   public install(): void {
     if (typeof $.fn.loadingdots !== "undefined") { return; }
 
-    $.fn.loadingdots = function( options: {} )
-    {
+    $.fn.loadingdots = function( options: {} ) {
       let i = 0;
       const settings = $.extend( {}, { duration : 250 }, options );
       const bucle = function() {

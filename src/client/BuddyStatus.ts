@@ -100,17 +100,17 @@ export class BuddyStatus implements IBuddyStatus {
   private static getLegacyCss(type: BuddyStatusType): string {
     switch (type) {
       case BuddyStatusType.ONLINE:
-        return "ZxChat_online";
+        return "ZxChat_available";
       case BuddyStatusType.BUSY:
         return "ZxChat_busy";
       case BuddyStatusType.AWAY:
         return "ZxChat_away";
       case BuddyStatusType.NEED_RESPONSE:
-        return "ZxChat_need_response";
+        return "ZxChat_pending-request";
       case BuddyStatusType.INVITED:
-        return "ZxChat_invited";
+        return "ZxChat_pending";
       case BuddyStatusType.UNREACHABLE:
-        return "ZxChat_unreachable";
+        return "ZxChat_deleted";
       case BuddyStatusType.OFFLINE:
         return "ZxChat_offline";
       case BuddyStatusType.INVISIBLE:

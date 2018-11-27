@@ -316,7 +316,7 @@ export class GroupTreeItem extends DwtTreeItem implements IDwtChatTreeItem {
 
   public applyFilter(regex: RegExp): number {
     let itemsShown: number = 0;
-    for (const treeItem of this.getChildren()){
+    for (const treeItem of this.getChildren()) {
       try {
         if (treeItem.isGroupTreeItem()) {
           itemsShown += (treeItem as GroupTreeItem).applyFilter(regex);

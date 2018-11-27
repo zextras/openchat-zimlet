@@ -45,7 +45,7 @@ export class RoomWindowMenuButton extends DwtToolBarButton {
     if (ZimbraUtils.isUniversalUI()) {
       this.setImage("MoreVertical,color=#b4d7eb");
     } else {
-      this.setImage("ZxChat_preferences");
+      this.setImage("ZxChat_icon-menu");
     }
     this.setDropDownImages("", "", "", "");
     this.dontStealFocus();
