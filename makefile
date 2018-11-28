@@ -39,6 +39,7 @@ node_modules:
 
 src/dwt/widgets/emoji/EmojiTemplate.ts:
 	@ node utils/GenerateEmojiMenus.js > src/dwt/widgets/emoji/EmojiTemplate.ts
+	# Updated EmojiTemplate.js
 
 src/ZimletVersion.ts:
 	@ rm -rf src/ZimletVersion.ts
@@ -51,7 +52,7 @@ src/ZimletVersion.ts:
 			-e s/#ZIMLET_NAME#/OpenChat/g \
 			-e s/#PACKAGE_NAME#/com_zextras_chat_open/g \
 		src/ZimletVersion.ts
-	@ echo "Updated src/ZimletVersion.ts"
+	# Updated src/ZimletVersion.ts
 
 src/images/com_zextras_chat_open_sprite.scss: node_modules
 	# Build sprites (emojione and icons)
