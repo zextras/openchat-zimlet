@@ -148,6 +148,7 @@ export class Conversation extends Component<IConversationProps, IConversationSta
           // check if is a new message or an history message
           !this.props.dataStore.getState().rooms[this.props.roomJid].loadingHistory
           && this.state.messages.length !== 0
+          && this.state.messages.length === (prevState.messages.length + 1)
         ) {
           if (
             // check if I'm the sender
@@ -158,6 +159,10 @@ export class Conversation extends Component<IConversationProps, IConversationSta
           ) {
             this.moveToBottom();
           } else {
+            this.setState({
+              prevScrollHeight: this.mElement.scrollHeight,
+              scrollPosition: this.mElement.scrollHeight - this.mElement.scrollTop,
+            });
             this.scrollToPosition(this.state.prevScrollHeight, this.state.scrollPosition);
           }
         } else {
