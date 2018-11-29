@@ -15,20 +15,9 @@
 // If not, see <http://www.gnu.org/licenses/>.
 //
 
-@import "./images/com_zextras_chat_open_sprite";
-
 .Imgfa {
   font-size: 14px;
   padding-top: 2px;
-}
-
-.Img16 {
-  //@extend .ZxChat-16;
-  background-repeat: no-repeat;
-  display: block;
-  overflow: hidden;
-  height: 16px;
-  width: 16px;
 }
 
 .ZxEmojiPickerButton {
@@ -49,65 +38,12 @@
   height: 0;
 }
 
-.ImgZxChat_close {
-  @extend .Img16;
-  @include sprite($icon-close);
-}
-
-.ImgZxChat_preferences {
-  @extend .Img16;
-  @include sprite($icon-menu);
-}
-
-.ImgZxChat_preferences-gray {
-  @extend .Img16;
-  @include sprite($icon-menu-gray);
-}
-
-.ImgZxChat_online {
-  @extend .Img16;
-  @include sprite($available);
-}
-
-.ImgZxChat_away {
-  @extend .Img16;
-  @include sprite($away);
-}
-
-.ImgZxChat_busy {
-  @extend .Img16;
-  @include sprite($busy);
-}
-
-.ImgZxChat_offline {
-  @extend .Img16;
-  @include sprite($offline);
-}
-
-.ImgZxChat_invisible {
-  @extend .Img16;
-  @include sprite($invisible);
-}
-
-.ImgZxChat_unreachable {
-  @extend .Img16;
-  @include sprite($deleted);
-}
-
-.ImgZxChat_need_response {
-  @extend .Img16;
-  @include sprite($pending-request);
-}
-
-.ImgZxChat_invited {
-  @extend .Img16;
-  @include sprite($pending);
-}
-
-.ImgChatFolder {
-  @extend .Img16;
-  @include sprite($chat-folder);
-}
+// Deprecated, we don't show the history folder anymore.
+// Keeping as reference.
+//.ImgChatFolder {
+//  @extend .Img16;
+//  @include sprite($chat-folder);
+//}
 
 // Override button borders and settings for the emoji picker button
 .ZxEmojiPickerButton > .ZToolbarButtonBorder {

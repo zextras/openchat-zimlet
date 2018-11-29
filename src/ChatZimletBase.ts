@@ -229,7 +229,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
 
     this.mNotificationManager = new NotificationManager(
         StringUtils.getMessage("default_notification_title"),
-        location.protocol + "//" + location.hostname + (this.getResource("images/desktop-chat_128.png")),
+        location.protocol + "//" + location.hostname + (this.getResource("desktop-chat_128.png")),
         this.mTimedCallbackFactory,
         appCtxt,
     );
@@ -381,7 +381,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
 
   public getNotificationImage(): string {
     const differentImage: string = this.mMainWindow.getPluginManager().getFieldPlugin(MainWindow.ChatImageFieldPlugin);
-    const defaultUrl = this.getResource("images/desktop-chat_128.png");
+    const defaultUrl = this.getResource("desktop-chat_128.png");
     if (typeof differentImage !== "undefined" && differentImage !== null) {
       return differentImage;
     }

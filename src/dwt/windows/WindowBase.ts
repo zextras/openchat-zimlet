@@ -41,9 +41,9 @@ export class WindowBase extends DwtBaseDialog {
   public static BTN_MINIMIZE: string = "minimize";
   public static BTN_MAXIMIZE: string = "maximize";
 
-  public static _MINIMIZE_ICON = "ImgZxChat_minimize";
-  public static _EXPAND_ICON = "ImgZxChat_expand";
-  public static _CLOSE_ICON = "ImgZxChat_close-legacy";
+  public static _MINIMIZE_ICON = "ImgZxChat_resize-in";
+  public static _EXPAND_ICON = "ImgZxChat_resize-out";
+  public static _CLOSE_ICON = "ImgZxChat_close";
   public static MAX_TITLE_LENGTH: number = ZimbraUtils.isUniversalUI() ? 190 : 148;
   public static Z_INDEX: number = 499;
 

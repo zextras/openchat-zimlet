@@ -22,8 +22,6 @@
 
     <include>#NAME#_bundle.js</include>
 
-    <includeCSS>#NAME#_bundle.css</includeCSS>
-
     <handlerObject>#NAME#_hdlr</handlerObject>
 
     <!-- Includes for auto-generated template files -->
@@ -51,9 +49,9 @@
         <property type="string" name="zxchat_pref_last_status" value="1"/>
     </userProperties>
 
-    <resource>emojione.sprites.png</resource>
-    <resource>images/com_zextras_chat_open_sprite.png</resource>
-    <resource>images/emojione.sprites.png</resource>
-    <resource>images/desktop-chat_128.png</resource>
+    <resource>emojione.sprites_16.png</resource>
+    <resource>emojione.sprites_32.png</resource>
+    <resource>com_zextras_chat_open_sprite.png</resource>
+    <resource>desktop-chat_128.png</resource>
 
 </zimlet>

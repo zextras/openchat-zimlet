@@ -61,9 +61,10 @@ export class ZimbraPatcher {
       typeof AjxUtil !== "undefined" && AjxUtil !== null &&
       (typeof AjxUtil.FULL_URL_RE === "undefined" || AjxUtil.FULL_URL_RE === null)
     ) {
-      // tslint:disable-next-line:max-line-length
+      // tslint:disable:max-line-length
       AjxUtil.FULL_URL_RE =
         /^[A-Za-z0-9]{2,}:\/\/[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)*(:([0-9])+)?(\/[\w\.\|\^\*\[\]\{\}\(\)\-<>~,'#_;@:!%]+)*(\/)?(\?[\w\.\|\^\*\+\[\]\{\}\(\)\-<>~,'#_;@:!%&=]*)?$/;
+      // tslint:enable:max-line-length
     }
 
     if (

@@ -470,7 +470,7 @@ export class MainWindow extends WindowBase {
     if (ZimbraUtils.isUniversalUI()) {
       return `MoreVertical,color=${primary ? "#b4d7eb" : "#989898"}`;
     } else {
-      return `${primary ? "ZxChat_preferences" : "ZxChat_preferences-gray"}`;
+      return `${primary ? "ZxChat_icon-menu" : "ZxChat_icon-menu-gray"}`;
     }
   }
 

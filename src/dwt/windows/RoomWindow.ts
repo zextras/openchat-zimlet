@@ -188,7 +188,7 @@ export class RoomWindow<S extends IOpenChatState>
     // Fix between versions
     this.mTitlebar.getHtmlElement().onmouseup = (ev: MouseEvent) => {
       const target: HTMLElement = ev.target as HTMLElement;
-      if (target.className === "ImgZxChat_preferences" || target.className === "ImgZxChat_close") {
+      if (target.className === "ImgZxChat_icon-menu" || target.className === "ImgZxChat_close") {
         // Run default handler
         DwtControl.__mouseUpHdlr(ev);
       }

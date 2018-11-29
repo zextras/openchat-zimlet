@@ -18,12 +18,7 @@
 var webpack = require("webpack");
 var BannerPlugin = webpack.BannerPlugin;
 var path = require("path");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-
-var extractCss = new ExtractTextPlugin({
-  filename: "[name].css",
-  disable: process.env.NODE_ENV === "development"
-});
+var autoprefixer = require('autoprefixer');
 
 var license = [];
 license.push("Copyright (C) " + ((new Date()).getFullYear()) + " ZeXtras S.r.l.");
@@ -49,54 +44,109 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, "../build/"),
-    filename: '[name].js'
+    filename: '[name].js',
+    publicPath: '/service/zimlet/com_zextras_chat_open/'
   },
   resolve: {
-    extensions: [".js", ".json", ".tsx", ".ts"]
+    extensions: [".js", ".json", ".tsx", ".ts"],
+    alias: {
+      preact: path.resolve(__dirname, "../node_modules/preact/dist/preact.js")
+    }
   },
   devtool: "source-map", // TODO: Remove source maps from production?
   module: {
     rules: [
       {
-        test: /\.json$/,
+        test: /\.tsx?$/,
+        loader: require.resolve('tslint-loader'),
+        exclude: [
+          path.resolve(__dirname, 'node_modules/')
+        ],
+        enforce: 'pre'
+      },
+      {
+        test: /\.js$/,
+        loader: require.resolve('source-map-loader'),
         exclude: [],
-        loader: "json-loader"
+        enforce: 'pre'
+      },
+      {
+        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+        loader: require.resolve('url-loader'),
+        options: {
+          limit: 10000,
+          name: "[name].[ext]"
+        }
       },
       {
         test: /\.tsx?$/,
         exclude: [
-          path.resolve(__dirname, "src/zimbra/"),
-          path.resolve(__dirname, "node_modules/")
+          path.resolve(__dirname, 'node_modules/')
         ],
-        loader: "awesome-typescript-loader"
-      },
-      {
-        test: /\.png$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            publicPath: "service/zimlet/",
-            outputPath: "/images/"
-          }
+        loader: 'awesome-typescript-loader',
+        options: {
+          configFileName: "./tsconfig.json"
         }
       },
       {
-        test: /\.scss$/,
-        use: extractCss.extract({
-          fallback: "style-loader",
-          use: [{
-            loader: "css-loader",
-            options: { url: false }
-          }, {
-            loader: "sass-loader"
-          }]
-        })
+        test: /\.s?css$/,
+        use: [
+          {
+            loader: require.resolve('style-loader')
+          },
+          {
+            loader: require.resolve('css-loader'),
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: "resolve-url-loader"
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
+              sourceMapContents: false
+            }
+          },
+          {
+            loader: require.resolve('postcss-loader'),
+            options: {
+              // Necessary for external CSS imports to work
+              // https://github.com/facebookincubator/create-react-app/issues/2677
+              ident: 'postcss',
+              syntax: 'postcss-scss',
+              plugins: function() {
+                return [
+                  require('postcss-flexbugs-fixes'),
+                  autoprefixer({
+                    browsers: [
+                      '>1%',
+                      'last 4 versions',
+                      'Firefox ESR',
+                      'not ie < 9' // React doesn't support IE8 anyway
+                    ],
+                    flexbox: 'no-2009'
+                  })
+                ];
+              }
+            }
+          }
+        ]
       },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+      {
+        exclude: [/\.js$/, /\.html$/, /\.json$/, /\.tsx?$/, /\.s?css$/, /\.png$/],
+        loader: require.resolve('file-loader'),
+        options: {
+          name: "[name].[ext]"
+        }
+      },
+      { enforce: 'pre', test: /\.js$/, loader: 'source-map-loader' }
     ]
   },
   externals: {
-    jquery: "jQuery",
+    jquery: "jQuery"
   },
   plugins: [
     // Banner required to avoid contamination caused by the YUI compressor.
@@ -112,7 +162,6 @@ module.exports = {
         banner: license.join('\n'),
         entryOnly: false
       }
-    ),
-    extractCss
+    )
   ]
 };
