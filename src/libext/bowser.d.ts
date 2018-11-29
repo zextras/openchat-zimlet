@@ -39,7 +39,7 @@ export declare class Bowser {
    *   });
    *
    * @param browsers {any}  minVersions map of minimal version to browser
-   * @param strictMode {Boolean} [strictMode = false] flag to return false if browser wasn't found in map
+   * @param strictMod {Boolean} [strictMod = false] flag to return false if browser wasn't found in map
    * @param userAgent {string} [ua] user agent string
    * @return {Boolean}
    */
@@ -52,7 +52,7 @@ export declare class Bowser {
       opera?: string,
       phantom?: string,
     },
-    strictMode: boolean = false,
-    userAgent: string = navigator.userAgent,
+    strictMod?: boolean,
+    userAgent?: string,
   ): boolean;
 }
