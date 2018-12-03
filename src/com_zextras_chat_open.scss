@@ -15,6 +15,8 @@
 // If not, see <http://www.gnu.org/licenses/>.
 //
 
+@import "../src/images/com_zextras_chat_open_sprite";
+
 .Imgfa {
   font-size: 14px;
   padding-top: 2px;
@@ -38,12 +40,10 @@
   height: 0;
 }
 
-// Deprecated, we don't show the history folder anymore.
-// Keeping as reference.
-//.ImgChatFolder {
-//  @extend .Img16;
-//  @include sprite($chat-folder);
-//}
+.ImgChatFolder {
+  @extend .Img16;
+  @extend .ImgZxChat_chat-folder;
+}
 
 // Override button borders and settings for the emoji picker button
 .ZxEmojiPickerButton > .ZToolbarButtonBorder {
