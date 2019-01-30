@@ -15,20 +15,19 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatZimletBase} from "../../ChatZimletBase";
 import {Callback} from "../../lib/callbacks/Callback";
 import {TimedCallbackFactory} from "../../lib/callbacks/TimedCallbackFactory";
-import {IOpenChatState} from "../../redux/IOpenChatState";
+import {ZmZimletBase} from "../../zimbra/zimbraMail/share/model/ZmZimletBase";
 import {Setting} from "../Setting";
 import {SettingsUtils} from "../SettingsUtils";
 import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
 export class ConfigHandler implements ISettingsHandlerInterface {
 
-  private mZimletContext: ChatZimletBase<IOpenChatState>;
+  private mZimletContext: ZmZimletBase;
   private mTimedCallbackFactory: TimedCallbackFactory;
 
-  constructor(zimletContext: ChatZimletBase<IOpenChatState>, timedCallbackFactory: TimedCallbackFactory) {
+  constructor(zimletContext: ZmZimletBase, timedCallbackFactory: TimedCallbackFactory) {
     this.mZimletContext = zimletContext;
     this.mTimedCallbackFactory = timedCallbackFactory;
   }

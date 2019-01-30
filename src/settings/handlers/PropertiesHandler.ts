@@ -15,13 +15,12 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {ChatZimletBase} from "../../ChatZimletBase";
 import {Callback} from "../../lib/callbacks/Callback";
-import {IOpenChatState} from "../../redux/IOpenChatState";
 import {AjxCallback} from "../../zimbra/ajax/boot/AjxCallback";
 import {AjxSoapDoc} from "../../zimbra/ajax/soap/AjxSoapDoc";
 import {appCtxt} from "../../zimbra/zimbraMail/appCtxt";
 import {ZmZimbraMail} from "../../zimbra/zimbraMail/core/ZmZimbraMail";
+import {ZmZimletBase} from "../../zimbra/zimbraMail/share/model/ZmZimletBase";
 import {ZmZimletContext} from "../../zimbra/zimbraMail/share/model/ZmZimletContext";
 import {Setting} from "../Setting";
 import {SettingsUtils} from "../SettingsUtils";
@@ -29,9 +28,9 @@ import {ISettingsHandlerInterface} from "./SettingsHandlerInterface";
 
 export class PropertiesHandler implements ISettingsHandlerInterface {
 
-  private mZimletContext: ChatZimletBase<IOpenChatState>;
+  private mZimletContext: ZmZimletBase;
 
-  constructor(zimletContext: ChatZimletBase<IOpenChatState>) {
+  constructor(zimletContext: ZmZimletBase) {
     this.mZimletContext = zimletContext;
   }
 
