@@ -40,7 +40,7 @@ var cow = "function Cow() {}\nCow.prototype.moo = function() { console.log('Moo!
 
 module.exports = {
   entry: {
-    com_zextras_chat_open_bundle: "./src/OpenChatZimletEntryPoint.ts"
+    com_zextras_chat_open_bundle: "./src/OpenChatZimlet.ts"
   },
   output: {
     path: path.resolve(__dirname, "../build/"),

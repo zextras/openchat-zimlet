@@ -47,7 +47,7 @@ import {ChatPluginManager} from "./lib/plugin/ChatPluginManager";
 import {SidebarUtils} from "./lib/SidebarUtils";
 import {StringUtils} from "./lib/StringUtils";
 import {OpenChatBootStrategy} from "./OpenChatBootStrategy";
-import {OpenChatZimletEntryPoint} from "./OpenChatZimletEntryPoint";
+import {OpenChatZimlet} from "./OpenChatZimlet";
 import {IOpenChatState} from "./redux/IOpenChatState";
 import {IOpenChatUIState} from "./redux/IOpenChatUIState";
 import {SettingsManager} from "./settings/SettingsManager";
@@ -63,7 +63,7 @@ export class OpenChatZimletLazyLoader extends ChatZimletBase<IOpenChatState> {
   private mUIStore: Store<IOpenChatUIState>;
 
   constructor(
-    entry: OpenChatZimletEntryPoint,
+    entry: OpenChatZimlet,
     timedCallbackFactory: TimedCallbackFactory,
     settingsManager: SettingsManager,
     sessionInfoProvider: SessionInfoProvider,
