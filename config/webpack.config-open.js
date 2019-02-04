@@ -163,6 +163,11 @@ module.exports = {
         banner: license.join('\n'),
         entryOnly: false
       }
-    )
+    ),
+    new webpack.optimize.CommonsChunkPlugin({
+      children: true,
+      async: true,
+      minChunks: 2
+    })
   ]
 };

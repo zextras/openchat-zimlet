@@ -132,7 +132,7 @@ export class Message extends DwtComposite {
     if (this.mConversation.scrollToTop != null) {
       this.mConversation.scrollToTop();
     }
-    const elements: NodeListOf<HTMLSpanElement> = this.getHtmlElement().getElementsByTagName("span");
+    const elements: HTMLCollectionOf<HTMLSpanElement> = this.getHtmlElement().getElementsByTagName("span");
     // tslint:disable-next-line
     for (let i = 0; i < elements.length; i++) {
       const element = elements[i];

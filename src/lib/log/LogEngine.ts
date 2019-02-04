@@ -137,6 +137,7 @@ export class LogEngineImp {
 const location: Location = (typeof window !== "undefined" && typeof window.location !== "undefined") ?
   window.location :
   {
+    ancestorOrigins: {} as any,
     assign: (url: string) =>  { return; },
     hash: "",
     host: "",
@@ -149,7 +150,6 @@ const location: Location = (typeof window !== "undefined" && typeof window.locat
     reload: (forcedReload?: boolean) => { return; },
     replace: (url: string) => { return; },
     search: "",
-    toString: () => "",
   };
 
 const urlParser = new URLParser(location);
