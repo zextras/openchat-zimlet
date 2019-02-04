@@ -18,7 +18,6 @@
 import {JSON3 as JSON} from "../libext/json3";
 import {XRegExp} from "../libext/xregexp";
 
-import {ChatZimletBase} from "../ChatZimletBase";
 import {MainWindow} from "../dwt/windows/MainWindow";
 import {Callback} from "../lib/callbacks/Callback";
 import {CallbackManager} from "../lib/callbacks/CallbackManager";
@@ -26,10 +25,10 @@ import {TimedCallbackFactory} from "../lib/callbacks/TimedCallbackFactory";
 import {LogEngine} from "../lib/log/LogEngine";
 import {Logger} from "../lib/log/Logger";
 import {Version} from "../lib/Version";
-import {IOpenChatState} from "../redux/IOpenChatState";
 import {AjxCallback} from "../zimbra/ajax/boot/AjxCallback";
 import {ZmApp} from "../zimbra/zimbraMail/core/ZmApp";
 import {ZmSettings} from "../zimbra/zimbraMail/share/model/ZmSettings";
+import {ZmZimletBase} from "../zimbra/zimbraMail/share/model/ZmZimletBase";
 import {UserProperty, ZmZimletContext} from "../zimbra/zimbraMail/share/model/ZmZimletContext";
 import {ZimletVersion} from "../ZimletVersion";
 import {ConfigHandler} from "./handlers/ConfigHandler";
@@ -43,7 +42,7 @@ export class SettingsManager implements ISettingsManager {
 
   public DELEGATED_ACCESS: boolean;
 
-  private zimletContext: ChatZimletBase<IOpenChatState>;
+  private zimletContext: ZmZimletBase;
   private settingsHandlers: ISettingsHandlerInterface[];
   private onChangeCallbacks: {[name: string]: CallbackManager};
   private defaultSettingsHandler: ISettingsHandlerInterface;
@@ -51,7 +50,7 @@ export class SettingsManager implements ISettingsManager {
   // TODO: Remove me...
 
   constructor(
-    zimletContext: ChatZimletBase<IOpenChatState>,
+    zimletContext: ZmZimletBase,
     settings: ZmSettings,
     timedCallbackFactory: TimedCallbackFactory,
   ) {

@@ -91,7 +91,7 @@ import {ZmZimletBase} from "./zimbra/zimbraMail/share/model/ZmZimletBase";
 import {ZmStatusView} from "./zimbra/zimbraMail/share/view/ZmStatusView";
 import {ZimletVersion} from "./ZimletVersion";
 
-export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
+export class ChatZimletBase<T extends IOpenChatState> {
 
   public static alreadyInit: boolean;
   public static INSTANCE: ChatZimletBase<IOpenChatState>;
@@ -110,7 +110,8 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
   protected mSoapCommandFactory: ICommandFactory;
   protected mStore: Store<T>;
   protected mI18n: Store<Ii18n>;
-  private mSettingsManager: SettingsManager;
+  protected mSettingsManager: SettingsManager;
+  protected mEntry: ZmZimletBase;
   private mEventManager: IEventManager;
   private mIdleTimer: IdleTimer;
   private mMainWindow: MainWindow;
@@ -135,7 +136,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
   private mJQueryPlugins: JQueryPlugins;
 
   constructor() {
-    super(); // Do nothing
     if (typeof ChatZimletBase.INSTANCE === "undefined" || ChatZimletBase.INSTANCE === null) {
       ChatZimletBase.INSTANCE = this;
     }
@@ -174,7 +174,6 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
     this.mI18n = i18n;
     this.mTimedCallbackFactory = timedCallbackFactory;
     this.mDateProvider = dateProvider;
-    this.mSettingsManager = settingsManager;
     this.mSessionInfoProvider = sessionInfoProvider;
     this.mConnectionManager = connectionManager;
     this.mEventManager = eventManager;
@@ -183,18 +182,18 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
     emojione.setAscii(true);
     emojione.setUnicodeAlt(false);
     emojione.setCacheBustParams("");
-    emojione.setImagePath(this.getResource(ChatZimletBase.EMOJI_ASSETS_PATH));
+    emojione.setImagePath(this.mEntry.getResource(ChatZimletBase.EMOJI_ASSETS_PATH));
 
     if (ZimbraUtils.getZimbraMajorVersion() < 7) {
       if (isNaN(ZimbraUtils.getZimbraMajorVersion())) {
-        this.displayStatusMessage(
+        this.mEntry.displayStatusMessage(
           {
             level: ZmStatusView.LEVEL_CRITICAL,
             msg: StringUtils.getMessage("undetectable_zimbra_version"),
           },
         );
       } else {
-        this.displayStatusMessage(
+        this.mEntry.displayStatusMessage(
           {
             level: ZmStatusView.LEVEL_CRITICAL,
             msg: StringUtils.getMessage("zimbra_not_supported"),
@@ -229,7 +228,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
 
     this.mNotificationManager = new NotificationManager(
         StringUtils.getMessage("default_notification_title"),
-        location.protocol + "//" + location.hostname + (this.getResource("desktop-chat_128.png")),
+        location.protocol + "//" + location.hostname + (this.mEntry.getResource("desktop-chat_128.png")),
         this.mTimedCallbackFactory,
         appCtxt,
     );
@@ -381,7 +380,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
 
   public getNotificationImage(): string {
     const differentImage: string = this.mMainWindow.getPluginManager().getFieldPlugin(MainWindow.ChatImageFieldPlugin);
-    const defaultUrl = this.getResource("desktop-chat_128.png");
+    const defaultUrl = this.mEntry.getResource("desktop-chat_128.png");
     if (typeof differentImage !== "undefined" && differentImage !== null) {
       return differentImage;
     }
@@ -579,7 +578,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
       (new TimedCallback(
         new Callback(
           this,
-          this.displayStatusMessage,
+          this.mEntry.displayStatusMessage,
           {
             level: ZmStatusView.LEVEL_CRITICAL,
             msg: StringUtils.getMessage("error_contact_server"),
@@ -638,7 +637,7 @@ export class ChatZimletBase<T extends IOpenChatState> extends ZmZimletBase {
     }
     if (!this.mCoreNotFoundNotified) {
       this.mCoreNotFoundNotified = true;
-      this.displayStatusMessage(
+      this.mEntry.displayStatusMessage(
         {
           level: ZmStatusView.LEVEL_WARNING,
           msg: msg,

@@ -145,6 +145,8 @@ dist/com_zextras_chat_open.zip: init \
 		templates/* \
 		com_zextras_chat_open_bundle.js \
 		com_zextras_chat_open_bundle.js.map \
+		OpenChatZimletLazyLoader.bundle.js \
+        OpenChatZimletLazyLoader.bundle.js.map \
 		com_zextras_chat_open*.properties \
 		com_zextras_chat_open.xml \
 		com_zextras_chat_open_sprite.png \

@@ -2,13 +2,19 @@
   "compilerOptions": {
     "sourceMap": true,
     "noImplicitAny": true,
-    "removeComments": true,
-    "module": "commonjs",
+    "removeComments": false,
+    "module": "esnext",
     "target": "es3",
+    "moduleResolution": "node",
     "jsx": "react",
     "jsxFactory": "h",
     "skipLibCheck": true,
-    "importHelpers": false
+    "importHelpers": false,
+    "lib": [
+      "es2015",
+      "es2015.promise",
+      "dom"
+    ]
   },
   "exclude": [
     "node_modules",
