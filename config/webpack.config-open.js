@@ -46,7 +46,8 @@ module.exports = {
     path: path.resolve(__dirname, "../build/"),
     filename: '[name].js',
     chunkFilename: '[name].bundle.js',
-    publicPath: '/service/zimlet/com_zextras_chat_open/'
+    publicPath: '/service/zimlet/com_zextras_chat_open/',
+    jsonpFunction: "com_zextras_chat_open_jsonp"
   },
   resolve: {
     extensions: [".js", ".json", ".tsx", ".ts"],
