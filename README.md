@@ -18,3 +18,19 @@
 [6]: https://www.npmjs.com/package/html-entities
 [7]: https://github.com/Ranks/emojione
 [8]: https://yuku-t.com/jquery-textcomplete/
+
+# Building from source
+Install dependancies
+- g++
+ yum install gcc-c++ make
+- nvm (remove npm if you have issues)
+https://github.com/creationix/nvm#install-script
+
+Then in ~/.nvm run `nvm install 6` and `nvm use 6` in the same terminal but in a different folder make a clone of openchat-zimlet.
+- git clone https://github.com/ZeXtras/openchat-zimlet
+- git submodule init
+- git submodule update
+- make
+
+You should find the zimlet in:
+openchat-zimlet/dist/com_zextras_chat_open.zip
